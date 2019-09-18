@@ -1,0 +1,18 @@
+<aura:component access="global" implements="forceCommunity:availableForAllPageTypes" >
+	<aura:attribute name="brandType" type="String" />
+    <aura:attribute name="confirmationHeader" type="String" />
+    <aura:attribute name="confirmationSubHeader1" type="String" />
+    <aura:attribute name="confirmationSubHeader2" type="String" />
+    <aura:attribute name="userId" type="String"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:registerEvent name="perferenceEvent" type="c:SFMC_PreferenceEvent"></aura:registerEvent>
+    
+            <h1><div class="headerText slds-text-align_center slds-p-top_xx-large">{!v.confirmationHeader}</div></h1>
+            <div class="slds-text-align_center slds-p-top_xx-large">
+                <div class="subheaderText">
+                    <p>{!v.confirmationSubHeader1}</p>
+                    <p class="slds-p-top_medium">{!v.confirmationSubHeader2} <a style="color:blue;" onclick="{!c.handelClick}">{!$Label.c.SFMC_change_subscription_label}</a></p>
+                </div>
+            </div>
+			<div class="slds-p-bottom_xx-large"></div>           
+</aura:component>

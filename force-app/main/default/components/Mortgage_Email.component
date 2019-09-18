@@ -1,0 +1,13 @@
+<apex:component controller="Mortgage_Email_Controller" access="global">
+    <apex:attribute name="as" type="Asset" description="Asset" access="global" required="true"/>
+    <apex:outputText escape="false" value="Field Name,Value"/>
+    <c:Mortgage_Attachment record="{!as.Account}" fieldSet="{!$ObjectType.Account.FieldSets.Mortgage_Order_Fulfillment}" entityName="Account"/>
+    <apex:repeat value="{!contacts[as.AccountId]}" var="con">
+        <c:Mortgage_Attachment record="{!con.con}" fieldSet="{!$ObjectType.Contact.FieldSets.Mortgage_Order_Fulfillment}" entityName="{!con.Role}"/>
+        <apex:repeat value="{!con.con.Contact_Methods__r}" var="conMethod">
+            <c:Mortgage_Attachment record="{!conMethod}" fieldSet="{!$ObjectType.ContactMethod__c.FieldSets.Mortgage_Order_Fulfillment_Phone}" entityName="{!con.Role} {!conMethod.Type_Purpose__c}" rendered="{!conMethod.Type__c=='Phone'}"/>
+            <c:Mortgage_Attachment record="{!conMethod}" fieldSet="{!$ObjectType.ContactMethod__c.FieldSets.Mortgage_Order_Fulfillment_Email}" entityName="{!con.Role} {!conMethod.Type_Purpose__c}" rendered="{!conMethod.Type__c=='Email'}"/>
+        </apex:repeat>
+    </apex:repeat>
+    <c:Mortgage_Attachment record="{!as}" fieldSet="{!$ObjectType.Asset.FieldSets.Mortgage_Order_Fulfillment}" entityName="Asset"/>
+</apex:component>

@@ -1,0 +1,145 @@
+<apex:page controller="CBCPerformanceSearch" contentType="application/vnd.ms-excel#CustomerAssetsExport.xls">
+   <!--  <apex:form >
+        <apex:pageBlock >
+            <apex:repeat value="{!relatedAssets}" var="account"> 
+                <apex:pageBlocksection title="Customer Assets" columns="1" >
+                    <apex:pageBlockTable value="{!account.dwrap}" var="asset" >
+                        <apex:column headerValue="Child Contract Number">
+                            <apex:outputText value="{!asset.AssetId}"/>
+                        </apex:column>                                    
+                        <apex:column headerValue="Status">
+                            <apex:outputText value="{!asset.Status}"/>
+                        </apex:column>                                    
+                        <apex:column headerValue="Quantity">
+                            <apex:outputText value="{!asset.Quantity}"/>
+                        </apex:column>
+                        <apex:column headerValue="Size">
+                            <apex:outputText value="{!asset.ProductType}"/>
+                        </apex:column>                                    
+                        <apex:column headerValue="Routing">
+                            <apex:outputText value="{!asset.LeadType}"/>
+                        </apex:column>                                    
+                        <apex:column headerValue="Market">
+                                <apex:outputText value="{!asset.MarketZip}"/>
+                        </apex:column>
+                        <apex:column headerValue="Start">
+                            <apex:outputText value="{0, date,MM'/'dd'/'yyyy}">
+                                <apex:param value="{!asset.StartDate}"/>
+                            </apex:outputText>
+                        </apex:column>                                    
+                        <apex:column headerValue="Expiration">
+                            <apex:outputText value="{0, date,MM'/'dd'/'yyyy}">
+                                <apex:param value="{!asset.End_Date}"/>
+                            </apex:outputText>
+                        </apex:column>
+                        <apex:column headerValue="Last Unit Price">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value="{!asset.ListPrice}"/>
+                            </apex:outputText>
+                        </apex:column>                                    
+                        <apex:column headerValue="Renewal Amount">
+                            <apex:outputText value="{!asset.RenewalPrice}"/>
+                        </apex:column>
+                        <apex:column headerValue="Lead Count">
+                            <apex:outputText value="{!asset.AssetLeadDetailCount}"/>
+                        </apex:column>
+                        <apex:column headerValue="Avg Listing Price Web">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value="{!asset.AverageListingPriceWebLead}"/>
+                            </apex:outputText>
+                        </apex:column>
+                        <apex:column headerValue="Avg Listing Price Mobile">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value="{!asset.AverageListingPriceMobileLead}"/>
+                            </apex:outputText>
+                        </apex:column>
+                        <apex:column headerValue="Avg Listing Price Total">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value="{!asset.AverageListingPriceAllLead}"/>
+                            </apex:outputText>
+                        </apex:column>
+                        <apex:column headerValue="Web">
+                            <apex:outputText value="{!asset.WebLead}"/>
+                        </apex:column>
+                        <apex:column headerValue="Mobile">
+                            <apex:outputText value="{!asset.MobileLead}"/>
+                        </apex:column>                                    
+                        <apex:column headerValue="Paid">
+                            <apex:outputText value="{!asset.PaidLead}"/>
+                        </apex:column>                                    
+                        <apex:column headerValue="Courtesy">
+                            <apex:outputText value="{!asset.CourtesyLead}"/>
+                        </apex:column>                                    
+                        <apex:column headerValue="Total">
+                            <apex:outputText value="{!asset.TotalLeads}"/>                                        
+                        </apex:column>
+                        <apex:column headerValue="Over Sold Full">
+                            <apex:outputText value="{!asset.OverSoldFull}"/>
+                        </apex:column>
+                        <apex:column headerValue="Over Sold Half">
+                            <apex:outputText value="{!asset.OverSoldHalf}"/>
+                        </apex:column>
+                        <apex:column headerValue="Terms">
+                            <apex:outputText value="{!asset.ContractTerm}"/>
+                        </apex:column> 
+                        <apex:column headerValue="Performance">
+                            <apex:outputText value="{!asset.Performance}" />
+                        </apex:column>
+                        <apex:column headerValue="Full Flex Available">
+                            <apex:outputText value="{!asset.FullFlexAvailable}"/>
+                        </apex:column>
+                        <apex:column headerValue="Half Flex Available">
+                            <apex:outputText value="{!asset.HalfFlexAvailable}"/>
+                        </apex:column>
+                        <apex:column headerValue="Full Flex Each">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value="{!asset.FullFlexUnitPrice}"/>
+                            </apex:outputText>
+                        </apex:column>
+                        <apex:column headerValue="Half Flex Each">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value="{!asset.HalfFlexUnitPrice}"/>
+                            </apex:outputText>
+                        </apex:column>
+                        <apex:column headerValue="Full Flex All">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value="{!asset.FullFlexAll}"/>
+                            </apex:outputText>
+                        </apex:column>
+                        <apex:column headerValue="Half Flex All">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value="{!asset.HalfFlexAll}"/>
+                            </apex:outputText>
+                        </apex:column>
+                        <apex:column headerValue="Full Fast Available">
+                            <apex:outputText value="{!asset.FullFastAvailable}"/>
+                        </apex:column>
+                        <apex:column headerValue="Half Fast Available">
+                            <apex:outputText value="{!asset.HalfFastAvailable}"/>
+                        </apex:column>                                    
+                        <apex:column headerValue="Full Fast Each">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value="{!asset.FullFastUnitPrice}"/>
+                            </apex:outputText>
+                        </apex:column>
+                        <apex:column headerValue="Half Fast Each">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value="{!asset.HalfFastUnitPrice}"/>
+                            </apex:outputText>
+                        </apex:column>
+                        <apex:column headerValue="Full Fast All">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value="{!asset.FullFastAll}"/>
+                            </apex:outputText>
+                        </apex:column>
+                        <apex:column headerValue="Half Fast All">
+                            <apex:outputText value="{0, number, currency}">
+                                <apex:param value="{!asset.HalfFastAll}"/>
+                            </apex:outputText>
+                        </apex:column>
+                    </apex:pageBlockTable>
+                </apex:pageBlocksection>
+            </apex:repeat>
+        </apex:pageBlock>
+    </apex:form>  -->
+</apex:page>

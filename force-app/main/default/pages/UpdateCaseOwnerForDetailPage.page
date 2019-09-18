@@ -1,0 +1,45 @@
+<apex:page standardController="Case" extensions="UpdateCaseOwnerForDetailPageController"
+           id="updateOwnerPage">
+  <style>
+  .messageText h4 {
+    color: #cc0000;
+  }
+  </style>
+
+  <apex:form id="updateOwnerPageForm">
+    <apex:pagemessages />
+    <apex:sectionheader title="Change Owner for Cases" />
+    <apex:pageblock mode="edit">
+
+      <apex:pageblocksection title="Select Queue" columns="1" rendered="{!!ISNULL(selectedCase)}">
+        <apex:pageblocksectionitem > Queue :
+          <apex:selectList value="{!selectedQueue}" size="1">
+            <apex:selectOptions value="{!allQueue}" />
+          </apex:selectList>
+        </apex:pageblocksectionitem>
+      </apex:pageblocksection>
+
+      <apex:pageblockbuttons location="bottom">
+        <apex:commandbutton action="{!saveRecords}" value="Save" reRender="updateOwnerPageForm"
+        status="statusC" rendered="{!!ISNULL(selectedCase)}" />
+        <apex:commandbutton value="Cancel" action="{!cancel}" />
+      </apex:pageblockbuttons>
+
+    </apex:pageblock>
+
+    <apex:outputpanel >
+      <apex:actionstatus id="statusC">
+        <apex:facet name="start">
+          <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+                 height: 100%;opacity:0.65;width:100%;">
+            <div class="waitingHolder" style="top: 100px; width: 100px;">
+              <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+              <span class="waitingDescription">Please Wait...</span>
+            </div>
+          </div>
+        </apex:facet>
+      </apex:actionstatus>
+    </apex:outputpanel>
+
+  </apex:form>
+</apex:page>

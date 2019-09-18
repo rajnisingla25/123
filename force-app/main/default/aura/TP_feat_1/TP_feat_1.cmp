@@ -1,0 +1,30 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,forceCommunity:themeLayout" access="global" >
+	<div class="cTP_feat_1">
+       <div id="features-wrap" class="text-center">
+          <article>
+            <h3 style="color:#004b8d;">Leading real estate CRM, automated marketing and IDX websites</h3>
+            <div class="row">
+                <div class="col-md-4 col-sm-4 feature">
+                  <img style="height:100px; width:auto;" src="https://psweb.realtor.com/lp-images/2019/TP-feat-icons/tp-feat-icon1.png" alt="" class="img-responsive center-block"/>
+                    <h4><b>Manage contacts and leads</b> <br/> from 200+ sources</h4>
+                </div>
+                <div class="col-md-4 col-sm-4 feature">
+                  <img style="height:100px; width:auto;" src="https://psweb.realtor.com/lp-images/2019/TP-feat-icons/tp-feat-icon2.png" alt="" class="img-responsive center-block"/>
+                    <h4>Simplify and automate <br/><b>follow-up</b></h4>
+                </div>
+                <div class="col-md-4 col-sm-4 feature">
+                  <img style="height:100px; width:auto;" src="https://psweb.realtor.com/lp-images/2019/TP-feat-icons/tp-feat-icon3.png" alt="" class="img-responsive center-block"/>
+                    <h4>Increase your <br/> <b>repeat-and-referral</b> business</h4>
+                </div>
+    		</div>
+              <aura:if isTrue="{!v.themePage == true}" >
+              <div style="margin-top:30px;">
+                <center>
+                    <img src="https://b2bweb.realtor.com/web_assets/rdc/logos/realliving.jpg" alt="United Real Estate"/><br/><br/>
+                </center>
+               </div>
+              </aura:if>
+          </article>
+        </div>
+     </div>
+</aura:component>

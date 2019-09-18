@@ -1,0 +1,49 @@
+<apex:page standardController="Account" extensions="CaseServiceRequestController">
+    <apex:form id="myForm">
+    <apex:messages />
+        <apex:PageBlock >
+            <apex:pageBlockButtons >
+                <apex:commandButton value="Save & Add Assets" action="{!saveAndRedirect}" />
+                <apex:commandButton value="Cancel" action="{!Cancel}" />
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Case Details" columns="2">
+                
+                <apex:inputField value="{!caseRecord.AccountId}" required="true"/>
+                <apex:inputField value="{!caseRecord.Status}" required="true"/>
+                
+            </apex:pageBlockSection>
+           <apex:pageBlockSection title="Request Details" columns="2">
+               
+                
+                <apex:inputField value="{!caseRecord.Date_Requested__c}"/>
+                <apex:inputField value="{!caseRecord.Requesting_AE__c}"/>
+                <apex:inputField value="{!caseRecord.Request_Type__c}"/>                
+                <apex:inputField value="{!caseRecord.Request_Urgency__c}"/>
+                <apex:inputField value="{!caseRecord.Description}" required="true"/> <!-- CRM-3314: Added Description field to the section -->
+                <apex:inputField value="{!caseRecord.Urgent_Request_Bill_Date__c}"/>               
+                
+            </apex:pageBlockSection>
+            
+            <apex:pageblockSection title="Cancellation Information" columns="2">
+                <apex:inputField value="{!caseRecord.Cancel_Type__c}" />
+                <apex:inputField value="{!caseRecord.Cancel_on_date__c}"/>
+                <apex:inputField value="{!caseRecord.Cancel_Reason__c}"/>
+                <apex:inputField value="{!caseRecord.Amount_being_cancelled__c}"/>
+            </apex:pageblockSection>
+            <apex:pageBlockSection title="Reallocation Information" columns="2">
+                <apex:inputField value="{!caseRecord.Reallocation_Type__c}"/>
+                <apex:outputLabel ></apex:outputLabel>
+                <apex:inputField value="{!caseRecord.Market_being_cancelled__c}"/>
+                <apex:inputField value="{!caseRecord.Market_being_ordered__c}"/>
+                <apex:inputField value="{!caseRecord.Amount_being_reallocated__c}"/>
+                <apex:inputField value="{!caseRecord.Amount_of_new_Order__c}"/>
+                <apex:inputField value="{!caseRecord.Was_new_order_placed_yet__c}"/>
+                <apex:inputField value="{!caseRecord.Do_you_need_inv_locked__c}"/><!-- CRM-4124: Add "Do you need inventory locked? field back on the Create Service Request page -->
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Credit/Refund Information" columns="2"> <!-- CRM-3314: Added new section and fields -->
+                <apex:inputField value="{!caseRecord.Credit_Amount__c}" />
+                <apex:inputField value="{!caseRecord.Refund_Amount__c}" />
+            </apex:pageBlockSection>
+        </apex:PageBlock>
+    </apex:form>
+</apex:page>

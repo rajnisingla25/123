@@ -1,0 +1,97 @@
+<apex:page Controller="AssetAllBrokerAssetList2Con" showHeader="true" tabStyle="Account">
+
+<apex:form id="theForm">
+    <script>
+        function cvCheckAllOrNone(allOrNoneCheckbox) {
+        
+            // Find parent table
+            var container = allOrNoneCheckbox;
+            while (container.tagName != "TABLE") {
+                container = container.parentNode;
+            }
+        
+            // Switch all checkboxes
+            var inputs = container.getElementsByTagName("input");
+            var checked = allOrNoneCheckbox.checked;
+            for (var i = 0; i < inputs.length; i++) { 
+                var input = inputs.item(i);
+                if (input.type == "checkbox") {
+                    if (input != allOrNoneCheckbox) {
+                        input.checked = checked;
+                    }
+                }
+            }
+        }
+    </script>
+  
+<apex:outputPanel id="opp" layout="block" style="overflow:auto !important;width:100%;height:600px" >
+        <table id="tbl" width="1000px;">
+             <tr><td>
+  <apex:pageBlock title="Viewing Parent Assets for account {!AccName}">
+  
+    <apex:pageBlockTable var="asset" value="{!Assets}">
+      <apex:column headerValue="Asset Name"><a onClick="window.open('{!baseurl}/{!asset.Id}', '_blank')" href="#">{!asset.Name}</a></apex:column>
+      <apex:column headerValue="Include All">           
+                <apex:facet name="header">
+                  <apex:outputPanel layout="None" style="float: Left; border:5px;">
+              <apex:outputLabel value="Include" for="inputId1" />
+              <apex:inputCheckbox onclick="cvCheckAllOrNone(this)" id="inputId1" />                   
+                  </apex:outputPanel>                   
+                  </apex:facet>
+                <apex:inputCheckbox value="{!asset.Include_Asset__c}" id="inputId"/>               
+       </apex:column>
+    <!--<apex:column headerValue="Include" ><apex:inputCheckbox rendered="{!if(asset.Renewal_Status__c =='Do Not Renew',false,true)}" value="{!asset.Include_Asset__c}" id="inputId"  />
+                     </apex:column>-->
+                     <apex:column headerValue="Start Date"><apex:outputText value="{0,date,MM/dd/yyyy}"><apex:param value="{!asset.Start_Date__c}" /></apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="End Date"><apex:outputText value="{0,date,MM/dd/yyyy}"><apex:param value="{!asset.End_Date__c}" /></apex:outputText>
+                     </apex:column>
+                     <apex:column headerValue="Quantity"> {!asset.Quantity}
+                     </apex:column>
+                     <apex:column headerValue="Lead Type">{!asset.Lead_Type__c}
+                     </apex:column>
+                     <apex:column headerValue="Status">{!asset.Status}
+                     </apex:column>
+                     <apex:column headerValue="Renewal Status">{!asset.Renewal_Status__c}
+                     </apex:column>
+                     <!---<apex:column headerValue="Asset Name">{!asset.TCV}
+                     </apex:column>
+                     <apex:column headerValue="Asset Name">{!asset.assetCMMR}
+                     </apex:column>-->
+                     <apex:column headerValue="Auto Renewal">{!asset.Auto_Renewal__c}
+                     </apex:column>
+                     <apex:column headerValue="FulfullmentStatus">{!asset.Fulfillment_Status__c}
+                     </apex:column>
+                     <apex:column headerValue="MLS">{!asset.MLS_Set__c}
+                     </apex:column>
+                     <apex:column headerValue="BOP Code">{!asset.BOP_Code__c}
+                     </apex:column>
+                     <apex:column headerValue="Asset Type">{!asset.Asset_Type__c}
+                     </apex:column>
+                     <apex:column headerValue="Product Bundle">{!asset.Commerce_Group__c}
+                     </apex:column>
+    </apex:pageBlockTable>
+    <!--<apex:panelGrid columns="2">
+      <apex:commandLink action="{!previous}">Previous</apex:commandlink>
+      <apex:commandLink action="{!next}">Next</apex:commandlink>
+    </apex:panelGrid>-->
+    
+    
+    <apex:pageBlockButtons >
+    
+    <apex:commandButton value="Previous" action="{!Previous}" status="actStatusId" rendered="{!PageNumber != '' && PageNumber != '0'}"/>
+    
+    <apex:commandButton value="Save" action="{!SaveAsset}" status="actStatusId"/>
+    <apex:commandButton value="Next" action="{!Next}" status="actStatusId"/>
+     <apex:actionStatus id="actStatusId" >
+                <apex:facet name="start" >
+                  <img src="/img/loading.gif" />                    
+                </apex:facet>
+            </apex:actionStatus>
+    </apex:pageBlockButtons>
+  
+  
+  </apex:pageBlock>
+  </td></tr></table></apex:outputpanel>
+  </apex:form> 
+</apex:page>

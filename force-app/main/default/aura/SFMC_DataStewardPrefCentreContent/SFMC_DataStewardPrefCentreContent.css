@@ -1,0 +1,22 @@
+.THIS {
+    font-family: "Roboto", sans-serif !important
+}
+.THIS .article{
+    max-width: 75%;
+    Margin: 0 auto;   
+}
+.THIS .headerText{
+    font-family: "Roboto", sans-serif !important;
+    font-weight: normal;
+    font-size: 2.25rem;
+    line-height: 1.3;
+}
+.THIS .brandClass{
+    text-align: center;
+    font-size: 2vw;
+}
+.THIS .buttonClass{
+    height: 8vh;
+    width: 8vw;
+    font-size: 1.2vw;
+}

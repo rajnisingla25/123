@@ -1,0 +1,92 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,forceCommunity:themeLayout" access="global" >
+    <aura:attribute name="phoneNumber" type="String" />
+    <div class="cTPFS_footer_main">
+      <div class="phone-wrap text-center">
+    	<article>
+          <div class="row">
+            <div class="col-md-12">
+              <h5>Call us to learn more:</h5>
+              <h3><img src="https://psweb.realtor.com/logos/greenphone-whitebg.png" width="39" height="" alt=""/>&nbsp;
+               <a href="{!'tel:'+ v.phoneNumber}" style="text-decoration: none;">{!v.phoneNumber} </a>
+              </h3>
+            </div>
+           </div>
+    	</article>
+		</div>
+    	<div id="footerwrap">
+        <div class="footlight-wrap bottom-pad-0">
+            <article>
+                <div class="footerContent container">
+                    <div class="row">
+                        <div class="col-sm-8 footerlinks none400">
+
+                            <h4 class="title-footer">Move, Inc. Sites</h4>
+                            <ul>
+                                <li><a data-omtag="footer:move sites:realtor.com" href="https://www.realtor.com">realtor.com<sup>®</sup></a></li>
+                                <li><a data-omtag="footer:move sites:move.com" href="https://www.move.com">Move.com</a></li>
+                                <li><a data-omtag="footer:move sites:moving.com" href="http://www.moving.com">Moving.com</a></li>
+                                <li><a data-omtag="footer:move sites:top producer" href="https://www.topproducer.com/">Top Producer<sup>®</sup></a></li>
+                                <li><a data-omtag="footer:move sites:listhub" href="https://www.listhub.com/home.html">ListHub</a></li>
+                                <li><a data-omtag="footer:move sites:realsuite" href="https://www.realsuite.io">Realsuite</a></li>
+                                <li><a data-omtag="footer:move sites:senior" href="http://www.seniorhousingnet.com/">SeniorHousingNet.com</a></li>
+                                <li><a data-omtag="footer:move sites:doorsteps" href="https://www.doorsteps.com/" >Doorsteps</a></li>
+                                <li><a data-omtag="footer:move sites:remodelista" href="https://www.remodelista.com/">Remodelista</a></li>
+                                <li><a data-omtag="footer:move sites:gardenista" href="https://www.gardenista.com/" >Gardenista</a></li>
+                                <li><a data-omtag="footer:move sites:homefair" href="http://www.homefair.com">HomeFair</a></li>
+                                <li><a data-omtag="footer:move sites:new homes" href="http://newhomes.move.com/" target="_blank" >New Homes</a></li>
+                                <li><a data-omtag="footer:move sites:relocation" href="http://www.relocation.com/">Relocation.com</a></li>
+                            </ul>
+                            <h4 class="title-footer footerlinks">Corporate</h4>
+                            <ul>
+                                <li><a data-omtag="footer:corp:about us" href="http://marketing.move.com/">About Us</a></li>
+                                <li><a data-omtag="footer:corp:news" href="http://news.move.com"> News</a></li>
+                                <li><a data-omtag="footer:corp:careers" href="http://careers.move.com">Careers</a></li>
+                                <li><a data-omtag="footer:corp:terms of use" href="https://marketing.move.com/terms-of-service/" rel="nofollow">Terms of Use</a></li>
+                                <li><a data-omtag="footer:corp:privacy policy" href="https://marketing.move.com/privacy-policy/" rel="nofollow">Privacy Policy</a></li>
+                                <li><a data-omtag="footer:corp:advertise with us" href="http://marketing.move.com/">Advertise With Us</a></li>
+                            </ul>
+                            <ul>
+                                <li><a data-omtag="footer:corp:ad choices" rel="nofollow" href="https://marketing.move.com/privacy-policy/#oba_anchor">Ad Choices<i class="i-adchoices"></i></a></li>
+                                <li><a data-omtag="footer:corp:equal housing opportunity" rel="nofollow" href="http://marketing.move.com/equal-housing-opportunity/">Equal Housing Opportunity</a></li>
+                                <li><a data-omtag="footer:corp:sitemap" href="https://www.realtor.com/sitemap">Sitemap</a></li>
+                                <li><a data-omtag="footer:corp:contact us" href="http://marketing.move.com/contact-us/" rel="nofollow">Contact Us</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-sm-4 sm-group">
+                            <h4 class="title-footer">Connect with us</h4>
+
+                            <ul>
+                                <li><a href="https://www.facebook.com/Realtor.comPro" alt="Follow realtor.com on Facebook" class="sm-icon" target="_blank"><img src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2018/icons/facebook-footer-icon-grey.png"/></a></li>
+                                <li><a title="Tune in on YouTube" href="https://www.youtube.com/realtormarketer" target="_blank" class="sm-icon"><img src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2018/icons/youtube-footer-icon-grey.png"/></a></li>
+                                <li><a href="https://twitter.com/REALTORdotcom" target="_blank" class="sm-icon" alt="Follow realtor.com on Twitter"><img src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2018/icons/twitter-footer-icon-grey.png"/></a></li>
+                                <li><a title="Pin it on Pinterest" href="https://pinterest.com/realtordotcom" target="_blank" class="sm-icon"><img src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2018/icons/pinterest-footer-icon-grey.png"/></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="footerlinks footcenter clearfix">
+                        <ul class="list-horizontal-links li-disc col-940 grid fit center centerlist">
+                            <li><a href="https://www.realtor.com/">Homes</a></li>
+                            <li><a href="https://www.realtor.com/rentals/">Rentals</a></li>
+                            <li><a href="https://www.realtor.com/mortgage/">Mortgage</a></li>
+                            <li><a href="https://www.realtor.com/realestateagents/">Find REALTORS<sup>®</sup></a></li>
+                            <li><a href="https://www.realtor.com/news/">Blogs</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <hr/>
+            </article>
+        </div>
+
+        <div class="footlight-wrap">
+			<article>
+                <div class="footerContent container">
+                    <p class="footerlinks copyright"><img src="https://success.realtor.com/cp/files/large/4c41fae06e5fe1dfb7adcf35c4421f79.png" title="REALTOR® -- A registered collective membership mark that identifies a real estate professional who is a member of the National Association of REALTORS® and subscribes to its strict Code of Ethics. Inquiries regarding the Code of Ethics should be directed to the board in which a REALTOR® holds membership." />
+                        &copy; 1995-2019 <a href="https://www.nar.realtor/">NATIONAL ASSOCIATION OF REALTORS<sup>®</sup></a> and <a href="http://www.move.com">Move, Inc.</a> All rights reserved<br/>
+                        realtor.com<sup>®</sup> is the official site of the National Association of REALTORS<sup>®</sup> and is operated by Move, Inc. </p>
+                </div>
+            </article>
+        </div>
+    </div> 
+    </div>
+
+</aura:component>

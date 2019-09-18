@@ -1,0 +1,281 @@
+<apex:component controller="AccountCMViewCTRL" allowDML="true">
+    <head>
+        <apex:includeScript value="{!$Resource.JQuery}" />
+        <apex:includeScript value="{!URLFOR($Resource.jExpand, '/jExpand/jExpand.js')}" />
+        <apex:includeScript value="/support/console/45.0/integration.js"/>
+        <apex:includeScript value="/support/console/40.0/connection.js"/>
+        
+        <script>
+            var j$ = jQuery.noConflict();
+            
+            j$(document).ready(function()
+            {
+                resetTable();
+                j$('#originalDrilldowns tr.primary-contact span#plusimg').click();
+            });
+            
+            //Collapses the outer table and hides the inner table.
+            function resetTable()
+            {
+                j$("#originalDrilldowns tr.pleaseHideMe").hide();
+                j$("#originalDrilldowns tr:first-child").show();
+
+                /*j$("#originalDrilldowns tr.odd").click(function()
+                {
+                     j$(this).next("tr").toggle();
+                     j$(this).find(".arrow").toggleClass("up");
+                     this.firstElementChild.textContent = "[+]";
+                     if(j$(this).next('tr') && j$(this).next('tr').size() > 0 && j$(this).next('tr')[0] 
+                            && j$(this).next('tr')[0].style && j$(this).next('tr')[0].style.display != 'none'){
+                        this.firstElementChild.textContent = "[-]";
+                     }
+                });*/
+                
+                j$("#originalDrilldowns tr.odd span#plusimg").click(function() {
+                    if(j$(this).text() === '[+]') {
+                        j$(this).text('[-]');
+                    } else {
+                        j$(this).text('[+]');
+                    }
+                    
+                    var parentTr = j$(this).closest('tr.odd');
+                    parentTr.next("tr").toggle();
+                    parentTr.find(".arrow").toggleClass("up");
+                });
+            }
+                        
+        </script>
+        <script type="text/javascript">
+            var url;
+            // Method used to send user to new record url.
+            function createNewRecordURL(info) {
+        
+                // CRM-1722: Restrict users to add another relationship on customer accounts when primary contact already exists.
+                // CRM-2125: Make Exception for users and allow them access to add relationships.
+                var usersList = "{!$Label.EmailEditExceptionForUsers}";
+                var userArr = usersList.split(',');
+                var userName = '{!$User.Username}';
+                var profiles = "{!$Label.RestrictProfilesForContactCreation}";
+                var arr = profiles.split(',');
+                var userProfile = '{!$Profile.Name}';
+                if(arr.indexOf(userProfile) != -1 && userArr.indexOf(userName) == -1 && '{!isPrimaryContactExist}' == 'true'){
+                    alert('You do not have access to create another contact on customer account');
+                } else {
+                    url = '/{!accountRelationShipobjectId}/e?&saveURL=%2F' + '{!account.Id}&retURL=%2F' + '{!account.Id}';
+                    var accountname="{!JSENCODE(account.Name)}";;//('{!account.Name}').replace(/'/i, ""));
+                    //alert(accountname);
+                    if (info.indexOf('Contact') > -1) {
+                        url += encodeURI('&RecordType='
+                                         + '{!$Setup.Account_Relationship_RelatedList_Setting__c.Contact_Relationship_RecordType__c}'
+                                         + '&'
+                                         + '{!$Setup.Account_Relationship_RelatedList_Setting__c.Parent_Account_Field_Id__c}'
+                                         + '_lkid=' + '{!account.Id}' + '&'
+                                         + '{!$Setup.Account_Relationship_RelatedList_Setting__c.Parent_Account_Field_Id__c}'
+                                         +  '=' + accountname);
+                    }
+                    if (info.indexOf('NewContact') > -1) {
+                        
+                        url = '/003/e?&saveURL=%2F' + '{!account.Id}&retURL=%2F' + '{!account.Id}'; 
+                        var accountType = '{!account.Type}';
+                        var accountRecordType = '{!account.RecordType.Name}';
+                        var recordTypeId ='';
+                        console.log(accountType + '  ' + accountType.includes('Moving'));
+                        if  (accountType.includes('Moving')) {
+                            recordTypeId ='{!$Setup.Account_Relationship_RelatedList_Setting__c.Moving_Contact_Record_Type__c}';
+                        }
+                        else if  (accountRecordType=='Mortgage') {
+                            recordTypeId ='{!$Setup.Account_Relationship_RelatedList_Setting__c.Mortgage_Contact_Record_Type__c}';
+                        }
+                            else {
+                                recordTypeId ='{!$Setup.Account_Relationship_RelatedList_Setting__c.Standard_Record_Type__c}';
+                            }
+                        url += encodeURI('&RecordType='+recordTypeId           
+                                         //  + '&nooverride=0&'
+                                         + '&con4_lkid=' + '{!account.Id}' + '&'
+                                         + 'con4=' + accountname          
+                                         + '&00Ng000000186RK=1'         
+                                        );
+                    }
+                    
+                    if (!sforce.console.isInConsole()) {
+                        window.parent.location.href = url;
+                    } else {
+                        sforce.console.getEnclosingPrimaryTabId(openSubtabForButton);
+                    }
+                    
+                }
+                
+            }
+        
+            function deleteRecord(role, conRelId, totalRelations)
+            {
+                console.log('role>>>'+role);
+                console.log('totalRelations>>' + totalRelations);
+                if(role != 'Primary Contact' && totalRelations > 1)
+                {
+                    if(confirm("Press OK to Continue Deletion!"))
+                    {
+                        deleteRel(conRelId);
+                        window.parent.location.href='/{!accID}';
+                    }
+                }
+                else
+                {
+                    if(totalRelations < 2){
+                        alert('Sorry, you cannot delete all Relationships.');
+                    }else{
+                        alert('Sorry, you cannot delete Primary Relationship.');
+                    }
+                    return null;
+                }
+                return null;
+            }
+            
+            var newUrl;
+            function openNewPopup(contactId)
+            {
+                newUrl = '/apex/AccountContactClickToDial?Id=' +contactId;
+                
+                if (!sforce.console.isInConsole())
+                {
+                    window.open(newUrl, '_blank');
+                }
+                else
+                {
+                    sforce.console.getEnclosingPrimaryTabId(openSubtabForButton);
+                }
+            }
+        
+            var openSubtabForButton = function openSubtabForButton(result)
+            {
+                var primaryTabId = result.id;
+                sforce.console.openSubtab(primaryTabId, newUrl, true, 'Contact Relationship & Preferences', null);
+            };
+        </script>
+        <style type="text/css">
+            body { font-family:Arial, Helvetica, Sans-Serif; font-size:0.8em;}
+            #originalDrilldowns { border-collapse:collapse;}
+            #originalDrilldowns h4 { margin:0px; padding:0px;}
+            
+            #originalDrilldowns ul { margin:10px 0 10px 40px; padding:0px;}
+            #originalDrilldowns th { url({!URLFOR($Resource.jExpand, '/jExpand/header_bkg.png')}) repeat-x scroll center left; color:#000000; padding:7px 15px; text-align:left;}
+            #originalDrilldowns td { none repeat-x scroll center left; color:#000; padding:7px 15px; }
+            #originalDrilldowns tr.odd td { url({!URLFOR($Resource.jExpand, '/jExpand/row_bkg.png')}) repeat-x scroll center left; cursor:pointer; }
+            #originalDrilldowns div.arrow { background:#000 url({!URLFOR($Resource.jExpand, '/jExpand/arrows.png')}) no-repeat scroll 0px -16px; width:16px; height:16px; display:block;}
+            #originalDrilldowns div.up { background-position:0px 0px;}
+            .dontDisplay {display:none;}
+        </style>
+    </head>
+    <div style="width:100%;">
+        <apex:actionFunction action="{!deleteRel}" name="deleteRel" reRender="reload" >
+            <apex:param assignTo="{!conRelId}" name="conRelId" value="" />
+        </apex:actionFunction>
+        <apex:pageBlock id="reload">             
+            <center>
+                <div id="hiddendiv" class="ding" style="width:0px;display:none;" />
+                <apex:commandButton value="New Contact Relationship" onclick="createNewRecordURL('Contact')" id="newConRel" />
+                <apex:commandButton value="New Contact" onclick="createNewRecordURL('NewContact')" id="newContact" />
+                <apex:commandButton value="Save" onclick="document.getElementById('hiddendiv').click();" action="{!saveRecords}" id="saveButton" style="display:none;" reRender="scriptPanel,msgs" oncomplete="refreshFullAccess();" />
+                <apex:commandButton value="Cancel" action="{!cancelAll}" id="cancelButton" style="display:none" reRender="reload,msgs"/>
+            </center>
+            <apex:outputText rendered="{!errorMessage != ''}" style="color:red;font-weight:bold;" value="{!errorMessage}"></apex:outputText>
+            <apex:outputPanel id="scriptPanel">
+                <script>
+                    function refreshFullAccess() {
+                        if('{!hasError}' == 'false'){
+                            window.top.location = '/{!accID}';
+                        }
+                    }
+                </script>
+            </apex:outputPanel>
+            <table id="originalDrilldowns" width="100%">
+            <tr>
+                <th width="5%"></th>
+                <th>Contact To</th>
+                <th>Sales Contact Role</th>
+                <th>Billing Contact</th>
+                <th>Type</th>
+                <th>NAR ID</th>
+                <th>Active</th>            
+                </tr>
+                <apex:repeat value="{!CMAccWrapperList}" var="con">
+                    <apex:repeat value="{!con.AcctWrap}" var="cm">
+                        <tr class="odd {!IF(cm.AccountRelationship.Contact_Role__c = 'Primary Contact', 'primary-contact', '')}">
+                            <td width="5%"><span id="plusimg">[+]</span></td>
+                            <td><apex:outputlink target="_blank" value="/{!cm.AccountRelationship.Contact_To__c}" >{!cm.AccountRelationship.Contact_To__r.Name}</apex:outputlink></td>
+                            <td><apex:outputField value="{!cm.AccountRelationship.Contact_Role__c}">
+                                <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newConRel, newContact"/>
+                                </apex:outputField></td>
+                            <td><apex:outputField value="{!cm.AccountRelationship.Billing_Contact__c}">
+                                <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newConRel, newContact"/>
+                                </apex:outputField></td>
+                            <td><apex:outputField value="{!cm.AccountRelationship.Contact_To__r.Type__c}">
+                                <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newConRel, newContact"/>
+                                </apex:outputField></td>
+                            <td><apex:outputField value="{!cm.AccountRelationship.Contact_To__r.NAR_ID__c}">
+                                <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newConRel, newContact"/>
+                                </apex:outputField></td>
+                            <td><apex:outputField value="{!cm.AccountRelationship.Active__c}">
+                                <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newConRel, newContact"/>
+                                </apex:outputField></td>
+                            <td>
+                                <apex:outputlink target="_blank" value="/{!cm.AccountRelationship.Id}/e">Edit</apex:outputlink> &nbsp; | &nbsp;
+                                <apex:outputlink onclick="deleteRecord('{!cm.AccountRelationship.Contact_Role__c}', '{!cm.AccountRelationship.Id}')" >Del</apex:outputlink>
+                            </td>
+                        </tr>
+                        <apex:outputPanel layout="none" id="optInTable">
+                            <tr class="pleaseHideMe">
+                                <td colspan="7">
+                                    <apex:commandButton value="{!buttonName}" action="{!showHideTable}" reRender="details,optInTable" >
+                                        <apex:param name="viewTable" value="{!viewTable}" assignTo="{!viewTable}"/>
+                                    </apex:commandButton>
+                                    <apex:outputpanel id="panelId">
+                                        <apex:commandButton value="Save" id="savebtn" action="{!saveRecords}" rendered="{!bIsnewRow}" style="left: 45%; position: absolute;" reRender="panelId,details" />
+                                        <apex:commandButton value="Cancel" id="canlbtn" action="{!cancelAll}" rendered="{!bIsnewRow}" style="left: 48%; position: absolute;" reRender="panelId,details"/>
+                                        <!-- <apex:commandLink styleClass="btn" value="Open Click to Dial" onclick="openNewPopup('{!cm.AccountRelationship.Contact_To__c}','{!cm.AccountRelationship.Contact_To__r.Name}');" reRender="panelId,details" >
+                                            <apex:param name="selectedConId" value="{!cm.AccountRelationship.Contact_To__c}" assignTo="{!selectedConId}"/>
+                                        </apex:commandLink> -->
+                                        <c:ContactMethodCreationComponent contactId="{!cm.AccountRelationship.Contact_To__c}" accId="{!accID}" />            
+                                    </apex:outputpanel>
+                                    <apex:pageBlockTable value="{!cm.refWrap}" var="drilldown" rendered="{!cm.isPhoneRecordPresent}" rowClasses="doNothing" id="details">                                        
+                                        <apex:column value="{!drilldown.cm.Type__c}" styleClass="{!IF(drilldown.cm.Type__c == 'Phone', '', 'dontDisplay')}" width="10%"/>
+                                        <apex:column headerValue="Category" value="{!drilldown.cm.Type_Purpose__c}" styleClass="{!IF(drilldown.cm.Type__c == 'Phone', '', 'dontDisplay')}" width="20%"/>                                        
+                                        <apex:column value="{!drilldown.cm.Phone__c}" styleClass="{!IF(drilldown.cm.Type__c == 'Phone', '', 'dontDisplay')}" width="20%"/>
+                                        <apex:column value="{!drilldown.cm.Phone_Extension__c}" styleClass="{!IF(drilldown.cm.Type__c == 'Phone', '', 'dontDisplay')}" width="20%"/>
+                                        <apex:column value="{!drilldown.cm.Primary_To_Account__c}" styleClass="{!IF(drilldown.cm.Type__c == 'Phone', '', 'dontDisplay')}" width="15%"/>
+                                        <apex:column value="{!drilldown.cm.Active__c}" styleClass="{!IF(drilldown.cm.Type__c == 'Phone', '', 'dontDisplay')}" width="15%"/>
+                                        
+                                        <apex:column value="{!drilldown.cm.SMS_RDC_Promo_Pref__c}" rendered="{!viewTable}" styleClass="{!IF(drilldown.cm.Type__c == 'Phone', '', 'dontDisplay')}" width="15%"/>                                                                
+                                    </apex:pageBlockTable>
+                                    <apex:pageBlockTable value="{!cm.refWrap}" var="drilldown" rendered="{!cm.isEmailRecordPresent}" rowClasses="doNothing" id="details1">
+                                        <apex:column value="{!drilldown.cm.Type__c}" styleClass="{!IF(drilldown.cm.Type__c == 'Email', '', 'dontDisplay')}" width="10%"/>
+                                        <apex:column headerValue="Category" value="{!drilldown.cm.Type_Purpose__c}" styleClass="{!IF(drilldown.cm.Type__c == 'Email', '', 'dontDisplay')}" width="20%"/>                                      
+                                        <apex:column value="{!drilldown.cm.Email__c}" styleClass="{!IF(drilldown.cm.Type__c == 'Email', '', 'dontDisplay')}" width="40%"/>
+                                        <apex:column value="{!drilldown.cm.Primary_To_Account__c}" styleClass="{!IF(drilldown.cm.Type__c == 'Email', '', 'dontDisplay')}" width="15%"/>
+                                        <apex:column value="{!drilldown.cm.Active__c}" styleClass="{!IF(drilldown.cm.Type__c == 'Email', '', 'dontDisplay')}" width="15%"/>
+                                        
+                                        <apex:column value="{!drilldown.cm.RDC_Event_OptIn__c}" rendered="{!viewTable}" styleClass="{!IF(drilldown.cm.Type__c == 'Email', '', 'dontDisplay')}" width="6%"/>
+                                        <apex:column value="{!drilldown.cm.RDC_Info_OptIn__c}" rendered="{!viewTable}" styleClass="{!IF(drilldown.cm.Type__c == 'Email', '', 'dontDisplay')}" width="6%"/>
+                                        <apex:column value="{!drilldown.cm.RDC_Promo_OptIn__c}" rendered="{!viewTable}" styleClass="{!IF(drilldown.cm.Type__c == 'Email', '', 'dontDisplay')}" width="6%"/>
+                                        <apex:column value="{!drilldown.cm.TP_Event_OptIn__c}" rendered="{!viewTable}" styleClass="{!IF(drilldown.cm.Type__c == 'Email', '', 'dontDisplay')}" width="6%"/>
+                                        <apex:column value="{!drilldown.cm.TP_Info_OptIn__c}" rendered="{!viewTable}" styleClass="{!IF(drilldown.cm.Type__c == 'Email', '', 'dontDisplay')}" width="6%"/>
+                                        <apex:column value="{!drilldown.cm.TP_Promo_OptIn__c}" rendered="{!viewTable}" styleClass="{!IF(drilldown.cm.Type__c == 'Email', '', 'dontDisplay')}" width="6%"/>
+                                    </apex:pageBlockTable>
+                                    <apex:pageBlockTable value="{!cm.refWrap}" var="drilldown" rendered="{!cm.isWebRecordPresent}" rowClasses="doNothing" id="details2">
+                                        <apex:column value="{!drilldown.cm.Type__c}" styleClass="{!IF(drilldown.cm.Type__c == 'Social', '', 'dontDisplay')}" width="10%"/>
+                                        <apex:column headerValue="Category" value="{!drilldown.cm.Type_Purpose__c}" styleClass="{!IF(drilldown.cm.Type__c == 'Social', '', 'dontDisplay')}" width="20%"/>
+                                        <apex:column styleClass="{!IF(drilldown.cm.Type__c == 'Social', '', 'dontDisplay')}" width="55%">
+                                            <apex:facet name="header">URL</apex:facet>
+                                            <apex:outputField value="{!drilldown.cm.Value__c}"/>
+                                        </apex:column>
+                                        <apex:column value="{!drilldown.cm.Active__c}" styleClass="{!IF(drilldown.cm.Type__c == 'Social', '', 'dontDisplay')}" width="15%"/>
+                                    </apex:pageBlockTable>
+                                </td>
+                            </tr>
+                        </apex:outputPanel>
+                    </apex:repeat>
+                </apex:repeat>
+            </table>
+        </apex:pageBlock>
+    </div>
+</apex:component>

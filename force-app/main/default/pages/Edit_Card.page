@@ -1,0 +1,80 @@
+<apex:page title="Update Credit Card" showHeader="false" sidebar="false" tabStyle="Account" standardController="Account" extensions="EditCard">
+    <!-- Begin Default Content REMOVE THIS -->
+    <style>
+        .headerRow .headerStyle {
+            background-color: #E5FFD5 !important;
+            color: #000000 !important
+        }
+        .flat {
+            border-style: solid !important;
+            border-width: 0 !important;
+        }
+        .center-align{
+            vertical-align: middle;
+        }
+    </style>
+    <apex:outputPanel id="error">
+                <apex:pageMessages escape="false"/>
+            </apex:outputPanel>
+    <zqu:StatusModal />
+    <apex:form >
+    <apex:pageBlock title="Update Credit Card Information">
+        <table width="400px" height="100%" cellspacing="2" border="0" cellpadding="0" class="center-align">
+            <tr><td>Card Type</td><td><apex:outputText value="{!paymentMethod.Zuora__CreditCardType__c}"/></td></tr>
+            <tr height="25px"><td>Card Number (Masked)</td><td><apex:outputText value="{!paymentMethod.Zuora__CreditCardMaskNumber__c}"/></td></tr>
+            <tr><td>Expiration Date</td><td><apex:inputField value="{!paymentMethod.Zuora__CreditCardExpirationMonth__c}"/>/<apex:inputField value="{!paymentMethod.Zuora__CreditCardExpirationYear__c}"/></td></tr>
+            <tr><td>Cardholder Name</td><td><apex:inputField value="{!paymentMethod.Zuora__CreditCardHolderName__c}"/></td></tr>    
+            <tr><td>Country</td><td><apex:inputField value="{!paymentMethod.Zuora__CreditCardCountry__c}"/></td></tr>
+            <tr><td>Address 1</td><td><apex:inputField value="{!paymentMethod.Zuora__CreditCardAddress1__c}"/></td></tr>
+            <tr><td>Address 2</td><td><apex:inputField value="{!paymentMethod.Zuora__CreditCardAddress2__c}"/></td></tr>
+            <tr><td>City</td><td><apex:inputField value="{!paymentMethod.Zuora__CreditCardCity__c}"/></td></tr>
+            <tr><td>State</td><td><apex:inputField value="{!paymentMethod.Zuora__CreditCardState__c}"/></td></tr>
+            <tr><td>Postal Code</td><td><apex:inputField value="{!paymentMethod.Zuora__CreditCardPostalCode__c}"/></td></tr>
+            <tr><td>Contact Phone Number</td><td><apex:inputField value="{!paymentMethod.Zuora__Phone__c}"/></td></tr>
+            <tr><td>Email Address</td><td><apex:inputField value="{!paymentMethod.Zuora__Email__c}"/></td></tr>
+        </table>
+    </apex:pageBlock>
+    <!--
+    <apex:pageMessages />
+    <apex:commandButton value="save" action="{!updateCard}"/> -->
+        <!-- <apex:pageBlock title="Update Credit Card Information" id="information">
+            <apex:pageBlockSection >
+                <apex:inputField value="{!paymentMethod.Zuora__CreditCardHolderName__c}" />
+                <br />
+            </apex:pageBlockSection>
+            <br />
+            <apex:pageBlockTable title="General Credit Card Information" value="{!paymentMethod}" var="pm">
+                <apex:column headerValue="Number" width="16.5%" headerClass="headerStyle">
+                    <apex:outputText value="{!pm.Zuora__CreditCardMaskNumber__c}" /></apex:column>
+                <apex:column headerValue="Type" width="16.5%" headerClass="headerStyle">
+                    <apex:outputText value="{!pm.Zuora__CreditCardType__c}" /></apex:column>
+                <apex:column headerValue="Expiration Month" width="16.5%" headerClass="headerStyle">
+                    <apex:inputField value="{!pm.Zuora__CreditCardExpirationMonth__c}" styleClass="flat" /></apex:column>
+                <apex:column headerValue="Expiration Year" width="16.5%" headerClass="headerStyle">
+                    <apex:inputField value="{!pm.Zuora__CreditCardExpirationYear__c}" styleClass="flat" /></apex:column>
+                <apex:column headerValue="Email" width="16.5%" headerClass="headerStyle">
+                    <apex:inputField value="{!pm.Zuora__Email__c}" styleClass="flat" /></apex:column>
+                <apex:column headerValue="Phone Number" width="16.5%" headerClass="headerStyle">
+                    <apex:inputField value="{!pm.Zuora__Phone__c}" styleClass="flat" /></apex:column>
+            </apex:pageBlockTable>
+            <apex:pageBlockTable title="Credit Card Address" value="{!paymentMethod}" var="pm">
+                <apex:column headerValue="Street Address" width="16.5%" headerClass="headerStyle">
+                    <apex:inputField value="{!pm.Zuora__CreditCardAddress1__c}" styleClass="flat" /></apex:column>
+                <apex:column headerValue="Apt or Suite Number" width="16.5%" headerClass="headerStyle">
+                    <apex:inputField value="{!pm.Zuora__CreditCardAddress2__c}" styleClass="flat" /></apex:column>
+                <apex:column headerValue="City" width="16.5%" headerClass="headerStyle">
+                    <apex:inputField value="{!pm.Zuora__CreditCardCity__c}" styleClass="flat" /></apex:column>
+                <apex:column headerValue="State" width="16.5%" headerClass="headerStyle">
+                    <apex:inputField value="{!pm.Zuora__CreditCardState__c}" styleClass="flat" /></apex:column>
+                <apex:column headerValue="Country" width="16.5%" headerClass="headerStyle">
+                    <apex:inputField value="{!pm.Zuora__CreditCardCountry__c}" styleClass="flat" /></apex:column>
+                <apex:column headerValue="Zip or Postal Code" width="16.5%" headerClass="headerStyle">
+                    <apex:inputField value="{!pm.Zuora__CreditCardPostalCode__c}" styleClass="flat" /></apex:column>
+            </apex:pageBlockTable>
+            <br /> -->
+            <apex:actionStatus startText="" stopText="" id="action" onstart="javascript:displayStatusModal()" onstop="javascript:closeStatusModal()" />
+            <apex:commandButton value="Cancel" action="{!cancel}" rerender="error" />
+            <apex:commandButton value="Save" action="{!updateCard}" status="action" rerender="error" />
+    </apex:form>
+    <!-- End Default Content REMOVE THIS -->
+</apex:page>

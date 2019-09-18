@@ -1,0 +1,42 @@
+<apex:page standardController="Account" extensions="AssetSelectorExtension">
+   <apex:form >    
+      <apex:pageBlock >
+              <apex:pageBlockButtons >
+                <apex:commandButton value="Save" action="{!updateAssets}" />
+                <apex:commandButton action="{!URLFOR($Action.Asset.New,Account.id,[retURL=$CurrentPage.URL])}" 
+                      value="New Asset"/>              
+              </apex:pageBlockButtons>
+              <apex:pageBlockTable value="{!assetsPaginationObj.records}" var="asset">
+                 <apex:column headerValue="Action">
+                    <apex:outputLink title="" value="/{!asset.id}/e?retURL=/{!asset.AccountId}" style="font-weight:bold" target="_top">Edit</apex:outputLink>&nbsp;|&nbsp;
+                    <apex:commandLink action="{!deleteAsset}" onClick="return window.confirm('Are you sure?');" style="font-weight:bold" target="_top"><apex:param value="{!asset.Id}" name="assetId" assignTo="{!SelectedAssetId}"/> Del</apex:commandLink>
+                 </apex:column>
+                 <apex:column headerValue="Asset Name">
+                    <apex:outputLink value="/{!asset.id}?retURL=/{!asset.AccountId}" target="_top">
+                        <apex:outputField value="{!asset.Name}"/>
+                    </apex:outputLink>
+                 </apex:column>
+                 <apex:column value="{!asset.SerialNumber}"/>
+                 <apex:column value="{!asset.InstallDate}"/>
+                 <apex:column value="{!asset.Quantity}"/>
+                 <apex:column headerValue="Contact Name">
+                    <apex:outputText value="{!asset.Contact.Name}"/>
+                 </apex:column>
+                 <apex:column value="{!asset.Status}"/>
+                 <apex:column value="{!asset.IsCompetitorProduct}"/>                 
+                  <apex:column headerValue="Include Asset">
+                    <apex:inputCheckbox value="{!asset.Include_Asset__c}" id="inputId"/>
+                 </apex:column>
+              </apex:pageBlockTable>
+              <!-- <apex:actionFunction action="{!deleteAsset}" name="DeleteAsset" reRender="form" >
+                <apex:param name="assetId" value="" assignTo="{!SelectedAssetId}"/>
+              </apex:actionFunction> -->
+              <div align='center'>
+                    <apex:panelGrid id="paginationPanel" columns="2">                 
+                         <apex:commandLink action="{!assetsPaginationObj.previous}" rendered="{!assetsPaginationObj.hasPrevious}"> <apex:image value="/s.gif" StyleClass="prevoff"/> Previous </apex:commandLink>
+                          <apex:commandLink action="{!assetsPaginationObj.next}" rendered="{!assetsPaginationObj.hasNext}" >Next <apex:image StyleClass="nextOff" value="/s.gif"/> </apex:commandLink>           
+                    </apex:panelGrid>
+              </div>   
+      </apex:pageBlock>   
+    </apex:form>
+</apex:page>

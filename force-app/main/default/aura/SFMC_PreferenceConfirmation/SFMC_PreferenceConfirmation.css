@@ -1,0 +1,13 @@
+.THIS .headerText{
+    font-family: "Roboto", sans-serif !important;
+    font-weight: normal;
+    font-size: 2.20rem;
+    line-height: 1.3;
+}
+
+.THIS .subheaderText{
+    font-family: "Roboto", sans-serif !important;
+    font-weight: normal;
+    font-size: 1rem !important;
+    line-height: 1.3;
+}

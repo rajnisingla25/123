@@ -1,0 +1,11 @@
+.THIS {
+}
+.THIS .copyright{
+    max-width: 1080px;
+    Margin: 0 auto;    
+    padding: 20px;
+    line-height: 16px;
+    color: #555;
+    font: 12px/15px Arial,Helvetica,sans-serif;
+    text-align: center;
+}

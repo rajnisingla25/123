@@ -1,0 +1,39 @@
+<!-- LCM-414 -->
+<apex:component >
+    <!-- Start of Contact Detail Panel -->
+    <div class="contact-container" id="app-contact-detail">
+        <div class="container-fluid">
+            <div class="row gutter-none-xs">
+            <div class="col-xs-12">
+                <!-- Start of Widget Slot 10 -->
+                <div class="panel panel-widget panel-auto">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <ul class="list-inline-table pad-top-md pad-bottom-md no-margin">
+                                    <li class="valign-top"><span class="pi pi-lg pi-envelope-o text-muted valign-top"></span></li>
+                                    <li class="pad-left-md"><h3 class="mar-bottom-lg">Send us an email</h3><p>Have questions? Send us an email. We are happy to help.</p><a href="https://support.realtor.com/s/contactsupport" target="_blank" data-omtag="help-send_email">Send an email</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-sm-4">
+                                <ul class="list-inline-table pad-top-md pad-bottom-md no-margin">
+                                    <li class="valign-top"><span class="pi pi-lg pi-phone text-muted valign-top"></span></li>
+                                    <li class="pad-left-md"><h3 class="mar-bottom-lg">Call us</h3><p>Give us a call. We are here to answer your questions.</p><a data-omtag="help_call_custcare">877-309-3151</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-sm-4">
+                                <ul class="list-inline-table pad-top-md pad-bottom-md no-margin">
+                                    <li class="valign-top"><span class="pi pi-lg pi-comments-o text-muted valign-top"></span></li>
+                                    <li class="pad-left-md"><h3 class="mar-bottom-lg">Connect on Facebook</h3><p>Join the <a href="https://www.realtor.com/" target="_blank">realtor.com</a>® pro community for tips, live sessions and product news.</p><a href="https://www.facebook.com/groups/realtorprosolutions/" target="_blank" data-omtag="help_join-convo">Become a member</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End of Widget Slot 10 -->
+            </div>
+        </div>
+        </div>
+    </div>
+    <!-- End of Contact Detail Panel -->
+</apex:component>

@@ -1,0 +1,36 @@
+<apex:page standardController="Contact" sidebar="false" extensions="ContactSharingEmailCTRL">
+    <apex:form >
+        <apex:pageBlock title="Contact Information" id="edit">
+            <apex:outputLabel ><b>Current Contact Name</b></apex:outputLabel> &nbsp;&nbsp;&nbsp;
+            <apex:outputField value="{!con.Name}"/>
+            <br/><br/>
+            <apex:pageBlockTable value="{!conMetList}" var="conMet" title="Contact Methods">
+            	<apex:column value="{!conMet.Type_Purpose__c}"/>
+                <apex:column value="{!conMet.Email__c}"/>
+                <apex:column value="{!conMet.Primary_To_Contact__c}"/>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+        <!-- <apex:pageBlock title="Contact Sharing Email" id="cEmail">    
+            <apex:pageBlockTable value="{!conEmailList}" var="cEmail">
+                <apex:column headerValue="Contact">
+                     <apex:outputLink value="/{!cEmail.id}">{!cEmail.Name}</apex:outputLink>
+                </apex:column>
+                <apex:column value="{!cEmail.Email}"/>
+                <apex:column value="{!cEmail.Phone}"/>
+            </apex:pageBlockTable> -->
+        <apex:pageBlock title="Contact Sharing Email" id="cEmail">    
+            <apex:pageBlockTable value="{!conMetEmailList}" var="cEmail">
+                <apex:column headerValue="Contact Name">
+                     <apex:outputLink value="/{!cEmail.Contact__r.Id}">{!cEmail.Contact__r.Name}</apex:outputLink>
+                </apex:column>
+                <apex:column value="{!cEmail.Email__c}"/>
+                <apex:column value="{!cEmail.Primary_To_Contact__c}"/>
+            </apex:pageBlockTable>        
+            
+            <apex:pageBlockButtons >
+              <apex:commandButton action="{!back}" value="Back"/>
+          </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+
+</apex:page>

@@ -1,0 +1,9 @@
+<design:component>
+	<design:attribute name="headline" label="Headline" />
+    <design:attribute name="headline1" label="Headline 1" />
+    <design:attribute name="headline2" label="Headline 2" />
+    <design:attribute name="headline3" label="Headline 3" />
+    <design:attribute name="icon1" label="Icon 1" />
+    <design:attribute name="icon2" label="Icon 2" />
+    <design:attribute name="icon3" label="Icon 3" />
+</design:component>

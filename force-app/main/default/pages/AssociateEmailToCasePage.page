@@ -1,0 +1,18 @@
+<apex:page standardController="EmailMessage" extensions="AssociateEmailToCasePageController" showHeader="true">
+ 
+    <apex:form >        
+    
+        <apex:pageBlock title="Move Email">
+        <apex:pageMessages />
+            <apex:pageBlockSection collapsible="false" columns="1">
+                <apex:inputField value="{!emailMsg.Subject}" style="width: 300px;"/>
+                <apex:inputField value="{!emailMsg.Internal_Comments__c}" style="width: 300px; height: 100px;"/>            
+                <apex:inputField value="{!emailMsg.Case__c}"/>
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom">
+                <apex:commandButton value="Move Email" action="{!save}" />
+            </apex:pageBlockButtons> 
+        </apex:pageBlock>
+    
+    </apex:form>
+</apex:page>

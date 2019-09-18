@@ -1,0 +1,20 @@
+<apex:page id="pageId" extensions="AccountContactMethodViewCTRL" standardController="Account" sidebar="false" showHeader="true" standardStyleSheets="true" docType="html-5.0" lightningStylesheets="true">
+    <apex:pageMessages id="msgs"/>
+    <div style="width:100%;"> 
+        <apex:form id="readonly" rendered="{!if(Not(contains($Label.AccountContactMethod_ReadOnly_View,$Profile.Name)),False,True)}">
+            <c:AccountContactMethodReadOnly />           
+        </apex:form>
+        <apex:form id="primaryaccess" rendered="{!if(Not(contains($Label.AccountContactMethod_PrimaryAccess_View,$Profile.Name)),False,True)}">
+            <c:AccountContactMethodPrimaryOnly />            
+        </apex:form>        
+        <apex:form id="RelationOnly" rendered="{!if(Not(contains($Label.AccountContactMethod_RelationshipOnly_View,$Profile.Name)),False,True)}">
+            <c:AccountContactMethodRelationshipOnly />            
+        </apex:form> 
+        <apex:form id="fullaccess" rendered="{!if(Not(contains($Label.AccountContactMethod_FullAccess_View,$Profile.Name)),False,True)}">
+            <c:AccountContactMethodFullAccess />            
+        </apex:form>
+        <apex:form id="fullaccess1" rendered="{!if(Not(contains($Label.AccountContactMethod_FullAccess_View2,$Profile.Name)),False,True)}">
+            <c:AccountContactMethodFullAccess />            
+        </apex:form>
+    </div>
+</apex:page>

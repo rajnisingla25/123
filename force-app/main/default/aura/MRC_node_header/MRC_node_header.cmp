@@ -1,0 +1,143 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,forceCommunity:themeLayout" access="global" >
+    <link rel="stylesheet" href="https://marketing.realtor.com/styles/client-0.0.1.min.css" />
+    <link rel="stylesheet" href="https://marketing.realtor.com/lib/font-awesome/css/font-awesome.min.css" />
+        <!-- Font Montserrat -->
+            <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600,700,900" rel="stylesheet" />
+            
+    <nav class="navbar navbar-fixed-top navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="https://marketing.realtor.com"><img src="https://success.realtor.com/cp/uploads/default/files/b8abda1c764db455e573ca0f2e9667b6.png" alt="Realtor.com(R)" class="logo hidden-xs" /><img src="//success.realtor.com/cp/uploads/default/files/b8abda1c764db455e573ca0f2e9667b6.png" alt="Realtor.com(R)" class="logo visible-xs" /></a>
+                <div class="nav-quick-links visible-xs visible-sm visible-md pull-right">
+                    <ul class="list-unstyled list-inline">
+                        <li><a href="https://support.realtor.com/" target="_blank"><span class="fa-stack"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-question fa-stack-1x fa-inverse" title="Support"></i></span></a></li>
+                        <li><a href="https://dashboard.realtor.com" target="_blank"><span class="fa-stack"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-user fa-stack-1x fa-inverse" title="realtor.com Dashboard"></i></span></a></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Begin Mobile Nav -->
+            <div class="tabbar visible-xs visible-sm visible-md navbar-fixed-bottom">
+                <ul class="list-unstyled list-inline pull-left">
+                    <li><a role="button" data-toggle="collapse-side" href="#navbar-mobile" aria-expanded="false" aria-controls="navbar-mobile"><i class="fa fa-bars" aria-hidden="true"></i>Menu</a></li>
+                    <li><a href="https://marketing.realtor.com"><i class="fa fa-cubes" aria-hidden="true"></i>Products</a></li>
+                    <li><a href="http://results.realtor.com/"><i class="fa fa-calendar" aria-hidden="true"></i>Events</a></li>
+                </ul>
+                    <button class="cta-primary">Contact Us</button>
+            </div>
+            <div id="navbar-mobile" class="side-collapse in visible-xs visible-sm visible-md">
+                <button type="button" class="close" data-dismiss="navbar-mobile" aria-label="Close"><i class="fa fa-times-circle-o" aria-hidden="true"></i></button>
+                <div class="clearfix"></div>
+                <ul class="nav navbar-nav">
+                    <li class="dropdown"><a href="https://marketing.realtor.com/products" class="dropdown-toggle" data-toggle="dropdown" role="button">Products <i class="fa fa-chevron-right pull-right" aria-hidden="true"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a class="collapse-down" tabindex="-1" href="https://marketing.realtor.com/real-estate-lead-generation">Real Estate Lead Generation<i class="fa fa-chevron-right pull-right" aria-hidden="true"></i></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="https://marketing.realtor.com/connections-plus">Overview</a></li>
+                                    <li><a href="https://marketing.realtor.com/connections-plus">Connections<sup>SM</sup> Plus</a></li>
+                                </ul>
+                            </li>
+                            <li><a class="collapse-down" tabindex="-1" href="https://marketing.realtor.com/real-estate-marketing">Real Estate Marketing<i class="fa fa-chevron-right pull-right" aria-hidden="true"></i></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="https://marketing.realtor.com/real-estate-marketing">Overview</a></li>
+                                    <li><a href="https://marketing.realtor.com/local-expert">Local Expert<sup>SM</sup></a></li>
+                                    <li><a href="https://marketing.realtor.com/advantage-brand">Advantage<sup>SM</sup> Brand</a></li>                                    
+                                    <li><a href="https://marketing.realtor.com/top-producer-websites">Top Producer<sup>&reg;</sup> Websites</a></li>
+                                    <li><a href="https://marketing.realtor.com/listhub">ListHub</a></li>
+                                    <li><a href="https://marketing.realtor.com/essentials">The Essentials<sup>SM</sup> Toolkit</a></li>
+                                </ul>
+                            </li>
+                            <li><a class="collapse-down" tabindex="-1" href="/generate-repeat-referral-business">Real Estate CRM<i class="fa fa-chevron-right pull-right" aria-hidden="true"></i></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="https://marketing.realtor.com/generate-repeat-referral-business">Top Producer<sup>&reg;</sup> CRM</a></li>
+                                    <li><a href="https://marketing.realtor.com/market-snapshot">Market Snapshot<sup>&reg;</sup> Reports</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="https://marketing.realtor.com/who-we-serve">Who We Serve</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a href="https://hub.realtor.com" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Resources<i class="fa fa-chevron-right pull-right" aria-hidden="true"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="https://hub.realtor.com/resources">Blog</a></li>
+                            <li><a href="https://hub.realtor.com/downloads">Downloads</a></li>
+                            <li><a href="https://hub.realtor.com/videos">Videos</a></li>
+                            <li><a href="https://hub.realtor.com/product-news">Product News</a></li>
+                            <li><a href="https://hub.realtor.com/shareable-news">Shareable Content</a></li>
+                            <li><a href="https://marketing.realtor.com/proapp">Download App</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="https://industry.realtor.com/success-stories" role="button">Success Stories</a></li>
+                    <li class="dropdown"><a href="http://results.realtor.com" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Events<i class="fa fa-chevron-right pull-right" aria-hidden="true"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="https://results.realtor.com/events_calendar?officeuse=MRC1" target="_blank">Live Event Workshops</a></li>
+                            <li><a href="https://results.realtor.com/events_calendar#calendar" target="_blank">Realtor.com Webinars</a></li>
+                            <li><a href="https://results.realtor.com/events_calendar#calendar" target="_blank">Top Producer Webinars</a></li>
+                            <li><a href="https://www.realtor.com/summit" target="_blank">Results Summit</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="https://support.realtor.com/" target="_blank">Support</a></li>
+                    <!--<li><a href="/request-a-demo">Contact Us</a></li>-->
+                </ul>
+            </div>
+            <!-- End Mobile Nav -->
+            <!-- Begin Desktop Nav -->
+            <div id="navbar" class="clearfix hidden-xs hidden-sm hidden-md">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown"><a href="/products" role="button" class="dropdown-toggle">Products</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="https://marketing.realtor.com/connections-plus">Real Estate Lead Generation</a>
+                                <p><a href="https://marketing.realtor.com/connections-plus">Connections<sup>SM</sup> Plus</a>
+                                    <br />
+                                </p>
+                            </li>
+                            <li><a href="https://marketing.realtor.com/real-estate-marketing">Real Estate Marketing</a>
+                                <p><a href="https://marketing.realtor.com/local-expert">Local Expert<sup>SM</sup></a>
+                                    <br /><a href="https://marketing.realtor.com/advantage-brand">Advantage<sup>SM</sup> Brand</a>
+                                    <br /><a href="https://marketing.realtor.com/top-producer-websites">Top Producer<sup>&reg;</sup> Websites</a>
+                                    <br /><a href="https://marketing.realtor.com/listhub">ListHub</a>
+                                    <br /><a href="https://marketing.realtor.com/essentials">The Essentials<sup>SM</sup> Toolkit</a></p>
+                            </li>
+                            <li><a href="https://marketing.realtor.com/generate-repeat-referral-business">Real Estate CRM</a>
+                                <p><a href="https://marketing.realtor.com/generate-repeat-referral-business">Top Producer<sup>&reg;</sup> CRM</a>
+                                    <br /><a href="https://marketing.realtor.com/market-snapshot">Market Snapshot<sup>&reg;</sup> Reports</a>
+                                    <br />
+                                </p>
+                            </li>
+                            <li><a href="https://marketing.realtor.com/who-we-serve" role="button">Who We Serve</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="https://hub.realtor.com" role="button" target="_blank">Resources</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="https://hub.realtor.com/resources" target="_blank">Blog</a></li>
+                            <li><a href="https://hub.realtor.com/downloads" target="_blank">Downloads</a></li>
+                            <li><a href="https://hub.realtor.com/videos" target="_blank">Videos</a></li>
+                            <li><a href="https://hub.realtor.com/product-news" target="_blank">Product News</a></li>
+                            <li><a href="https://hub.realtor.com/shareable-news" target="_blank">Shareable Content</a></li>
+                            <li><a href="https://marketing.realtor.com/proapp">Download App</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="https://industry.realtor.com/success-stories" role="button" target="_blank">Success Stories</a></li>
+                    <li class="dropdown"><a href="https://results.realtor.com" role="button" target="_blank">Events</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="https://results.realtor.com/events_calendar?officeuse=MRC1" target="_blank">Live Event Workshops</a></li>
+                            <li><a href="https://results.realtor.com/events_calendar#calendar" target="_blank">Realtor.com Webinars</a></li>
+                            <li><a href="https://results.realtor.com/events_calendar#calendar" target="_blank">Top Producer Webinars</a></li>
+                            <li><a href="https://www.realtor.com/summit" target="_blank">Results Summit Conference</a></li>
+                        </ul>
+                    </li>
+                    <li role="separator" class="v-divider"></li>
+                    <li>
+                        <div class="nav-quick-links clearfix">
+                            <ul class="list-unstyled list-inline">
+                                <li><a href="https://support.realtor.com/" target="_blank"><span class="fa-stack"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-question fa-stack-1x fa-inverse"></i></span><span>Support</span></a></li>
+                                <li><a href="https://dashboard.realtor.com" target="_blank"><span class="fa-stack"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-user fa-stack-1x fa-inverse"></i></span><span>Sign In / Sign Up</span></a></li>
+                            </ul>
+                        </div>
+                    </li>
+                   
+                </ul>
+            </div>
+            <!-- End Desktop Nav -->
+        </div>
+    </nav>
+    <!-- End Nav-->
+</aura:component>

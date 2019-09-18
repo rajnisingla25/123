@@ -1,0 +1,12 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" >
+    <aura:attribute name="videoURL" type="String" default="https://www.youtube.com/embed/rZCOwjwFLjQ"/>
+    <aura:attribute name="videoPluginHeight" type="String" default="500"/>
+    <aura:attribute name="videoPluginWidth" type="String" default="500"/>
+    <div >
+        <div  class="resp-container">
+    	<iframe class="resp-iframe"  src="{!v.videoURL}"></iframe>
+    </div>
+    </div>
+    
+	
+</aura:component>

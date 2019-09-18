@@ -1,0 +1,5 @@
+<design:component>
+	<design:attribute name="backgroundColour" label="Background colour" placeholder="Ex: #222 or black"/>
+    <design:attribute name="footerText" label="Footer text." placeholder="Ex: 'All Rights Reserved'"/>
+    <design:attribute name="footerTextColour" label="Footer text colour" placeholder="Ex: #222 or black"/>
+</design:component>

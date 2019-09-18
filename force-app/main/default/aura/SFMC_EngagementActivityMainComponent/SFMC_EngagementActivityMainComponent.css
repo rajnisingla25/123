@@ -1,0 +1,40 @@
+.THIS {
+    font-size: 90%;
+}
+
+.THIS .header-column {
+    padding: 0 1.25rem;
+}
+
+.THIS .filterclass{
+    float : left;
+}
+.THIS .paginationdiv{
+    float : right;
+}
+.THIS .totalCount{
+    color : rgb(107, 109, 112);
+    font-size: .75rem;
+    padding-top : .5rem;
+}
+.THIS .totalRecordClass{   
+    float: left;
+}
+.THIS .totalRecordNoteSection{    
+    font-style: italic;
+}
+.THIS p{
+    color : black !important;
+}
+.THIS .contentDiv{
+    height: 330px;
+    border-top: 1px solid #e0e3e5;
+    border-bottom: 1px solid #e0e3e5;
+    padding: 1rem 0;
+}
+.THIS .filtersection{
+    padding-bottom : .5rem;
+}
+.THIS .slds-form-element__label{
+    color : black !important;   
+}

@@ -1,0 +1,149 @@
+<apex:page controller="CBCPerformanceSearch" contentType="application/vnd.ms-excel#CBCPerfExport.xls" cache="true">
+  <!--  <apex:form >
+        <apex:pageBlock >
+            <apex:repeat value="{!relatedAssets}" var="account"> 
+                <apex:pageBlocksection title="Asset Lead Details" columns="1">
+                    <apex:pageBlockTable value="{!account.ldwrap}" var="lead">
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:commandLink value="Source" action="{!toggleSort}" rerender="results2,debug">
+                                    <apex:param name="sortField" value="lead.Source" assignTo="{!sortField}" />
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outputText value="{!lead.Source}"/>
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:commandLink value="Type" action="{!toggleSort}" rerender="results2,debug">
+                                    <apex:param name="sortField" value="LeadType" assignTo="{!sortField}" />
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outputText value="{!lead.LeadType}"/>
+                        </apex:column>
+                        
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:commandLink value="MasterProperty" action="{!toggleSort}" rerender="results2,debug">
+                                    <apex:param name="sortField" value="MasterPropertyRecordId" assignTo="{!sortField}" />
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outputText value="{!lead.MasterPropertyRecordId}"/>
+                        </apex:column>
+                       
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:commandLink value="Address" action="{!toggleSort}" rerender="results2,debug">
+                                    <apex:param name="sortField" value="ListingAddress" assignTo="{!sortField}" />
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outputText value="{!lead.ListingAddress}"/>
+                        </apex:column>
+                        
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:commandLink value="City" action="{!toggleSort}" rerender="results2,debug">
+                                    <apex:param name="sortField" value="ListingCity" assignTo="{!sortField}" />
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outputText value="{!lead.ListingCity}"/>
+                        </apex:column>
+                        
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:commandLink value="StateId" action="{!toggleSort}" rerender="results2,debug">
+                                    <apex:param name="sortField" value="ListingStateId" assignTo="{!sortField}" />
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outputText value="{!lead.ListingStateId}"/>
+                        </apex:column>
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:commandLink value="Lead Zip" action="{!toggleSort}" rerender="results2,debug">
+                                    <apex:param name="sortField" value="ListingPostalCode" assignTo="{!sortField}" />
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outputText value="{!lead.ListingPostalCode}"/>
+                        </apex:column>
+                        
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:commandLink value="Status" action="{!toggleSort}" rerender="results2,debug">
+                                    <apex:param name="sortField" value="ListingStatus" assignTo="{!sortField}" />
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outputText value="{!lead.ListingStatus}"/>
+                        </apex:column>
+                        
+                        
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:commandLink value="Price" action="{!toggleSort}" rerender="results2,debug">
+                                    <apex:param name="sortField" value="ListingPrice" assignTo="{!sortField}" />
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outputText value="{!lead.ListingPrice}"/>
+                        </apex:column>
+                        
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:commandLink value="Email" action="{!toggleSort}" rerender="results2,debug">
+                                    <apex:param name="sortField" value="SourceEmailAddress" assignTo="{!sortField}" />
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outputText value="{!lead.SourceEmailAddress}"/>
+                        </apex:column>
+                       
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:commandLink value="FirstName" action="{!toggleSort}" rerender="results2,debug">
+                                    <apex:param name="sortField" value="FirstName" assignTo="{!sortField}" />
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outputText value="{!lead.FirstName}"/>
+                        </apex:column>
+                        
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:commandLink value="LastName" action="{!toggleSort}" rerender="results2,debug">
+                                    <apex:param name="sortField" value="LastName" assignTo="{!sortField}" />
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outputText value="{!lead.LastName}"/>
+                        </apex:column>
+                        
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:commandLink value="Email" action="{!toggleSort}" rerender="results2,debug">
+                                    <apex:param name="sortField" value="Email" assignTo="{!sortField}" />
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outputText value="{!lead.Email}"/>
+                        </apex:column>
+                        
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:commandLink value="Phone" action="{!toggleSort}" rerender="results2,debug">
+                                    <apex:param name="sortField" value="Phone" assignTo="{!sortField}" />
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outputText value="{!lead.Phone}"/>
+                        </apex:column>
+                        
+                        <apex:column >
+                            <apex:facet name="header">
+                                <apex:commandLink value="CreateDate" action="{!toggleSort}" rerender="results2,debug">
+                                    <apex:param name="sortField" value="CreateDate" assignTo="{!sortField}" />
+                                </apex:commandLink>
+                            </apex:facet>
+                            <apex:outputText value="{!lead.CreateDate}"/>
+                        </apex:column>
+                    </apex:pageBlockTable>
+                </apex:pageBlocksection>
+                
+            </apex:repeat>
+        </apex:pageBlock>
+        
+        
+    </apex:form>
+    -->
+</apex:page>

@@ -1,0 +1,18 @@
+<apex:page standardController="Quota__c" recordSetVar="quotas" extensions="Commissions_QuotaCompPlanToFinCntrl" action="{!sendCompPlanToFinanceUserOnly}">
+    <apex:form >
+        <apex:pageMessages ></apex:pageMessages>
+        <apex:pageBlock >
+            <apex:sectionHeader title="Quota" subtitle="Quota DocuSign Confirmation for Finance Only"/>
+            <apex:outputPanel rendered="{!!hasAccessToSend}">
+            	<br/>
+                <h1>
+                    You do not have access to perform this action. Please contact your system administrator for any queries.
+                </h1><br/><br/><br/>
+                <apex:commandButton value="Go back to previous page" action="{!goBackandSelectMore}"/>
+            </apex:outputPanel>
+            <apex:outputPanel >
+                
+            </apex:outputPanel>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

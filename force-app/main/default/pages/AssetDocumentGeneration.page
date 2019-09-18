@@ -1,0 +1,5 @@
+<apex:page renderAs="PDF" controller="AssetDocumentGenerationCTRL">
+    
+            {!oAsset.Product_Logins__c}
+    
+</apex:page>

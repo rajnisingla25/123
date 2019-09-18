@@ -1,0 +1,53 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" 
+                			access="global" controller="ServiceDashboardController"> 
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="lstAccRel" type="Account_Relationship__c"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>  
+     <ltng:require styles="{! $Resource.sd_datatable + '/DataTables-1.10.16/media/css/jquery.dataTables.min.css'}" 
+                  scripts="{!join(',', 
+                           $Resource.jquery224 , 
+                           $Resource.sd_datatable + '/DataTables-1.10.16/media/js/jquery.dataTables.min.js')
+                           }" afterScriptsLoaded="{!c.scriptsLoaded}"/>
+    <div class="slds-box slds-m-bottom_large">
+    <div class="slds-page-header slds-card">
+            <div class="slds-media">
+                <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-standard-account" title="Description of icon when needed">
+                    	<lightning:icon iconName="standard:note" size="medium" alternativeText="Indicates Account"/>
+                    </span>
+                </div>
+                <div class="slds-media__body">                    
+                	<h1 class="slds-page-header__title slds-truncate slds-align-middle" title="Broker Exclusions">Broker Exclusions</h1>
+                </div>
+            </div>
+        	<br/>
+            <div class="slds-card__body">
+                <table style="table-layout: fixed;" id="account-table" class="slds-table slds-table_bordered">
+                    <thead class="font-size-heading-medium">
+                        <tr>
+                            <th style="font-weight: bold;font-size: 15px;">Account Name</th>
+                            <th style="width:500px;font-weight: bold;font-size: 15px;">Exclusion Notes</th>
+                            <th style="width:80px;font-weight: bold;font-size: 15px;">Sales calls</th>
+                            <th style="font-weight: bold;font-size: 15px; white-space:pre">Customer care calls</th>
+                            <th style="font-weight: bold;font-size: 15px;">Marketing emails</th>
+                            <th style="width:80px;font-weight: bold;font-size: 15px;">Agent SLE</th>
+                        </tr>
+                    </thead>
+                    <tbody class="font-size-text-medium">
+                    <aura:iteration items="{!v.lstAccRel}" var="ar">
+                        <tr>
+                            <td class="slds-cell-wrap" style="font-size: 15px;"><a href="{!'/'+ar.Parent_Account__c}" target="_blank" ></a>{!ar.Parent_Account__r.Name}</td>
+                            <td style="font-size: 15px; white-space:normal;width: 400px;word-wrap: break-word;">{!ar.Parent_Account__r.Exclusion_Notes__c}</td>
+                            <td style="font-size: 15px;">{!ar.Parent_Account__r.Sales_Calls__c}</td>
+                            <td style="font-size: 15px;">{!ar.Parent_Account__r.Customer_Care_Calls__c}</td>
+                            <td style="font-size: 15px;">{!ar.Parent_Account__r.Marketing_Emails__c}</td>
+                            <td style="font-size: 15px;">{!ar.Parent_Account__r.Agent_SLE__c}</td>
+                        </tr>
+                     </aura:iteration>
+                    </tbody>
+                    
+				</table>
+            </div>
+        </div>
+    </div>
+</aura:component>

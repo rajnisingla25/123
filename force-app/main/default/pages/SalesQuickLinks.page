@@ -1,0 +1,132 @@
+<apex:page >
+<!--CRM-2945 -->
+ <apex:includeScript value="/support/console/41.0/integration.js"/>
+ <script type="text/javascript">
+   /*function openMyWaitlistTab() {
+     // if (sforce.console.isInConsole()) {
+      //        sforce.console.openPrimaryTab(null, "/apex/MyWaitlist" , true, 'My Waitlist',null);
+     // }
+      //else{
+      //  window.open("/apex/MyWaitlist");
+     // }
+   //  }
+   //function openInventorySearchTab() {
+     //  if (sforce.console.isInConsole()) {
+      //     alert("in console");
+     //       sforce.console.openPrimaryTab(null, "/apex/InventorySearch" , true, 'Inventory Search',null);
+     //  }
+     //  else{
+      //      alert(" not in console");
+      //      window.open("/apex/InventorySearch");
+    //   }
+  // }
+   function openReportsTab() {
+     sforce.console.openPrimaryTab(null, '/00O/o', true, 'Reports');
+     sforce.console.setTabTitle('Reports');
+   }
+   function openDashboardsTab() {
+     sforce.console.openPrimaryTab(null, '/01Z/o', true, 'Dashboards');
+     sforce.console.setTabTitle('Dashboards');
+   }*/
+   //Lines 32 to 37 - CRM-3174 Open Waitlist and Inventory Search in Console
+   function openMyWaitlistTab() {
+      window.open("{!$Site.Domain}/apex/MyWaitlist");
+   }
+   function openInventorySearchTab(){
+      window.open("{!$Site.Domain}/apex/InventorySearch");
+   }
+   function openAgentSalesTool() {
+      window.open("http://c3tools/star/youroptimiseddataapplication/");
+   }
+   function openBrokerUtilities() {
+      window.open("http://brokertrackutilities/");
+   }
+   function openBrokerSalesTool() {
+      window.open("http://brokersalestool/");
+   }
+   function openFeaturedProspectingTool() {
+      window.open("http://reports/ReportServer/Pages/ReportViewer.aspx?%2fSalestrack%2fFeatured+Prospects+Report&rs:Command=Render&rc:StyleSheet=SP_Full");
+   }
+   function openMelissaData() {
+      window.open("http://www.melissadata.com/lists/ezlists/ezHomeowners.aspx?zip=94528");
+   }
+   function openMLSDB() {
+      window.open("http://c3tools/mlsinfo/info.php?");
+   }
+   function openRealtor() {
+      window.open("http://www.realtor.com");
+   }
+   function openRealtorRosterSearch() {
+      window.open("http://calltrack/Realtor/RealtorRosterSearch.asp");
+   //CRM-4945
+   }
+   function openMyServiceRequests() {
+      window.open("{!$Site.Domain}/{!$Label.My_Service_Request}");
+   }
+   function openZipSearchTool() {
+      window.open("http://www.zip-codes.com/zip-code-radius-finder.asp?zipMilesLow=0&amp;zipMilesHigh=15&amp;zip1=98006&amp;Submit=Searchv");
+   }
+   function openMyCPQApprovals() {
+     sforce.console.openPrimaryTab(null,'/00Oj0000004Qxiz?pv0={!$User.FirstName} {!$User.LastName}', true,'My CPQ Approval List');
+     sforce.console.setTabTitle('My CPQ Approval List');
+   }
+   function openRISBrokerContactManagement() {
+     sforce.console.openPrimaryTab(null,'/00Oj0000000jhUE', true, 'RIS Broker Contact Management');
+     sforce.console.setTabTitle('RIS Broker Contact Management');
+   }
+   function openPastDueReport() {
+     sforce.console.openPrimaryTab(null,'/00Oj0000004qDX3', true, 'Past Due Report');
+     sforce.console.setTabTitle('Past Due Report');
+   }  
+   function openRealtorList() {
+     window.open("http://reports/realtorlists/RealtorList.aspx");
+   }
+   function openRealtorRosterSearchSFDC() {
+     sforce.console.openPrimaryTab(null,'/apex/realtorRosterSearch',true,'Realtor Roster Search SFDC');
+     sforce.console.setTabTitle('Realtor Roster Search SFDC');
+   }
+   function openPromotionTool() {
+     window.open("https://c3tools.move.com/auth/?loc=/STaR/cbc.promotional.markets/");
+   }
+   function openSurveyMonkey() {
+     window.open("https://www.surveymonkey.com/r/BHZK6FH");
+   }
+   function openLeadToSale() {
+      window.open("https://c3tools.move.com/STaR/leads_to_sale/")
+   }
+   function openBLAPendingAssets() {
+       sforce.console.openPrimaryTab(null,'/{!$Label.Opcity_BLA_Pending_Signature}', true, 'My BLA Customer Pending Signatures');
+       sforce.console.setTabTitle('My BLA Customer Pending Signatures');
+   }
+ </script>
+ <!--Commenting out some links for ticket CRM-3183-->
+ <!--Commenting out some links for ticket CRM-5741-->
+ <b>SFDC Console Links</b><br />
+ <br />
+     <a href="#" onClick="openMyWaitlistTab(); return false">My Waitlist</a><br />
+     <a href="#" onClick="openInventorySearchTab(); return false">Inventory Search</a><br />
+     <!--<a href="#" onClick="openReportsTab(); return false">Reports</a><br />-->
+     <!--<a href="#" onClick="openDashboardsTab(); return false">Dashboards</a><br />-->
+     <!--<a href="#" onclick="openAgentSalesTool(); return false">Agent Sales Tool</a><br />-->
+     <!--<a href="#" onClick="openBrokerUtilities(); return false">Broker Utilities</a><br />-->
+     <!--<a href="#" onClick="openBrokerSalesTool(); return false">Broker Sales Tool</a><br />-->
+     <!--<a href="#" onClick="openFeaturedProspectingTool(); return false">Featured Prospecting Tool</a><br />-->
+     <!--<a href="#" onClick="openMelissaData(); return false">Melissa Data</a><br />-->
+     <a href="#" onClick="openMLSDB(); return false">MLS DB</a><br />
+     <a href="#" onClick="openMyServiceRequests(); return false">My Service Requests</a><br />
+     <!--<a href="#" onClick="openRealtor(); return false">Realtor.com</a><br />-->
+     <!--<a href="#" onClick="openRealtorRosterSearch(); return false">Realtor Roster Search</a><br />-->
+     <a href="#" onClick="openZipSearchTool(); return false">Zip Search Tool</a><br />
+     <a href="#" onClick="openMyCPQApprovals(); return false">My CPQ Approval List</a><br />
+     <!--<a href="#" onClick="openRISBrokerContactManagement(); return false">RIS Broker Contact Management</a><br />-->
+     <a href="#" onClick="openPastDueReport(); return false">Past Due Report</a><br />
+     <!--<a href="#" onClick="openRealtorList(); return false">Realtor List</a><br />-->
+     <!--<a href="#" onClick="openRealtorRosterSearchSFDC(); return false">Realtor Roster Search SFDC</a><br />-->
+     <!--<a href="#" onClick="openPromotionTool(); return false">Agent Promo Tool</a><br />-->
+     <!--<a href="#" onClick="openSurveyMonkey(); return false">Leads Team Survey Monkey</a><br />-->
+     <a href="#" onClick="openLeadToSale(); return false">Leads to Sold Tool</a><br />
+     <a href="#" onClick="openBLAPendingAssets(); return false">My BLA Customer Pending Signatures</a><br/>
+     <br />
+ <br />
+ 
+</apex:page>

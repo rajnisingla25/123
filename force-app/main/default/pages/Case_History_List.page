@@ -1,0 +1,39 @@
+<!--/********************************************************************************************
+*   @Author :       Srinidhi M 
+*   @Purpose:       To dispaly Case History of Contact 
+*   @Class          Case_History_List
+*   @TestClass      Case_History_List_Test
+*   @JIRA           
+*   @CreatedDate:   May 23rd, 2018
+*********************************************************************************************
+   JIRA No      Date       Modified By         Description                                Tag No
+*********************************************************************************************
+
+*/-->
+
+
+<apex:page controller="Case_History_List">    
+      <apex:form >
+        <apex:pageBlock >
+            <apex:pageBlockTable value="{!case}" var="con">
+
+               <apex:repeat value="{!$ObjectType.Case.FieldSets.CaseHistory_Fields}" var="f">
+                <apex:column >
+                      <apex:facet name="header">{!f.label}</apex:facet>
+                      <apex:outputLink value="/{!con.Id}" target="_blank" rendered="{!f=='CaseNumber'}">{!con.CaseNumber}</apex:outputLink> 
+                      <apex:outputField value="{!con[f]}" rendered="{!f!='CaseNumber'}"/>
+                </apex:column></apex:repeat>
+            </apex:pageBlockTable><br/>
+           
+            <apex:commandButton value="First" rendered="{!setCon.hasPrevious}"  action="{!setCon.first}"/>
+            <apex:commandButton rendered="{!setCon.hasPrevious}" value="Previous" action="{!setCon.previous}"/>
+            <apex:outputText rendered="{!(setCon.pageNumber * setCon.pageSize) < setCon.ResultSize}" value="{!setCon.pageNumber * setCon.pageSize} Of {!setCon.ResultSize}"></apex:outputText>
+            <apex:outputText rendered="{!(setCon.pageNumber * setCon.pageSize) >= setCon.ResultSize}" value="{!setCon.ResultSize} of {!setCon.ResultSize}"></apex:outputText>
+           
+            <apex:commandButton rendered="{!setCon.hasNext}" value="Next" action="{!setCon.next}"/>
+           
+            <apex:commandButton rendered="{!setCon.hasNext}" value="Last" action="{!setCon.last}"/>
+        </apex:pageBlock>
+    </apex:form>
+
+</apex:page>

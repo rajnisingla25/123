@@ -1,0 +1,46 @@
+<apex:page showHeader="false" sidebar="false">
+    <apex:includescript value="//code.jquery.com/jquery-1.11.1.min.js" />   
+    <apex:includeLightning />
+    <div id="container">
+    </div> 
+    <script>
+    var params = '{!$CurrentPage.parameters.req_reference_number}';
+    console.log(' ***** params **'+params);
+    $Lightning.use("c:cybsResponseLightningOut", function()
+                   {
+                       $Lightning.createComponent(
+                           "c:cybsResponse",
+                           {'responseCode':'{!$CurrentPage.parameters.reason_code}',
+                            'abaCode':'{!$CurrentPage.parameters.auth_code}',
+                            'ccNumber':'{!$CurrentPage.parameters.req_card_number}', 
+                            'expDate':'{!$CurrentPage.parameters.req_card_expiry_date}',
+                            'accountId':params.split(';')[0],
+                            'paymethodId':'{!$CurrentPage.parameters.transaction_id}',
+                            'pageSource':params.split(';')[1],
+                            'paymentToken':{!$CurrentPage.parameters.payment_token},
+                            'cardType':{!$CurrentPage.parameters.req_card_type}
+                           },
+                           "container",
+                           function(cmp)
+                           {
+                               console.log('component created');
+                           });
+                   });
+    </script>
+    
+    <script>
+    $(document).ready(function(){
+        window.addEventListener("message", receiveMessage, false);        
+    });
+    
+    // window.onload = receiveMessage;
+    function receiveMessage() {       
+        if(event.data != '' && event.data.split(';')[0]=='paymentProfileManager' && event.data.split(';')[1].includes('Payment Profile Created Successfully')){
+            console.log(' Recieved the Psot message '+event.data)
+            // var url = "https://moveinc--dev.lightning.force.com";
+            var url = "https://moveinc--rdev.lightning.force.com";
+            parent.postMessage('Payment Profile Created Successfully',url);
+        } 
+    }     
+    </script>   
+</apex:page>

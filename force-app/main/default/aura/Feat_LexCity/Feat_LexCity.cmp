@@ -1,0 +1,36 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,forceCommunity:themeLayout" access="global" >
+    <aura:attribute name="LocalExpert" type="Boolean" default="false"/>
+    <aura:attribute name="themePage" type="Boolean" default="false"/>
+    
+	
+    <aura:if isTrue="{!v.LocalExpert}" >
+     <div class="cLexfeat">
+       <div id="features-wrap" class="text-center">
+        <article>
+          
+            <div class="row">
+                <div class="col-md-6 col-sm-6 feature">
+                    <img src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2019/LP/LEX/LEXprod-icon1.png" alt="" class="img-responsive center-block"/>
+                    <h2>Attract serious home shoppers<br/> searching online</h2>
+                    <h4>More consumers are starting their home search online. Target these in-market buyers with customized, branded ads on realtor.com<sup>&reg;</sup> and then again on the same consumers’ Facebook News Feeds.</h4>
+                </div>
+                <div class="col-md-6 col-sm-6 feature">
+                    <img src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2019/LP/LEX/LEXprod-icon2.png" alt="" class="img-responsive center-block"/>
+                    <h2>Customize <br/>
+your ad designs</h2>
+                    <h4>Stay true to your brand without spending hours designing your own ads. Use customizable ad design templates to promote your unique qualities and points of difference.</h4>
+                </div>
+            </div>
+            <aura:if isTrue="{!v.themePage == true}" >
+              <div style="margin-top:30px;">
+                <center>
+                    <img src="https://b2bweb.realtor.com/web_assets/rdc/logos/realliving.jpg" alt="United Real Estate"/><br/><br/>
+                </center>
+               </div>
+            </aura:if>
+        </article>
+	   </div>
+     </div>
+    </aura:if>
+   
+</aura:component>

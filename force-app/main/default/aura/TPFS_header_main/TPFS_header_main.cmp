@@ -1,0 +1,26 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,forceCommunity:themeLayout" access="global" >
+    <aura:attribute name="phoneNumber" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <div class="cTPFS_header_main">
+    <header>
+        <article>
+            <div class="logo">
+                <img src="https://psweb.realtor.com/logos/fs-logo.png" alt="Top Producer(R)"/>
+            </div>
+            <div class="pull-right phonePosition"><span class="call-icon"></span><h3><span class="hide480">Call </span>
+                <!--<h3><span class="hide480">Call </span><a href="tel:18888819931 " class="phoneColor">888.881.9931 </a></h3>-->
+                            <a href="{!'tel:' + v.phoneNumber}" class="phoneColor">{!v.phoneNumber}</a>
+                </h3>
+
+            </div>
+            <div class="util-contact pull-right">
+                <!--<h3>Call <a href="tel:18002449630">800-244-9630xx</a></h3>-->
+                <!--<a href="javascript:;" onclick="LC_API.open_chat_window();return false;" class="visible-sm visible-xs pull-right"><img src="img/chat.png" alt="" width="59" height="38"></a>-->
+            </div>
+            <div class="clearfix"></div>
+        </article>
+    </header>
+    </div>
+	
+</aura:component>

@@ -1,0 +1,192 @@
+/* Footer */
+/* footer styles - new 03072014 */
+.THIS #footerwrap {
+  background-color: #f1f1f1; }
+
+.THIS #footerwrap hr {
+  border-bottom: 1px dotted #9c9c9c; }
+
+.THIS .footdark-wrap {
+  background-color: #222;
+  padding: 30px 0 30px; }
+
+.THIS .footlight-wrap {
+  background-color: #f1f1f1;
+  padding: 30px 0 30px; }
+
+.THIS .footerlinks ul, .THIS.sm-group ul {
+  margin: 0;
+  padding: 0; }
+
+.THIS .footerlinks ul li, .THIS .sm-group ul li {
+  list-style-type: none;
+  display: inline; }
+
+.THIS .footerlinks li:before {
+  content: " ";
+  padding: 0 3px; }
+
+.THIS .footerlinks li:first-child:before {
+  content: none; }
+
+.THIS .footerlinks a {
+  color: #9c9c9c;
+  font: 12px/15px Arial,Helvetica,sans-serif; }
+
+.THIS .footerlinks {
+  color: #555;
+  font: 12px/15px Arial,Helvetica,sans-serif; }
+
+.THIS .title-footer {
+  font-size: 13px;
+  font-weight: bold;
+  font-family: Arial,Helvetica,sans-serif;
+  color: #50595d;
+  padding: 10px 0 10px;
+  margin: 0; }
+
+.THIS .sm-group img {
+  height: 35px; }
+
+.THIS .sm-group li:before {
+  content: " ";
+  padding: 0 2px; }
+
+.THIS .sm-group li:first-child:before {
+  content: none; }
+
+.THIS .footcenter {
+  text-align: center;
+  padding: 20px 0 20px;
+  font-size: 13px; }
+
+.THIS .copyright {
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 16px; }
+
+.THIS .copyright img {
+  float: left;
+  margin-right: 10px;
+  height: 33px; }
+
+
+@media screen and (max-width: 480px) {
+ .THIS .footlight-wrap {
+    text-align: center; }
+
+  .THIS header #rdc-logo {
+    display: block;
+    align: center;
+    margin-left: 90px;
+    margin-bottom: 10px; }
+    
+    .cTP_footer_main .phone-wrap h3 {
+    font-size: 22px !important;
+	}
+    
+    .THIS .phone-wrap h5 {
+    font-size: 22px !important;
+	}
+
+  .THIS .pull-right {
+    align: center; } }
+@media screen and (max-width: 400px) {
+  .THIS .copyright, .THIS .copyright a {
+    font-size: 10px;
+    line-height: 12px; }
+
+ .THIS .none400 {
+    display: none !important; } }
+.THIS #tabbar-menu-mobile {
+  padding: 13px 12px 10px;
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+  z-index: 1000;
+  background-color: #fff;
+  border-top: 1px solid #e5e5e5; }
+
+.THIS #tabbar-menu-mobile [data-pages="header-toggle"] {
+  display: inline; }
+
+.THIS #tabbar-menu-mobile ul.menu {
+  margin: 0;
+  padding: 0; }
+
+.THIS #tabbar-menu-mobile ul.menu > li {
+  float: left;
+  list-style: outside none none;
+  text-align: center;
+  border-right: 1px solid #e5e5e5;
+  padding: 0;
+  margin-right: 0; }
+
+.THIS #tabbar-menu-mobile ul.menu > li a {
+  text-align: center;
+  font-size: 10px;
+  color: #707372;
+  font-weight: 400;
+  margin-top: 8px; }
+
+.THIS #tabbar-menu-mobile ul.menu > li a i {
+  font-size: 20px;
+  display: block; }
+
+.THIS #tabbar-menu-mobile ul.menu > li.disabled a {
+  color: #e0e0e0; }
+
+.THIS #tabbar-menu-mobile ul.menu-right > li {
+  float: right;
+  border: 0;
+  margin: 0; }
+
+.THIS #tabbar-menu-mobile ul.menu-right > li a.btn-get-demo {
+  background-image: url(img/chat.png); }
+
+.THIS #tabbar-menu-mobile button.anchor {
+  width: 120px;
+  background: #eb212e;
+  color: #fff;
+  font-size: 16px;
+  padding: 6px 12px;
+  border: 0;
+  -webkit-border-radius: 7px;
+  -moz-border-radius: 7px;
+  -ms-border-radius: 7px;
+  border-radius: 7px; }
+
+.THIS .phoneColor {
+  color: black; }
+
+.THIS .phoneColor:hover {
+  color: black; }
+
+.THIS .phonePosition .call-icon {
+  display: inline-block;
+  background: url("https://psweb.realtor.com/logos/tp-phone-icon-fix.png") center left no-repeat;
+  width: 35px;
+  height: 30px;
+  vertical-align: bottom; }
+.THIS .phonePosition h3 {
+  display: inline-block;
+  font-size: 26px;
+  font-weight: bold;
+  margin-bottom: 0;
+  color: #101d61; }
+
+.THIS .phone-wrap {
+  background-color: #004b8d;
+  color: #fff;
+  width: 100%;
+  padding: 45px; }
+ .THIS .phone-wrap img {
+    margin-bottom: 5px; }
+  .THIS .phone-wrap h3 {
+    font-size: 40px;
+    font-weight: ; }
+    .THIS .phone-wrap h3 a {
+      color: #fff; }
+ .THIS .phone-wrap h5 {
+    font-size: 32px;
+    font-weight: bold; }

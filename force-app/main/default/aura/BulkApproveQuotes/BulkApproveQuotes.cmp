@@ -1,0 +1,47 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" controller="BulkApproveQuotes_Controller">
+	<ltng:require scripts="/support/console/44.0/integration.js" />
+    <aura:attribute name="quotes" type="Object[]" />
+    <aura:attribute name="columns" type="Object[]"/>
+    <aura:attribute name="pQuoteId" type="String"/>
+    <aura:attribute name="selectedQuotes" type="Object[]"/>
+    <aura:attribute name="height" type="integer" access="global"/>
+    <aura:attribute name="totalProds" type="integer" default="0"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div class="c-container">
+            <div class="slds-align_absolute-center" style="height:2rem;">
+            	<lightning:button variant="brand" label="Submit" title="Approve Selected Quotes" onclick="{! c.submit }" /> 
+            	<lightning:button variant="brand" label="Refresh" title="Refresh" onclick="{! c.doInit }" /> 
+        	</div>
+        <aura:if isTrue="{!v.quotes.length > 0}">
+        	<lightning:card title="{!v.quotes.length + ' Quotes Pending for Approval. Selected ' + v.selectedQuotes.length  +  ' Quotes and ' +  v.totalProds + ' Quote Products'}" class="sslds-theme_info">
+        	</lightning:card>
+        <aura:set attribute="else">
+          <lightning:card title="Either your user is not configured to use this feature or there is no Pending Approval Quotes for you!" class="sslds-theme_info">
+          </lightning:card>
+        </aura:set>
+       </aura:if>
+        <lightning:layout class="slds-page-header slds-page-header--object-home">
+            <lightning:layoutItem flexibility="auto">
+                <lightning:card title="Quotes" class="sslds-theme_info" iconName="standard:quotes">
+                <div class="slds" style="{!'height:' + v.height + 'rem;'}">
+                    <lightning:datatable aura:id="quoteTable"
+                        class="quoteTable"
+                        data="{!v.quotes}"
+                        columns="{!v.columns}"
+                        keyField="Id" 
+                        onrowaction="{! c.handleRowAction }"
+                        onrowselection="{!c.handleSelect}"
+                        onsave="{! c.handleSave }"/>
+                </div>
+                </lightning:card>
+            </lightning:layoutItem> 
+            <lightning:layoutItem flexibility="auto">
+                <lightning:card iconName="standard:product_item" title="{!'Quote Products for ' + v.pQuoteId}" class="sslds-theme_info" >
+                    <c:BulkApproveQuoteProducts cQuoteId="{!v.pQuoteId}" height="{!v.height}"/>
+                </lightning:card>
+            </lightning:layoutItem>
+        </lightning:layout>
+        <lightning:spinner aura:id="spinner" variant="brand" size="large"/>
+    </div>
+</aura:component>

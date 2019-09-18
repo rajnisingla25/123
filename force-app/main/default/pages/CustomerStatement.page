@@ -1,0 +1,645 @@
+<apex:page applyHtmlTag="false" renderAs="pdf" showHeader="false" applyBodyTag="false" controller="InvoiceCustomerStatement" action="{!validateCommunityUser}">
+   <head>
+      <style type="text/css" media="print">
+         @page {
+         @top-center {
+         content: element(header);
+         }
+         @bottom-left {
+         content: element(footer);
+         }
+         }
+         div.header {
+         padding:10px;
+         position: running(header);
+         }
+         div.footer {
+         display: block;
+         padding: 10px;
+         position: running(footer);
+         }
+         .pagenumber:before {
+         content: counter(page);
+         }
+         .pagecount:before {
+         content: counter(pages);
+         }
+         @import url(http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300ita‌​lic,400italic,500,500italic,700,700italic,900italic,900);
+         html, html * {
+         font-family: Roboto;
+         }
+         body {
+         font-family: 'Roboto', sans-serif;
+         }
+      </style>
+       <link rel="shortcut icon" href="{!$Resource.CustomerCommunityFavicon}" type="image/x-icon"/>
+   </head>
+   <div class="header">
+      <div style="font-size:7px;float:right;">Page: <span class="pagenumber"/> of <span class="pagecount"/></div>
+   </div>
+   <div class="footer">
+      <div><!--<span style="color:#d2143a;font-size:20px;">real</span><span style="font-size:20px;">tor.com</span>
+         --><apex:image url="{!$Resource.Realtor_footer_logo}" width="100" height="20"/><!--CRM -2992 -->
+         <span style="font-size:8px;float:center;margin-left:360px"><b>Contact us</b> Email:<b>customercare@realtor.com</b> Phone <b>(800) 878-4166</b></span>
+      </div>
+   </div>
+      <div class="content">
+     
+      <table width="860px;">
+         <tr valign="top">
+            <td>
+               <table  width="110px;">
+                  <tr>
+                     <td style="font-size: 20px;font-weight: normal;font-family: Arial, Helvetica, sans-serif;">INVOICE</td>
+                  </tr>
+                  <tr>
+                     <td style="font-size:14px;font-weight: normal;font-family: Arial, Helvetica, sans-serif;">{!InvoiceName}</td>
+                  </tr>
+                  <tr>
+                     <td style="font-size:9px;">
+                        Invoice Date:
+                        <b>
+                           <apex:outputText value="{0,date,MM/dd/yyyy}">
+                              <apex:param value="{!InvoiceGenerateDate}" />
+                           </apex:outputText>
+                        </b>
+                     </td>
+                  </tr>
+               </table>
+            </td>
+            <!--<td valign="top"><table width="180px;" style="border: 1px solid #cccccc;"><tr><td  style="font-size:9px;">Account Name : {!AccountName}</td></tr>
+               <tr><td  style="font-size:9px;">Account Number : {!partyId}</td></tr>
+               <tr><td  style="font-size:9px;">Billing Period : <apex:outputText value="{0,date,MM/dd/yyyy}"><apex:param value="{!BillingPeriodStartDate}" />
+               </apex:outputText>-<apex:outputText value="{0,date,MM/dd/yyyy}"><apex:param value="{!BillingPeriodEndDate}" />
+               </apex:outputText></td></tr>
+               </table></td>-->
+            <td style="box-sizing: border-box; font-family: 'Roboto', Helvetica, Arial, 'Lucida Grande', sans-serif; font-size: 14px; vertical-align: top; width: 250px; max-width: 250px" valign="top" align="right" width="250">
+               <table style="width: 100%; max-width:100%; border: 1px solid #e9e9e9; font-family: 'Roboto', Helvetica, Arial, 'Lucida Grande', sans-serif; font-size: 12px; padding: 5px; min-height: 56px;">
+                  <tr>
+                     <td>Account name:</td>
+                     <td style="font-weight: 500"><b>{!AccountName}</b></td>
+                  </tr>
+                  <tr>
+                     <td>Account number: </td>
+                     <td style="font-weight: 500"><b>{!partyId}</b></td>
+                  </tr>
+                  <tr>
+                     <td>Payment due:</td>
+                     <td style="font-weight: 500">
+                        <b>
+                           <apex:outputText rendered="{!IF(totalBalance>0,true,false)}" value="{0,date,MM/dd/yyyy}">
+                              <!--<apex:param value="{!BillingPeriodEndDate}" />-->
+                              <apex:param value="{!InvoiceDueDate}" />
+                           </apex:outputText>
+                        </b>
+                     </td>
+                  </tr>
+               </table>
+            </td>
+            <td>
+               <table  width="270px;">
+                  <tr>
+                     <td style="box-sizing: border-box; font-family: 'Roboto', Helvetica, Arial, 'Lucida Grande', sans-serif; font-size: 14px; vertical-align: top; width: 280px; max-width: 280px" valign="top" width="280">
+                        <!--<table width="270px;" style="border: 1px solid #cccccc;color:#ffffff" cellspacing="0"><tr style="background-color:  #000000;"><td style="float:center;" colspan="2">
+                           Total Balance Due
+                           </td></tr></table>
+                           <table width="270px;">
+                           <tr><td width="60px;" style="padding:5px;font-size:16px;"><b>${!totalfinalBalance}</b></td><td  width="160px;" style="padding:2px;">
+                           Past Due ${!pastdueBalance}<br/><br/>
+                           Balance Due ${!totalBalance}
+                           </td></tr></table>-->
+                        <table width="270px;" cellspacing="0" cellpadding="0" style="box-sizing: border-box; border-collapse: separate !important; width: 100%; max-width:100%; border: 1px solid #e9e9e9; font-family: 'Roboto', Helvetica, Arial, 'Lucida Grande', sans-serif; font-size: 12px; padding: 0; min-height: 66px;">
+                           <tr>
+                              <td colspan="3" style="padding:0px;text-align: center; background-color: #000000 !important; color: #ffffff; -webkit-print-color-adjust: exact;">AMOUNT DUE</td>
+                           </tr>
+                           <tr>
+                              <td rowspan="2" style="padding: 0 5px; font-size: 18px; text-align: center; text-align:center"><b><apex:outputText rendered="{!IF(totalfinalBalance>=0,true,false)}" value="{0, number, $#,##0.00}">
+    <apex:param value="{!totalfinalBalance}"/>
+</apex:outputText><APEX:OUTputPanel rendered="{!IF(totalfinalBalance<0,true,false)}">
+(<apex:outputText value="{0, number, $#,##0.00}">
+    <apex:param value="{!ABS(totalfinalBalance)}"/>
+</apex:outputText>)</APEX:OUTputPanel>
+</b></td>
+                              <td style="padding-left:10px; padding-top:5px;" valign="bottom">Paid:</td>
+                              <td style="font-weight: 500; padding-top:5px;padding-right:4px;text-align: right;" valign="bottom"><apex:outputText rendered="{!IF(pastdueBalance>0,true,false)}" value="({0, number, $#,###.00})">
+    <apex:param value="{!pastdueBalance}" />
+</apex:outputText><apex:outputText rendered="{!IF(pastdueBalance<0,true,false)}" style="margin-left:16px;padding-right:0px;text-align: right;" value="{0, number, $#,###.00}">
+    <apex:param value="{!pastdueBalance*-1}" />
+</apex:outputText><apex:outputText rendered="{!IF(pastdueBalance==0,true,false)}" value="{0, number, $0.00}">
+    <apex:param value="{!pastdueBalance}" />
+</apex:outputText></td>
+                           </tr>
+                           <tr>
+                              <td style="padding-left:10px; padding-bottom:5px;" valign="top">Balance due:</td>
+                              <td style="font-weight: 500; padding-bottom:5px;padding-right:4px;text-align: right;" valign="top"><apex:outputText rendered="{!IF(totalBalance<>0,true,false)}"  value="{0, number, $#,###.00}">
+    <apex:param value="{!totalBalance}" /></apex:outputText>
+    <apex:outputText rendered="{!IF(totalBalance==0,true,false)}"  value="{0, number, $0.00}">
+    <apex:param value="{!totalBalance}" />
+</apex:outputText></td>
+                           </tr>
+                        </table>
+                        <!--<table width="270px;"><tr><td colspan="2">Total balance for 2 invoice(s)</td></tr></table>-->
+                     </td>
+                  </tr>
+               </table>
+            </td>
+         </tr>
+      </table>
+      <table width="900px;">
+         <apex:variable var="startnum" value="{!0}"/>
+         <apex:repeat value="{!lstInvoiceWrapper}" var="inv">
+           <tr>
+               <td></td>
+               <td></td>
+            </tr>
+            <!-- <tr>
+               <td>
+                  <p style="font-size:10px;width:300px;"></p>
+               </td>
+               <td>
+                  <p style="font-size:9px;width:300px;">
+                     Payment Due Date
+                     <b>
+                        <apex:outputText value="{0,date,MM/dd/yyyy}">
+                           <apex:param value="{!inv.zinv.Zuora__DueDate__c}"/>
+                        </apex:outputText>
+                     </b>
+                  </p>
+               </td>
+            </tr>-->
+            <tr>
+               <td colspan="2">
+                  <table border="0" cellspacing="0" width="700px;">
+                     <tr style="background-color:  #F5F5F5;">
+                        <td style="font-size:9px;padding: 9px;font-family: Arial, Helvetica, serif;"><b>ITEM DESCRIPTIONS</b></td>
+                        <td style="font-size:9px;font-family: Arial, Helvetica, sans-serif;"><b>SERVICE DATES</b></td>
+                        <td style="font-size:9px;font-family: Arial, Helvetica, sans-serif;"><b>NOTES</b></td>
+                        <td style="font-size:9px;font-family: Arial, Helvetica, sans-serif;"><b>PRICE</b></td>
+                        <td style="font-size:9px;font-family: Arial, Helvetica, sans-serif;"><b>TAX</b></td>
+                        <td style="font-size:9px;font-family: Arial, Helvetica, sans-serif;"><b>TOTAL</b></td>
+                     </tr>
+                     <apex:repeat rendered="{!IF((inv.DisplayInvoice),true,false)}" value="{!inv.InvlineList1}" var="ii">
+                        <tr>
+                           <td style="font-size:8px;padding: 6px;">
+                            <apex:outputPanel rendered="{!IF(ii.Billing_Account__r.Zuora__Account__r.Type != 'Lender Individual',true,false)}">
+                                 <!-- LCM-91 : Added this output panel tag-->
+                                 <apex:outputPanel rendered="{!IF(ii.Subscription__r.CMRelationship__r != null && ii.Asset__r == null,false,true)}" >
+                                      <b>{!IF(ii.Asset__r.Commerce_Group__c=='Broker Marketing Solution' || ii.Asset__r.Commerce_Group__c=='Agent Marketing Solution',ii.Asset__r.Commerce_Group__c,(IF(AND(contains(ii.Asset__r.Product2.ProductCode, 'COBROKE'), DATEVALUE($Label.Connections_Plus_GA_date) <= Today(), DATEVALUE($Label.Connections_Plus_GA_date) <= DATEVALUE(ii.CreatedDate)), $Label.COBROKE_Product_Name2, if(ii.Asset__r.Product2.productcode == 'LOCALEXPERT','Local Expert Zip', ii.Asset__r.Product2.name))))}</b>
+                                      <apex:outputPanel rendered="{!IF(ii.Asset__r.Commerce_Group__c=='Broker Marketing Solution' || ii.Asset__r.Commerce_Group__c=='Agent Marketing Solution',false,true)}"><br/>Item number:-{!ii.Asset__r.Asset_Number__c}<br/>Order number:-{!ii.Asset__r.Order_Line_Item__r.Order.OrderNumber}<br/></apex:outputPanel>
+                                      <apex:outputPanel rendered="{!IF(ii.Asset__r.Commerce_Group__c=='Broker Marketing Solution' || ii.Asset__r.Commerce_Group__c=='Agent Marketing Solution',false,true)}">
+                                        <apex:outputPanel rendered="{!IF(ii.Asset__c!=null,IF(((ii.Asset__r.Product2.Renewal_Term_Type__c=='evergreen' || YEAR(ii.Asset__r.End_Date__c)==2026 || YEAR(ii.Asset__r.End_Date__c)==2099 || (IF(ii.Asset__r.Net_Price__c==null,true,ii.Asset__r.Net_Price__c<0.01) && (YEAR(ii.Asset__r.End_Date__c)==2026 || YEAR(ii.Asset__r.End_Date__c)==2099))) && (ii.Asset__r.Product2.Renewal_Term_Type__c=='evergreen' || YEAR(ii.Asset__r.End_Date__c)<2025)) ,false,IF(YEAR(ii.Asset__r.End_Date__c)==2099,false,true)),false)}">Contract Period:
+                                      <!--<apex:outputPanel>-->
+                                          <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                             <apex:param value="{!ii.Asset__r.Start_Date__c}" />
+                                          </apex:outputText>
+                                          -
+                                          <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                             <apex:param value="{!ii.Asset__r.End_Date__c}" />
+                                          </apex:outputText>
+                                      </apex:outputPanel>
+                                      <apex:outputPanel rendered="{!IF(ii.Asset__r.Product2.Renewal_Term_Type__c=='evergreen' || YEAR(ii.Asset__r.End_Date__c)==2026 || YEAR(ii.Asset__r.End_Date__c)==2099 ,true,false)}">
+                                      Contract Period: Evergreen                                                                                                                                                                                                                                                                                                                                                          
+                                      </apex:outputPanel>
+                                     </apex:outputPanel>
+                                    </apex:outputPanel>
+                                    
+                                    <apex:outputPanel rendered="{!IF(ii.Subscription__r.CMRelationship__r != null && ii.Asset__r == null,true,false)}" >
+                                       <!-- LCM-91 : Agent account panel-->
+                                       <b>Co-marketing {!$Label.COBROKE_Product_Name2}</b><br/>
+                                       <apex:outputPanel >
+                                          Start date:
+                                          <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                             <apex:param value="{!ii.Subscription__r.CMRelationship__r.Start_Date__c}" />
+                                          </apex:outputText>
+                                          <br/>
+                                       </apex:outputPanel>
+                                       <apex:outputPanel >
+                                          Lender name:
+                                          <apex:outputText value=" {!ii.Subscription__r.CMRelationship__r.Lender_Account__r.name}">
+                                          </apex:outputText>
+                                       </apex:outputPanel>
+                                       <!-- LCM-193 : Hide lender paid amount for credit-->
+                                       <apex:outputPanel rendered="{!IF(ii.Charge_Name__c=='CreditIssued',false,true)}" >
+                                           <br/>
+                                          Lender paid amount:
+                                          <apex:outputText value=" {!ROUND(ii.Lender_Paid_Amount_LCM__c, 2)}">
+                                          </apex:outputText>
+                                       </apex:outputPanel>
+                                    </apex:outputPanel>
+                            </apex:outputPanel>
+                             
+                            
+                            <!-- LCM-96  Lender account panel-->
+                            <apex:outputPanel rendered="{!IF(ii.Billing_Account__r.Zuora__Account__r.Type = 'Lender Individual',true,false)}">
+                                <b>Co-marketing {!$Label.COBROKE_Product_Name2}</b><br/>
+                                <apex:outputPanel > Start date:
+                                    <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                         <apex:param value="{!ii.Subscription__r.CMRelationship__r.Start_Date__c}" />
+                                    </apex:outputText><br/>
+                                </apex:outputPanel>
+                                <apex:outputPanel > 
+                                   
+                                    <apex:outputText rendered="{!IF(ii.Subscription__r.CMRelationship__r.Agent_Account__r.Type == 'Realtor Agent',true,false)}">Agent name:</apex:outputText>
+                                     <apex:outputText rendered="{!IF(ii.Subscription__r.CMRelationship__r.Agent_Account__r.Type == 'Broker',true,false)}">Broker name:</apex:outputText>
+                                    <apex:outputText value=" {!ii.Subscription__r.CMRelationship__r.Agent_Account__r.name}">
+                                    </apex:outputText>
+                                </apex:outputPanel><br/>
+                                <apex:outputPanel rendered="{!IF(ii.ProductRatePlanCharge__r.zqu__Type__c == 'Recurring',true,false)}" > 
+                                     <apex:outputText rendered="{!IF(ii.Subscription__r.CMRelationship__r.Agent_Account__r.Type == 'Realtor Agent',true,false)}">Agent paid amount:</apex:outputText>
+                                     <apex:outputText rendered="{!IF(ii.Subscription__r.CMRelationship__r.Agent_Account__r.Type == 'Broker',true,false)}">Broker paid amount:</apex:outputText>
+                                    <apex:outputText value=" {!ROUND(ii.Agent_Paid_Amount_LCM__c, 2)}">
+                                    </apex:outputText>
+                                </apex:outputPanel>
+                                 <apex:outputPanel rendered="{!IF(ii.Charge_Name__c=='CreditIssued' && ii.ProductRatePlanCharge__r.zqu__Type__c == 'One-Time',true,false)}"> 
+                                     <apex:outputText rendered="{!IF(ii.Subscription__r.CMRelationship__r.Agent_Account__r.Type == 'Realtor Agent',true,false)}">Agent credit amount:</apex:outputText>
+                                     <apex:outputText rendered="{!IF(ii.Subscription__r.CMRelationship__r.Agent_Account__r.Type == 'Broker',true,false)}">Broker credit amount:</apex:outputText>
+                                    <apex:outputText value=" {!ROUND(ii.Agent_Credit_Amount_LCM__c, 2)}">
+                                    </apex:outputText>
+                                </apex:outputPanel>
+                            </apex:outputPanel>
+                            <!-- LCM-96 END -->
+                             <br/>
+
+                              <i><b><apex:outputtext style="padding-top:20;margin-top:10;font-size:8px;" rendered="{!IF(ii.Charge_Name__c=='CreditIssued',true,false)}" value="{0, number, $#,###.##}"><apex:param value="{!ii.Tax_Exempt_Amount__c}" /> </apex:outputtext><apex:outputPanel rendered="{!IF(ii.Charge_Name__c=='CreditIssued',true,false)}"> Credit Applied</apex:outputPanel></b>
+                           </i>
+                           </td>
+                           <td style="font-size:8px;">
+                              <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                 <apex:param value="{!ii.Service_Start_Date__c}" />
+                              </apex:outputText>
+                              -
+                              <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                 <apex:param value="{!ii.Service_End_Date__c}" />
+                              </apex:outputText>
+                           </td>
+                           <td style="font-size:8px;"><apex:outputPanel rendered="{!IF(ii.Asset__r.Commerce_Group__c=='Broker Marketing Solution' || ii.Asset__r.Commerce_Group__c=='Agent Marketing Solution',false,true)}"> 
+                               <apex:outputPanel rendered="{!IF(ii.Billing_Account__r.Zuora__Account__r.Type = 'Lender Individual' || ( ii.Subscription__r.CMRelationship__r != null && ii.Asset__r == null) ,false,true)}" >
+                                   <apex:outputPanel rendered="{!IF(ii.Asset__r.product2.name == 'Local Expert' || ii.Asset__r.product2.name == 'Local Expert City',false,true)}">
+                                   {!IF(ii.Asset__r.Market__c!='' && ii.Asset__r.Lead_Type__c!='','Market '+ ii.Asset__r.Market__c+','+ii.Asset__r.Lead_Type__c,'Market '+ii.Asset__r.Market__c+''+ii.Asset__r.Lead_Type__c)}
+                                   </apex:outputPanel>
+                                    <apex:outputPanel rendered="{!IF(ii.Asset__r.product2.name == 'Local Expert' || ii.Asset__r.product2.name == 'Local Expert City',true,false)}">
+                                   {!IF(ii.Asset__r.Market__c!='' && ii.Asset__r.Product_Type__c!='','Market '+ ii.Asset__r.Market__c+','+SUBSTITUTE(ii.Asset__r.Product_Type__c,'V','M'),'Market '+ii.Asset__r.Market__c+''+SUBSTITUTE(ii.Asset__r.Product_Type__c,'V','M'))}
+                                   </apex:outputPanel>   
+                               </apex:outputPanel>
+                               <!-- LCM-96, LCM-91 -->
+                                <apex:outputPanel rendered="{!IF(ii.Billing_Account__r.Zuora__Account__r.Type = 'Lender Individual' || (ii.Subscription__r.CMRelationship__r != null && ii.Asset__r == null) ,true,false)}" >
+                                   {!IF(ii.Subscription__r.CMRelationship__r.CFCB_Asset__r.Market__c!='' && ii.Subscription__r.CMRelationship__r.CFCB_Asset__r.Lead_Type__c!='','Market '+ ii.Subscription__r.CMRelationship__r.CFCB_Asset__r.Market__c+','+ii.Subscription__r.CMRelationship__r.CFCB_Asset__r.Lead_Type__c,'Market '+ii.Subscription__r.CMRelationship__r.CFCB_Asset__r.Market__c+''+ii.Subscription__r.CMRelationship__r.CFCB_Asset__r.Lead_Type__c)}
+                               </apex:outputPanel>
+                               <br/>
+                               <!-- LCM-96 End-->
+                               <apex:outputText rendered="{!IF(ii.Billing_Account__r.Zuora__Account__r.Type = 'Lender Individual',false,true)}" ><b>Quantity {!ROUND(ii.Asset__r.Quantity__c, 0)}</b></apex:outputText>
+                               <apex:outputText rendered="{!IF(ii.Billing_Account__r.Zuora__Account__r.Type = 'Lender Individual',true,false)}" ><b>Quantity {!ROUND(ii.Subscription__r.CMRelationship__r.CFCB_Asset__r.Quantity__c, 0)}</b></apex:outputText>
+                              </apex:outputPanel>
+                           </td>
+                           <td style="font-size:8px;"><apex:outputText style="text-align: right;" value="{0, number, $#,###.00}">
+    <apex:param value="{!ii.Charge_Amount__c}" />
+</apex:outputText></td>
+                           <td style="font-size:8px;"><apex:outputText rendered="{!IF(ii.Tax_Amount__c<>0,true,false)}"  style="text-align: right;" value="{0, number, $#,###.00}">
+    <apex:param value="{!ii.Tax_Amount__c}" /><!--CRM-2993-->
+</apex:outputText><apex:outputText rendered="{!IF(ii.Tax_Amount__c==0,true,false)}"  style="text-align: right;" value="{0, number, $0.00}">
+    <apex:param value="{!ii.Tax_Amount__c}" />
+</apex:outputText></td>
+                           <td style="font-size:8px;"><apex:outputText rendered="{!IF((ii.Charge_Amount__c + ii.Tax_Amount__c -ii.Tax_Exempt_Amount__c)>=0,true,false)}" style="text-align: right;" value="{0, number, $#,###.00}"><!-- CRM-5212 -->
+    <apex:param value="{!(ii.Charge_Amount__c + ii.Tax_Amount__c -ii.Tax_Exempt_Amount__c)}" />
+</apex:outputText>
+<APEX:OUTputPanel rendered="{!IF((ii.Charge_Amount__c + ii.Tax_Amount__c -ii.Tax_Exempt_Amount__c)<0,true,false)}">
+(<apex:outputText value="{0, number, $#,##0.00}">
+    <apex:param value="{!ABS((ii.Charge_Amount__c + ii.Tax_Amount__c -ii.Tax_Exempt_Amount__c))}"/>
+</apex:outputText>)</APEX:OUTputPanel>
+</td>
+                        </tr>
+                        <apex:variable var="startnum" value="{!startnum+1}"/>
+                        <apex:outputPanel style="bgcolor:#E6E6FA;" layout="none" rendered="{!IF(ii.Asset__r.Commerce_Group__c=='Broker Marketing Solution' || ii.Asset__r.Commerce_Group__c=='Agent Marketing Solution',true,false)}">
+                         <tr>
+                           <td colspan="6">
+                           <table  border="0" cellspacing="0" style="padding-left:20px;" width="420px;">
+                           <tr>
+                           <td></td>
+                           <td></td>
+                           <td></td>
+                           <td></td>
+                           <td></td>
+                           <td></td>
+                           
+                        </tr>
+                           <tr style="background-color:  #F5F5F5;"><td style="font-size:8px;padding: 0px;font-family: Arial, Helvetica, serif;"><b>DESCRIPTION</b></td>
+                           <td style="font-size:8px;font-family: Arial, Helvetica, sans-serif;"><b>DATES</b></td>
+                           <!--<td style="font-size:8px;font-family: Arial, Helvetica, sans-serif;"><b>NOTES</b></td>
+                           <td style="font-size:8px;font-family: Arial, Helvetica, sans-serif;"><b>PRICE</b></td>
+                           <td style="font-size:8px;font-family: Arial, Helvetica, sans-serif;"><b>TAX</b></td>
+                           <td style="font-size:8px;font-family: Arial, Helvetica, sans-serif;"><b>TOTAL</b></td>--></tr>
+                           <!--<tr style="background-color:#F5F5F5;">
+                           <td></td>
+                           <td></td>
+                           <td></td>
+                           <td></td>
+                           <td></td>
+                           <td></td>
+                           
+                        </tr>-->
+                       <apex:repeat rendered="{!IF(ii.Asset__r.Commerce_Group__c=='Broker Marketing Solution' || ii.Asset__r.Commerce_Group__c=='Agent Marketing Solution',true,false)}" value="{!mapRetProductBundle[ii.Asset__r.Commerce_Group__c]}" var="jj">
+                        
+                        <tr style="background-color:  #F5F5F5;">
+                           <td style="font-size:7px;padding: 6px;">
+                             <b>{!IF(jj.Asset__r.Commerce_Group__c=='Broker Marketing Solution' || jj.Asset__r.Commerce_Group__c=='Agent Marketing Solution',jj.Asset__r.Product2.Name,jj.Asset__r.Product2.Name)}</b><apex:outputPanel rendered="true"><br/>Item number:-{!jj.Asset__r.Asset_Number__c}<br/>Order number:-{!jj.Asset__r.Order_Line_Item__r.Order.OrderNumber}<br/></apex:outputPanel>
+                              <apex:outputPanel rendered="{!IF(jj.Asset__r.Commerce_Group__c=='Broker Marketing Solution' || jj.Asset__r.Commerce_Group__c=='Agent Marketing Solution',false,true)}">
+<!--<apex:outputPanel rendered="{!IF(jj.Asset__c!=null,IF(((jj.Asset__r.Product2.Renewal_Term_Type__c=='evergreen' || YEAR(jj.Asset__r.End_Date__c)==2026 || YEAR(jj.Asset__r.End_Date__c)==2099 || (IF(jj.Asset__r.Net_Price__c==null,true,jj.Asset__r.Net_Price__c<0.01) && (YEAR(jj.Asset__r.End_Date__c)==2026 || YEAR(jj.Asset__r.End_Date__c)==2099))) && (jj.Asset__r.Product2.Renewal_Term_Type__c=='evergreen' || YEAR(jj.Asset__r.End_Date__c)<2025)) ,false,true),false)}">Contract Period:
+                   -->          <apex:outputPanel rendered="{!IF(jj.Asset__c!=null,IF(((jj.Asset__r.Product2.Renewal_Term_Type__c=='evergreen' || YEAR(jj.Asset__r.End_Date__c)==2026 || YEAR(jj.Asset__r.End_Date__c)==2099 || (IF(jj.Asset__r.Net_Price__c==null,true,jj.Asset__r.Net_Price__c<0.01) && (YEAR(jj.Asset__r.End_Date__c)==2026 || YEAR(jj.Asset__r.End_Date__c)==2099))) && (jj.Asset__r.Product2.Renewal_Term_Type__c=='evergreen' || YEAR(jj.Asset__r.End_Date__c)<2025)) ,false,true),false)}">Contract Period:
+ 
+                              <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                 <apex:param value="{!jj.Asset__r.Start_Date__c}" />
+                              </apex:outputText>
+                              -
+                              <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                 <apex:param value="{!jj.Asset__r.End_Date__c}" />
+                              </apex:outputText></apex:outputPanel>
+                              <apex:outputPanel rendered="{!IF(jj.Asset__r.Product2.Renewal_Term_Type__c=='evergreen' || YEAR(jj.Asset__r.End_Date__c)==2026 || YEAR(jj.Asset__r.End_Date__c)==2099 ,true,false)}">
+                              Contract Period: Evergreen
+                              </apex:outputPanel>
+                              </apex:outputPanel>
+                              <br/>
+
+                              <i><b><apex:outputtext style="padding-top:20;margin-top:10;font-size:7px;" rendered="{!IF(jj.Charge_Name__c=='CreditIssued',true,false)}" value="{0, number, $#,###.##}"><apex:param value="{!jj.Tax_Exempt_Amount__c}" /> </apex:outputtext><apex:outputPanel rendered="{!IF(jj.Charge_Name__c=='CreditIssued',true,false)}"> Credit Applied</apex:outputPanel></b>
+                           </i>
+                           </td>
+                           <td style="font-size:7px;">
+                              <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                 <apex:param value="{!jj.Service_Start_Date__c}" />
+                              </apex:outputText>
+                              -
+                              <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                 <apex:param value="{!jj.Service_End_Date__c}" />
+                              </apex:outputText>
+                           </td>
+                           <!--<td style="font-size:7px;"><apex:outputPanel rendered="{!IF(jj.Asset__r.Commerce_Group__c=='Broker Marketing Solution' || jj.Asset__r.Commerce_Group__c=='Agent Marketing Solution',true,true)}"> {!IF(jj.Asset__r.Market__c!='' && jj.Asset__r.Lead_Type__c!='','Market '+ jj.Asset__r.Market__c+','+jj.Asset__r.Lead_Type__c,'Market '+jj.Asset__r.Market__c+''+jj.Asset__r.Lead_Type__c)}
+                           <br/><b>Quantity {!ROUND(jj.Asset__r.Quantity__c, 0)}</b></apex:outputPanel>
+                           </td>
+                           <td style="font-size:7px;"><apex:outputText style="text-align: right;" value="{0, number, $#,###.00}">
+    <apex:param value="{!jj.Charge_Amount__c}" />
+</apex:outputText></td>
+                           <td style="font-size:7px;"><apex:outputText rendered="{!IF(ii.Tax_Amount__c<>0,true,false)}"  style="text-align: right;" value="{0, number, $#,###.00}">
+    <apex:param value="{!jj.Tax_Amount__c}" />
+</apex:outputText><apex:outputText rendered="{!IF(jj.Tax_Amount__c==0,true,false)}"  style="text-align: right;" value="{0, number, $#,###.##}">
+    <apex:param value="{!jj.Tax_Amount__c}" />
+</apex:outputText></td>
+                           <td style="font-size:7px;"><apex:outputText style="text-align: right;" value="{0, number, $#,###.00}">
+    <apex:param value="{!(jj.Charge_Amount__c + jj.Tax_Amount__c -jj.Tax_Exempt_Amount__c)}" />
+</apex:outputText></td>-->
+                        </tr>
+                        </apex:repeat>
+                           </table>
+                           </td>
+                        </tr></apex:outputPanel>
+                        <tr style="background-color:#F5F5F5;">
+                           <td></td>
+                           <td></td>
+                           <td></td>
+                           <td></td>
+                           <td></td>
+                           <td></td>
+                        </tr>
+                     </apex:repeat>
+                  </table>
+               </td>
+            </tr>
+            <tr>
+               <td valign="top" width="500px;">
+                  <apex:outputPanel rendered="{!inv.zinvpayment.size>0}">
+                     <p style="font-size:11px;width:300px;">Your Payment details</p>
+                     <table  border="0" cellspacing="0" width="550px;">
+                        <tr style="background-color:  #F5F5F5" >
+                           <td style="font-size:9px;padding: 1px;"><b>PAYMENT DATE</b></td>
+                           <td style="font-size:9px;"><b>PAYMENT METHOD</b></td>
+                           <td style="font-size:9px;"><b>CARD HOLDER</b></td>
+                           <td style="font-size:9px;"><b>PAID AMOUNTS</b></td>
+                            
+                         <!-- Added by Pratik for CRM 4920 on 18th October 2018-->
+                         <!-- LCM-156: Hide split % for lenders-->
+                            <td style="font-size:9px;{!IF(IsSubscriptionPayment || AccountType = 'Lender Individual', 'display: none', 'display: block')}"><b>SPLIT BY</b></td>
+                            
+                        <!-- Ends here -->
+                        </tr>
+                        <apex:repeat value="{!inv.zinvpayment}" var="ii">
+                           <tr>
+                              <td style="font-size:8px;padding: 6px;">
+                                 <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                    <apex:param value="{!ii.Effective_Date__c}" />
+                                 </apex:outputText>
+                              </td>
+                              <td style="font-size:8px;">{!ii.Payment_Method__c}</td>
+                              <td style="font-size:8px;">{!ii.Credit_Card_Name__c}</td>
+                              <td style="font-size:8px;"><apex:outputPanel rendered="{!IF(ii.Zuora__ApplyAmount__c!=0,true,false)}">(<apex:outputText value="{0, number, $###,###.00}">
+    <apex:param value="{!ii.Zuora__ApplyAmount__c}"/>
+</apex:outputText>)</apex:outputPanel></td>
+                               <!-- Added by Pratik for CRM 4920 on 18th October 2018-->
+                            <td style="font-size:8px;{!IF(IsSubscriptionPayment || AccountType = 'Lender Individual', 'display: none', 'display: block')}">
+                                 
+                                  <apex:outputText rendered="{!IF((ii.Payment_Method__c=='Check' || ii.Split_Percentage__c=null),false,true)}" value="{0, number, ###}"><apex:param value="{!ii.Split_Percentage__c}" />
+</apex:outputText>
+<apex:outputText rendered="{!IF((ii.Payment_Method__c=='Check' || ii.Split_Percentage__c=null),false,true)}">%
+</apex:outputText>
+<apex:outputText rendered="{!IF((ii.Payment_Method__c=='Check' || ii.Split_Percentage__c=null),true,false)}">N/A</apex:outputText>
+</td>
+                               <!-- Ends here -->
+                           </tr>
+                           <tr style="background-color:#F5F5F5;">
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                           </tr>
+                        </apex:repeat>
+
+                     </table>
+                  </apex:outputPanel>
+               </td>
+               <td rowspan="2" valign="top">
+                  <table style="padding-left:20px;">
+                     <tr>
+                        <td style="margin-left:0px;font-size:10px;padding: 0px;padding-top: 16px;padding-right: 1px;"><table><tr><td width="20px;"><b>Subtotal</b></td><td width="75px;" style="text-align: right;"><b>
+                        <apex:outputText style="padding-right:3px;text-align: right;padding-right:10px;" rendered="{!IF(inv.subtotal>0,true,false)}" value="{0, number, $#,###.00}">
+    <apex:param value="{!inv.subtotal}" />
+</apex:outputText>
+<APEX:OUTputPanel style="padding-right:3px;text-align: right;padding-right:10px;" rendered="{!IF(inv.subtotal<0,true,false)}">
+(<apex:outputText value="{0, number, $#,##0.00}">
+    <apex:param value="{!ABS(inv.subtotal)}"/>
+</apex:outputText>)</APEX:OUTputPanel>
+<apex:outputText rendered="{!IF(inv.subtotal==0,true,false)}" style="padding-right:3px;text-align: right;padding-right:10px;" value="{0, number, 0.00}">
+    <apex:param value="{!inv.subtotal}" />
+</apex:outputText></b></td></tr></table></td>
+                     </tr>
+                     <!-- <tr>
+                       <td style="font-size:9px;">Credit applied  -$50</td>
+                     </tr>-->
+                     <tr>
+                        <td>---------------------</td>
+                     </tr>
+                     <tr>
+                        <td style="font-size:10px;"><table><tr><td width="10px;"><b>Total </b></td><td width="79px;" style="text-align: right;"><b> <apex:outputText rendered="{!IF(inv.subtotal>0,true,false)}" style="" value="{0, number, $#,###.00}">
+    <apex:param value="{!inv.subtotal}" />
+</apex:outputText><APEX:OUTputPanel rendered="{!IF(inv.subtotal<0,true,false)}">
+(<apex:outputText value="{0, number, $#,##0.00}">
+    <apex:param value="{!ABS(inv.subtotal)}"/>
+</apex:outputText>)</APEX:OUTputPanel></b></td></tr></table></td>
+                     </tr>
+                     <tr>
+                        <td style="font-size:10px;padding: 3px;"><table><tr><td width="10px;"><b>Paid </b></td><td width="79px;" style="text-align: right;"><b><apex:outputText rendered="{!IF((inv.paid)>0,true,false)}" style="margin-left:10px;padding-right:0px;text-align: right;padding-right:0px;" value="({0, number, $#,###.00})">
+    <apex:param value="{!inv.paid}" />
+</apex:outputText><apex:outputText rendered="{!IF((inv.paid)<0,true,false)}" style="margin-left:16px;padding-right:0px;text-align: right;padding-right:0px;" value="{0, number, $#,###.00}">
+    <apex:param value="{!(inv.paid)*-1}" />
+</apex:outputText>
+<apex:outputText style="margin-left:10px;padding-right:0px;text-align: right;padding-right:0px;"  rendered="{!IF((inv.paid)==0,true,false)}" value="{0, number, $0.00}">
+    <apex:param value="{!inv.paid}" />
+</apex:outputText></b></td></tr></table></td>
+                     </tr>
+                     <tr>
+                        <td style="font-size:10px;"><table><tr><td width="10px;" style="font-size:10px;"><b>Adjust </b></td><td width="70px;" style="text-align: right;"><b><apex:outputText rendered="{!IF(inv.Adjustment>0,true,false)}" style="margin-left:10px;padding-right:0px;text-align: right;padding-right:0px;" value="({0, number, $#,###.00})">
+    <apex:param value="{!inv.Adjustment}" />
+</apex:outputText><apex:outputText rendered="{!IF(inv.Adjustment<0,true,false)}" style="padding-right:0px;text-align: right;padding-right:0px;" value="{0, number, $#,###.00}">
+    <apex:param value="{!inv.Adjustment*-1}" />
+</apex:outputText>
+<apex:outputText style="padding-right:0px;text-align: right;padding-right:0px;"  rendered="{!IF(inv.Adjustment==0,true,false)}" value="{0, number, $0.00}">
+    <apex:param value="{!inv.Adjustment}" />
+</apex:outputText></b></td></tr></table></td>
+                     </tr>
+                     <tr>
+                        <td style="font-size:10px;"><table><tr><td width="10px;" style="font-size:10px;"><b>Applied</b></td><td width="65px;" style="text-align: right;"><b><apex:outputText rendered="{!IF((inv.Applied)>0,true,false)}" style="margin-left:10px;padding-right:0px;text-align: right;padding-right:0px;" value="{0, number, $#,###.00}">
+    <apex:param value="{!inv.Applied}" />
+</apex:outputText><apex:outputText rendered="{!IF((inv.Applied)<0,true,false)}" style="margin-left:10px;padding-right:0px;text-align: right;padding-right:0px;" value="({0, number, $#,###.00})">
+    <apex:param value="{!(inv.Applied)*-1}" />
+</apex:outputText>
+<apex:outputText style="margin-left:10px;padding-right:0px;text-align: right;padding-right:0px;"  rendered="{!IF((inv.Applied)==0,true,false)}" value="{0, number, $0.00}">
+    <apex:param value="{!inv.Applied}" />
+</apex:outputText></b></td></tr></table></td>
+                     </tr>
+                     <tr>
+                        <td style="font-size:10px;"><table><tr><td width="10px;" style="font-size:10px;"><b>Refund</b></td><td width="67px;" style="text-align: right;"><b><apex:outputText rendered="{!IF((inv.Refund)>0,true,false)}" style="margin-left:10px;padding-right:0px;text-align: right;padding-right:0px;" value="{0, number, $#,###.00}">
+    <apex:param value="{!inv.Refund}" />
+</apex:outputText><!--<apex:outputText rendered="{!IF((inv.Applied)<0,true,false)}" style="margin-left:10px;padding-right:0px;text-align: right;padding-right:0px;" value="{0, number, $#,###.00}">
+    <apex:param value="{!(inv.Applied)*-1}" />
+</apex:outputText>-->
+<apex:outputText style="margin-left:10px;padding-right:0px;text-align: right;padding-right:0px;" rendered="{!IF((inv.Refund)==0,true,false)}" value="{0, number, $0.00}">
+    <apex:param value="{!inv.Refund}" />
+</apex:outputText></b></td></tr></table></td>
+                     </tr>
+                     <tr>
+                     
+                        <td>---------------------</td>
+                     </tr>
+                     <tr>
+                        <td style="font-size:12px;"><b>Balance  <apex:outputText style="margin-left:5px" rendered="{!IF(inv.Balance<>0,true,false)}" value="{0, number, $#,###.00}">
+    <apex:param value="{!inv.Balance}" />
+</apex:outputText><apex:outputText rendered="{!IF(inv.Balance==0,true,false)}" style="margin-left:5px" value="{0, number, $0.00}">
+    <apex:param value="{!inv.Balance}" />
+</apex:outputText></b></td>
+                     </tr>
+                     <tr>
+                        <td style="font-size:8px;"><!--Due by &nbsp; <apex:outputText value="{0,date,MM/dd/yyyy}">
+                              <apex:param value="{!InvoiceGenerateDate}" />
+                           </apex:outputText>--></td>
+                     </tr>
+                     <tr>
+                        <td >
+                        <apex:outputText rendered="{!IF(inv.Balance>0 && pastDueDays>0,true,false)}" style="border: 1px solid #cccccc;font-size:8px;float:center;padding:5px;" value="Past due from {!pastDueDays} days"></apex:outputText>  
+                           <apex:outputText rendered="{!IF(inv.Balance>0 && pastDueDays<1,true,false)}" style="border: 1px solid #cccccc;font-size:8px;float:center;padding:5px;" value="UNPAID"></apex:outputText>
+                           <apex:outputText rendered="{!IF(inv.Balance==0,true,false)}" style="border: 1px solid #cccccc;font-size:8px;float:center;padding:5px;" value="PAID"></apex:outputText>
+                        </td>
+                     </tr>
+                  </table>
+               </td>
+            </tr>
+            <tr>
+               <td>
+                  <apex:outputPanel rendered="{!IF(inv.zinvrefund.size>0,true,false)}">
+                     <p style="font-size:11px;width:300px;">Your refund details</p>
+                     <table  border="0" cellspacing="0"  width="560px;">
+                        <tr style="background-color:  #F5F5F5">
+                           <td style="font-size:9px;padding: 6px;"><b>REFUND DATE</b></td>
+                           <td style="font-size:9px;"><b>REFUND METHOD</b></td>
+                           <td style="font-size:9px;"><b>CARD HOLDER</b></td>
+                           <td style="font-size:9px;"><b>REFUND AMOUNTS</b></td>
+                        </tr>
+                        <apex:repeat value="{!inv.zinvrefund}" var="ii">
+                           <tr>
+                              <td style="font-size:8px;padding: 6px;">
+                                 <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                    <apex:param value="{!ii.CreatedDate}" />
+                                 </apex:outputText>
+                              </td>
+                              <td style="font-size:8px;">{!ii.Zuora__InvoicePayment__r.Payment_Method__c}</td>
+                              <td style="font-size:8px;">{!ii.Zuora__InvoicePayment__r.Credit_Card_Name__c}</td>
+                              <td style="font-size:8px;"><apex:outputText rendered="{!IF(ii.Zuora__RefundAmount__c>0,true,false)}" value="{0, number, $#,###.00}">
+    <apex:param value="{!ii.Zuora__RefundAmount__c}" />
+</apex:outputText><APEX:OUTputPanel rendered="{!IF(ii.Zuora__RefundAmount__c<0,true,false)}">
+(<apex:outputText value="{0, number, $#,###.00}">
+    <apex:param value="{! ABS(ii.Zuora__RefundAmount__c)}" />
+</apex:outputText>)</APEX:OUTputPanel></td>
+                           </tr>
+                           <tr style="background-color:#F5F5F5;">
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                           </tr>
+                        </apex:repeat>
+                     </table>
+                  </apex:outputPanel>
+               </td>
+               <td></td>
+            </tr>
+            <tr>
+               <td>
+                  <apex:outputPanel rendered="{!IF(inv.zinvCredit.size>0,true,false)}">
+                     <p style="font-size:11px;width:300px;">Your credit details</p>
+                     
+                  <table  border="0" cellspacing="0"  width="560px;">
+                        <tr style="background-color:  #F5F5F5">
+                           <td style="font-size:9px;padding: 6px;"><b>CREDIT DATE</b></td>
+                           <td style="font-size:9px;"><b>REASON</b></td>
+                           
+                           <td style="font-size:9px;text-align: right;padding-right:200px;"><b>CREDIT AMOUNTS</b></td>
+                        </tr>
+                        <apex:repeat value="{!inv.zinvCredit}" var="ii">
+                           <tr>
+                              <td style="font-size:8px;padding: 6px;">
+                                 <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                    <apex:param value="{!ii.Adjustment_Date__c}" />
+                                 </apex:outputText>
+                              </td>
+                              <td style="font-size:8px;">{!ii.Reason_Code__c}</td>
+                              
+                              <td style="font-size:8px;text-align: right;padding-right:200px;"><apex:outputText rendered="{!IF(ii.Zuora_Amount__c>=0,true,false)}"  value="{0, number, $#,###.00}">
+    <apex:param value="{!ii.Zuora_Amount__c}" />
+</apex:outputText>
+<APEX:OUTputPanel rendered="{!IF(ii.Zuora_Amount__c<0,true,false)}">
+(<apex:outputText value="{0, number, $#,###.00}">
+    <apex:param value="{! ABS(ii.Zuora_Amount__c)}" />
+</apex:outputText>)</APEX:OUTputPanel>
+</td>
+                           </tr>
+                           <tr style="background-color:#F5F5F5;">
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                              <td></td>
+                           </tr>
+                        </apex:repeat>
+                     </table>
+                  </apex:outputPanel>
+               </td>
+               <td></td>
+            </tr>
+         </apex:repeat>
+          <tr valign="top">
+                                                        <td colspan="5" style="padding-left: 10px; padding-top: 20px; padding-bottom: 10px; font-size: 10px; vertical-algin: middle;" valign="middle">
+                                                            *One time charge is also included and can be identified when service start date and end date are same.
+                                                        </td>
+
+                                                    </tr>
+      </table>
+   </div>
+
+</apex:page>

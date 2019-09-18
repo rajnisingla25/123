@@ -1,0 +1,34 @@
+<apex:page standardController="Lead" recordSetvar="leads" extensions="ListingMarket" contentType="application/vnd.ms-excel#AccountListingExport.xls" cache="true" showheader="false">
+    <apex:form >
+        <apex:pageBlock title="Account Listings">
+            <apex:pageBlockTable value="{!AccountListing}" var="a">
+                <apex:column value="{!a.Account_Name__c}"/>
+                <apex:column value="{!a.Account_Type__c}"/>
+                <apex:column value="{!a.Zip__c}"/>
+                <apex:column value="{!a.City__c}"/>
+                <apex:column value="{!a.State__c}"/>
+                <apex:column value="{!a.County__c}"/>
+                <apex:column value="{!a.Country__c}"/>
+                <apex:column value="{!a.Market_Tier__c}"/>
+                <apex:column value="{!a.Listing_Type__c}"/>
+                <apex:column value="{!a.Listing_Count__c}"/>
+                <apex:column value="{!a.CFCB_Full_Fast__c}"/>
+                <apex:column value="{!a.CFCB_Full_Flex__c}"/>
+                <apex:column value="{!a.CFCB_Half_Fast__c}"/>
+                <apex:column value="{!a.CFCB_Half_Flex__c}"/>
+                <apex:column value="{!a.CFCB_City_Fast__c}"/>
+                <apex:column value="{!a.CFCB_City_Flex__c}"/>
+                <apex:column value="{!a.CFCB_FULL_TIER__c}"/>
+                <apex:column value="{!a.CFCB_HALF_TIER__c}"/>
+                <apex:column value="{!a.CFCB_CITY_TIER__c}"/>
+                <apex:column value="{!a.CFCB_CITYHALF_TIER__c}"/>
+                <apex:column value="{!a.DAP__c}"/>
+                <apex:column value="{!a.FAC_COMP_Qty__c}"/>
+                <apex:column value="{!a.FAC_LB_Qty__c}"/>
+                <apex:column value="{!a.FAC_MREC_Qty__c}"/>
+                <apex:column value="{!a.FH__c}"/>
+                <apex:column value="{!a.Hand_Raiser__c}"/>      
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

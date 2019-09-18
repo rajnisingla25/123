@@ -1,0 +1,5 @@
+<apex:page standardStylesheets="false" showHeader="false" applyBodyTag="false" applyHtmlTag="false">
+    <div style="text-align:center;">
+         <img src="{!$Resource.custDashboardError}"/>
+    </div>
+</apex:page>

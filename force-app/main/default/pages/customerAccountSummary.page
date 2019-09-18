@@ -1,0 +1,205 @@
+<apex:page renderAs="pdf" standardController="Account" extensions="customerAccountSummary" showHeader="false" sidebar="false" standardStylesheets="false" applyBodyTag="false" applyHtmlTag="false" title="Customer Account Summary" readOnly="true">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+        <title>Customer Account Summary</title>
+         <apex:includeScript value="/support/console/40.0/integration.js"/>
+      
+     <apex:stylesheet value="{!$Resource.customerAccountSummaryCss}"/>
+    
+    </head>
+   
+    <body class="accountsummery-rep-body" style="font-family: sans-serif;">
+
+    <div class="footer">
+                <div style="float: right; height: 45px; padding-top: 20px; font-size: 12px;"><span>Contact us:</span> <Strong> 3315 scott Blvd, Santa Clara, CA 96054 &nbsp;</Strong><span>Email:</span><Strong> customercare@realtor.com&nbsp;</Strong><span>Phone:</span><Strong> (800)878-4166</Strong></div>
+                
+                <div style="float: left;"> <apex:image id="logo1" url="{!$Resource.RealtorLogo4}" height="45px"/></div>
+                 <div style="clear: both"></div>
+          </div>  
+      
+             <apex:outputPanel id="export-table-panel">
+                     
+                        <div class="float-left"><div colspan="4" style="text-align:left;font-size:24px;color: #111111 !important">Account Summary</div></div>
+                        <div class="float-right acct-info" style="font-size:14px;">
+                        
+                        <table style="box-sizing: border-box; border-collapse: collapse; mso-table-lspace: 0pt; width: 100%; max-width:100%;  font-family: 'Roboto', Helvetica, Arial, 'Lucida Grande', sans-serif; font-size: 12px; " cellpadding="5px">
+                          <tr>
+                            <td>Summary issued:</td>
+                            <td style="font-weight: bold">{!currentDateTimeFormatted}</td>
+                          </tr>
+                          <tr>
+                            <td>Primary Contact:</td>
+                            <td style="font-weight: bold">{!contactName}</td>
+                          </tr>
+                          <tr>
+                            <td>Account number: </td>
+                            <td style="font-weight: bold">{!partyId}</td>
+                          </tr>
+                        </table>
+                        
+                        </div>
+                        <div style="clear: both"></div>
+                    <br/>
+
+                     <div id="export-table-container" style="display:block; overflow-x:auto; font-size:14px;">   
+                     <apex:outputPanel rendered="{!bmsAssetOrderList.size > 0}"><!-- LCM-440: New BMS section-->
+                         <table class="export-table" style="box-sizing: border-box; border-collapse: collapse; table-layout:fixed; font-family: 'Roboto', Helvetica, Arial, 'Lucida Grande', sans-serif; " cellpadding="6px" width="100%">
+                             <tr class="export-table-header-tr">
+                                <td class="td-1" style="background-color: #f6f6f6;border-collapse: collapse;overflow: hidden padding-top: 10px; padding-bottom: 10px;">PRODUCT</td>
+                                <td class="td-2" style=" background-color: #f6f6f6;border-collapse: collapse;overflow: hidden; word-break: break-all; padding-top: 10px; padding-bottom: 10px; display: {!If(marketNotNull == true ,'','none') } ">MARKET</td>
+                                <td class="td-3" style="background-color: #f6f6f6;border-collapse: collapse;overflow: hidden padding-top: 10px; padding-bottom: 10px;">QUANTITY</td>
+                                <td class="td-4" style="background-color: #f6f6f6;border-collapse: collapse; padding-top: 10px; padding-bottom: 10px;">LEAD TYPE</td>
+                                <td class="td-5" style="background-color: #f6f6f6;border-collapse: collapse; padding-top: 10px; padding-bottom: 10px;">PRODUCT TYPE</td>
+                                <td class="td-6" style="background-color: #f6f6f6;border-collapse: collapse; padding-top: 10px; padding-bottom: 10px;">TERM</td>
+                                <td class="td-7" style="background-color: #f6f6f6;border-collapse: collapse; padding-top: 10px; padding-bottom: 10px; text-align: right; display: {!If(monthlyPayNotNull == true ,'','none') }">MONTHLY PAYMENT</td>
+                                <td class="td-8" style="background-color: #f6f6f6;border-collapse: collapse; padding-top: 10px; padding-bottom: 10px; text-align: right; display: {!If(PaidInFullNotNull == true ,'','none') }">PAID IN FULL</td>
+                                <td class="td-9" style="background-color: #f6f6f6;border-collapse: collapse; padding-top: 10px; padding-bottom: 10px;">START DATE</td>
+                                <td class="td-10" style="background-color: #f6f6f6;border-collapse: collapse; padding-top: 10px; padding-bottom: 10px;">END DATE</td>
+                                <td class="td-11" style="background-color: #f6f6f6;border-collapse: collapse; padding-top: 10px; padding-bottom: 10px;">ORDER NUMBER</td>
+                             </tr>  
+                             <tr class="level-1-header-tr" style="background-color: white;font-size:14px;">
+                                 <td style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight:500;white-space: nowrap;font-size:16px">Broker Marketing Solution</td>
+                                 <td style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight:500; overflow-x:hidden;display: {!If(marketNotNull == true ,'','none') }"></td>
+                                 <td style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight:500; overflow-x:hidden;"></td>
+                                 <td style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight:500; overflow-x:hidden;"></td>
+                                 <td style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight:500; overflow-x:hidden;"></td>
+                                 <td style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight:500; overflow-x:hidden;"></td>
+                                 <td style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: right;font-weight:500; white-space: nowrap;font-size:16px;overflow-x:hidden; display: {!If(monthlyPayNotNull == true ,'','none') }">$ {!bmsMonthlyPrice}</td>
+                                 <td style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: right;font-weight:500; white-space: nowrap;font-size:16px;overflow-x:hidden; display: {!If(PaidInFullNotNull == true ,'','none') }">$ {!bmsPaidInFullPrice}</td>
+                                 <td style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight:500; overflow-x:hidden;"></td>
+                                 <td style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight:500; overflow-x:hidden;"></td>
+                                 <td style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight:500; overflow-x:hidden;"></td>
+                             </tr>
+                             <apex:repeat value="{!bmsAssetOrderList}" var="ast">
+                                 <tr class="level-1-header-tr" style="background-color: white;font-size:14px;">
+                                      <td  style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight:500; overflow-x:hidden;">
+                                           <apex:outputText value="{!ast.Product_Name}" >
+                                           </apex:outputText>
+                                      </td>
+                                       <td class="td" style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left; overflow-x:hidden; display: {!If(marketNotNull == true ,'','none') }">
+                                           <apex:outputText value="{!ast.Market}" >
+                                           </apex:outputText>
+                                      </td>
+                                     <td  style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left; overflow-x:hidden;">
+                                           <apex:outputText value="{!ast.Quantity}" >
+                                           </apex:outputText>
+                                      </td>
+                                      <td  style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight: normal; overflow-x:hidden;">
+                                           <apex:outputText value="{!ast.Lead_Type}" >
+                                           </apex:outputText>
+                                      </td>
+                                      <td  style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight: normal; overflow-x:hidden;">
+                                           <apex:outputText value="{!ast.Product_Type}" >
+                                           </apex:outputText>
+                                      </td>
+                                      <td  style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight: normal; overflow-x:hidden;">
+                                           <apex:outputText value="{!ast.Contract_Term}" >
+                                           </apex:outputText>
+                                      </td>
+                                      <td  style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: right;font-weight: normal; overflow-x:hidden; display: {!If(monthlyPayNotNull == true ,'','none') }">
+                                           <apex:outputText value="{!IF((ast.Billing_Period == 'Monthly'),'Bundle Pricing', '')}" >
+                                           </apex:outputText>
+                                      </td>
+                                      <td  style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: right;font-weight: normal; overflow-x:hidden; display: {!If(PaidInFullNotNull == true ,'','none') }">
+                                           <apex:outputText value="{!IF((ast.Billing_Period != 'Monthly'),'Bundle Pricing', '')}" >
+                                           </apex:outputText>
+                                      </td>
+                                      <td  style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight: normal; overflow-x:hidden;">
+                                        <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                            <apex:param value="{!(ast.Start_Date)}" />
+                                        
+                                         </apex:outputText>
+                                      </td>
+                                      <td style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight: normal; overflow-x:hidden;">
+                                         <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                            <apex:param value="{!(ast.End_Date)}" />
+                                         </apex:outputText>
+                                      </td>
+                                      <td  style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight: normal; overflow-x:hidden;">
+                                           <apex:outputText value="{!ast.OrderNumber}" >
+                                           </apex:outputText>
+                                      </td>
+                                 </tr>         
+                             </apex:repeat>          
+                         </table>
+                         <br/><br/>
+                     </apex:outputPanel>
+                     <apex:outputPanel rendered="{!assetOrderList.size > 0}">
+                          <table class="export-table" style="box-sizing: border-box; border-collapse: collapse; table-layout:fixed; font-family: 'Roboto', Helvetica, Arial, 'Lucida Grande', sans-serif; " cellpadding="6px" width="100%">
+                             <tr class="export-table-header-tr">
+                                <td class="td-1" style="background-color: #f6f6f6;border-collapse: collapse;overflow: hidden padding-top: 10px; padding-bottom: 10px;">PRODUCT</td>
+                                <td class="td-2" style=" background-color: #f6f6f6;border-collapse: collapse;overflow: hidden; word-break: break-all; padding-top: 10px; padding-bottom: 10px; display: {!If(marketNotNull == true ,'','none') } ">MARKET</td>
+                                <td class="td-3" style="background-color: #f6f6f6;border-collapse: collapse;overflow: hidden padding-top: 10px; padding-bottom: 10px;">QUANTITY</td>
+                                <td class="td-4" style="background-color: #f6f6f6;border-collapse: collapse; padding-top: 10px; padding-bottom: 10px;">LEAD TYPE</td>
+                                <td class="td-5" style="background-color: #f6f6f6;border-collapse: collapse; padding-top: 10px; padding-bottom: 10px;">PRODUCT TYPE</td>
+                                <td class="td-6" style="background-color: #f6f6f6;border-collapse: collapse; padding-top: 10px; padding-bottom: 10px;">TERM</td>
+                                <td class="td-7" style="background-color: #f6f6f6;border-collapse: collapse; padding-top: 10px; padding-bottom: 10px; text-align: right; display: {!If(monthlyPayNotNull == true ,'','none') }">MONTHLY PAYMENT</td>
+                                <td class="td-8" style="background-color: #f6f6f6;border-collapse: collapse; padding-top: 10px; padding-bottom: 10px; text-align: right; display: {!If(PaidInFullNotNull == true ,'','none') }">PAID IN FULL</td>
+                                <td class="td-9" style="background-color: #f6f6f6;border-collapse: collapse; padding-top: 10px; padding-bottom: 10px;">START DATE</td>
+                                <td class="td-10" style="background-color: #f6f6f6;border-collapse: collapse; padding-top: 10px; padding-bottom: 10px;">END DATE</td>
+                                <td class="td-11" style="background-color: #f6f6f6;border-collapse: collapse; padding-top: 10px; padding-bottom: 10px;">ORDER NUMBER</td>
+                             </tr>     
+                             <apex:repeat value="{!assetOrderList}" var="ast">
+                                 <tr class="level-1-header-tr" style="background-color: white;font-size:14px;">
+                                      <td  style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight:500; overflow-x:hidden;">
+                                           <apex:outputText value="{!IF(ast.Product_Name == 'Local Expert', 'Local Expert Zip', ast.Product_Name)}" > <!-- CRM-6156 -->
+                                           </apex:outputText>
+                                      </td>
+                                       <td class="td" style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left; overflow-x:hidden; display: {!If(marketNotNull == true ,'','none') }">
+                                           <apex:outputText value="{!ast.Market}" >
+                                           </apex:outputText>
+                                      </td>
+                                     <td  style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left; overflow-x:hidden;">
+                                           <apex:outputText value="{!ast.Quantity}" >
+                                           </apex:outputText>
+                                      </td>
+                                      <td  style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight: normal; overflow-x:hidden;">
+                                           <apex:outputText value="{!ast.Lead_Type}" >
+                                           </apex:outputText>
+                                      </td>
+                                      <td  style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight: normal; overflow-x:hidden;">
+                                           <apex:outputText value="{!IF(ast.product_name == 'Local Expert' || ast.product_name == 'Local Expert City', SUBSTITUTE(ast.Product_Type,'V','M'), ast.product_type)}" >
+                                           </apex:outputText>
+                                      </td>
+                                      <td  style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight: normal; overflow-x:hidden;">
+                                           <apex:outputText value="{!ast.Contract_Term}" >
+                                           </apex:outputText>
+                                      </td>
+                                      <td  style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: right;font-weight: normal; overflow-x:hidden; display: {!If(monthlyPayNotNull == true ,'','none') }">
+                                           $&nbsp;<apex:outputText value="{!IF((ast.Billing_Period == 'Monthly'),ast.Net_Price, '')}" >
+                                           </apex:outputText>
+                                      </td>
+                                      <td  style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: right;font-weight: normal; overflow-x:hidden; display: {!If(PaidInFullNotNull == true ,'','none') }">
+                                           $&nbsp;<apex:outputText value="{!IF((ast.Billing_Period != 'Monthly'),ast.Net_Price, '')}" >
+                                           </apex:outputText>
+                                      </td>
+                                      <td  style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight: normal; overflow-x:hidden;">
+                                        <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                            <apex:param value="{!(ast.Start_Date)}" />
+                                        
+                                         </apex:outputText>
+                                      </td>
+                                      <td style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight: normal; overflow-x:hidden;">
+                                         <apex:outputText value="{0,date,MM/dd/yyyy}">
+                                            <apex:param value="{!(ast.End_Date)}" />
+                                         </apex:outputText>
+                                      </td>
+                                      <td  style="border-bottom:1px solid #d2cece;border-collapse: collapse;text-align: left;font-weight: normal; overflow-x:hidden;">
+                                           <apex:outputText value="{!ast.OrderNumber}" >
+                                           </apex:outputText>
+                                      </td>
+                                 </tr>         
+                             </apex:repeat>          
+                         </table>
+                      </apex:outputPanel>
+                     <p style="display: {!If(sellerLeadBundleExist == true ,'','none') }">*Connections(SM) for Seller Bundle is a usage based product so pricing shown here is an estimate.</p>
+                     <p>Realtor.com® does not use any National Association of REALTORS® dues to operate and maintain realtor.com®.</p>
+                     <p>© 2016 Move Sales, Inc. REALTOR® and the realtor.com® name and logo are trademarks of the National Association of REALTORS® and are used with permission.
+                     The information in this work is not guaranteed and should be independently verified with your professional advisors prior to use.</p>
+                 </div>   
+                
+             </apex:outputPanel>         
+      
+    </body>        
+        
+</apex:page>

@@ -1,0 +1,629 @@
+<apex:page action="{!if($user.canseedashboard__c = True, 
+                   null, 
+                   urlFor($Action.Account.View, Account.Id,
+                   null, true))}" 
+           standardController="Account" extensions="OPCityAccountSummaryHelper" showHeader="true" standardStylesheets="false" sidebar="false" docType="html-5.0" title="Account Dashboard">
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+        <body>
+            <div class="slds-scope">
+                <div id="loader">
+                </div>
+                <apex:form >
+                    <meta charset="utf-8" />
+                    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+                    <title>Account Dashboard 360</title>
+                    <!--<script src="js/jquery.js" type="text/javascript"></script>
+<script src="js/jquery.dataTables.js" type="text/javascript"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> -->
+<apex:styleSheet value="{!$Resource.Dashboard_common_css}" />
+    <apex:stylesheet value="https://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css"/>
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css"/>
+            <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+                <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css"/> 
+                    <meta name="viewport" content="width=device-width, initial-scale=1" />
+                        <apex:includeScript value="{!$Resource.dashboard_js}" />
+                            <apex:includeScript value="{!URLFOR($Resource.JS_CSS_Bundles,'JS/JQuery-1.12.4.js')}"/>
+                                <apex:includeScript value="{!URLFOR($Resource.JS_CSS_Bundles,'JS/Jquery-Datatable-Min.js')}"/>
+                                    <apex:includeScript value="{!URLFOR($Resource.JS_CSS_Bundles,'JS/JqueryUI.js')}"/>
+                                        <apex:includeScript value="{!URLFOR($Resource.JS_CSS_Bundles,'JS/JQueryUI-Datatable-Min.js')}"/>
+                                            <apex:includeScript value="{!URLFOR($Resource.DatatableRowsGroupJS)}"/>
+                                                
+                                                <apex:includeScript value="{!URLFOR($Resource.JS_CSS_Bundles,'JS/datatables-buttons.min.js')}"/>
+                                                    <apex:includeScript value="{!URLFOR($Resource.JS_CSS_Bundles,'JS/jszip.min.js')}"/>
+                                                        <apex:includeScript value="{!URLFOR($Resource.JS_CSS_Bundles,'JS/pdfmake.min.js')}"/>
+                                                            <apex:includeScript value="{!URLFOR($Resource.JS_CSS_Bundles,'JS/vfs_fonts.js')}"/>
+                                                                <apex:includeScript value="{!URLFOR($Resource.JS_CSS_Bundles,'JS/buttons.html5.min.js')}"/>
+                                                                    <script>
+                                                                    </script>
+<style>
+.tabcontent {
+display: none;
+}
+.refreshButton{
+margin-left: 15px;
+color: #fffff1;
+font-weight: bold;
+float: right;
+line-height: 20px;
+cursor: pointer;
+background: #1797c0;
+}
+#scroll {
+position:fixed;
+right:10px;
+bottom:10px;
+cursor:pointer;
+width:50px;
+height:50px;
+background-color:#3498db;
+text-indent:-9999px;
+display:none;
+-webkit-border-radius:60px;
+-moz-border-radius:60px;
+border-radius:60px
+}
+#scroll span {
+position:absolute;
+top:50%;
+left:50%;
+margin-left:-8px;
+margin-top:-12px;
+height:0;
+width:0;
+border:8px solid transparent;
+border-bottom-color:#ffffff;
+}
+#scroll:hover {
+background-color:#e74c3c;
+opacity:1;filter:"alpha(opacity=100)";
+-ms-filter:"alpha(opacity=100)";
+}
+</style>
+<!--The Salesforce Lightning Design System Wrapping Div with Scoping Class -->
+                    <apex:slds />
+                    <apex:pageMessages ></apex:pageMessages>
+                    <div class="alert" id="ErrorDiv" style="display:none;">
+                        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+                        <strong>Error!</strong> Please refresh your browser. If the error persists, please contact your system administrator.
+                    </div> 
+                    <div>
+                        <button onclick="myFunction()" class="refreshButton slds-button slds-button_neutral">Refresh</button>
+                    </div>
+                    <div class="minerva18">
+                        <a href="#" id="scroll" style="display: none;"><span></span></a>
+                        <!--The Salesforce Lightning Design System Tabs Component-->
+                        <div class="slds-tabs--default">
+                            <ul class="slds-tabs--default__nav" role="tablist">
+                                <li class="slds-tabs--default__item  slds-active" title="Item One" role="presentation" style="font-weight:bold;">
+                                    <a class="slds-tabs--default__link" href="javascript:void(0);" role="tab" tabindex="0" aria-selected="true" aria-controls="tab-default-1" id="tab-default-1__item">Account Summary</a></li>
+                                <li class="slds-tabs--default__item " title="Item Two" role="presentation" style="font-weight:bold;">
+                                    <a class="slds-tabs--default__link" href="javascript:void(0);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item">Account Details</a></li>
+                                <li class="slds-tabs--default__item " title="Item Two" role="presentation" style="font-weight:bold;display:{!if(isOpcityCoreTeamUser,"block","none")};">
+                                    <a class="slds-tabs--default__link" href="javascript:void(0);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item">{!$Label.QuickOpcityQuoteTab}</a></li>
+                                <!--<li class="slds-tabs--default__item " title="Item Two" role="presentation" style="font-weight:bold;">
+                                    <a class="slds-tabs--default__link" href="javascript:void(0);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-6" id="tab-default-6__item">{!$Label.QuickOpcityQuoteTabBLA}</a></li>-->
+                                <li class="slds-tabs--default__item " title="Item Two" role="presentation" style="font-weight:bold;display:{!if(isOpcityBlaTeamUser,"block","none")};">
+                                    <a class="slds-tabs--default__link" href="javascript:void(0);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-7" id="tab-default-7__item">{!$Label.QuickOpcityQuoteTabBLA}</a></li>
+                            </ul>
+                            <div id="tab-default-1" class="slds-tabs--default__content slds-show tabcontent" role="tabpanel" aria-labelledby="tab-default-1__item">
+                                <div class="stillLoading"> <img src="{!URLFOR($Resource.stillLoading)}" style="padding-left:35%;padding-right:0.6%;"/><b><font style="font-size: medium;color: darkred;">Still fetching live data... </font></b></div>
+                                <div class="slds-card" style="border-color: #85C8DD; border-width:10px 1px 1px;border-style:solid;margin:25px 0;">
+                                    <div class="slds-card__header slds-grid" style="position:relative;">
+                                        <div class="slds-media slds-media--center slds-has-flexi-truncate">
+                                            <div class="slds-media__figure">
+                                                <!--  <svg aria-hidden="true" class="slds-icon slds-icon-standard-contact slds-icon--small">
+<use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#contact"></use>
+</svg> -->
+                                            </div>
+                                            <div class="slds-media__body" style="font-weight:bold;background-color: #00485F;position: absolute;top: -28px;font-weight: bold;border-radius: 5px;padding: 5px 14px;left: 15px;color: #fff;">
+                                                <h2 style="font-size:15px;" class="slds-text-heading--small slds-truncate">Account Profile</h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="slds-card__body">
+                                        <table class="slds-table " cellspacing="4">
+                                            <thead>
+                                                <tr>
+                                                    <th style="font-weight:bold;">Party Id</th> 
+                                                    <th style="font-weight:bold;">Opcity</th>  
+                                                    <th style="font-weight:bold;">Products Owned</th>
+                                                    <th style="font-weight:bold;">Total Contract Value</th>
+                                                    <th style="font-weight:bold;">Billing Status</th>
+                                                    <th style="font-weight:bold;">Account Owner</th>
+                                                    <th style="font-weight:bold;" class=".gusForm .gusFormFieldLeft label">Bill To Address</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="slds-hint-parent">
+                                                    <td>{!JSENCODE(account.Party_ID__c)}</td>
+                                                    <td><apex:outputtext value="{!If(OR(AND(account.Type == 'Broker',OR(account.BLA__c == 'Yes',account.BLA__c == 'Partial',account.Core__c == 'Yes',account.Core__c == 'Partial')),AND(account.Type == 'Realtor Agent', OR(account.Office_Agent_BLA__c == 'BLA Unconfirmed',account.Office_Agent_BLA__c == 'BLA Confirmed',account.Office_Agent_BLA__c == 'Core'))),"Yes","No")}" /></td>
+                                                    <td class="slds-text-body_regular" data-label="Owned Products" >
+                                                        <script>
+                                                        var temp='{!JSENCODE(IF(OwnedProductsNames='','-',OwnedProductsNames))}';
+                                                        if(temp.indexOf(';')>=0){
+                                                            var tempArr=temp.split(';');
+                                                            for(i=0;i<tempArr.length;i++){
+                                                                console.log(tempArr[i]);
+                                                                document.write(tempArr[i]+';<br/>');
+                                                            }
+                                                        }
+                                                        else{
+                                                            document.write('{!JSENCODE(IF(OwnedProductsNames='','-',OwnedProductsNames))}');
+                                                        }
+                                                        </script>
+                                                        <p></p>
+                                                    </td>  
+                                                    <td class="slds-text-body_regular" data-label="Total Contract Value">
+                                                        <apex:outputText value="{0, Number, Currency}">
+                                                            <apex:param value="{!Account.Total_Contract_Value__c}" />
+                                                        </apex:outputText>
+                                                    </td>
+                                                    <td class="slds-text-body_regular" data-label="Billing Status">
+                                                        <font color="green" font-weight="bold"> <apex:outputText value="{!account.Billing_Status__c}" escape="false"/> </font>
+                                                    </td>
+                                                    <td class="slds-text-body_regular" data-label="Account Owner">{!JSENCODE(account.Owner.Name)}</td>
+                                                    <td class="slds-text-body_regular" data-label="Account Owner">
+                                                        {!JSENCODE(account.BillingStreet)} <br/>{!JSENCODE(account.BillingCity)}, {!JSENCODE(account.BillingState)} - {!JSENCODE(account.BillingPostalCode)} 
+                                                        <br/>{!JSENCODE(account.BillingCountry)}</td>                     
+                                                </tr>
+                                            </tbody>
+                                            <thead>
+                                                <tr>
+                                                    <th style="font-weight:bold;">Account Sub Type</th>
+                                                    <th style="font-weight:bold;">Franchise Type</th>
+                                                    <th style="font-weight:bold;">Monthly Spend</th>
+                                                    <th style="font-weight:bold;">Consolidated Billing Day</th>
+                                                    <th style="font-weight:bold;">Time since Last Touch</th>
+                                                    <th style="font-weight:bold;">Preferred phone</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="slds-hint-parent">
+                                                    <td  class="slds-text-body_regular" data-label="Location"><apex:outputtext value="{!account.Account_Sub_Type__c}" /></td>
+                                                    <td class="slds-text-body_regular" data-label="Franchise Type">{!JSENCODE(account.Franchise_Type__c)}</td>  
+                                                    <td class="slds-text-body_regular" data-label="Monthly spend">
+                                                        <apex:outputText value="{0, Number, Currency}">
+                                                            <apex:param value="{!Monthlyspend}" />
+                                                        </apex:outputText>
+                                                    </td>
+                                                    <td class="slds-text-body_regular" data-label="Consolidated Billing Date">
+                                                        {!JSENCODE(if(account.Consolidated_Billing_Flag__c,ConsolidatedBillingDate,'-'))}
+                                                    </td>
+                                                    <td class="slds-text-body_regular" >{!account.last_touched2__c} </td>
+                                                    <td class="slds-text-body_regular" >{!account.Phone} </td>  
+                                                </tr>
+                                            </tbody>
+                                            <thead>
+                                                <tr>
+                                                    <th style="font-weight:bold;">Account Type</th>
+                                                    <th style="font-weight:bold;">SMS Opt-in</th>
+                                                    <th style="font-weight:bold;">Next Renewal Date</th>
+                                                    <th style="font-weight:bold;">Time Now</th> 
+                                                    <th style="font-weight:bold;">Primary Email Address</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="slds-hint-parent">
+                                                    <td  class="slds-text-body_regular" data-label="Location"><apex:outputtext value="{!account.Type}" /></td>
+                                                    <td  class="slds-text-body_regular" data-label="Location"><apex:outputtext value="{!If(account.SMS_Opt_In__c == false,"NO","YES")}"/></td>               
+                                                    <td><apex:outputText value="{0, date, MMMM d','  yyyy}">
+                                                        <apex:param value="{!account.Next_Renewal_Date__c}"/>
+                                                        </apex:outputText></td>
+                                                    <td id="localTime"></td>   
+                                                    <td>{!JSENCODE(account.Email_Address__c)}</td>                            
+                                                </tr>
+                                            </tbody>
+                                        </table> 
+                                    </div>
+                                </div>
+                                <div class="slds-card" style="border-color: #85C8DD; border-width:10px 1px 1px;border-style:solid;margin:30px 0;">
+                                    <div class="slds-card__header slds-grid" style="position:relative;">
+                                        <div class="slds-media slds-media--center slds-has-flexi-truncate">
+                                            <div class="slds-media__figure">
+                                                <!--   <svg aria-hidden="true" class="slds-icon slds-icon-standard-contact slds-icon--small">
+<use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#contact"></use>
+</svg> -->
+                                            </div>
+                                            <div class="slds-media__body" style="font-weight:bold;background-color: #00485F;position: absolute;top: -28px;font-weight: bold;border-radius: 5px;padding: 5px 14px;left: 15px;color: #fff;">
+                                                <h2 style="font-size:15px;" class="slds-text-heading--small slds-truncate">Market Information</h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="slds-card__body">
+                                        <div  class = "pbBody">                    
+                                            <div class="innerPanel">
+                                                <table id="listingTable" cellspacing="0" width="100%" class="row-border display slds-max-medium-table_stacked-horizontal">
+                                                    <thead align="right">
+                                                        <tr>
+                                                            <th style="font-weight:bold;text-align:center;border:1px solid #c5c5c5;" width="15%" rowspan="1" >MSA</th>
+                                                            <th style="font-weight:bold;text-align:center;border:1px solid #c5c5c5;" width="15%" rowspan="1" >Market</th>
+                                                            <th style="font-weight:bold;text-align:center;border:1px solid #c5c5c5;" width="15%" rowspan="1" class="no-sort" >Buy-side Transactions</th>
+                                                            <th style="font-weight:bold;text-align:center;border:1px solid #c5c5c5;" width="15%" rowspan="1" >Listings</th>
+                                                            <th style="font-weight:bold;text-align:center;border:1px solid #c5c5c5;" width="15%" rowspan="1" >Median Market Price</th>
+                                                            <th style="font-weight:bold;text-align:center;border:1px solid #c5c5c5;" width="25%" rowspan="1" title="This field displays type of waitlist and Pre-Authorization Information" >Entry Type</th>
+                                                        </tr> 
+                                                    </thead>
+                                                    <tbody align ="center" id="marketTableBody">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="tab-default-2" class="slds-tabs--default__content slds-hide tabcontent" role="tabpanel" aria-labelledby="tab-default-2__item">
+                                <apex:outputPanel layout="block" id="detailTab">
+                                    <apex:detail subject="{!JSENCODE($CurrentPage.parameters.id)}" inlineEdit="true" relatedList="true" showChatter="true" title="true" id="detailts"/>
+                                </apex:outputPanel>     
+                            </div>
+                            <div id="tab-default-3" class="slds-tabs--default__content slds-hide tabcontent" role="tabpanel" aria-labelledby="tab-default-3__item">
+                                <iframe height="800px" width="100%" src="{!OpcityCoreQQURL}" rendered="{!loadDeatils}"/> 
+                            </div> 
+                            <div id="tab-default-4" class="slds-tabs--default__content slds-hide tabcontent" role="tabpanel" aria-labelledby="tab-default-4__item">
+                                <apex:outputPanel id="waitlist" layout="block">
+                                    <iframe height="1000px" width="100%" src="AccountCreateWaitlist?id={!$CurrentPage.parameters.id}" rendered="{!loadDeatils}" onload="parent.resizeIframe(1.5*document.body.clientHeight,'tab-default-4');"/>
+                                </apex:outputPanel>
+                            </div>
+                            <div id="tab-default-5" class="slds-tabs--default__content slds-hide tabcontent" role="tabpanel" aria-labelledby="tab-default-5__item">
+                                <apex:outputPanel id="assetsOwn" layout="block">
+                                    <iframe height="1000px" id="assetIfrm" width="100%" src="" rendered="{!loadDeatils}" onload="parent.resizeIframe(1.5*document.body.clientHeight,'tab-default-5');"/>
+                                </apex:outputPanel>
+                            </div> 
+                            <!--<div id="tab-default-6" class="slds-tabs--default__content slds-hide tabcontent" role="tabpanel" aria-labelledby="tab-default-6__item">  
+                                <iframe height="800px" width="100%" src="{!OpcityBLAQQURL}" rendered="{!loadDeatils}"/> 
+                            </div>-->
+                            <div id="tab-default-7" class="slds-tabs--default__content slds-hide tabcontent" role="tabpanel" aria-labelledby="tab-default-7__item">
+                                <apex:outputPanel id="SelectOfficeOpcity" layout="block" rendered="{!isOpcityBlaTeamUser}">
+                                    <iframe height="{!blaIframeHeight}px" width="100%" id="opcityBLAQuote" src="" scrolling="auto" rendered="{!loadDeatils}"/> <!-- Opcity BLA Tab for CRM-6098 -->
+                                </apex:outputPanel>
+                            </div>
+                        </div>
+                    </div>
+                    <apex:actionFunction action="{!loadTheTab}" name="loadTabs" rerender="detailTab,waitlist,priceTab"/>
+                </apex:form>
+                <apex:includeScript value="/support/console/40.0/integration.js"/>
+                <apex:includeScript value="/support/console/40.0/connection.js"/>
+                <script type="text/javascript">
+                /*SLDS Tabs JS*/
+                $('.slds-tabs--default__link,.slds-tabs--scoped__link').click(function(){
+                    $(this).parent().parent().find('.slds-tabs--default__link,.slds-tabs--scoped__link').attr('aria-selected','false');
+                    $(this).attr('aria-selected','true');
+                    $(this).parent().parent().find('.slds-tabs--default__link,.slds-tabs--scoped__link').attr('tabindex','-1');
+                    $(this).attr('tabindex','0');
+                    $(this).parent().addClass('slds-active').siblings().removeClass('slds-active');
+                    $(this).parent().parent().parent().find('.'+$(this).parent().parent().parent().find('.slds-tabs--default__content,.slds-tabs--scoped__content')[0].classList[0]).removeClass('slds-show').addClass('slds-hide');
+                    $(this).parent().parent().parent().find('#'+$(this).attr('aria-controls')).removeClass('slds-hide').addClass('slds-show');
+                }); 
+                /*SLDS Tabs JS*/
+                if(sforce.console.isInConsole()){
+                    document.getElementById('assetIfrm').src='includeAssetsToAccount?id={!$CurrentPage.parameters.id}&inConsole=true';
+                    var blaIframe = document.getElementById('opcityBLAQuote');
+                    if (blaIframe != null) {
+                        blaIframe.src='OpcityQuote?id={!$CurrentPage.parameters.id}&inConsole=true';
+                    }
+                }
+                else{
+                    document.getElementById('assetIfrm').src='includeAssetsToAccount?id={!$CurrentPage.parameters.id}';
+                    var blaIframe = document.getElementById('opcityBLAQuote');
+                    if (blaIframe != null) {
+                        blaIframe.src='OpcityQuote?id={!$CurrentPage.parameters.id}';
+                    }
+                }
+                
+                var waitlistMap;
+                //reInitializeController();
+                //set height for waitlist page
+                function resizeIframe(newHeight, id){    
+                    document.getElementById(id).style.height = parseInt(newHeight,10) + 'px';
+                }
+                var listingTable;
+                function openTabContentDiv(evt, tabname) {
+                    var i, tabcontent, tablinks;
+                    tabcontent = document.getElementsByClassName("tabcontent");
+                    for (i = 0; i < tabcontent.length; i++) {
+                        tabcontent[i].style.display = "none";
+                    }
+                    tablinks = document.getElementsByClassName("tablinks");
+                    for (i = 0; i < tablinks.length; i++) {
+                        tablinks[i].className = tablinks[i].className.replace(" on", "");
+                    }
+                    $("#"+tabname).show();
+                    $(evt).addClass("on");
+                }
+                
+                //Display Live clock based on Account geo codes
+                $(document).ready(function(){
+                    console.log('index -->'+{!$Label.Account360Products}.trim().length);
+                    if (({!$Label.Account360Products}.indexOf('localexpert')) >=0 ) {
+                        $('#productTabs').show();
+                    } else {
+                        $('#productTabs').hide();
+                    }
+                    
+                    $(window).scroll(function(){ 
+                        if ($(this).scrollTop() > 10) { 
+                            $('#scroll').fadeIn(); 
+                        } else { 
+                            $('#scroll').fadeOut(); 
+                        } 
+                        
+                    }); 
+                    $('#scroll').click(function(){ 
+                        $("html, body").animate({ scrollTop: 0 }, 600); 
+                        return false; 
+                    }); 
+                    
+                    //Retrieving the Account location
+                    var Latitude  = '{!Account.BillingLatitude}';//6.0535185;
+                    var Longitude = '{!Account.BillingLongitude}';//80.22097729999996;
+                    startTime();
+                });
+                
+                function startTime() {
+                    var TimeZone = '{!Account.BillingTimezone__c}';
+                    //var today = new Date();
+                    var today = new Date().toLocaleString("en-US", {timeZone: TimeZone});
+                    today = new Date(today);
+                    
+                    var h = today.getHours();
+                    var m = today.getMinutes();
+                    var s = today.getSeconds();
+                    var hh = h;
+                    var dd = "AM";
+                    if (h >= 12) {
+                        h = hh - 12;
+                        dd = "PM";
+                    }
+                    if (h == 0) {
+                        h = 12;
+                    }
+                    m = checkTime(m);
+                    s = checkTime(s);
+                    
+                    document.getElementById('localTime').innerHTML =
+                        h + ":" + m + ":" + s +" "+ dd;
+                    var t = setTimeout(startTime, 500);
+                }
+                
+                function checkTime(i) {
+                    if (i < 10) {i = "0" + i};  
+                    return i;
+                } 
+                
+                function customSearch(obj){
+                    if($(obj).val().indexOf(',')==-1)
+                        listingTable.search($(obj).val()).draw() ;
+                    else 
+                        listingTable.search($(obj).val().split(',').join('|'),true, false).draw();
+                    
+                }
+                
+                var listFlag;
+                if(listingTable!=null && listingTable!=undefined){
+                    listingTable.destroy();listFlag=false;
+                }
+                
+                listingTable= $('#listingTable').DataTable();
+                
+                $("#listingTable_filter").empty();
+                $("#listingTable_filter").html("<label>Search: <input type='text' id='search-inp' onkeyup='customSearch(this);' /></label>");
+                
+                var invData='{!JSENCODE(marketInfoStringJSON)}';
+                console.log(' invData ** '+invData);
+                var waitListMapString='{!JSENCODE(waitListMapString)}';
+                var partyID='{!JSENCODE(partyId)}';
+                
+                if(invData!=null && invData!=undefined && invData!=''){
+                    invData=JSON.parse(invData); 
+                    console.log('$$$$$$$$$$$$'+invData);
+                    var invDataLength=invData.length;
+                    console.log(' *** invDataLength ** '+invDataLength);
+                    var invDataIndex=0;
+                    var simulateIndex=1;
+                    var processDataCalculation=function() {
+                        console.log('$$$$$$$'+invDataIndex+'$$$$$$$$'+simulateIndex);
+                        // Perform xml processing //&& invDataLength % 100 == 0
+                        if (invDataIndex + (6*simulateIndex) < invDataLength) { 
+                            console.log('$$$$$$$'+invDataIndex+'$$$$$$$$'+simulateIndex);
+                            buildTheCodesString(invData.slice(invDataIndex,invDataIndex+(6*simulateIndex)+1));
+                            if(invDataIndex==0)
+                                fadeOut();
+                            invDataIndex=invDataIndex+(6*simulateIndex)+1;
+                            simulateIndex=simulateIndex*2;
+                            setTimeout(processDataCalculation, 5000);
+                        }
+                        else{
+                            console.log('$$$$$$$InSIDE');
+                            console.log('$$$$$$$'+invDataIndex+'$$$$$$$$'+simulateIndex);
+                            buildTheCodesString(invData.slice(invDataIndex,invDataLength));
+                            if(invDataIndex==0)
+                                fadeOut();
+                            $(".stillLoading").fadeOut("slow");
+                        }
+                    };
+                    processDataCalculation();
+                }
+                else{
+                    $(".stillLoading").fadeOut("slow");
+                }
+                function fadeOut(){
+                    setTimeout(function()
+                               {
+                                   $("#loader").fadeOut("slow");
+                               }, 4000);
+                    loadTabs();
+                }
+                
+                function buildTheCodesString(marketData){
+                    console.log(' ** marketData '+marketData);
+                    var marketLength=marketData.length;            
+                    buildTheTableBody(waitListMapString,JSON.stringify(marketData));
+                }
+                
+                function buildTheTableBody(waitListMapString,marketInfoStringJSON){
+                    console.log(' **** waitListMapString *** '+waitListMapString);
+                    if(waitListMapString!=undefined && waitListMapString!=null && waitListMapString!='')
+                        waitlistMap=JSON.parse(waitListMapString);
+                    
+                    $("#marketTableBody").empty();
+                    try{
+                        var invString=JSON.parse(marketInfoStringJSON);
+                        var invStringLen=invString.length;
+                        console.log(' *** invStringLen *** '+invStringLen);
+                        var htmlString11,htmlString1='';
+                        for(i=0;i<invStringLen;i++){
+                            htmlString11=iterateTheData(invString);
+                            htmlString11=htmlString11.replace(new RegExp('undefined', 'g'), '-');
+                            if(htmlString11!='')
+                                htmlString1=htmlString1+ htmlString11;  
+                        }
+                        listingTable.rows.add($(htmlString1)).draw();         
+                    }
+                    catch(err){
+                        console.log(' Error building the table ** '+err.message);
+                    }
+                    finally{
+                    }
+                }
+                
+                function iterateTheData(invString){
+                    console.log(' Entered iterateTheData function ');
+                    var htmlString='';
+                    if(invString[i] != ''){
+                        console.log(' Inventory Data '+invString[i].Inventory_Data__r.Name);
+                        htmlString=htmlString+'<tr>';
+                        htmlString=htmlString+'<td style="text-align:center;" >'+invString[i].Inventory_Data__r.Opcity_MSA__c;
+                        htmlString=htmlString+'</td>';
+                        htmlString=htmlString+'<td style="text-align:center;" >'+invString[i].Inventory_Data__r.Name+', '+invString[i].Inventory_Data__r.City__c+', '+invString[i].Inventory_Data__r.State__c;
+                        htmlString=htmlString+'</td>';
+                        htmlString=htmlString+'<td style="text-align:center;" >'+invString[i].Number_of_Buy_Side_Transactions__c;
+                        htmlString=htmlString+'</td>';
+                        htmlString=htmlString+'<td style="text-align:center;">'+invString[i].Number_of_Listings__c;
+                        htmlString=htmlString+'</td>';
+                        if(isNaN(parseFloat(invString[i].Inventory_Data__r.Median_Market_Price__c).toFixed(2)))
+                            htmlString=htmlString+'<td style="text-align:center;">$0';
+                        else
+                            htmlString=htmlString+'<td style="text-align:center;">$'+parseFloat(invString[i].Inventory_Data__r.Median_Market_Price__c).toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+                        
+                        htmlString=htmlString+'</td>';
+                        
+                        //variable assignment 
+                        var entryType;
+                        var preAuth;
+                        var ownedAssets;
+                        var waitlistType;
+                        
+                        //PreAuth related code
+                        preAuth = '';
+                        var invName=invString[i].Inventory_Data__r.Name;
+                        
+                        if(waitlistMap!=undefined && waitlistMap!=null && waitlistMap[invName]!=undefined && waitlistMap[invName]!=null && waitlistMap[invName]!=''){
+                            preAuth = waitlistMap[invName];
+                        }
+                        
+                        //Waitlist related code
+                        waitlistType = '';
+                        console.log('inside waitlist loop');
+                        //CBC
+                        if(invString[i].Having_waitlist__c || invString[i].Waitlist__c || invString[i].Waitlist_Half__c){
+                            console.log('inside cbc');
+                            if(invString[i].Waitlist_Type__c == 'Hot'){
+                                console.log('inside hot');
+                                waitlistType = '<span style="color:green">CBC Waitlist Hot</span>';
+                            }else{
+                                console.log('inside not hot');
+                                waitlistType = 'CBC Waitlist '+ invString[i].Waitlist_Type__c;
+                            }
+                        }
+                        //LE
+                        if(invString[i].waitlist_product_type__c != ''){
+                            console.log('Inside LE');
+                            if(invString[i].waitlist_type_LE__c == 'Hot'){
+                                console.log('inside hot');
+                                if(waitlistType == ''){
+                                    waitlistType = '<span style="color:green">LE Waitlist Hot</span>';
+                                }else{
+                                    waitlistType = waitlistType + ', <span style="color:green">LE Waitlist Hot</span>';
+                                } 
+                            }else if(invString[i].waitlist_type_LE__c != '' && invString[i].waitlist_type_LE__c != null){
+                                console.log('inside not hot');
+                                if(waitlistType == ''){
+                                    waitlistType = 'LE Waitlist '+ invString[i].waitlist_type_LE__c;
+                                }else{
+                                    waitlistType = waitlistType + ', LE Waitlist '+invString[i].waitlist_type_LE__c;
+                                } 
+                                
+                            }
+                        }
+   
+                        //Owned Assets related code
+                        ownedAssets = '';
+                        if(invString[i].Has_Assets__c == true && invString[i].has_assets_LE__c == true){
+                            console.log('Inside has assets for both');
+                            ownedAssets = 'Owns CBC, LE';
+                        }else{
+                            console.log('Inside else loop for has assets'+invString[i].Has_Assets__c+invString[i].has_assets_LE__c);
+                            if(invString[i].Has_Assets__c == true){
+                                console.log('Inside CBC assets');
+                                ownedAssets = 'Owns CBC';
+                            }
+                            if(invString[i].has_assets_LE__c== true){
+                                console.log('Inside LE assets');
+                                ownedAssets = 'Owns LE';
+                            }
+                        }
+
+                        //adding value to entry type based on assets owned and waitlist information
+                        entryType = '';
+                        if(preAuth != ''){
+                            console.log('Inside preauth string');
+                            entryType = preAuth;
+                        }
+                        if(waitlistType != ''){
+                            console.log('Inside waitlist string');
+                            if(entryType != ''){
+                                console.log('Inside adding to the entry type');
+                                entryType = entryType + '/'+ waitlistType;
+                            }else{
+                                console.log('Inside adding to entry type');
+                                entryType = waitlistType;
+                            }
+                        }
+                        if(ownedAssets != ''){
+                            console.log('Inside adding to the owned assets'+ownedAssets);
+                            if(entryType != ''){
+                                entryType = entryType + '/' + ownedAssets;
+                            }else{
+                                entryType = ownedAssets;
+                            }
+                        } 
+                        
+                        if(entryType == ''){
+                            entryType = '-';
+                        }
+                        console.log('Inside Entry Value ->'+entryType);
+                        htmlString=htmlString+'<td style="text-align:center;">'+ entryType+'</td>'
+                        
+                    }
+                    return htmlString;
+                }
+                //To set tab Title in Console
+                function testSetTabTitle() {
+                    //Set the current tab's title
+                    sforce.console.setTabTitle("{!JSENCODE(Account.Name)}");
+                }
+                var pageLoad = window.onload;
+                window.onload = function() {
+                    if (pageLoad) {
+                        pageLoad();
+                    }
+                    testSetTabTitle();               
+                }
+                function myFunction() {
+                    window.top.location='/console';
+                }
+                </script>
+            </div>
+        </body>
+    </html>
+</apex:page>

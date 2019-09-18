@@ -1,0 +1,9 @@
+<design:component>
+<design:attribute name="backgroundPath" label="Background Image" />
+    <design:attribute name="backgroundColor" label="Background Color" />
+    <design:attribute name="backgroundSize" label="Background Size" placeholder="Ex: cover" />
+    <design:attribute name="backgroundPos" label="Background Position" placeholder="Ex: top center" />
+    <design:attribute name="topPad" label="Top Padding" />
+    <design:attribute name="botPad" label="Bottom Padding" />
+    <design:attribute name="phoneNumber" label="Phone Number" />
+</design:component>

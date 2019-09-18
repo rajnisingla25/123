@@ -1,0 +1,35 @@
+<design:component>
+	<design:attribute name="headline" label="Headline" />
+    <design:attribute name="headlineColor" label="Headline Color" placeholder="Ex: #001d61" />
+    <design:attribute name="headlinePad" label="Headline Padding" placeholder="Ex: 5px 3px 2px 1px" />
+    <design:attribute name="subheadline" label="Subheadline" />
+    <design:attribute name="subheadlineColor" label="Subheadline Color" placeholder="Ex: #001d61" />
+    <design:attribute name="subheadlinePad" label="Subheadline Padding" placeholder="Ex: 5px 3px 2px 1px" />
+    <design:attribute name="textalign" label="Text Align" />
+    <design:attribute name="imagePath" label="Image path"/>
+    <design:attribute name="imageSize" label="Image Size"/>
+    <design:attribute name="imagePad" label="Image Top Padding"/>
+    <design:attribute name="mobileOnly" label="Mobile Only"/>
+    <design:attribute name="backgroundPath" label="Background Image" />
+    <design:attribute name="backgroundColor" label="Background Color" />
+    <design:attribute name="backgroundSize" label="Background Size" placeholder="Ex: cover" />
+    <design:attribute name="backgroundPos" label="Background Position" placeholder="Ex: top center" />
+    <design:attribute name="topPad" label="Top Padding" />
+    <design:attribute name="botPad" label="Bottom Padding" />
+    <design:attribute name="formShadow" label="Form Shadow" placeholder="Ex: #001d61" />
+    
+    
+    <!--Form Attributes.-->
+    <design:attribute name="formButtonText" label="Button Label." placeholder="Ex: 'REGISTER'"/>
+    <design:attribute name="formTitle" label="Form Title." placeholder="Ex: 'Register me'"/>
+    <design:attribute name="showPicklist"  label="Show picklist field in Form." default="true"/>
+
+    <!--Form Attributes.-->
+    
+    <!--PopUp attributes-->
+    <design:attribute name="popUpImageTest" label="Pop-Up Image"/>
+    <design:attribute name="popUpImageLink" label="Pop-Up Image URL" placeholder="Ex. 'http://www.google.com'"/>
+    <design:attribute name="popUpImageWidth" label="Pop-Up Image Width" placeholder="Ex: '50%'"/>
+    <design:attribute name="popupProductType" label="Pop-Up Product" datasource="ADVANTAGE,COBROKE,DOMAINNAME,FIVESTREET,LISTHUBPRO,LOCALEXPERT,OPCITYCORE,RSCONNECT,RSRESPOND,TOPCRM,TOPIDX,TOPMRKSNP,TOPWEB" default="ADVANTAGE"/>
+    <!--PopUp attributes-->
+</design:component>

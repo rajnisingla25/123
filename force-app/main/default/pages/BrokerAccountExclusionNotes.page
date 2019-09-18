@@ -1,0 +1,40 @@
+<apex:page standardController="Account" extensions="BrokerAccountExclusionNotesContExtension" tabStyle="Account">
+
+  <style>
+    .noRowsHeader {
+        border: 1px solid rgb(221, 213, 213);
+        background-color: #f8f8f8;
+        background-image: none;
+        font-size: 0.9em;
+        font-weight: normal;
+        padding: 5px;
+    }
+  </style>
+
+  <apex:form >
+    <apex:pageMessages />
+      <apex:outputPanel rendered="{!AND(NOT(falseAccountType),len(filterCriteria) > 0)}" >
+        <c:Related_List p_objectName="Account"
+          p_fieldsCSV="Name,Exclusion_Notes__c,Sales_Calls__c,Customer_Care_Calls__c,Marketing_Emails__c,Agent_SLE__c"
+          p_pageSize="5"
+          p_parentFieldId=""
+          p_parentFieldName=""
+          p_orderByFieldName="Name"
+          p_sortDirection="asc"
+          p_hideActionLinks="true"
+          p_filter="{!filterCriteria}"
+          p_title=""
+          p_showAsStandardRelatedList="false"
+          p_hideButtons="true"/>
+     </apex:outputPanel>
+
+    <apex:pageBlock rendered="{!IF(AND(NOT(falseAccountType),len(filterCriteria)==0),true,false)}" >
+        <div class="noRowsHeader" >No Broker Notes To Display</div>
+     </apex:pageBlock>
+
+     <apex:pageBlock rendered="{!falseAccountType}" >
+        <div class="noRowsHeader" >Only Agent and Office Account Can See Exclusion Notes</div>
+     </apex:pageBlock>
+
+    </apex:form>
+</apex:page>

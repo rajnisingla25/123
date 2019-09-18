@@ -1,0 +1,6 @@
+<aura:event type="Application" description="Configuration parameter event for landing page">
+    <aura:attribute name="product" type="String" />
+    <aura:attribute name="submissionType" type="String" />
+    <aura:attribute name="popUpProduct" type="String" />
+    <aura:attribute name="campaignId" Type="String"/>
+</aura:event>

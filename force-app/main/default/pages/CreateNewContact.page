@@ -1,0 +1,179 @@
+<apex:page showChat="false" sidebar="false" tabStyle="Contact" standardController="Contact" extensions="CreateNewContactExtension" docType="html-5.0">
+  <script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+  <style>
+    .showProcessing {
+      position: relative !important;
+      top: 4px !important;
+      left: 5px !important;
+    }
+    .showCDHContactsProcessing {
+      position: relative !important;
+      top: 5px !important;
+      left: 5px !important;
+    }
+  </style>
+  <apex:sectionHeader title="Contact Edit" subtitle="New Contact"/>
+  <apex:form id="theCDHContactSearchForm" html-novalidate="true">
+    <apex:pageMessages />
+    <apex:outputPanel layout="block" style="display:none;" styleClass="matchingCDHContacts">
+      <apex:pageBlock title="Matching CDH Contacts" id="matchingCDHContactsSection">
+        <apex:pageBlockButtons location="top">
+          <apex:outputPanel >
+            <apex:outputPanel >
+              <apex:commandButton value="Update Existing Contact" action="{!updateExistingContact}" rerender="theCDHContactSearchForm" status="theCDHContactsSectionProcessing" onComplete="showMatchingCDHContactsSection(false,1);"/>
+            </apex:outputPanel>
+            <apex:outputPanel >
+              <apex:commandButton value="Create New Contact" action="{!createNewContact}" rerender="theCDHContactSearchForm" status="theCDHContactsSectionProcessing" onComplete="showMatchingCDHContactsSection(false,1);"/>
+            </apex:outputPanel>
+          </apex:outputPanel>
+          <apex:outputPanel >
+            <apex:actionStatus startStyleClass="showCDHContactsProcessing" id="theCDHContactsSectionProcessing">
+              <apex:facet name="start">
+                <img src="/img/loading.gif"/>
+              </apex:facet>
+            </apex:actionStatus>
+          </apex:outputPanel>
+        </apex:pageBlockButtons>
+        <apex:pageBlockTable value="{!theSelectedContacts}" var="theSelectedContact">
+          <apex:column >
+            <apex:inputCheckbox value="{!theSelectedContact.isSelected}"/>
+          </apex:column>
+          <apex:column value="{!theSelectedContact.theContact.FirstName}"/>
+          <apex:column value="{!theSelectedContact.theContact.LastName}"/>
+          <apex:column value="{!theSelectedContact.theContact.Phone}"/>
+          <apex:column value="{!theSelectedContact.theContact.Email}"/>
+          <apex:column value="{!theSelectedContact.theContact.Type__c}"/>
+        </apex:pageBlockTable>
+      </apex:pageBlock>
+    </apex:outputPanel>
+    <apex:pageBlock >
+      <apex:pageBlockButtons >
+        <apex:outputPanel layout="block">
+          <apex:outputPanel >
+            <apex:commandButton value="Save" action="{!createContact}" rerender="theCDHContactSearchForm, matchingCDHContactsSection" status="theCDHProcessing" onComplete="showMatchingCDHContactsSection({!hasError},0);"/>
+          </apex:outputPanel>
+          <apex:outputPanel >
+            <apex:commandButton value="Cancel" action="{!cancelProcess}" immediate="true"/>
+          </apex:outputPanel>
+          <apex:outputPanel >
+            <apex:actionStatus startStyleClass="showProcessing" id="theCDHProcessing">
+              <apex:facet name="start">
+                <img src="/img/loading.gif"/>
+              </apex:facet>
+            </apex:actionStatus>
+          </apex:outputPanel>
+        </apex:outputPanel>
+      </apex:pageBlockButtons>
+                
+
+      <apex:pageBlockSection title="Account Information" rendered="{!IF( accountID != null, true, false )}">
+          <apex:outputField value="{!acc.Name}"/>
+          <apex:outputField value="{!acc.Type}"/>
+          <apex:outputField value="{!acc.Email_Address__c}"/>
+          <apex:outputField value="{!acc.Phone}"/>
+      </apex:pageBlockSection>
+      <apex:pageBlockSection title="Existing Primary Contact Relationship" rendered="{!IF( AND(accountID != null, ar != null), true, false )}">
+          <apex:outputField value="{!ar.Contact_To__r.Name}"/>
+          <apex:outputField value="{!ar.Contact_To__r.Type__c}"/>
+          <apex:outputField value="{!ar.Contact_To__r.Email}"/>
+          <apex:outputField value="{!ar.Contact_To__r.Phone}"/>
+      </apex:pageBlockSection>
+      
+      <apex:pageBlockSection title="Contact Information" rendered="{!$ObjectType.Contact.FieldSets.Contact_Information.size > 0}">
+        <apex:repeat value="{!$ObjectType.Contact.FieldSets.Contact_Information}" var="field">
+          <apex:pageBlockSectionItem helpText="{!$ObjectType.Contact.Fields[field].InlinehelpText}">
+            <apex:outputLabel value="{!field.label}"/>
+            <apex:inputField value="{!Contact[field]}" required="{!OR(field.required, field.dbrequired)}"/>
+          </apex:pageBlockSectionItem>
+        </apex:repeat>
+                
+      </apex:pageBlockSection>               
+
+      <apex:pageBlockSection title="Contact Relationship">
+            <apex:pageBlockSectionItem >
+           		<apex:outputLabel value="Sales Contact Role"/>
+                <apex:selectList value="{!contactRole}" multiselect="false" size="1">
+                    <apex:selectOptions value="{!contactRoleLst}"/>
+                </apex:selectList>
+            </apex:pageBlockSectionItem>
+            <!-- CRM-495 End -->
+            
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Is Billing?"/>
+                <apex:inputCheckBox value="{!isBilling}"/>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+                
+        <apex:pageBlockSection title="Phone Preferences">
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Preferred Phone"/>
+                <apex:selectList value="{!selectedprefPhone}" multiselect="false" size="1">
+                    <apex:selectOptions value="{!phoneOptions}"/>
+                </apex:selectList>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Business Phone"/>
+                <apex:input value="{!businessPhone}" id="businessPhone"/>
+            </apex:pageBlockSectionItem>           
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Personal Phone"/>
+                <apex:input id="personalPhone" value="{!personalPhone}"/>
+           </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Business Extension"/>
+                <apex:input value="{!businessExt}" id="businessExt"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Personal Extension"/>
+                <apex:input value="{!personalExt}" id="personalExt"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Business Mobile"/>
+                <apex:input id="businessMobile" value="{!businessMobile}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Personal Mobile"/>
+                <apex:input id="personalMobile" value="{!personalMobile}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Business Fax"/>
+                <apex:input id="businessFax" value="{!businessFax}"/>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>
+      
+      
+        <apex:pageBlockSection title="Email Preferences">
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Preferred Email"/>
+                <apex:selectList value="{!selectedprefEmail}" multiselect="false" size="1">
+                    <apex:selectOptions value="{!emailOptions}"/>
+                </apex:selectList>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Business Email"/>
+                <apex:input id="businessEmail" value="{!businessEmail}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+                <apex:outputLabel value="Personal Email"/>
+                <apex:input id="personalEmail" value="{!personalEmail}"/>
+            </apex:pageBlockSectionItem>            
+        </apex:pageBlockSection>
+                
+        
+      
+    </apex:pageBlock>
+  </apex:form>
+  <script type="text/javascript">
+    function showMatchingCDHContactsSection(hasError, flag) {
+      console.log('hasError: ' + hasError);
+      if(hasError == false) {
+          $('div.matchingCDHContacts').show();
+          if(flag == 0) {
+            $('html, body').animate({
+              scrollTop: 0
+            }, 1000);
+          }
+      }
+    }
+  </script>
+</apex:page>

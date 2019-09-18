@@ -1,0 +1,217 @@
+<!-- LCM-293 -->
+<apex:page standardStylesheets="false" showHeader="false" controller="SelfServiceController" applyBodyTag="false" applyHtmlTag="false">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta name="description" content="Layout prototype for Prosoft" />
+        <meta name="author" content="Move Prosoft UX" />
+        <link rel="shortcut icon" href="{!$Resource.CustomerCommunityFavicon}" type="image/x-icon"/>
+        <link rel="stylesheet" href="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/css/prosoft-ui.css')}" />
+        <link rel="stylesheet" media="screen" href="{!$Resource.SelfServiceCss}" />
+        <apex:includeScript value="{!$Resource.zqu__jquery_1_9_1}" />
+    </head>
+     <style>
+         .credit-cards-body #simplemodal-container #basic-model-content:after{
+            background-image: url("{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/Loading/loading.png')}")
+        }
+   </style>
+    <body class="credit-cards-body">
+        <div id="app-container" class="app-container">
+            <c:SelfServiceHeader id="app-header" />
+            <c:SelfServiceTopMenu id="app-menu" />
+            <div class="main-container">
+                <div class="container-fluid credit-cards-container">
+                    <div id="my-credit-cards-root">
+                        <section class="title-section">
+                            <div class="title-section-breadcrumb hidden-xs">
+                                <span><span class="text-gray">Credit Cards</span></span>
+                            </div>
+                            <div class="row row-no-gutters title-section-header">
+                                <a class="back-arrow display-inline-block hidden-sm hidden-lg hidden-md hidden-xl ui-link" href="{!$Label.CustomerCommunityDomain}/SelfServiceMobileMenu" rel="external"><i class="pi pi-android-arrow-back"></i></a>
+                                <strong><span> Credit Cards </span></strong>
+                            </div>
+                        </section>
+                         <div class="alertdiv"></div>
+                        <div class="section-body">
+                            <div class="panel">
+                              <div class="panel-heading border-bottom-grey hidden-xs">
+                                <h3 class="panel-title">Your credit cards</h3>
+                              </div>
+                              <div class="panel-body">
+                                <div class="credit-card-list container-fluid">
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-3 add-credit-card">
+                                    </div>
+                                </div>
+                                <div class="info">
+                                    <span>If you would like to make payments using multiple cards, give us a call at (877) 309-3151.</span>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+            <c:SelfServiceContactDetail id="app-contact-detail" />
+            <c:SelfServiceFooter id="app-footer" />
+        </div>
+    </body>
+
+    <apex:includeScript value="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/js/jquery.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/js/bootstrap.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/js/jquery.mobile-1.4.5.min.js')}" />
+    <apex:includeScript value="{!$Resource.SelfServiceJS}" />
+    
+    <!-- Start of add credit card modal -->
+    <div class="modal fade" id="add-card" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-full-screen" role="document">
+            <div class="modal-content">
+                <!-- Start of Fullscreen modal header -->
+                <div class="modal-header modal-header-secondary">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="pi pi-ios-close-empty"></span></button>
+                    <h4 class="modal-title text-center">Replace card</h4>
+                </div>
+                <!-- End of Fullscreen modal header -->
+    
+                <!-- Start of Fullscreen modal body -->
+                <div class="modal-body">
+                <div class="container-fluid">
+                  <div class="row">
+                    <div >
+                        <apex:outputPanel id="iFrameSection" ><!--LCM-429-->
+                            <apex:outputPanel layout="block" styleClass="centered" rendered="{!displayIframe}">
+                                <zqu:PaymentPage zuoraPageId="{!addCCPageId}" submitEnabled="true" style="inline"/>
+                            </apex:outputPanel>
+                        </apex:outputPanel>
+                    </div>
+                  </div>
+                </div>
+                </div>
+                <!-- End of Fullscreen modal body -->
+                
+                <!-- Start of Fullscreen modal footer -->
+                <div class="modal-footer modal-footer-secondary">
+                <div class="container-fluid">
+                  <div class="row">
+                    <div class="col-md-10 col-md-offset-1">
+                      <ul class="nav">
+                        <li><button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button></li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                </div>
+                <!-- End of Fullscreen modal footer -->
+            </div>
+        </div>
+    </div>
+    <!-- End of add credit card modal -->
+    
+    <div role="dialog" class="modal fade" id="enter-password-modal">
+        <div class="modal-dialog modal-full-screen modal-dialog">
+      <div class="modal-content" role="document">
+         <div class="modal-header modal-header-secondary mar-bottom-lg">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="pi pi-ios-close-empty"></span></button>
+                 <h4 class="modal-title text-center">&nbsp;</h4>
+         </div>
+         <div class="col-sm-10 col-sm-push-1 col-md-8 col-md-push-2 col-lg-6 col-lg-push-3 mar-top-lg">
+            <h1 class="text-center mar-top-lg">Enter your password to continue</h1>
+            <div class="text-center mar-top-sm mar-bottom-sm mar-bottom-huge-sm mar-top-huge-sm">
+               <div class="avatar-xl margin-center img-circle bg-white has-borders pad-top-lg pad-left-lg pad-right-lg hidden-xs"><img class="img-responsive" src="https://d260ckbc6brolt.cloudfront.net/prosoft-ui/releases/latest/img/avatar.svg" alt="SSO avatar" /></div>
+               <div class="avatar-md margin-center img-circle bg-white has-borders pad-top-sm pad-left-sm pad-right-sm visible-xs"><img class="img-responsive" src="https://d260ckbc6brolt.cloudfront.net/prosoft-ui/releases/latest/img/avatar.svg" alt="SSO avatar" /></div>
+            </div>
+            <form id="password-verify-form">
+               <div class="sign-in-form col-sm-10 col-sm-push-1 col-md-8 col-md-push-2">
+                  <div class="row">
+                     <div class="col-md-12 col-sm-11">
+                        <div class="form-group has-feedback " style="padding-right: 0px;">
+                           <div class="control-label"><label class="control-label">Password</label></div>
+                           <div class="input-group">
+                              <div class="input-group state-control pos-relative"><input type="password" class="form-control" id="add-credit-card-password" maxlength="255" pattern="" value="" /></div>
+                           </div>
+                           <span class="help-block focus-visible">Enter your password</span>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="text-center mar-top-xl mar-top-huge-sm"><button id="verify-password-btn" type="submit" class="btn btn-primary" disabled="true">Continue</button></div>
+               </div>
+             
+            </form>
+            <apex:form ><!--LCM-429-->
+                   <apex:actionFunction action="{!updateCCIframeDisplay}" name="updateCCIframeDisplay" rerender="iFrameSection"></apex:actionFunction>
+            </apex:form>
+         </div>
+      </div>
+   </div>
+    </div>  
+    
+<script id="password-modal-template" type="x-tmpl-mustache">
+   
+
+</script>
+    <script type="text/javascript">
+        function getCreditCards() {
+            SelfServiceController.getAllCreditCards($("#sfdc-account-id").data('sfdc-id'), function(result, event) {
+                console.log(event);
+                if(event.status && result !== null && result !== undefined){
+                        for (var i = 0; i < result.length; i++) {
+                            var expDate = result[i]['ExpirationDate__c'].split('/')
+                            var cardExpired = false;
+                            if (new Date(expDate[1], expDate[0], 0) < new Date()) {
+                                cardExpired = true;
+                            }
+                            if(cardExpired) {
+                                var expiryTemplate = '<span class="text-red">Expired. ' + result[i]['ExpirationDate__c'] + '</span>';
+                            } else {
+                                var expiryTemplate = '<span>Exp. ' + result[i]['ExpirationDate__c'] + '</span>'
+                            }
+                            var borderClass = (result[i]['SplitPercentage__c'] == 100) ? " rectangle border-blue" : " rectangle";
+                            var template = '<div class="row">\
+                                                <a data-ajax="false" rel="external" href={!$Label.CustomerCommunityDomain}/SelfServiceCreditCardDetails?id='  +  result[i]["Id"] + '>\
+                                                    <div class="col-xs-12 col-sm-6' + borderClass + '" >\
+                                                        <div class="row">\
+                                                            <div class="col-xs-3 col-sm-2 pad-left-none">\
+                                                                <img id="credit-card-icon" src="{!URLFOR($Resource.SelfServiceUtil, "/SelfServiceUtil/icons/CreditCard/CreditCardIcon.svg")}">\
+                                                            </div>\
+                                                            <div class="col-xs-9 col-sm-8 mar-top-sm">\
+                                                                <div class="row bold text-gray-base">\
+                                                                    <span>' + result[i]['CreditCardType__c']  + ' ending in ' + result[i]['MaskNumber__c'].split('*').pop() + '</span>\
+                                                                </div>\
+                                                                <div class="row text-gray-base">'
+                                                                     + expiryTemplate + 
+                                                                '</div>\
+                                                            </div>\
+                                                            <div class="col-sm-2 hidden-xs mar-top-sm pad-left-none">\
+                                                                <a data-ajax="false" rel="external" href={!$Label.CustomerCommunityDomain}/SelfServiceCreditCardDetails?id='  +  result[i]["Id"] + '>Details</a>\
+                                                            </div>\
+                                                        </div>\
+                                                    </div>\
+                                                </a>\
+                                            </div>'
+                            $(".credit-card-list").append(template);
+                        }
+                        // append Replace Card button; Disable it if there are multiple cards.
+                        if (result.length >= 2) {
+                            var replaceButton = '<button type="button" disabled="true" class="btn btn-primary" data-toggle="modal" data-target="#enter-password-modal">Replace card</button>';
+                        } else if(result.length === 0){
+                            var replaceButton = '<button type="button" class="btn btn-primary" id="replace-card-btn" data-toggle="modal" data-target="#enter-password-modal" >Add a new card</button>';
+                        } else {
+                            var replaceButton = '<button type="button" class="btn btn-primary" id="replace-card-btn" data-toggle="modal" data-target="#enter-password-modal" >Replace card</button>';
+                        }
+                        $(".add-credit-card").append(replaceButton);
+                }
+                   
+            });
+        }   
+        $(".credit-cards-body").on("pagecreate", function(event) {
+
+            $("#credit-card-icon").attr("src", "{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/Nav/Active/CreditCards.svg')}"); 
+            getCreditCards();
+            attachHandlersCCPage();
+            localStorage.setItem('filterValue', 'Last 12 Months');
+        });
+    </script>
+</apex:page>

@@ -1,0 +1,301 @@
+<apex:page standardStylesheets="false" showHeader="false" controller="EmployeeDashboardController" applyBodyTag="false" applyHtmlTag="false">
+
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta name="description" content="realtor.com® Essentials℠ dashboard" />
+        <link rel="icon" href="{!$Resource.EmployeeSiteFavicon}" />
+
+        <title>realtor.com® Essentials℠ dashboard</title>
+
+        <link rel="stylesheet" href="{!URLFOR($Resource.EmployeeDashboard, '/employee/font-awesome.min.css')}" />
+        <link rel="stylesheet" href="{!URLFOR($Resource.EmployeeDashboard, '/employee/googleApisFontCss.css')}" />
+
+        <link rel="stylesheet" media="screen" href="{!$Resource.EmployeeDashboardCss}" />
+        
+        <style>
+            .load-spinner-lg:after {
+                background-image: url("{!$Resource.EmployeeDashboardLoading}")
+            }
+        </style>
+    </head>
+
+
+    <section class="sidebar-open" id="main-body" style="background-color: #f5f5f5 !important;">
+
+        <div id="app-container" class="app-container">
+            <c:EmployeeDashboardHeaderSidebar id="headerComp" />
+            <div id="main-container" class="main-container">
+                <div class="container-fluid">
+                    <div class="alertdiv">
+                    </div>
+
+                    <section class="title-section">
+                        <div class="title-section-breadcrumb hidden-xs">Dashboard</div>
+                        <h1 class="title-section-header">Account</h1>
+                    </section>
+                    <div class="profile-content-section pos-relative" id="page-content">
+                        <ul class="nav nav-tabs bg-white" role="tablist">
+                            <li class="account-tab active"><a href="#tab-account" aria-controls="tab-account" role="tab" data-toggle="tab">My Account</a></li>
+                            <li class="pull-right"><a href="{!$Site.Prefix}/EmployeeCreateAccounts">Add Broker</a> </li>
+                            <!--CRM-3225: Added edit account details link -->
+                            <li class="pull-right" data-target="#modal-edit" data-toggle="modal" ><a href="" style="cursor: pointer;">Edit</a></li>
+                        </ul> 
+
+                        <div class="tab-content">
+                            <!-- Start of Account tab content -->
+                            <div role="tabpanel" class="tab-pane fade in active" id="tab-account">
+                                <div class="tab-content-body pad-top-lg pad-bottom-lg bg-white">
+                                    <div class="setting">
+                                        <!-- Start of setting content -->
+                                        <div class="error-div" ></div>
+                                        <div class="myAccountContent">
+                                            <div class="row setting-content pad-bottom-sm">
+
+                                                <div class="col-sm-6">
+                                                    <div class="mar-top-md">
+                                                        <div>
+                                                            <strong>Account Name</strong>
+                                                        </div>
+                                                        <div class="setting-content-value" id="acctName"></div>
+                                                    </div>
+
+                                                    <div class="mar-top-md">
+                                                        <div>
+                                                            <strong>Email Address</strong>
+                                                        </div>
+                                                        <div class="setting-content-value" id="primaryEmail"></div>
+
+                                                    </div>
+
+                                                    <div class="mar-top-md">
+                                                        <div>
+                                                            <strong>Phone Number</strong>
+                                                        </div>
+                                                        <div class="setting-content-value" id="mobilePhone"></div>
+
+                                                    </div>
+
+                                                    <div class="mar-top-md">
+                                                        <div>
+                                                            <strong>Party Id</strong>
+                                                        </div>
+                                                        <div class="setting-content-value" id="partyId"></div>
+
+                                                    </div>
+                                                     <div class="mar-top-md hidden" id="onlyAgent">
+                                                        <div>
+                                                            <strong>Primary MLS Set Id</strong>
+                                                        </div>
+                                                        <div class="setting-content-value" id="mlsSetId"></div>
+
+                                                    </div>
+                                                      <div class="mar-top-md">
+                                                        <div>
+                                                            <strong>Essentials Status</strong>
+                                                        </div>
+                                                        <div class="setting-content-value" id="essStatus"></div>
+
+                                                    </div>
+                                                    
+                                                      <div class="mar-top-md">
+                                                        <div>
+                                                            <strong>Advertiser Id</strong>
+                                                        </div>
+                                                        <div class="setting-content-value" id="advId"></div>
+
+                                                    </div>
+                                                    
+                                                      <div class="mar-top-md">
+                                                        <div>
+                                                            <strong>Welcome Email URL</strong>
+                                                        </div>
+                                                        <div><a target="_blank" href="" class="setting-content-value" id="welcomeUrl"></a></div>
+
+                                                    </div>
+                                                    <div class="mar-top-md">
+                                                        <div>
+                                                            <strong>Impersonation link</strong>
+                                                        </div>
+                                                        <div ><a target="_blank" href="" class="setting-content-value" id="impLink"></a></div>
+
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <!-- End of setting content -->
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <c:SetFooterCommunity id="footerComp" />
+        </div>
+        <!-- CRM-3225-->
+         <div class="modal fade md-width" id="modal-edit" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Edit account details</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label class="control-label">Account Party Id</label>
+                                <p id="party-id"></p>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Email</label>
+                                <input class="form-control" id="email-edit" type="text" required="required" />
+                                <span id="required-error" class="state-message hidden">This Field is required</span>
+                            </div>
+                            <!-- Last Name -->
+                            <div class="form-group">
+                                <label class="control-label">Phone</label>
+                                <button type="button" class="btn btn-icon" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Enter 10 digit phone number, e.g 5105578977"><i class="pi pi-info-circle"></i>
+                                </button>
+                                <input class="form-control" id="phone-edit" />
+                                <span id="required-error" class="state-message hidden">This Field is required</span>
+                                <span id="limit-error" class="state-message hidden">Phone number should be 10 digit</span>
+                            </div>
+                            <div class="form-group">
+                                <button type="button" onclick="editAccount();" class="btn btn-primary" id="edit-account">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <apex:includeScript value="{!URLFOR($Resource.EmployeeDashboard, '/employee/jquery-2.2.4.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.EmployeeDashboard, '/employee/prosoft-ui.min.js')}" />
+
+    <apex:includeScript value="{!$Resource.EmployeeDashboardJS}" />
+
+    <script type="text/javascript">
+        $(function() {
+            init();
+        });
+
+        function init(){
+            getAccount();
+            $(".setting-content-value").each(function(index) {
+                if ($(this).text() == '') {
+                    $(this).html('-');
+                }
+            });
+            $(".myAccountContent .setting-change").click(function() {
+                $(".myAccountContent").hide();
+            });
+            $(".acc-cancel-btn").click(function() {
+                $(".myAccountContent").show();
+                $("html, body").animate({
+                    scrollTop: 0
+                }, 400);
+
+            });
+
+        }
+
+        function getAccount() {
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.EmployeeDashboardController.getAllParentAccounts}',
+                false,
+                function(result, event) {
+                    console.log(result);
+                    var acct = result[0];
+
+                    if(event.status){
+                        var dateDiff = Math.ceil((acct.Binder_account_active_till_date__c - (new Date())) / (1000 * 3600 * 24))
+                        $('#acctName').html(acct.Name);
+                        $('#primaryEmail').html(acct.Email_Address__c);
+                        $("#email-edit").val(acct.Email_Address__c);
+                        $('#mobilePhone').html(acct.Phone);
+                        $("#phone-edit").val(acct.Phone);
+                        $('#partyId').html(acct.Party_ID__c);
+                        $('#advId').html(acct.Advertiserid__c);
+                        $('#essStatus').html(acct.EssentialsStatus__c);
+                        if(acct.Advertiserid__c != null){
+                             $('#impLink').html(acct.ImpersonationLink__c);
+                             $('#impLink').attr("href",acct.ImpersonationLink__c);
+                             $('#welcomeUrl').html(acct.WelcomeEmailURL__c);
+                             $('#welcomeUrl').attr("href",acct.WelcomeEmailURL__c);
+                        }
+                        $('#daysActive').html(dateDiff);
+                        $('#mlsSetId').html(acct.MLS_Set_Id__c);
+                        if(acct.Type == 'Realtor Agent'){
+                            $("onlyAgent").removeClass("hidden");
+                        }
+                        $("#edit-account").data("id", acct.Id);
+                        
+                    } else {
+                        displayError(event.message);
+                    }
+
+                });
+        }
+
+        // CRM-3225 : Allow user to edit email and phone on account
+        function editAccount() {
+            showSpinner();
+            // Validation
+            var isError = false;
+            $("#modal-edit .form-group").each(function() {
+                removeValidationError('required', this);
+                removeValidationError('limit', this);
+                if ($(".form-control", this).val() == '') {
+                    addError('required', this);
+                    isError = true;
+                    console.log(isError);
+                }
+            });
+            if ($("#phone-edit").val().length != 10) {
+                addError('limit', $("#phone-edit").parent());
+                isError = true;
+                console.log(isError);
+            }
+            // End validation
+            if (!isError) {
+                function Account() {
+                    this.id = null;
+                    this.Email_Address__c = null;
+                    this.Phone = null;
+                }
+                var a = new Account();
+                a.id = $("#edit-account").data("id");
+                a.Email_Address__c = $("#email-edit").val();
+                a.Phone = $("#phone-edit").val();
+                console.log(a);
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.EmployeeDashboardController.editAccount}',
+                    a,
+                    function(result, event) {
+                        $("#modal-edit").modal('hide');
+                        if (event.status) {
+                            displayAlert("success", "success", "Account has been updated");
+                            $("#agents-table").bootgrid('destroy');
+                            init();
+
+                        } else {
+                            displayError(event.message);
+                        }
+                        hideSpinner();
+                        console.log(event);
+                    });
+            } else {
+                hideSpinner();
+                return false;
+            }
+        }
+        
+    </script>
+</apex:page>

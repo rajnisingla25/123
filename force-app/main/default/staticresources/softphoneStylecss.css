@@ -1,0 +1,795 @@
+
+
+.logPanel {
+	float: left;
+	margin: auto;
+	margin-bottom: 3px;
+	padding: auto;
+	width: 183px;
+}
+
+td.header1, td.content {
+	text-align: left;
+}
+
+button:hover {
+	cursor: pointer;
+}
+
+.agentExtension {
+	width: 191px;
+	margin: auto;
+	margin-top: 2px;
+	display: block;
+	background-color: #f8f8f8;
+	font-size: 12px;
+	font-family: Arial, Helvetica, sans-serif;
+	border: 1px solid #cccccc;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	text-align: center;
+}
+
+div#digits button {
+	margin: 5px;
+	height: 20px;
+	width: 45px;
+	border: 1px solid #b5b5b5;
+	border-bottom: 1px solid #7f7f7f;
+	background: white;
+	padding: 1px;
+	color: #333333;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 15px;
+	font-weight: bold;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	behavior: url(css/PIE.htc);
+}
+
+div#SaveLogPad>button{
+	margin-top: 5px;
+	height: 20px;
+	width: 130px;
+	background: #3fa930;
+	padding: 0px;
+	color: white;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 12px;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border: 1px solid #3f8f26;
+	border-bottom: 1px solid gray;
+	behavior: url(css/PIE.htc);
+}
+
+.dialpadBtn1, .dialpadBtn2, .dialpadBtn3, .dialpadBtn4, .dialpadBtn5{
+    margin-top: 5px;
+    height: 20px;
+    width: 130px;
+    padding: 0px;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    font-size: 11px;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-bottom: 1px solid gray;
+    behavior: url(css/PIE.htc);
+}
+
+.dialpadBtn1{
+	background: #3fa930;
+	border: 1px solid #3f8f26;
+}
+
+.dialpadBtn2 {
+	background: #FAA005;
+	border: 1px solid #E38922;
+}
+
+.dialpadBtn3 {
+	background: #CF2929;
+	border: 1px solid #B31D1D;
+}
+
+.dialpadBtn4 {
+	background: #EDAA0C;
+	border: 1px solid #D1960A;
+}
+
+.dialpadBtn5 {
+    background: red;
+    border: 1px solid #D1960A;
+}
+
+div#SaveLogPad {
+	height: auto;
+	width: 191px;
+	margin: auto;
+	margin-bottom: 2px;
+	padding: 4px;
+	text-align: center;
+}
+
+/* button#CallHandler1.func, button#CallHandler2.func, div#CallHandling2Pad>button, div#newlineHandlingPad>button { */
+button.func, button.dialpadBtn {
+	margin: 2px;
+	height: 20px;
+	width: 150px;
+	background: #CF2929;
+	padding: 0px;
+	color: white;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 12px;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	border: 1px solid #B31D1D;
+	border-bottom: 1px solid gray;
+	text-align: center;
+	behavior: url(css/PIE.htc);
+}
+
+.Dialpad>button:hover, div#digits button:hover, div#div_register button:hover { /*log in pad button not working in chrome...ie?*/
+	cursor: pointer;
+	text-decoration: none;
+}
+
+/* div#CallHandlingPad {  */
+.CallFuncPad {
+	margin: auto;
+	/*margin-top: -4px;*/
+	display: block;
+	text-align: center;
+	border: 1px solid #cccccc;
+	border-top: none;
+	border-bottom: none;
+	background-color: white;
+	float: left;
+	width: 191px;     /*Paul changed.  Original:  width: 191px;    */
+	height: auto;     
+	background: white;
+}
+
+.LoggedInPadHeader {
+	margin: auto;
+	height: 30px;
+	border: 1px solid #cccccc;
+	width: 191px;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	background: white;
+}
+
+/*div#div_plines button, button#lineBtn2 { */
+div.lineBar>button.lineBarBtn {
+	border: none;
+	/*width: 50px;*/
+	background-color: transparent;
+	text-decoration: underline;
+	font-weight: bold;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: black;
+}
+
+.promptText {
+	width: 200px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	padding-top: 4px;
+	text-indent: 10px;
+	margin-bottom: 15px;
+}
+
+.enterPhoneNumber {
+	width: 187px;
+	text-align:left;
+	background: #cfecf6;
+	font-family: Arial;
+	font-size: 11px;
+	height: 15px;
+	text-indent: 10px;
+	margin: 2px;
+	behavior: url(css/PIE.htc);
+}
+
+select {
+	margin: auto;
+	background: transparent;
+	border: 1px solid #a5acb2;
+	width: 150px;
+	font-size: 12px;
+    font-family: Arial Unicode MS, Lucida Sans Unicode, Code2000, sans-serif;
+	height: 21px;
+}
+
+.ThedropDownPanel {
+	float: right;
+	margin-top: 5px;
+	margin-right: 5px;
+	width: 150px;
+	overflow: hidden;
+}
+
+/*  input#holdCall {  */
+  div.HTCN>input.holdBtn {
+  
+	background: #939393;
+	background-image: url(images/btn_hold.gif), -moz-linear-gradient(top, #939393 0%, #4b4b4b 100%);
+	background-image: url(images/btn_hold.gif), -webkit-gradient(linear, left top, left bottom, color-stop(0%, #939393), color-stop(100%, #4b4b4b));
+	background-image: url(images/btn_hold.gif), -webkit-linear-gradient(top, #939393 0%, #4b4b4b 100%);
+	background-image: url(images/btn_hold.gif), -o-linear-gradient(top, #939393 0%, #4b4b4b 100%);
+	background-image: url(images/btn_hold.gif), -ms-linear-gradient(top, #939393 0%, #4b4b4b 100%);
+	background-image: url(images/btn_hold.gif), linear-gradient(top, #939393 0%, #4b4b4b 100%);
+	background-repeat: no-repeat;
+	background-position: center;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#939393', endColorstr='#4b4b4b', GradientType=0);
+	behavior: url(css/PIE.htc);
+	
+}
+
+ div.HTCN>input.transferBtn  {	
+	background: #939393;
+	background-image: url(images/btn_transfer.gif), -moz-linear-gradient(top, #939393 0%, #4b4b4b 100%);
+	background-image: url(images/btn_transfer.gif), -webkit-gradient(linear, left top, left bottom, color-stop(0%, #939393), color-stop(100%, #4b4b4b));
+	background-image: url(images/btn_transfer.gif), -webkit-linear-gradient(top, #939393 0%, #4b4b4b 100%);
+	background-image: url(images/btn_transfer.gif), -o-linear-gradient(top, #939393 0%, #4b4b4b 100%);
+	background-image: url(images/btn_transfer.gif), -ms-linear-gradient(top, #939393 0%, #4b4b4b 100%);
+	background-image: url(images/btn_transfer.gif), linear-gradient(top, #939393 0%, #4b4b4b 100%);
+	background-repeat: no-repeat;
+	background-position: center;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#939393', endColorstr='#4b4b4b', GradientType=0);
+	behavior: url(css/PIE.htc);
+	
+ }
+
+ div.HTCN>input.conferenceBtn  {
+	background: #939393;
+	background-image: url(images/btn_conference.gif), -moz-linear-gradient(top, #939393 0%, #4b4b4b 100%);
+	background-image: url(images/btn_conference.gif), -webkit-gradient(linear, left top, left bottom, color-stop(0%, #939393), color-stop(100%, #4b4b4b));
+	background-image: url(images/btn_conference.gif), -webkit-linear-gradient(top, #939393 0%, #4b4b4b 100%);
+	background-image: url(images/btn_conference.gif), -o-linear-gradient(top, #939393 0%, #4b4b4b 100%);
+	background-image: url(images/btn_conference.gif), -ms-linear-gradient(top, #939393 0%, #4b4b4b 100%);
+	background-image: url(images/btn_conference.gif), linear-gradient(top, #939393 0%, #4b4b4b 100%);
+	background-repeat: no-repeat;
+	background-position: center;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#939393', endColorstr='#4b4b4b', GradientType=0);
+	behavior: url(css/PIE.htc);
+	
+ }
+
+ div.HTCN>input.newLineBtn  {
+	background-image: #939393;
+	background-image: url(images/btn_newline.gif), -moz-linear-gradient(top, #939393 0%, #4b4b4b 100%);
+	background-image: url(images/btn_newline.gif), -webkit-gradient(linear, left top, left bottom, color-stop(0%, #939393), color-stop(100%, #4b4b4b));
+	background-image: url(images/btn_newline.gif), -webkit-linear-gradient(top, #939393 0%, #4b4b4b 100%);
+	background-image: url(images/btn_newline.gif), -o-linear-gradient(top, #939393 0%, #4b4b4b 100%);
+	background-image: url(images/btn_newline.gif), -ms-linear-gradient(top, #939393 0%, #4b4b4b 100%);
+	background-image: url(images/btn_newline.gif), linear-gradient(top, #939393 0%, #4b4b4b 100%);
+	background-repeat: no-repeat;
+	background-position: center;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#939393', endColorstr='#4b4b4b', GradientType=0);
+	behavior: url(css/PIE.htc);
+	
+}
+
+div#CallFuncPad>input {
+    background-color: white;
+    background-repeat: no-repeat;
+    border: 1px solid #3b3b3b; 
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+    cursor: pointer;        /* make the cursor like hovering over an <a> element */
+    height: 31px;
+    width: 31px;
+    margin: 5px;
+	padding: 4px;
+	background-position: center;
+	text-align: center;
+	behavior: url(css/PIE.htc);
+}
+
+div.HTCN, div.CallFuncPad {  /*hold/transfer/conference/newline div incl others*/
+	text-align: center !important;
+	/*margin: 3px;
+	margin-top: -4px;*/
+	padding: 4px;
+	border: 1px solid #cccccc;
+	border-top: none;
+	background-color: white;
+	float: left !important;
+	width: 183px !important;
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+	background: white;
+	behavior: url(css/PIE.htc);
+}
+
+div.HTCN>input {
+    background-color: white;
+    background-repeat: no-repeat;
+    border: 1px solid #3b3b3b; 
+	border-radius: 4px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+    cursor: pointer;        /* make the cursor like hovering over an <a> element */
+    height: 31px !important;
+    width: 31px !important;
+    margin: 5px;
+	padding: 4px;
+	background-position: center;
+	text-align: center;
+	behavior: url(css/PIE.htc);
+}
+
+
+.InfoPad { /*container for dialing number/dialed number, duration div*/
+	margin: auto;
+	/*margin-top: -4px;*/
+	border: 1px solid #cccccc;
+	border-bottom: none;
+	background-color: white;
+	float: left;
+    overflow: hidden;
+	width: 191px;
+	background: white;
+	behavior: url(css/PIE.htc);
+}
+
+table.InfoPadTable { /*table for dialing number/dialed number/duration*/
+	width: 95%;
+	border: 1px solid #c2c2c2;
+	border-collapse: collapse;
+	border-radius: 2px;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	background: white;
+	padding: 4px;
+	margin: auto;
+	margin-top: 4px;
+	margin-bottom: 2px;
+	color: gray;
+}
+
+table.InfoPadTable td {
+	width: 70%;
+	text-align: left;
+	padding: 2px 0 2px 5px;
+    font-size: 11px;
+}
+
+table.InfoPadTable td.header {
+	width: 30%;
+	text-align: right;
+    vertical-align: top;
+    font-size: 11px;
+}
+
+div.lineBar {
+	/*margin: 3px;
+	margin-bottom: 3px;*/
+	margin: auto;
+	margin-top: 3px;
+	margin-bottom: 0px;
+	margin-left: 1px;
+    /*height: 19px;*/
+	width: 183px;
+	padding: 4px;
+	float: left;
+	border: 1px solid #aeaeae;
+	background: #f6fcfe;
+	background: -moz-linear-gradient(top, #f6fcfe 0%, #d0eef8 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f6fcfe), color-stop(100%, #d0eef8));
+	background: -webkit-linear-gradient(top, #f6fcfe 0%, #d0eef8 100%);
+	background: -o-linear-gradient(top, #f6fcfe 0%, #d0eef8 100%);
+	background: -ms-linear-gradient(top, #f6fcfe 0%, #d0eef8 100%);
+	background: linear-gradient(top, #f6fcfe 0%, #d0eef8 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f6fcfe', endColorstr='#d0eef8', GradientType=0);
+	color: black;
+	behavior: url(css/PIE.htc);
+}
+
+/* show dialpad above everything */
+.Dialpad {
+	margin: 3px;
+	margin-left: 3px;
+	margin-top: 3px;
+	border: 1px solid #cccccc;
+	/*float: left;*/
+	position: absolute;
+	z-index: 10;
+	width: 191px;
+	background: white;
+}
+
+.preComment div, .inlineBtn{
+    cursor: pointer;
+    margin: 1px;
+    padding: 0px;
+    background-color: #f9f7f7;
+    font-size: 10px;
+    font-weight: 500;
+    text-align: center;
+    border: 1px solid #b5b5b5;
+    border-bottom: 1px solid #7f7f7f;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    behavior: url(css/PIE.htc);
+}
+
+.preComment div{
+	float:left;
+    height: 13px;
+    width: 11px;
+}
+
+.speedDial button{
+    float:left;
+    cursor: pointer;
+    margin: 3px 8px;
+    height: 20px;
+    width: 70px;
+    overflow: hidden;
+    padding: 2px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid #b5b5b5;
+    border-bottom: 1px solid #7f7f7f;
+    border-radius: 4px;
+    -moz-border-radius: 20px;
+    -webkit-border-radius: 20px;
+    behavior: url(css/PIE.htc);
+    background: #c8c8c9;
+}
+
+label#lineStatus {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+
+body {
+	background-color: white;
+}
+
+* {
+	margin: 0px;
+	padding: 0px;
+}
+
+label {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+table, td, th {
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 20px;
+}
+
+td {
+	color: rgb(51, 52, 53);
+	font-weight: bold;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+
+.containerHeader {
+	background-color: #1797c0;
+	border: 2px solid #1797c0;
+	border-radius: 6px;
+	-moz-border-radius: 30px;
+	color: white;
+	font-size: 12px;
+	font-weight: bold;
+	padding: 3px;
+	text-indent: 3px;
+	font-family: Arial, Helvetica, sans-serif;
+	height: 15px;
+	width: 190px;
+	behavior: url(css/PIE.htc);
+}
+
+div#container {
+	background-color: rgb(207, 238, 248);
+	width: 200px;
+	height: auto /*271px*/;
+	border-radius: 4px;
+	-moz-border-radius: 30px;
+	overflow: hidden;
+	behavior: url(css/PIE.htc);
+}
+
+.spacer {
+	background-color: white;
+	width: 200px;
+	height: 2px;
+}
+
+.wrapper {
+	background-color: none;
+}
+
+.wrapper input {
+	border: 1px solid #cccccc;
+	padding: 4px;
+}
+
+.svrInfo {
+	width: 194px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 9px;
+	margin-top: 2px;
+	margin-bottom: 5px;
+	padding: 1px;
+	text-align: center;
+	background-color: #009a16;
+	color: white;
+	border: 2px solid #009a16;
+	/*word-wrap: break-word;
+	word-break: break-all;*/
+    overflow: hidden;
+}
+
+.svrError {
+	width: 194px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 9px;
+	margin-top: 2px;
+	margin-bottom: 5px;
+	text-align: center;
+	padding: 1px;
+	background-color: #c80000;
+	color: white;
+	border: 2px solid #c80000;
+	/*word-wrap: break-word;
+	word-break: break-all;*/
+    overflow: hidden;
+}
+
+.introMesg {
+	width: 194px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 9px;
+	margin-top: 2px;
+	margin-bottom: 5px;
+	padding: 1px;
+	text-align: center;
+	background-color: #EDAA0C;
+	color: white;
+	display: block;
+	border: 2px solid #EDAA0C;
+	/*word-wrap: break-word;
+	word-break: break-all;*/
+    overflow: hidden;
+}
+
+div#div_register button {
+	padding: 4px;
+	float: right;
+	border: 2px solid white;
+	border-radius: 4px;
+	-moz-border-radius: 40px;
+	font-family: arial;
+    white-space: nowrap;
+	font-size: 12px;
+	background: #2CBDED;
+	background: -moz-linear-gradient(top, #2CBDED 0%, #1797C0 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #2CBDED), color-stop(100%, #1797C0));
+	background: -webkit-linear-gradient(top, #2CBDED 0%, #1797C0 100%);
+	background: -o-linear-gradient(top, #2CBDED 0%, #1797C0 100%);
+	background: -ms-linear-gradient(top, #2CBDED 0%, #1797C0 100%);
+	background: linear-gradient(top, #2CBDED 0%, #1797C0 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#2CBDED', endColorstr='#1797C0', GradientType=0);
+	color: white;
+}
+
+/* tooltip code */
+
+.tooltip {
+	display: inline;
+	position: relative;
+}
+
+.tooltip:hover {
+	text-decoration: none;
+	content: attr(title);
+}
+
+img {
+	vertical-align: middle;
+}
+
+
+
+a:hover {
+	text-decoration: underline !important;
+}
+
+a:link {
+	text-decoration: none;
+}
+
+a:active {
+	text-decoration: none;
+}
+
+a:visited {
+	text-decoration: none;
+}
+
+input.button_Collapse,input.button_Collapse1,input.button_extended {
+    background-color: transparent;   		 /* make the button transparent */
+    background-repeat: no-repeat;			 /* make the background image appear only once */
+ 	background-position: center; 		 /* equivalent to 'top left' */
+    border: 0px;          					 /* assuming we don't want any borders */
+    cursor: pointer;       					 /* make the cursor like hovering over an <a> element */
+    height: 16px;          					 /* make this the size of your image */
+    width: 16px;      						 /* make this the size of your image */
+  	padding-left: 16px;     				 /* make text start to the right of the image */
+    vertical-align: middle; 				 /* align the text vertically centered */
+}
+
+input.button_Collapse,input.button_Collapse1 {
+    background-image: url(images/minus.png); /* 16px x 16px */
+}
+
+input.button_extended {
+    background-image: url(images/plus.png); /* 16px x 16px */
+}
+
+.LastCallsSwitchPanel {
+	height: auto; 		/*fho: set to auto to dynamically adapt with collapse button*/
+	width: 185px;
+	margin: 3px;
+	margin-left: 3px;
+	padding: 3px;
+    overflow: hidden;
+	font-size: 12px;
+	font-family: Arial, Helvetica, sans-serif;
+	float: left;
+	/*text-align: center;*/
+	display: block;
+	border: 1px solid gray;
+	background-color: #efefef;
+}
+
+.SaveLogPad {
+	height: auto; 		/*fho: set to auto to dynamically adapt with collapse button*/
+	width: 185px;
+	margin: auto;
+	margin-top: 3px;
+	padding: 3px;
+	font-size: 9px!important;
+	font-family: Arial, Helvetica, sans-serif;
+	float: left;
+	display: block;
+	border: 1px solid gray;
+	background-color: #efefef;
+}
+
+.logPanelTable {
+	margin-top: 3px;
+}
+
+.MyCall {
+	float: left;
+	margin: 0px;
+	margin-left: 1px;
+}
+
+.MyLine {
+	float: left;
+}
+
+.MyCallsAppearance {
+	margin: 2px;
+	margin-bottom: 0px;
+	display: block;
+}
+
+button.CallLogLink {
+	margin-left: -1px;
+	text-align: left;
+	font-size: 10px!important;
+	border: none;
+	background: none;
+	text-decoration: underline;
+	padding: 0px;
+}
+
+.matchLink {
+	margin-left: 1px;
+	text-align: left;
+	border: none;
+	background: none;
+	text-decoration: underline;
+    cursor: pointer;
+	/*font-size: 12px;*/
+}
+
+table.LastCallsEntry {
+	border: 1px solid #969393;
+	border-collapse: collapse;
+	border-radius: 2px;
+	-moz-border-radius: 2px;
+	-webkit-border-radius: 2px;
+	background: white;
+	color: gray;
+	width: 95%;
+	margin-top: 3px!important;
+	margin-bottom: 4px;
+	padding: 2px;
+}
+
+table.LastCallsEntry td {
+	/*width: 50%;*/
+	font-size: 11px!important;
+	padding: 1px;
+	padding-left: 3px;
+	/*border-bottom: 1px solid #c2c2c2;*/
+	/*border-right: 1px solid #c2c2c2;*/
+	background-color: #ffffff;
+	/*border-spacing: 1px;*/
+	text-align: left;
+}
+
+table.LastCallsEntry td.header {
+	/*width: 60%;*/
+	padding: 1px;
+	text-align: right;
+	background-color: #EBE8E8;
+	border: 1px solid #c2c2c2;
+}
+	
+textarea {
+	width: 155px;
+	height: 75px;
+	overflow-y: scroll!important;
+	resize: none;
+}
+
+img.headerLogo {
+	margin: auto;
+}
+
+img.loaderGIF {
+	width: 190px;
+	margin: auto;
+	padding-left: 4px!important;
+}
+
+.loader {
+	height: 50px;
+	font-size: 10px;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+.loading {
+    text-align: center;
+	margin: auto;
+	margin-top: 15px;
+	padding: auto;
+}
+
+.auxTimer{
+    font-size: 12px;
+    padding-left: 5px;
+}

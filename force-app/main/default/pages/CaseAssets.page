@@ -1,0 +1,335 @@
+<apex:page standardController="Case_Asset_Relationship__c" extensions="CaseAssetController" recordSetVar="Case_Asset_Relationship__c"   id="mypage">
+    <apex:outputpanel >
+        <apex:actionstatus id="actStatusId">
+            <apex:facet name="start">
+                <div class="waitingSearchDiv" id="el_loading" style="background-color: #DCD6D6;
+                                                                     height: 100%;opacity:0.65;width:100%;"> 
+                    <div class="waitingHolder" style="top: 200px; width: 91px;">
+                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                        <span class="waitingDescription">Saving...</span>
+                    </div>
+                </div>
+            </apex:facet>
+        </apex:actionstatus>
+    </apex:outputpanel>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+    <span id="hideThisHomePageComp"></span>
+    <script type="text/javascript">
+        $j = jQuery.noConflict();
+    $j(document).ready(function() {                   
+        var startYear=1900;
+        var endYear=2030;
+        var htmlStr=''; 
+        if(startYear<endYear){
+            for(i=startYear;i<endYear+1;i++){
+                htmlStr += "<option value=\""+i+"\">"+i+"</option>";
+            }
+            $j('#calYearPicker').html(htmlStr);
+        }
+        $j('#sidebarDiv #hideThisHomePageComp').parent().parent().hide();
+    }  );
+    </script>
+    <apex:includeScript value="{!URLFOR($Resource.multiselect2side, 'multiselect2side/js/jquery.js')}"/> 
+    <apex:includeScript value="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" />>
+    <apex:includeScript value="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.8/js/jquery.tablesorter.min.js" />
+    <apex:stylesheet value="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.8/css/theme.blue.css" />
+    <script>
+    //$(document).ready(function()
+    //{
+    //  $("[id$='objTable']").tablesorter({ dateFormat : "mm/dd/yyyy"});
+    //});
+    </script>
+    
+    <!--     <apex:pageMessage summary="Please select Cancellation reason for each Asset which you are Selected." severity="info"  strength="2" /> -->
+    <apex:pageMessages id="errormsg" />
+    <style>
+        .diplay-none{display:none;}
+    </style>
+    <apex:form id="myform">
+        <script type="text/javascript">
+        //$("[id$='objTable']").tablesorter({ dateFormat : "mm/dd/yyyy"});
+        var turboProductCode = '{!turboProductCode}';
+        function selectAllCheckboxes(obj,receivedInputID){
+            var inputCheckBox = document.getElementsByTagName("input");                  
+            for(var i=0; i<inputCheckBox.length; i++){          
+                if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){                                     
+                    inputCheckBox[i].checked = obj.checked;
+                }
+            }
+        }
+        
+        function checkUncheckCheckAll(cb)
+        {
+            var checkAll = true;
+            var inputElem = document.getElementsByTagName("input");
+            var checkAllElem;
+            for(var i=0; i<inputElem.length; i++)
+            {
+                var input = inputElem[i];
+                if (input.type == "checkbox" && !input.id.includes("checkAll")) {
+                    if (!input.checked) {
+                        checkAll = false;
+                    }
+                }
+                else if (input.type == "checkbox" && input.id.includes("checkAll")) {
+                    checkAllElem = input;  
+                } 
+                
+            }
+            checkAllElem.checked = checkAll;
+        }
+        </script>
+        <script type="text/javascript">
+        function confirmMethod(ischecked,isRealTrial) {
+            
+            //CRM-3539 -- Show msg when realsuite trial product is added
+            if(isRealTrial == 'true'){
+                if(confirm('The Line Action Amend is not allowed for Real Suite Trial products!')){                       
+                }
+            } else if(ischecked == 'true'){
+                // var val = ;
+                if(confirm('Are you sure you want to add Expired/Cancelled Assets to the Case?')){
+                    FinalSave(); 
+                }
+                /* else{
+                        window.location.href = "/{!caseId}";
+                    } */
+                }
+                    else
+                    {
+                        FinalSave();
+                    }                 
+            }       
+       function Save()
+       {      
+           SaveData();
+       }
+       </script>
+       <apex:actionFunction name="FinalSave" action="{!FinalSave}" />          
+       <apex:actionFunction name="SaveData" rerender="errormsg" action="{!Save}" oncomplete="confirmMethod('{!ischecked}','{!isRealTrial}');"/>
+       
+       <apex:pageBlock rendered="{!displayTable}" >
+           <apex:outputLabel rendered="{!filterParameterRendered}"><b>Please select the Parameter to filter the Assets !</b></apex:outputLabel>
+           <apex:selectRadio value="{!RadioSearchType}" rendered="{!RadioRendered}">
+               <apex:actionSupport event="onchange" 
+                                   action="{!filterSearch}" 
+                                   rerender="zipText,demo2,displayTable,myform,zipLabel,EndDateLabel,demo3,demo4,demo5,StartDateLabel,MarketLabel,AssetNumberLabel"/>
+               <apex:selectOptions value="{!items}"/>
+           </apex:selectRadio>
+           
+           &nbsp;&nbsp;&nbsp;&nbsp;  <apex:outputLabel rendered="{!Zipcoderendered}" id="zipLabel">Please enter the Zip Code : </apex:outputLabel> <apex:inputText value="{!MarketZip}" rendered="{!Zipcoderendered}" id="zipText"/>
+           <apex:outputLabel rendered="{!EndDaterendered}" id="EndDateLabel">Please select the End Date: </apex:outputLabel> <apex:inputText value="{!datenameStr}" size="10" id="demo2"    onfocus="DatePicker.pickDate(false, this , false);" rendered="{!EndDaterendered}"/>
+           <apex:outputLabel rendered="{!StartDaterendered}" id="StartDateLabel">Please select the Start Date: </apex:outputLabel> <apex:inputText value="{!StartDateStr}" size="10" id="demo3"    onfocus="DatePicker.pickDate(false, this , false);" rendered="{!StartDaterendered}"/>
+           <apex:outputLabel rendered="{!Marketrendered}" id="MarketLabel">Please enter the Market: </apex:outputLabel> <apex:inputText value="{!Market}" size="10" id="demo4"  rendered="{!Marketrendered}"/>
+           <apex:outputLabel rendered="{!AssetNumberrendered}" id="AssetNumberLabel">Please enter the AssetNumber: </apex:outputLabel> <apex:inputText value="{!AssetNumber}" size="10" id="demo5"  rendered="{!AssetNumberrendered}"/>
+           
+           &nbsp;&nbsp;&nbsp;&nbsp; <apex:commandButton action="{!searchAssets}" Value="Search Assets" rendered="{!SearchButton}"/>
+           &nbsp;&nbsp;&nbsp;&nbsp; <apex:commandButton action="{!CancelSearch}" Value="Cancel Search" rendered="{!Cancelrendered}" />
+           
+           <apex:outputPanel id="panel">
+               <apex:pageBlockTable value="{!AssetWrapper}" var="astWrap" id="objTable" styleClass="tablesorter" >
+                   <apex:column > 
+                       <apex:facet name="header">
+                           <apex:inputCheckbox onclick="selectAllCheckboxes(this,'inputId')" value="{!allCheck}" id="checkAll"/>
+                       </apex:facet>
+                       <apex:inputCheckbox value="{!astWrap.checked}" id="inputId" onclick="checkUncheckCheckAll(this)"/>
+                   </apex:column>
+                   <!-- CRM-3704 RSRESPOND-->
+                   <apex:column styleClass="line-action-td" headerValue="Line  Action" >
+                       <apex:selectList value="{!astWrap.lineAction}" required="true"  size="1" >
+                           <!--<apex:selectOptions value="{!LineAction1}" rendered="{!IF(astWrap.ast.Product2.productcode=='RSRESPOND',true,false)}"/>-->
+                           <apex:selectOptions value="{!LineAction}" rendered="{!IF(astWrap.ast.Product2.productcode=='RSRESPOND',true,true)}"/>
+                           
+                       </apex:selectList>
+                   </apex:column>
+                   <!---CRM-1983 venu ravilla-did changes to remove cancellation reason from vf page
+<!---<apex:column headerValue="Cancellation  Reason" >
+<apex:selectList value="{!astWrap.Ast.Cancellation_Reason__c}" required="true"  size="1" >
+<apex:selectOptions value="{!CancellationReason}"/>
+</apex:selectList>
+</apex:column>  
+CRM-1983 venu ravilla-did changes to remove cancellation reason from vf page --->
+                   <apex:column headerValue="Asset Name" width="250" >
+                       <apex:facet name="header">
+                           <apex:commandLink value="Asset Name" action="{!sortAssets}" status="status">
+                               <apex:param name="sortField" value="Name" assignTo="{!sortField}"/>
+                           </apex:commandLink>
+                       </apex:facet>          
+                       <apex:outputLink target="_blank" value="/{!astWrap.ast.Id}"><apex:outputText value="{!astWrap.ast.Name}" /></apex:outputLink>
+                   </apex:column>
+                   
+                   <apex:column style="font-weight:900;" value="{!astWrap.ast.Asset_Number__c}"> 
+                       <apex:facet name="header">
+                           <apex:commandLink value="Asset Number" action="{!sortAssets}" status="status">
+                               <apex:param name="sortField" value="Asset_Number__c" assignTo="{!sortField}"/>
+                           </apex:commandLink>
+                       </apex:facet> 
+                   </apex:column>
+                   
+                   <apex:column value="{!astWrap.ast.Status}">
+                       <apex:facet name="header">
+                           <apex:commandLink value="Status" action="{!sortAssets}" status="status">
+                               <apex:param name="sortField" value="Status" assignTo="{!sortField}"/>
+                           </apex:commandLink>
+                       </apex:facet> 
+                   </apex:column>
+                   
+                   <apex:column value="{!astWrap.ast.Start_Date__c}">
+                       <apex:facet name="header">
+                           <apex:commandLink value="Start Date" action="{!sortAssets}" status="status">
+                               <apex:param name="sortField" value="Start_Date__c" assignTo="{!sortField}"/>
+                           </apex:commandLink>
+                       </apex:facet> 
+                   </apex:column>
+                   
+                   <apex:column value="{!astWrap.ast.End_Date__c}">
+                       <apex:facet name="header">
+                           <apex:commandLink value="End Date" action="{!sortAssets}" status="status">
+                               <apex:param name="sortField" value="End_Date__c" assignTo="{!sortField}"/>
+                           </apex:commandLink>
+                       </apex:facet> 
+                   </apex:column>
+                   
+                   <apex:column value="{!astWrap.ast.Market__c}">
+                       <apex:facet name="header">
+                           <apex:commandLink value="Market" action="{!sortAssets}" status="status">
+                               <apex:param name="sortField" value="Market__c" assignTo="{!sortField}"/>
+                           </apex:commandLink>
+                       </apex:facet>
+                   </apex:column>    
+                   
+                   <apex:column value="{!astWrap.ast.Contract_Term__c}">
+                       <apex:facet name="header">
+                           <apex:commandLink value="Contract Term" action="{!sortAssets}" status="status">
+                               <apex:param name="sortField" value="Contract_Term__c" assignTo="{!sortField}"/>
+                           </apex:commandLink>
+                       </apex:facet>
+                   </apex:column>         
+                   <!--<apex:column value="{!astWrap.ast.Market_Zip__c}"/>-->
+                   <apex:column value="{!astWrap.ast.Net_Price__c}">
+                       <apex:facet name="header">
+                           <apex:commandLink value="Net Price" action="{!sortAssets}" status="status">
+                               <apex:param name="sortField" value="Net_Price__c" assignTo="{!sortField}"/>
+                           </apex:commandLink>
+                       </apex:facet>
+                   </apex:column>  
+                   
+                   <apex:column value="{!astWrap.ast.Extended_Net_Price__c}">
+                       <apex:facet name="header">
+                           <apex:commandLink value="Extended Net Price" action="{!sortAssets}" status="status">
+                               <apex:param name="sortField" value="Extended_Net_Price__c" assignTo="{!sortField}"/>
+                           </apex:commandLink>
+                       </apex:facet>
+                   </apex:column>
+                   
+                   <apex:column value="{!astWrap.ast.Quantity}">
+                       <apex:facet name="header">
+                           <apex:commandLink value="Quantity" action="{!sortAssets}" status="status">
+                               <apex:param name="sortField" value="Quantity" assignTo="{!sortField}"/>
+                           </apex:commandLink>
+                       </apex:facet>
+                   </apex:column>
+                   
+                   <apex:column value="{!astWrap.ast.Lead_Type__c}">
+                       <apex:facet name="header">
+                           <apex:commandLink value="Lead Type" action="{!sortAssets}" status="status">
+                               <apex:param name="sortField" value="Lead_Type__c" assignTo="{!sortField}"/>
+                           </apex:commandLink>
+                       </apex:facet>
+                   </apex:column>
+                   
+                   <apex:column value="{!astWrap.ast.Product_Type__c}">
+                       <apex:facet name="header">
+                           <apex:commandLink value="Product Type" action="{!sortAssets}" status="status">
+                               <apex:param name="sortField" value="Product_Type__c" assignTo="{!sortField}"/>
+                           </apex:commandLink>
+                       </apex:facet>
+                   </apex:column>
+                   
+                   <apex:column value="{!astWrap.ast.Renewal_Start_Date__c}">
+                       <apex:facet name="header">
+                           <apex:commandLink value="Renewal Start Date" action="{!sortAssets}" status="status">
+                               <apex:param name="sortField" value="Renewal_Start_Date__c" assignTo="{!sortField}"/>
+                           </apex:commandLink>
+                       </apex:facet>
+                   </apex:column>
+                   
+                   <apex:column value="{!astWrap.ast.Renewal_End_Date__c}">
+                       <apex:facet name="header">
+                           <apex:commandLink value="Renewal End Date" action="{!sortAssets}" status="status">
+                               <apex:param name="sortField" value="Renewal_End_Date__c" assignTo="{!sortField}"/>
+                           </apex:commandLink>
+                       </apex:facet>
+                   </apex:column>
+                   
+                   <apex:column value="{!astWrap.ast.Renewal_Price__c}">
+                       <apex:facet name="header">
+                           <apex:commandLink value="Renewal Price" action="{!sortAssets}" status="status">
+                               <apex:param name="sortField" value="Renewal_Price__c" assignTo="{!sortField}"/>
+                           </apex:commandLink>
+                       </apex:facet>
+                   </apex:column>
+                   
+                   <apex:column value="{!astWrap.ast.Product2.Commission_Category__c}">
+                       <apex:facet name="header">
+                           <apex:commandLink value="Commission Category" action="{!sortAssets}" status="status">
+                               <apex:param name="sortField" value="Product2.Commission_Category__c" assignTo="{!sortField}"/>
+                           </apex:commandLink>
+                       </apex:facet>
+                   </apex:column>
+                   
+                   <apex:column value="{!astWrap.ast.TCV_Processed__c}">
+                       <apex:facet name="header">
+                           <apex:commandLink value="TCV_Processed" action="{!sortAssets}" status="status">
+                               <apex:param name="sortField" value="TCV_Processed__c" assignTo="{!sortField}"/>
+                           </apex:commandLink>
+                       </apex:facet>
+                   </apex:column>
+                   
+                   <apex:column styleClass="product-code-td diplay-none" headerClass="diplay-none">
+                       <apex:outputText value="{!astWrap.ast.Product2.productcode}" styleClass="product-code"/>
+                   </apex:column>
+               </apex:pageBlockTable>
+           </apex:outputPanel>
+           <apex:pageBlockButtons >   
+               <apex:variable var="PrflNme" value="{!$Profile.Name}"/>
+               <apex:variable var="RoleNme" value="{!$User.UserRolename__c}"/>
+               
+               <apex:actionstatus id="idActionStatus">
+                   <apex:facet name="stop">       <!-- action="{!Save}" -->             
+                       <apex:commandbutton onclick="this.disabled='disabled';Save();return false;" rerender="errormsg" status="idActionStatus" value="Add Selected Assets To The Case" rendered="{!If((OR(CONTAINS(PrflNme,"Service"),CONTAINS(PrflNme,"Ops"),CONTAINS(PrflNme,"Manager"),CONTAINS(PrflNme,"Admin"),CONTAINS(PrflNme,"Agent Sales Rep"),CONTAINS(PrflNme,"Broker Sales Rep"))), true,false)}" oncomplete="confirmMethod({!ischecked},{!isRealTrial});" >
+                       </apex:commandbutton></apex:facet>
+                   <apex:facet name="start">
+                       <apex:commandbutton disabled="true" status="idActionStatus" value="Saving...">
+                       </apex:commandbutton></apex:facet>
+               </apex:actionstatus>
+               
+               <!--<apex:commandButton value="  Add Selected Assets To The Case  " action="{!Save}" rendered="{!If((OR(CONTAINS(PrflNme,"Service"),CONTAINS(PrflNme,"Ops"),CONTAINS(PrflNme,"Manager"),CONTAINS(PrflNme,"Admin"))), true,false)}" />
+<apex:commandButton value="  Add Selected Assets To The Case  " action="{!Save}" rendered="{!If((OR(CONTAINS(PrflNme,"Service"),CONTAINS(PrflNme,"Ops"),CONTAINS(PrflNme,"Manager"),CONTAINS(PrflNme,"Admin"))), true,false)}" oncomplete="confirmMethod({!ischecked});"/>
+-->
+               <!--CRM-1076 Go Back button added to return case-->
+               <apex:commandButton value="Go Back" action="{!BackToCase}"/>
+               
+               <apex:commandButton value="<<" action="{!beginning}" disabled="{!DisablePrevious}"/>
+               <apex:commandButton value="<" action="{!previous}" disabled="{!DisablePrevious}"/>
+               <apex:commandButton value=">" action="{!next}" disabled="{!DisableNext}"/>
+               <apex:commandButton value=">>" action="{!last}" disabled="{!DisableNext}"/>     
+           </apex:pageBlockButtons> 
+       </apex:pageBlock> 
+       
+       
+       <script>
+       $( document ).ready( function(){
+           $('.product-code-td').each( function(index,domele){
+               
+               productCode = $(domele).find('.product-code').html();
+               $lineActiontd = $(domele).siblings('.line-action-td');
+               
+               if( $.trim(productCode) == turboProductCode){
+                   $lineActiontd.find('select option[value!="cancel"]').remove();
+               }
+           });
+       });
+       </script>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,340 @@
+<!--<apex:page lightningStylesheets="true"  showHeader="false" sidebar="false" controller="LCMManageSubscripitonPaymentMethods" action="{!onLoad}">-->
+<apex:page lightningStylesheets="true"  showHeader="false" sidebar="false" controller="Z_ManageSubscripitonPaymentMethods" action="{!onLoad}">
+    <apex:includeScript value="{!$Resource.zqu__jquery_1_9_1}" />   
+    
+    <apex:slds /> 
+    <style>
+        .bordered {
+        border-top-style: solid;
+        border-right-style: solid;
+        border-bottom-style: solid;
+        border-left-style: solid;
+        border-color: #ededed;
+        }
+        
+        
+    </style>
+    <apex:actionStatus id="status">
+        <apex:facet name="start">
+            <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.25; z-index: 1000; background-color: black;">
+                &nbsp;
+            </div>
+            <div style="position: fixed; left: 0; top: 0; bottom: 0; right: 0; z-index: 1001; margin: 15% 50%">
+                <div style="display: inline-block; padding: 2px; background-color: #fff; width: 125px;">
+                    <img src="/img/loading.gif" style="float: left; margin: 8px;" />
+                    <span style="display: inline-block; padding: 10px 0px;">Please Wait...</span>
+                </div>
+            </div>
+        </apex:facet>
+    </apex:actionStatus>
+    <apex:form >
+        <apex:pageMessages />
+        <apex:inputHidden value="{!rowIndex}" id="myHiddenValue"/>
+        <apex:actionFunction name="refreshPageSize" action="{!refreshPageSize}" status="fetchStatus"/>
+        <apex:actionFunction name="getthevalues" action="{!getthevalues}"  status="fetchStatus"/>
+        <apex:actionFunction name="Search" action="{!Search}"  status="fetchStatus"/>
+        <apex:actionFunction name="callbackSuccess" action="{!callbackSuccess}" reRender="table1,pprepeat "/>
+        <apex:actionFunction name="donothing" action="{!nothing}" status="fetchStatus" reRender="pbId">
+            <apex:param name="conid" value="" assignTo="{!rowIndex}"/>
+        </apex:actionFunction>
+        
+        <apex:actionFunction action="{!editProfile}" name="editProfile" rerender="table1,pprepeat" status="action">
+            <apex:param name="profileToEdit" assignTo="{!profileToEdit}" value="" />
+            <apex:param name="cardHolderName" assignTo="{!cardHolderName}" value="" />
+            <apex:param name="expirationDate" assignTo="{!expirationDate}" value="" />
+            <apex:param name="address" assignTo="{!billingAddress}" value="" />
+            <apex:param name="city" assignTo="{!billingCity}" value="" />
+            <apex:param name="state" assignTo="{!billingState}" value="" />
+            <apex:param name="postal_code" assignTo="{!billingPostalCode}" value="" />
+            <apex:param name="country" assignTo="{!billingCountry}" value="" />
+        </apex:actionFunction>
+        <apex:outputPanel rendered="{!!hasConfigError}"> 
+            <div align="center" draggable="false" > 
+                <apex:commandButton id="searchButton" value="." action="{!Search}" style="display:none" status="status"/>        
+                <apex:commandButton styleClass="slds-button slds-button_brand" title="Please Select the Payment Profile and Assets" alt="this tooltip"  action="{!updateRelationships}" value="Update Relationships"  rendered="{!!renderHPM}" status="status"/>                                 
+                <apex:commandButton styleClass="slds-button slds-button_brand" title="Please Select the Assets only to Authorize Associated Profile" alt="this tooltip"  action="{!AuthorizeExistingLenderProfiles}" value="Authorize Existing Profiles"  rendered="{!!renderHPM}" status="status" />                                 
+                
+                <apex:commandButton styleClass="slds-button slds-button_brand" value="Add Payment Method" action="{!renderIFrame}" rendered="{!!renderHPM}" status="status"/>  
+                <!-- <apex:commandButton styleClass="slds-button slds-button_brand" action="{!returnToAccount}" value="Return To Account" rendered="{!!renderHPM && !creatingQuote}" status="status"/>  -->
+                <apex:commandButton styleClass="slds-button slds-button_brand" action="{!returntoprofilepage}" value="Back to Profilepage" rendered="{!renderHPM}" status="status"/>                
+                <apex:commandButton styleClass="slds-button slds-button_brand" value="Back" action="{!goback}"/>
+            </div>
+            
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!!renderHPM && !hasConfigError}" id="table1">
+            <table>
+                <tr>  
+                    
+                    <td width="32%" class="bordered" style= "vertical-align:top">
+                        <apex:outputPanel style="text-align:center;" layout="block" id="PaymentProfiles">                               
+                            <table class = "slds-table slds-table--cell-buffer slds-table--striped">
+                                <thead id="pbIdhead">
+                                    <tr class="slds-text-title--caps">
+                                        
+                                        <th scope="col">                                    
+                                            <div class="slds-truncate" title="Select">                               
+                                            </div>
+                                        </th>
+                                        <th scope="col">                                    
+                                            <div class="slds-truncate" title="Select">                               
+                                            </div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="Name ">Cardholder Name                               
+                                            </div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="Type"> Card Type                              
+                                            </div>
+                                        </th>
+                                        
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="Mask Number ">Card Number                            
+                                            </div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="Expiration"> Expiration                             
+                                            </div>
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="Reason Code"> BIN Auth                             
+                                            </div>
+                                        </th>
+										<th scope="col">
+                                            <div class="slds-truncate" title="Reason Code"> Reason Code                             
+                                            </div>
+                                        </th>                                        
+                                    </tr>                       
+                                </thead>
+                                <tbody>
+                                    <apex:repeat value="{!paymentProfiles}" var="p" id="pprepeat">
+                                        
+                                        <tr>   
+                                            <td>
+                                                <apex:commandButton image="{!$Resource.zqu__iconPen}" onclick="updatePaymentProfile('CreditCard','{!p.paymentProfile.Id}','{!p.paymentProfile.CardholderName__c}','{!p.paymentProfile.ExpirationDate__c}','{!p.paymentProfile.CreditCardType__c}');" reRender="pprepeat" status="action"/>
+                                            </td>
+                                            <td >   
+                                                <apex:outputPanel rendered="{!!p.Expired  && p.index != rowIndex2}">
+                                                    <input type="radio" name="paymentMethods" onclick="donothing('{!p.index}')"/>  
+                                                </apex:outputPanel> 
+                                                <apex:outputPanel rendered="{!!p.Expired  && p.index == rowIndex2}">
+                                                    <input type="radio" checked="checked" name="paymentMethods" onclick="donothing('{!p.index}')"/>  
+                                                </apex:outputPanel>                                                
+                                            </td>                                            
+                                            <td>                                                
+                                                <apex:outputField value="{!p.Paymentprofile.CardholderName__c}"/> 
+                                            </td>
+                                            <td>
+                                                <apex:outputField value="{!p.Paymentprofile.CreditCardType__c}"/> 
+                                            </td>
+                                            
+                                            <td>
+                                                <apex:outputField value="{!p.Paymentprofile.MaskNumber__c}"/> 
+                                            </td>                                            
+                                            <td>  
+                                                <font color="red">
+                                                    <apex:outputField value="{!p.Paymentprofile.ExpirationDate__c}" rendered="{!p.Expired}"/>
+                                                </font>
+                                                <apex:outputField value="{!p.Paymentprofile.ExpirationDate__c}" rendered="{!!p.Expired}"/>
+                                                
+                                            </td>  
+                                            <td>
+                                                <apex:outputPanel rendered="{!p.BINerror}">                                                                                                                                                                                                                                  
+                                                    <apex:inputText styleClass="slds-size_xx-small slds-form-element slds-has-error" value="{!p.userBIN}"/>                                                        
+                                                </apex:outputPanel>  
+                                                <apex:outputPanel rendered="{!!p.BINerror}">                                      
+                                                    <apex:inputText styleClass="slds-size_xx-small" value="{!p.userBIN}" rendered="{!!p.isNew}" />                                                       
+                                                </apex:outputPanel>    
+                                            </td>
+                                            <td>                                                 
+                                                <apex:outputtext value="{!p.paymentProfile.Reason_Code__c}"  rendered="{!p.paymentProfile.Reason_Code__c!=''}"/>
+                                                <apex:selectList styleClass="slds-size_xx-small" id="chooseColor" value="{!p.paymentProfile.Reason_Code__c}" size="1" rendered="{!p.paymentProfile.Reason_Code__c==''&&p.paymentProfile.Recently_Added__c}">
+                                                    <apex:selectOptions value="{!ReasonCodes}"></apex:selectOptions>
+                                                </apex:selectList>
+                                                
+                                            </td>
+                                            
+                                        </tr>
+                                        
+                                    </apex:repeat>
+                                </tbody>
+                                
+                            </table>
+                        </apex:outputPanel>
+                    </td>
+                    <td width="5px" class="not-white"></td>
+                    <td width="66.3%" class="bordered" style= "vertical-align:top">
+                        <apex:outputPanel style="text-align:center;" layout="block" id="Subscriptions">        
+                            
+                            <table class = "slds-table slds-table--bordered slds-table--cell-buffer slds-table--striped ">
+                                <thead id="pbIdhead">
+                                    <tr class="slds-text-title--caps">
+                                        
+                                        <th scope="col">                                    
+                                            <apex:inputCheckbox id="selectAll" value="{!Selectall}" onchange="toggleSelectAll(this);"/>
+                                        </th>
+                                        
+                                       
+                                        <th scope="col">
+                                            <apex:inputText styleClass="slds-input slds-size_x-small" style="max-height: 1px;" value="{!AssetNumber}" onblur="Search();" html-placeholder="Asset Number"/>                                              
+                                        </th>
+                                    
+                                        <th scope="col">
+                                            <apex:inputText styleClass="slds-input slds-size_x-small" style="max-height: 1px;" value="{!Fieldvalue}" onblur="Search();" html-placeholder="Agent Name"/>                                              
+                                        </th>
+                                        <th scope="col">
+                                            <apex:commandLink action="{!getthevalues}" value="AGENT ASSET MONTHLY CONTRIBUTION" reRender="Subscriptions,table1">
+                                                <apex:param name="orderByColumn" value="Agent_Asset_Monthly_Contribution__c" assignTo="{!orderByColumn}" />
+                                            </apex:commandLink>
+                                        </th>
+                                        <th scope="col">
+                                            <apex:commandLink action="{!getthevalues}" value="Lender Asset Monthly Contribution" reRender="Subscriptions,table1">
+                                                <apex:param name="orderByColumn" value="Lender_Asset_Monthly_Contribution__c" assignTo="{!orderByColumn}" />
+                                            </apex:commandLink>
+                                        </th>
+ 										<th scope="col">
+                                            <apex:inputText styleClass="slds-input slds-size_xx-small" style="max-height: 1px;" value="{!FieldvalueMask}" onblur="Search();" html-placeholder="CC Last 4"/>                                              
+                                        </th>
+                                        <th scope="col">
+                                            <div class="slds-truncate" title="CC Last 4"> Auth Status                               
+                                            </div>
+                                        </th>
+                                        
+                                    </tr>                       
+                                </thead>
+                                <tbody>
+                                    <apex:repeat value="{!CoMarketingRelWrapperList}" var="c" id="sbrepeat">
+                                        <tr>
+                                            
+                                            <td>
+                                                <apex:inputCheckbox styleClass="contactCb"  value="{!c.isSelected}" rendered="{!!c.Disable}"/>
+                                            </td>                                           
+                                            
+                                            <td>
+                                                <apex:outputField value="{!c.CoMarketingRel.cfcb_Asset__r.Asset_Number__c}"/> 
+                                            </td> 
+                                            <td>
+                                                <apex:outputField value="{!c.CoMarketingRel.agent_account__r.Name}"/> 
+                                            </td> 
+                                            <td>
+                                                <apex:outputField value="{!c.CoMarketingRel.Agent_Asset_Monthly_Contribution__c}"/> 
+                                            </td> 
+                                            <td>
+                                                <apex:outputField value="{!c.CoMarketingRel.Lender_Asset_Monthly_Contribution__c}"/> 
+                                            </td> 
+                                            <td>
+                                                <apex:outputPanel rendered="{!IF(c.CoMarketingRel.Payment_Profile__c != null, true, false)}">
+                                                    <apex:outputField value="{!c.CoMarketingRel.Payment_Profile__r.MaskNumber__c}"/> 
+                                                </apex:outputPanel>
+                                            </td>                                             
+                                            <td>                                                
+                                                <apex:outputText value="{!c.AuthStatus}" rendered="{!c.AuthStatus!= 'Authorized'}"/>
+                                                 <font color="green">
+                                                <apex:outputText value="{!c.AuthStatus}" rendered="{!c.AuthStatus == 'Authorized'}"/> 
+												</font>
+                                                
+                                            </td>
+                                        </tr>
+                                    </apex:repeat>
+                                </tbody>  
+                            </table>
+                            <apex:selectList value="{!size}" multiselect="false" size="1" onchange="refreshPageSize();" >
+                                <apex:selectOptions value="{!paginationSizeOptions}"/>
+                            </apex:selectList>
+                            <apex:commandButton value="First"  reRender="Subscriptions,PaymentProfiles,iFrameSection" action="{!first}" disabled="{!NOT(hasPrevious)}" status="paginationStatus"/>
+                            <apex:commandButton value="Previous"  reRender="Subscriptions,PaymentProfiles,iFrameSection" action="{!previous}" disabled="{!NOT(hasPrevious)}" status="paginationStatus"/>&nbsp;Page {!pageNumber} of {!totalPages}&nbsp;
+                            <apex:commandButton value="Next"  reRender="Subscriptions,PaymentProfiles,iFrameSection" action="{!next}" disabled="{!NOT(hasNext)}" status="paginationStatus"/>
+                            <apex:commandButton value="Last"  reRender="Subscriptions,PaymentProfiles,iFrameSection" action="{!last}" disabled="{!NOT(hasNext)}" status="paginationStatus"/>
+                            <apex:actionStatus id="paginationStatus">
+                                <apex:facet name="start">
+                                </apex:facet>
+                            </apex:actionStatus>
+                        </apex:outputPanel>
+                    </td>
+                </tr>
+            </table> 
+        </apex:outputPanel>
+        
+    </apex:form>  
+    
+    <apex:outputPanel layout="block" id="iFrameSection" styleClass="centered" rendered="{!renderHPM}" >
+        <zqu:PaymentPage zuoraPageId="{!ccHpmPageId}" submitEnabled="true" style="inline" rendered="{!paymentMethodType == 'CreditCard'}"/>
+    </apex:outputPanel>
+    <script>
+    
+    $(document).ready(function(){
+        overridePageMessages();    
+    });
+    
+    function overridePageMessages(){    
+        var textureEffect = '';
+        //Uncomment below line for texture effect on page messages
+        textureEffect = 'slds-theme--alert-texture';
+        
+        $('.warningM3').addClass('slds-notify slds-notify--toast slds-theme--warning customMessage '+textureEffect);          
+        $('.confirmM3').addClass('slds-notify slds-notify--alert slds-theme--success  customMessage '+textureEffect);    
+        $('.errorM3').addClass('slds-notify slds-notify--alert slds-theme--error customMessage '+textureEffect);                  
+        $('.infoM3').addClass('slds-notify slds-notify--toast customMessage '+textureEffect);    
+        
+        $('.errorM3').removeClass('errorM3'); 
+        $('.confirmM3').removeClass('confirmM3'); 
+        $('.infoM3').removeClass('infoM3');   
+        $('.warningM3').removeClass('warningM3');  
+    }
+    function customProcessCallback(params) {
+        var response = $jq.parseJSON(params);
+        if (response.success) {
+            callbackSuccess();
+        } else {
+            callbackFailure();
+        }
+        if (processCallback) {         
+            processCallback(params);
+        }
+    }
+    function updatePaymentProfile(type,profileToEdit, obj1, obj2, obj3) {
+        if(type.localeCompare('CreditCard')==0)
+            showSimpleDialog(profileToEdit, obj1, obj2, obj3);          
+    }
+    
+    function showSimpleDialog(profileToEdit, cardHolderName, expiration, type){    
+        var id=Dialogs.getNextId();
+        var script = "function edit(){editProfile('"+profileToEdit+"',document.getElementById('name"+id+"').value,document.getElementById('expiry"+id+"').value,document.getElementById('address"+id+"').value,document.getElementById('city"+id+"').value,document.getElementById('state"+id+"').value,document.getElementById('postal_code"+id+"').value,document.getElementById('country"+id+"').value); window.parent.sd.hide(); return true;}";
+        var targetNode = document.createElement('div'); //  construct div for script injection*/
+        document.body.appendChild(targetNode);
+        try {
+            var el = document.createElement('script');
+            el.type="text/javascript";
+            el.innerHTML = script;
+            targetNode.appendChild(el);
+        } catch (e){
+            var el = document.createElement('span');
+            targetNode.appendChild(el);
+            el.innerHTML = "<br /><scr"+"ipt type='text/javascript' defer='defer'>"+script+"</script" + ">";
+        }
+        var sd = new SimpleDialog("Test"+id, false);    
+        sd.setTitle("Update Payment Profile - Credit Card");   
+        sd.createDialog();   
+        window.parent.sd = sd;
+        sd.setContentInnerHTML("<p align='left'>Cardholder Name: <input style='float:right;' type='text' id='name"+id+"' name='name' value='"+cardHolderName+"'></p><p align='left'>Expiration: <input style='float:right;' type='text' id='expiry"+id+"' name='expiry' value='"+expiration+"'></p><br /><p align='left'>Address: <input style='float:right;' type='text' id='address"+id+"' name='address' value=''></p><p align='left'>City: <input style='float:right;' type='text' id='city"+id+"' name='city' value=''></p><p align='left'>State: <input style='float:right;' type='text' id='state"+id+"' name='state' value=''></p><p align='left'>Postal Code: <input style='float:right;' type='text' id='postal_code"+id+"' name='postal_code' value=''></p><p align='left'>Country (full): <input style='float:right;' type='text' id='country"+id+"' name='country' value='United States'></p></p><button class='btn' onclick='edit();'>Save</button><button class='btn' onclick='window.parent.sd.hide(); return false;'>Cancel</button></p>");   
+        
+        sd.show();   
+    }
+    function closeWindow() {
+        
+        window.close();
+        // alert('window close has been invoked and title of window is: '+window.document.title);
+    }
+    function toggleSelectAll(checkbox){       
+        var $j = jQuery.noConflict();           
+        
+        if(checkbox.checked){                
+            $j( ".contactCb" ).prop('checked', true);                
+        }
+        else{               
+            $j( ".contactCb" ).prop('checked', false);                
+        }           
+    }
+    </script>
+    
+</apex:page>

@@ -1,0 +1,65 @@
+<apex:page controller="CreateArticleFeedbackController" showHeader="false">
+    <script type='text/javascript' src='/canvas/sdk/js/publisher.js'/>
+    <style>
+    .FeedBackPanel{
+        padding-top: 12px;
+        width: 100%;
+    }
+    .FeedBackPanel textarea {
+        width: 95%;
+        -webkit-appearance: none;
+        padding: 0 8px;
+        margin: 4px 0;
+        line-height: 21px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        outline: none;
+    }
+    .FeedBackPanel button {
+        -webkit-appearance: button;
+        border-radius: 3px;
+        display: block;
+        padding: 12px;
+        margin: 4px 0;
+        width: 100%;
+        background: #eee;
+        border: solid 1px #ccc;
+    }
+    
+    .FeedBackPanel label{
+   		 font-weight: bold;
+   	}
+    </style>
+   
+     <script>
+      function refreshFeed() {
+          Sfdc.canvas.publisher.publish({name : 'publisher.refresh',  payload : {feed: true}});
+      }
+     </script>
+   
+    
+    <div>
+        <apex:form >
+        
+            <apex:actionFunction action="{!createArticleFeedback}" name="createArticleFeedback" rerender="out" oncomplete="refreshFeed();"/> 
+            <apex:outputPanel id="out" >
+            <apex:pageMessages />
+                <div class="FeedBackPanel">
+                    <label>Feedback:</label>
+                    <apex:inputTextarea id="articleComment" value="{!articleFeedback.Comments__c}" rows="3" />
+                </div>
+                <div class="FeedBackPanel" >
+                       <label>Was this Article Helpful?:</label>&nbsp;
+                       <apex:inputField value="{!articleFeedback.Was_this_Article_Helpful__c}" />
+               </div>
+               
+               <div class="FeedBackPanel" >
+                       <button type="button" onclick="createArticleFeedback();">Create</button>
+               </div>
+                
+            </apex:outputPanel>
+        </apex:form><br/>
+        
+    </div>            
+</apex:page>

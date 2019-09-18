@@ -1,0 +1,14 @@
+<apex:page showHeader="false" sidebar="false">
+  <iframe id="logout-iframe" src="{!$Site.Prefix}/secur/logout.jsp" height="1" width="1" />
+  <script>
+    
+    function redirectToLogin(){
+        window.parent.location="{!$CurrentPage.parameters.retUrl}";
+    } 
+    //CRM-5960
+    document.getElementById('logout-iframe').onload = function() {
+        setTimeout("redirectToLogin()", 1000);
+    }
+  </script>
+  Logging out...
+</apex:page>

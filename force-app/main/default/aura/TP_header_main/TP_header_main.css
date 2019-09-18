@@ -1,0 +1,120 @@
+.THIS article {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 15px; }
+
+.THIS header {
+  border-bottom: 2px solid #d9d9d9;
+  padding: 20px 0;
+  width: 100%;
+  margin: 0 auto; }
+ .THIS header #rdc-logo {
+    /* background-position: 0 -132px; */
+    display: inline-block;
+    background: url("//success.realtor.com/cp/uploads/default/files/dedfbc41a09a1b0dbb71c53065864645.png") no-repeat;
+    width: 220px;
+    height: 35px;
+    background-size: 210px auto;
+    margin-top: 15px; }
+  .THIS header .logo {
+    float: left;
+     }
+   .THIS  header .logo img {
+      max-width: 178px; }
+  .THIS header .util-contact {
+    float: right;
+    color: #101d61; }
+   .THIS header .util-contact h3 {
+      font-size: 22px;
+      margin-top: 12px;
+      margin-bottom: 0; }
+    .THIS  header .util-contact h3 a {
+        color: #101d61; }
+ .THIS header button.anchor {
+    background: #101d61;
+    color: #fff;
+    font-size: 16px;
+    padding: 5px 12px;
+    border: 0;
+    -webkit-border-radius: 7px;
+    -moz-border-radius: 7px;
+    -ms-border-radius: 7px;
+    border-radius: 7px; }
+.THIS .phoneColor {
+  color: black; }
+
+.THIS .phoneColor:hover {
+  color: black; }
+
+.THIS .phonePosition .call-icon {
+  display: inline-block;
+  background: url("https://psweb.realtor.com/logos/tp-phone-icon.png") center left no-repeat;
+  width: 35px;
+  height: 30px;
+  vertical-align: bottom; }
+.THIS .phonePosition h3 {
+  display: inline-block;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 0;
+  color: #000000; }
+
+.THIS .phone-wrap {
+  background-color: #3c3c3b;
+  color: #fff;
+  width: 100%;
+  padding: 45px;
+}
+  .THIS.phone-wrap img {
+    margin-bottom: 5px; }
+  .THIS.phone-wrap h3 {
+    font-size: 40px;
+    font-weight: bold; }
+   .THIS .phone-wrap h3 a {
+      color: #fff; }
+ .THIS .phone-wrap h5 {
+    font-size: 32px;
+    font-weight: bold; 
+}
+
+.THIS .pull-right {
+       float: right!important;
+       padding-right: 55px;
+}
+
+
+@media (max-width: 480px){
+		.THIS header .logo{
+		margin-left: 85px;
+        padding-bottom: 10px;
+		}
+    
+    
+    	 .THIS .phoneColor {
+   		 font-size: 16px;
+
+        }
+        
+        .THIS .phonePosition h3 {
+            font-size: 16px;
+        }
+        
+        .THIS .pull-right {
+            float: left;
+            text-align: center !important;
+            width: 100%;
+            margin: 0;
+            padding-right: 0px;
+        }
+        
+        .THIS  header .logo {
+            text-align: center !important;
+            width: 100%;
+            margin: 0;
+        }
+
+       .THIS .phonePosition .call-icon {
+            width: 30px;
+            height: 25px;
+		}
+}

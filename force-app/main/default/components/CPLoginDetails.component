@@ -1,0 +1,73 @@
+<!-- Component:CPLoginDetails-->
+
+<apex:component access="global" controller="CPLoginDetails" >
+
+    <apex:attribute name="quoteId" assignTo="{!qId}" description="This is the relatedTo Id in the quote"
+
+        type="String"/>
+   
+   
+
+    <apex:repeat var="ord" value="{!orders}"> 
+         <apex:outputPanel rendered="{!IF(ord.show_cp_details__c != null && ord.show_cp_details__c > 0, true, false)}"> 
+            
+         <b>AGENT SELF SERVICE ACCESS FOR {!ord.orderNumber}</b>
+        
+         <apex:variable var="ac" value="{!ord.Account}">
+             
+         <apex:outputText rendered="{!If(ac.type != 'Realtor Agent',true,false)}">
+         <!--   
+         <p>If you have purchased products that can be managed directly by your offices or agents, you can help them access their realtor.com dashboard.</p>
+         <p>Use the attachment (if applicable) to determine if you agents already have an access account</p>
+         <ol><li>If there is an email address next to the name, they have an access account and can login using this email address and their password at  <a href="http://solutioncenter.realtor.com/ControlPanel/Login.aspx " > http://solutioncenter.realtor.com/ControlPanel/Login.aspx </a></li>
+         <li>If there is no email address, they do not have an access account and will need to create their account at <a href="https://dashboard.realtor.com/dashboard/" > https://dashboard.realtor.com/dashboard/ </a>. Creating an access account requires them to select an email address and password, along with a phone number for password recovery. they will also need the MLS ID provided in the attachment to successfully connect to their Control Panel.</li></ol>
+         -->
+              <p>
+       <b> Agents can self sign up with the following credentials on www.realtor.com if an SSO email does not exist.
+           Use the attachment (if applicable) to determine if your agents already have an access account</b>
+        </p>
+             </apex:outputText>
+         
+         <apex:outputText rendered="{!If(ac.type == 'Realtor Agent',true,false)}">
+         <p>Based on the components of the realtor.com® Marketing System that you have purchased, you can use the realtor.com® dashboard to customize your enhanced listings and get the most from your new prospecting tools.</p>
+         <p>To access your realtor.com® dashboard, please follow these steps:</p>
+         <p> Go to <a href="https://dashboard.realtor.com/dashboard/" > dashboard.realtor.com</a></p>
+         
+            <!-- <p>2. <b>Select 'Agent'</b> as your account type and enter the following:.</p>
+             -->
+         <apex:repeat var="cp" value="{!ord.CPDetails__r}" rows="1">
+         <ol>
+             <!--<li>Select Your MLS - {!cp.Name}</li>
+             <li>MLS ID - {!cp.UserName__c}</li>
+             <li>Password - {!cp.Password__c}</li>
+               -->     
+                <li>Agent Name - {!cp.AgentName__c}</li>
+                <li>MLS Name - {!cp.Name}</li>
+                <li>MLS ID - {!cp.UserName__c}</li>
+                <li>SSO Email - {!cp.SSOEmail__c}</li>           
+             
+         </ol>
+         </apex:repeat>
+             <!--
+         <p>3. <b>Click on any of the options</b> in the green menu on the left</p>
+-->
+             
+         </apex:outputText>
+         
+         </apex:variable>
+             
+         </apex:outputPanel>   
+
+        
+         <apex:repeat var="pro" value="{!ord.OrderItems}" rows="1">
+         <apex:outputText rendered="{!If(pro.PricebookEntry.Product2.Description == 'ListHub Pro',true,false)}">
+         <p><b>ListHub Support</b></p>
+         <p>For ListHub product support, please login to your ListHub account, and click "Support" on the top right side of your screen. Here, you will have the opportunity to review Frequently Asked Questions, online and phone support options and a complete user manual which provides detailed information on tools available from ListHub. Additionally, webinars are presented every week to assist new members of the ListHub network in configuring and using ListHub to the fullest. </p>
+         <p>To access the online training calendar and register for one of our classes, visit www.ListHub.com and click "Educational Calendar."</p>
+         <p>LISTHUB RECEIPT AND TERMS AND CONDITIONS:</p>
+         <p>Please note that you will be receiving a separate confirmation from Listhub upon fulfillment with information on how to access the control panel and reports related to the syndication of your listings. You should expect that email within (1)one business day. If you do not receive this email, please send correspondence to:<a href="mailto:Registrations@ListHub.com">Registrations@ListHub.com </a> including your name and phone number.</p>
+         </apex:outputText>
+         </apex:repeat>
+        </apex:repeat>
+       
+</apex:component>

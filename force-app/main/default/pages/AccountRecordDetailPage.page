@@ -1,0 +1,8 @@
+<!-- CRM-6098 - Add profile and label check for BLA -->
+<apex:page action="{!if($user.canseedashboard__c = TRUE && ($Profile.Name = 'Move OpCity Operations' || $Profile.Name = 'Move BLA Operations'  || contains($Label.Opcity_Account_View_Users, $User.UserName)),urlFor($Page.OpcityAccountsummary, Account.Id, [id=Account.Id], true), if($user.canseedashboard__c = True, 
+    urlFor($Page.dashboardaccountsummarynew, Account.Id, [id=Account.Id], true), 
+    if($user.canSeeServiceDashboard__c = True, urlFor($Page.sd_servicedashboard, Account.Id, [id=Account.Id], true),
+    urlFor($Action.Account.View, Account.Id, null, true))))}" 
+    standardController="Account" showHeader="True" tabStyle="account" standardStylesheets="true" docType="html-5.0" sidebar="true" lightningStylesheets="true">
+  <!--<apex:form > -->
+</apex:page>

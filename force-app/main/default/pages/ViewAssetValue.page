@@ -1,0 +1,45 @@
+<apex:page Controller="ViewAssetValueController" sidebar="false" showHeader="false">
+     <apex:includeScript value="/support/console/40.0/integration.js"/>
+    <script type="text/javascript">
+    //CRM-1855 - Srinivas Vadla : added this javascript function to Set the button/link label to the subtab title.
+    function testGetFocusedSubtabId() {
+            sforce.console.getFocusedSubtabId(showTabId);
+        }
+        var showTabId = function showTabId(result) {
+                sforce.console.setTabTitle('View Asset Value');
+        };
+         var pageLoad = window.onload;
+          window.onload = function() {
+            if (pageLoad) {
+                pageLoad();
+            }
+            testGetFocusedSubtabId();
+          }
+    </script>
+    <apex:form > <br/> 
+        <apex:pageBlock ><br/>
+        <center>
+            <Table> 
+                <th>Total Remaining Value : ${!TotalRemainingValue}</th>
+                <th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>
+                <th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>
+                <th>Total Pending Value : ${!TotalPendingValue}</th>      
+            </Table>   
+        </center>  
+        </apex:pageBlock>     
+         
+        <apex:pageBlock >           
+            <apex:pageBlockTable value="{!wrapAssetList}" var="item">
+                <apex:column headerValue="Asset Name"> 
+                    <apex:outputText value="{!item.assets.Name}"></apex:outputText>
+                </apex:column> 
+                <apex:column headerValue="Remaining Value"> 
+                    <apex:outputText value="${!Item.Price}"></apex:outputText>
+                </apex:column> 
+                <apex:column headerValue="Pending Value"> 
+                    <apex:outputText value="${!Item.TotalPrice}"></apex:outputText>
+                </apex:column> 
+            </apex:pageBlockTable>             
+        </apex:pageBlock> 
+    </apex:form>    
+</apex:page>

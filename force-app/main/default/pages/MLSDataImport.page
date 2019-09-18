@@ -1,0 +1,66 @@
+<apex:page controller="MLSMergeFileUploader">
+    <apex:form >
+        <apex:sectionHeader title="Upload data from CSV file" />
+        <apex:pagemessages />
+        <apex:pageBlock rendered="{!ISNULL(uploadedMLSRecords)}">
+            <!--  Component to allow user to upload file from local machine -->
+            <apex:pageBlockSection rendered="{!ISNULL(uploadedMLSRecords)}">
+                    <apex:inputFile value="{!contentFile}" filename="{!nameFile}" />
+                    <apex:commandButton action="{!ReadFile}" value="Upload File" id="theButton" style="width:70px;" />
+                    <br/> <br/>
+                    <font color="red"> <b>Note: Please use the standard template to upload MLS Data.<br/> </b> </font> 
+                    <font size = "3"> <b> Save the file as .csv(comma separate value) format.<br/></b> </font> 
+                    <font color="red"> <b> <a href="{!$Resource.MLSDataupload}" target="_blank"> Click here </a> to download the template. </b> </font>
+            </apex:pageBlockSection>
+         </apex:pageBlock>
+            <!-- After the user clicks the 'Upload File' button, this section displays the inserted data -->
+        <apex:pageBlock rendered="{!NOT(ISNULL(uploadedMLSRecords))}"> 
+            <font size = "3"> <b>Preview of First 100 records from File.</b></font> <font color="red" size = "2"> Click on Insert button if you want to Continue </font>
+            <br/><br/><font size = "3"> <b> Total Records in the File: {!MLSDataRecords}</b></font>
+            <apex:pageblocktable value="{!uploadedMLSRecords}" var="acc" rendered="{!NOT(ISNULL(uploadedMLSRecords))}">                
+                <apex:column headerValue="Transaction Type">
+                    <apex:outputField value="{!acc.Transaction_Type__c}" />
+                </apex:column>
+                <apex:column headerValue="Status">
+                    <apex:outputField value="{!acc.Status__c}" />
+                </apex:column>
+                <apex:column headerValue="Account Type">
+                    <apex:outputField value="{!acc.Acccount_Type__c}" />
+                </apex:column>
+                <apex:column headerValue="Account Name">
+                    <apex:outputField value="{!acc.Account_Name__c}" />
+                </apex:column>
+                <apex:column headerValue="Old MLS Set">
+                    <apex:outputField value="{!acc.OLD_MLS_Set__c}" />
+                </apex:column>
+                <apex:column headerValue="New MLS Set">
+                    <apex:outputField value="{!acc.New_MLS_set__c}" />
+                </apex:column>
+                <apex:column headerValue="Primary MLS Set">
+                    <apex:outputField value="{!acc.Primary_MLS_Set__c}" />
+                </apex:column>
+                <apex:column headerValue="CLC">
+                    <apex:outputField value="{!acc.CLC__c}" />
+                </apex:column>
+                <apex:column headerValue="HLC">
+                    <apex:outputField value="{!acc.HLC__c}" />
+                </apex:column>
+                <apex:column headerValue="Old MLS Set Party Id">
+                    <apex:outputField value="{!acc.Old_MLS_Set_Party_Id__c}" />
+                </apex:column>
+                <apex:column headerValue="New MLS Set Party Id">
+                    <apex:outputField value="{!acc.New_MLS_Set_Party_Id__c}" />
+                </apex:column>
+                <apex:column headerValue="Survivor Party Id">
+                    <apex:outputField value="{!acc.Survivor_Party_Id__c}" />
+                </apex:column>
+                <apex:column headerValue="Victim Party Id">
+                    <apex:outputField value="{!acc.Victim_Party_Id__c}" />
+                </apex:column>               
+            </apex:pageblocktable> 
+            <apex:pageBlockButtons >
+                <apex:commandButton action="{!InsertRecords}" value="Insert" id="theButton1" style="width:70px;"  rendered="{!NOT(ISNULL(uploadedMLSRecords))}"/>
+            </apex:pageBlockButtons>
+        </apex:pageBlock>        
+    </apex:form>
+</apex:page>

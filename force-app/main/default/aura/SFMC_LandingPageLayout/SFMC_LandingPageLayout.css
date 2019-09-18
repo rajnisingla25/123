@@ -1,0 +1,50 @@
+/* .THIS .headerClass{
+    position: absolute;
+    right: 30px;
+    top: -30px;
+    left:0px
+}
+
+.THIS .contentClass{
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    left:0px;
+}
+
+.THIS .featureClass{
+    position: absolute;
+    top: 760px;
+    right: 30px;
+    left:0px;
+    margin-left:40px;
+}
+.THIS .footerClass{
+    position: absolute;
+    top: 997px;
+    right: 30px;
+    left:0px    
+}
+.THIS .siteforceContentArea{
+    position : relative;
+} */
+
+.THIS .headerClass{
+    position: relative;
+}
+
+.THIS .contentClass{
+    position: relative;
+
+}
+.THIS .featureClass{
+    position: relative;
+    
+}
+
+.THIS .footerClass{
+    position: relative;  
+}
+.THIS .customZIndex{
+    z-index: -1;
+}

@@ -1,0 +1,9 @@
+<apex:page controller="MonitorAsyncApexJobController" action="{!getLast24HoursApexJobCount}">
+    <apex:pageBlock title="Last 24 hours AsyncApexJobs Total Count : {!totalCount}">
+        <apex:pageBlockTable value="{!jobs}" var="job">
+            <apex:column value="{!job.className}" headerValue="Class Name"/>
+            <apex:column value="{!job.count}" headerValue="Count"/>
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+  
+</apex:page>

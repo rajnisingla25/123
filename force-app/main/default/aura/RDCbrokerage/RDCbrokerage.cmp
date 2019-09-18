@@ -1,0 +1,172 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" >
+	<aura:attribute name="headline" type="String" />
+    <aura:attribute name="subheadline" type="String" />
+    <aura:attribute name="imagePath" type="String"/>
+    <aura:attribute name="imageSize" type="String"/>
+    <aura:attribute name="subimagePath" type="String"/>
+    <aura:attribute name="subimageSize" type="String"/>
+    <aura:attribute name="backgroundPath" type="String"/>
+    <aura:attribute name="formheadline" type="String" />
+    <aura:attribute name="formsubheadline" type="String" />
+    <aura:attribute name="bannerTextFont" type="String" />
+    <aura:attribute name="bannersubTextFont" type="String" />
+    
+    
+    <!--Form Design attributes -->
+    <aura:attribute name="formTitle" type="String"/>
+    <aura:attribute name="formButtonText" type="String" />
+    <aura:attribute name="showBigWord" type="Boolean" default="false"/>
+    <aura:attribute name="firstWordInFormTitle" type="String"/>
+    <aura:attribute name="cellNumber" type="String"/>
+    <!--Form attributes -->
+   
+ <div class="cRDC_header_main">
+    <header>
+        <article>
+            <div class="logo">
+                <img src="https://b2bweb.realtor.com/web_assets/rdc/logos/realtorlogo.png" alt="Realtor.com(R)"/>
+            </div>
+             <div class="nav-quick-links pull-right">
+                <div class="pull-right">
+                    <a href="#banner-wrap"><button class="cta-red btn" style="">Learn More</button></a>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </article>
+    </header>
+    </div> 
+<!-- End Nav-->
+
+<!-- Main Jumbotron -->
+<div class="jumbotron bg-blue" style="background: url('https://b2bweb.realtor.com/web_assets/rdc/lp-images/2018/brokerage/header-bg.png') center center no-repeat; background-size: cover;">
+    <div class="container-fluid">
+        <div class="content-inner">
+            <div class="row">
+                <div id="jumboleftcopy" class="col-md-6">
+                    <h1>Brokerage Services</h1>
+                    <h3>More leads, faster response, more closings. </h3>
+                    </div>
+                <div class="col-md-6 p-r-0 m-t-40"><img src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2019/LP/brokerage.png" alt="Brokerage Services" class="img-responsive pull-right hidden-xs hidden-sm"/></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Jumbotron --><!-- Begin Main Content -->
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="block  row">
+            <div class="content-inner text-center">
+                <div class="col-sm-12">
+                    <h2>Let us put a strategy together for your brokerage.</h2>
+                        <h3>Realtor.com<sup>&reg;</sup> Brokerage Services is a program to help brokers fully utilize realtor.com<sup>&reg;</sup> solutions to their best advantage, to meet their objectives.
+                            <br/><br/>
+                        Our Digital Sales Consultants have consulted with countless real estate company owners, managers, marketing leadership, and with firms of all sizes and business models.
+                        </h3>
+                    <!--<h3>or call <a href="tel:1.800.878.4166">1.800.878.4166</a></h3>-->
+                    <div><img src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2018/brokerage/brokerage-icon-bar.png" alt="Brokerage Services is a program to help brokers fully utilize realtor.com" class="img-responsive hidden-xs hidden-sm" border="0" /></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="block bg-maroon row product-cta-wrapper" style="">
+            <div class="content-inner text-center">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-8">
+                    <h2>Yes! I want to learn more about brokerage services.</h2>
+                    <!--<h3>or call <a href="tel:1.800.878.4166">1.800.878.4166</a></h3>-->
+                     <div class="" id="banner-wrap">
+                    <div class="banner-form">
+                        <aura:if isTrue="{!not(empty(v.textalign))}">
+                            <div>
+                                <div id="before-submission">
+                                    <c:SFMC_LandingPageForm formTitle="{!v.formTitle}"
+                                                            buttonText="Submit &raquo;"
+                                                            showBigWord="{!v.showBigWord}"
+                                                            firstWordInFormTitle="{!v.firstWordInFormTitle}"
+                                                            popUpImageTest="{!v.popUpImageTest}"
+                                                            prefixString = "{!v.prefixString}"
+                                                            popUpImageHeight = "{!v.popUpImageHeight}"
+                                                            popUpImageWidth = "{!v.popUpImageWidth}"
+                                                            popUpImageLink = "{!v.popUpImageLink}"
+                                                            popupProductType = "{!v.popupProductType}"
+                                                            cellNumber = "{!v.cellNumber}"
+                                                            showPicklist="{!v.showPicklist}"/>
+                                </div>
+                                
+                                <div id="after-submission">
+                                    <h3>Thank you for your interest!</h3>
+                                    <h4>One of our marketing consultants will be reaching out to you via the phone number or email address provided below.</h4>
+                                    <p>Name: <span id="thanksnamef"></span> <span id="thanksnamel"></span></p>
+                                    <p>Email: <span id="thanksemail"></span></p>
+                                    <p>Phone: <span id="thanksphone"></span></p>
+                                </div>
+                                
+                            </div>
+                            <aura:set attribute="else">
+                                <div class="banner-form">
+                                    <div id="before-submission">
+                                        <c:SFMC_LandingPageForm formTitle="{!v.formTitle}"
+                                                                buttonText="Submit &raquo;"
+                                                                showBigWord="{!v.showBigWord}"
+                                                                firstWordInFormTitle="{!v.firstWordInFormTitle}"
+                                                                popUpImageTest="{!v.popUpImageTest}"
+                                                                prefixString = "{!v.prefixString}"
+                                                                popUpImageHeight = "{!v.popUpImageHeight}"
+                                                                popUpImageWidth = "{!v.popUpImageWidth}"
+                                                                popUpImageLink = "{!v.popUpImageLink}"
+                                                                popupProductType = "{!v.popupProductType}"
+                                                                cellNumber = "{!v.cellNumber}"
+                                                                showPicklist="{!v.showPicklist}"/>
+                                        
+                                    </div>
+                                    
+                                    <div id="after-submission">
+                                        <h3>Thank you for your interest!</h3>
+                                        <h4>One of our marketing consultants will be reaching out to you via the phone number or email address provided below.</h4>
+                                        <p>Name: <span id="thanksnamef"></span> <span id="thanksnamel"></span></p>
+                                        <p>Email: <span id="thanksemail"></span></p>
+                                        <p>Phone: <span id="thanksphone"></span></p>
+                                    </div>
+                                    
+                                </div>
+                            </aura:set>
+                            
+                        </aura:if>
+                    </div>
+                </div>
+                </div>
+                <div class="col-sm-2"></div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Main Content --><!-- Begin Footer -->
+<footer>
+    <div class="container-fluid content-inner">
+        <br/><br/>
+        <div class="row">
+            <div class="col-sm-7">
+                <div class="clearfix"><a class="navbar-brand" href="https://marketing.realtor.com"><img src="https://success.realtor.com/cp/files/large/b8abda1c764db455e573ca0f2e9667b6.png" alt="Realtor.com(R) | RealSuite(R)" class="img-responsive logo"/></a></div>
+            </div>
+            <div class="col-sm-5">
+                <div class="social-links">
+                    <ul class="list-unstyled list-inline text-center">
+                        <li><a href="https://www.facebook.com/Realtor.comPro" target="_blank" class="link-primary"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-facebook fa-stack-1x fa-inverse"></i></span></a></li>
+                        <li><a href="https://twitter.com/REALTORdotcom" target="_blank" class="link-primary"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-twitter fa-stack-1x fa-inverse"></i></span></a></li>
+                        <li><a href="https://plus.google.com/+RealtorcomForPros" target="_blank" class="link-primary"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-google-plus fa-stack-1x fa-inverse"></i></span></a></li>
+                        <li><a href="https://www.youtube.com/realtormarketer" target="_blank" class="link-primary"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-youtube fa-stack-1x fa-inverse"></i></span></a></li>
+                        <li><a href="https://pinterest.com/realtordotcom" target="_blank" class="link-primary"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-pinterest fa-stack-1x fa-inverse"></i></span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <br/><br/>
+        <div class="disclaimer text-center">
+            <p><small>&copy; 1995-2019&nbsp; NATIONAL ASSOCIATION OF REALTORS<sup>&reg;</sup> and Move, Inc. All rights reserved.<br/>
+                    realtor.com<sup>&reg;</sup> is the official site of the National Association of REALTORS<sup>&reg;</sup> and is operated by Move, Inc.</small></p>
+        </div>
+    </div>
+</footer>
+   </aura:component>

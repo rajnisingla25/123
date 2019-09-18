@@ -1,0 +1,11 @@
+.THIS {
+}
+.THIS .imagedivclass img{
+	min-width: 3rem;
+}
+.THIS .imagedivclass{
+	padding : 0 1.5rem;
+}
+.THIS .timeline{
+	font-size: 90%;	
+}

@@ -1,0 +1,19 @@
+<aura:component controller="System_Monitoring_Controller">
+	<aura:attribute name="categories" type="Object[]" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <lightning:layout class="slds-page-header slds-page-header--object-home">
+            <lightning:layoutItem flexibility="auto">
+                <lightning:card title="Monitoring Reports" class="sslds-theme_info" iconName="standard:quotes">
+                    <lightning:tabset>
+                        <aura:iteration items="{!v.categories}" var="cat">
+                            <lightning:tab label="{!cat.Display_Name__c}">
+                                <c:ReportTable category="{!cat.Name}" toList="{!cat.To_Email_List__c}"/>
+                            </lightning:tab>
+                        </aura:iteration>
+    				</lightning:tabset>
+                </lightning:card>
+            </lightning:layoutItem> 
+        </lightning:layout>
+    <lightning:spinner aura:id="spinner" variant="brand" size="large"/>
+</aura:component>

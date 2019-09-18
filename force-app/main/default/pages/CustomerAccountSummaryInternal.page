@@ -1,0 +1,25 @@
+<apex:page showHeader="false">
+    <apex:includeScript value="/support/console/40.0/integration.js"/>
+<script>
+            function testGetFocusedSubtabId() {
+            sforce.console.getFocusedSubtabId(showTabId);
+            window.location='/apex/customerAccountSummary?Id={!$CurrentPage.parameters.Id}&isdtp=vw';
+            console.log('/apex/customerAccountSummary?Id={!$CurrentPage.parameters.Id}&isdtp=vw');
+        }
+        var showTabId = function showTabId(result) {
+            console.log(showTabId);
+                sforce.console.setTabTitle('Customer Account Summary');
+        };
+         var pageLoad = window.onload;
+          window.onload = function() {
+            if (pageLoad) {
+                console.log('in page load');
+                pageLoad();
+            }
+             console.log('calling original');
+                testGetFocusedSubtabId();
+          }
+          
+//testGetFocusedSubtabId();
+        </script>
+</apex:page>

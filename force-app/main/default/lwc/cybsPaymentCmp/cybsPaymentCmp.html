@@ -1,0 +1,22 @@
+<template>  
+    <lightning-card title="Manage Payment Profiles" id="paymentProfile">               
+                    <div class="slds-m-around_medium">
+                            <template if:true={paymentRecords}>
+                                <lightning-datatable
+                                    key-field="Id"
+                                    data={paymentRecords}
+                                    columns={columns}
+                                    onsave={handleSave}                                    
+                                    draft-values={draftValues}>
+                                </lightning-datatable>
+                            </template>
+                            <template if:true={paymentRecords.error}>
+                                <!-- handle Apex error -->
+                            </template>
+                        </div>
+                
+                </br></br>                
+                <lightning-button id="btn" class = "addCCbutton" label ="Add Credit Card" onclick={sendData} style="text-align:center;"></lightning-button>              
+                <iframe id="lwciFrame" class="cybsiFrame" src="" height="824" width="100%" ></iframe>           
+    </lightning-card>   
+</template>

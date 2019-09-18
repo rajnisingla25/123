@@ -1,0 +1,96 @@
+<apex:page controller="PublicGroupQueueManagementController">
+<apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" />
+<script type="text/javascript" language="javascript">
+function disableEnter(myfield,e) {
+  var keycode;
+  if (window.event) 
+    keycode = window.event.keyCode;
+  else 
+    if (e) 
+      keycode = e.which;
+    else 
+      return true;
+  if (keycode == 13) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+function resetCall(){ 
+
+   $(".test").val('--None--'); 
+   $(".searchCriteria").val('');
+}
+</script>
+<apex:pageMessages />
+  <apex:form >
+    <br />
+    <apex:pageBlock title="Public Group and Queue Management">
+      
+      <apex:pageBlockButtons >
+        <apex:commandButton title="Reset" value="Reset" reRender="left_sl,right_sl,test" action="{!reset}" status="ResetStatus" onComplete="resetCall();"/>
+        <apex:commandButton title="Save" value="Save" action="{!Save}"/>
+      </apex:pageBlockButtons>
+      
+      <apex:actionFunction name="addUsers" action="{!addClick}" rerender="left_sl,right_sl" status="AddStatus"/>
+      <apex:actionFunction name="removeUsers" action="{!removeClick}" rerender="left_sl,right_sl" status="RemoveStatus"/>
+      <apex:actionFunction name="populatecurrentusers" action="{!getMembers}" rerender="left_sl,right_sl" status="GetGroupStatus"/>      
+
+      <br />
+      This Utility Is Used To Manager Queue and Public Group Assignments.
+      <br /><br />
+       Public Group or Queue&nbsp;
+       <apex:selectList value="{!g}" size="1" onchange="populatecurrentusers()" styleClass="test">
+            <apex:selectOptions value="{!items}"/>
+            <apex:selectOptions value="{!options2}"/>
+            <apex:selectOptions value="{!options3}"/>                        
+        </apex:selectList>
+      <br /><br />
+
+      Search in
+      <apex:selectList value="{!searchIn}" size="1" onchange="populatecurrentusers()">
+            <apex:selectOptions value="{!GroupsToSearch}"/>
+        </apex:selectList>         
+
+      <apex:inputText value="{!searchCriteria}" onKeyPress="return disableEnter(this,event)" styleclass="searchCriteria" />
+      <apex:commandButton value="Find" title="Find" action="{!Search}" reRender="left_sl" status="SearchStatus"/>      
+      <br></br>
+      <i><b>Use % as a wildcard.</b></i>
+
+      <br /><br />
+      
+      <apex:actionStatus startText="Getting members..." id="GetGroupStatus" />
+      <apex:actionStatus startText="Searching..." id="SearchStatus" />
+      <apex:actionStatus startText="Removing..." id="RemoveStatus" />
+      <apex:actionStatus startText="Adding..." id="AddStatus" />
+      <apex:actionStatus startText="Resetting..." id="ResetStatus" />
+      
+      <br /><br />
+      
+      <table border="0">
+        <tr>
+          <td>
+            <apex:selectList id="left_sl" value="{!leftselected}" multiselect="true" style="width:200px" size="10">
+              <apex:selectOptions value="{!unselectedvalues}" />
+            </apex:selectList>
+          </td>
+          <td align="middle" valign="middle">
+            <br></br>Add<br></br>
+            <apex:image id="addRight" styleClass="rightArrowIcon" url="/s.gif" onclick="addUsers()">
+          </apex:image>
+            <br></br><br></br>
+            <apex:image id="addleft" styleClass="leftArrowIcon" url="/s.gif" onclick="removeUsers()">
+          </apex:image>
+            <br></br>Remove
+          </td>
+            <td>
+              <apex:selectList id="right_sl" value="{!rightselected}" multiselect="true" style="width:200px" size="10">
+                <apex:selectOptions value="{!selectedvalues}" />
+              </apex:selectList>
+            </td>
+          </tr>
+        </table>
+      </apex:pageBlock>
+     </apex:form>
+  </apex:page>

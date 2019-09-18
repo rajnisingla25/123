@@ -1,0 +1,8 @@
+<!-- CRM-4825 : Conditionally display order total based on MonthToMonth (For Modify order types)-->
+<apex:component access="global" controller="ProductInformationController">
+
+    <apex:attribute name="orderId" assignTo="{!ordId}" description="This is the relatedTo Id in the order or quote" type="String" />
+    <apex:outputText rendered="{!If(hasMonthToMonth == true,false,true)}" value="{0,Number,currency}"> <apex:param value="{!thisOrder.TotalAmount}"/> </apex:outputText>
+    <apex:outputText rendered="{!If(hasMonthToMonth == true,true,false)}" value="{0,Number,currency}"> <apex:param value="{!thisOrder.Order_First_Month_Total__c}"/> </apex:outputText>
+       
+</apex:component>

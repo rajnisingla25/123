@@ -1,0 +1,357 @@
+<apex:page readOnly="true" Controller="realtorRosterSearchController"  title="Customer Account Summary"  showHeader="false" sidebar="false" standardStylesheets="false" >
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+        <title>Realtor Roaster Search</title>
+        <apex:includeScript value="/support/console/40.0/integration.js"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" />
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.15/css/dataTables.bootstrap.min.css"/>
+        <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+
+        
+        <!-- <apex:includeScript value="{!URLFOR($Resource.bootstrap4,'bootstrap4/jquery-3.2.1.min.js')}"/>
+            
+             <apex:includeScript value="{!URLFOR($Resource.bootstrap4,'bootstrap4/tether.js')}"/>
+            <apex:includeScript value="{!URLFOR($Resource.bootstrap4,'bootstrap4/jquery.dataTables.min.js')}"/>
+             <apex:includeScript value="{!URLFOR($Resource.bootstrap4,'bootstrap4/bootstrap.min.js')}"/>
+             
+             <apex:stylesheet value="{!URLFOR($Resource.bootstrap4, 'bootstrap4/bootstrap.min.css')}"/>
+              <apex:stylesheet value="{!URLFOR($Resource.bootstrap4, 'bootstrap4/jquery.dataTables.min.css')}"/>
+           --> 
+    </head>
+    <style type="text/css">
+        .radioBtn td {
+        padding-right: 20px;
+        }
+        .radioBtn label {
+        padding-left: 10px;
+        font-weight: 400;
+        }
+        .container {
+        padding: 20px;
+        width: 600px;
+        border: rgb(0, 0, 128) 1px solid;
+        }
+        .table-container {
+        margin: 20px;
+        }
+        #mls-table td a{
+            color: black;
+            text-decoration: underline;
+        }
+        .header-div {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 20px;
+        }
+        .control-label {
+        text-align: left !important;
+        }
+        .form-search {
+        background-color: rgb(135, 206, 235);
+        border: rgb(0, 0, 128) 1px solid;
+        border-bottom-width: 0;
+        padding: 5px 20px;
+        padding-bottom: 0;
+        width: 600px;
+        margin: auto; 
+        }
+        .clear-btn {
+        margin-left: 20px;
+        }
+
+        .help-table thead tr {
+            background-color: skyblue; 
+        }
+        .help-table {
+            margin:auto;
+            width: 50%;
+            margin-top: 50px;
+            margin-bottom: 30px;
+        }
+        .loadingDiv{
+        position:fixed;
+        top:0px;
+        right:0px;
+        width:100%;
+        height:100%;
+        background-color:#666;
+        background-image: url({!$Resource.loadingBar});
+        background-repeat:no-repeat;
+        background-position:center;
+        z-index:10000000;
+        opacity: 0.4;
+        filter: alpha(opacity=40); /* For IE8 and earlier */
+        }
+
+
+    </style>
+    <body style="font-family: sans-serif;">
+        <div class="header-div">
+            <h2 style="font-weight: bold; margin-bottom: 0">Realtor Roster Search</h2>
+            <p>(formerly known as Non-Customer Search)</p>
+        </div>
+        <apex:form id="MLSForm" styleclass="form-horizontal">
+        <apex:outputPanel id="FormPanel">
+            <div class="form-search">
+                <label>Search by:</label>
+            </div>
+            <div class="container">
+                <div class="form-group">
+                    <label class="control-label col-sm-2">Office Name:</label>
+                    <div class="col-sm-10">
+                        <apex:inputText styleClass="form-control" value="{!officeName}" />
+                    </div>
+                </div>
+                 <div class="form-group">
+                    <label class="control-label col-sm-2">Agent Name:</label>
+                    <div class="col-sm-10">
+                        <apex:inputText styleClass="form-control" value="{!agentName}" />
+                    </div>
+                </div>
+                 <div class="form-group">
+                    <label class="control-label col-sm-2">MLS Account Name:</label>
+                    <div class="col-sm-10">
+                        <apex:inputText styleClass="form-control" value="{!mlsAcctName}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2">MLS:</label>
+                    <div class="col-sm-10">
+                        <apex:selectList id="selectMLS" value="{!mlsId}" size="1">
+                            <apex:selectOption itemValue="" itemLabel=""/>
+                            <apex:selectOptions Value="{!mlsCodeOptions}" />
+                        </apex:selectList>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" >State:</label>
+                    <div class="col-sm-10">
+                        <apex:selectList id="selectState" value="{!state}" size="1">
+                            <apex:selectOption itemValue="" itemLabel=""/>
+                            <apex:selectOptions Value="{!stateOptions}" />
+                        </apex:selectList>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2">MLS Id:</label>
+                    <div class="col-sm-10">
+                        <apex:inputText styleClass="form-control" value="{!mlsAlias}"/>
+                    </div>
+                </div>
+                <div class="form-group ">
+                    <label class="control-label col-sm-2" >Type:</label>
+                    <div class="col-sm-10 radioBtn">
+                        <apex:selectRadio value="{!mlsType}">
+                            <apex:selectOption itemValue="" itemLabel="All"/>
+                            <apex:selectOption itemValue="Office" itemLabel="Office"/>
+                            <apex:selectOption itemValue="Agent" itemLabel="Agent"/>
+                        </apex:selectRadio>
+                    </div>
+                </div>
+                <div class="form-group ">
+                    <label class="control-label col-sm-2">Cust Status:</label>
+                    <div class="col-sm-10 radioBtn">
+                        <apex:selectRadio styleClass="radioBtn" value="{!mlsStatus}">
+                            <apex:selectOption itemValue="" itemLabel="All"/>
+                            <apex:selectOption itemValue="Active" itemLabel="Active"/>
+                             <apex:selectOption itemValue="Inactive" itemLabel="Inactive"/>
+                        </apex:selectRadio>
+                    </div>
+                </div>
+   
+               
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                       <!-- <apex:commandButton styleClass="btn btn-default" value="Search" rerender="MLSTable" oncomplete="displayTable();"  action="{!searchMLS}"  immediate="false"/> -->
+                        <button class="btn btn-default" type="submit" onclick="search();">Search</button>
+                        <apex:actionFunction name="searchMLS" action="{!searchMLS}" rerender="MLSTable" oncomplete="displayTable();"  ></apex:actionFunction>
+                        <apex:commandButton styleClass="btn btn-default clear-btn" value="Clear" rerender="FormPanel" action="{!clearInputs}"  immediate="false"/>
+
+                    </div>
+                </div>
+            </div>
+             </apex:outputPanel>
+            <apex:outputPanel id="MLSTable">
+                <div id='loadingDiv'></div>
+                <div id="table-container" class="table-container" >
+                    <div style="display: {!If((mlsList.size > 0 && offsetsize >= 1000) ,'','none') }; padding: 10px 0px; font-weight: bold;">
+                      To get more results, use Export functionality.
+                    </div>
+                    <div style="display: {!If((mlsList.size > 0 && offsetsize==500 && officeId == '') ,'','none') }; font-weight: bold;">
+                        To get few more results, click on "Get more rows" button
+                    </div><br/>
+                    <table id="mls-table" class="table table-bordered" data-page-length='50' cellpadding="6px" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Office Name</th>
+                                <th>Agent Name</th>
+                                <th>MLS Set</th>
+                                <th>Parent MLS Set</th>
+                                <th>MLS State</th>
+                                <th>MLS City</th>
+                                <th>MLS Name</th>
+                                <th>MLS Tier</th>
+                                <th>Primary MLS Set</th>
+                                <th>MLS Account Name</th>
+                                <th>MLS Phone Number</th>
+                                <th>Account Type</th>
+                                <th>Account Sub Type</th>
+                                <th>Account Advertiser Id</th>
+                                <th>HLC </th>
+                                <th>CLC </th>
+                                <th>Land AMLC </th>
+                                <th>Rental AMLC </th>
+                                <th>Residential AMLC</th>
+                                 <th>Party Id </th>
+                            </tr>
+                        </thead>
+                        <apex:repeat value="{!mlsList}" var="mls" rows="1000">
+                            <tr>
+                                <td  ><apex:outputText style="display: none;" value="{!mls.Office_Name__c}" ></apex:outputText>
+                                    <apex:commandButton style="color:black; background-color: white; border:none; " value="{!mls.Office_Name__c}" onclick="loadDiv();" action="{!getAgents}" rerender="MLSTable" oncomplete="displayTable();">
+                                        <apex:param name="OfficeId" 
+                                            value="{!mls.Office__c}" 
+                                            assignTo="{!officeId}"/>
+                                    </apex:commandButton>
+                                </td>
+                                <td  >
+                                    <a href="/{!mls.Agent__c}" target="_blank">{!mls.Agent_Name__c}</a>
+                                </td>
+                               <td  >
+                                    <a  style="display: {!If(mls.MLS_Set_Type__c == 'Agent' ,'','none') }" href="/{!mls.Agent__c}" target="_blank">{!mls.Name}</a>
+                                    <a  style="display: {!If(mls.MLS_Set_Type__c == 'Office' ,'','none') }" href="/{!mls.Office__c}" target="_blank">{!mls.Name}</a>
+                                </td>
+                                <td  >
+                                    <apex:outputText value="{!mls.Parent_MLS_Set_ID__c}" ></apex:outputText>
+                                </td>
+                                <td  >
+                                    <apex:outputText value="{!mls.MLS_State__c}" ></apex:outputText>
+                                </td>
+                                <td  >
+                                    <apex:outputText value="{!If(mls.MLS_City__c == '' ,If(mls.MLS_Set_Type__c == 'Agent' ,mls.Agent__r.BillingCity,mls.Office__r.BillingCity),mls.MLS_City__c) }" ></apex:outputText>
+                                </td>
+                                <td  >
+                                    <apex:outputText value="{!mls.MLS_Area_Source_Reference__c}" ></apex:outputText>
+                                </td>
+                                 <td  ><!-- CRM-3020 -->
+                                    <apex:outputText value="{!mls.MLS__r.MLSTier__c}" ></apex:outputText>
+                                </td>
+                                 <td  >
+                                    <apex:outputText value="{!mls.Primary_MLS_Set__c}" ></apex:outputText>
+                                </td>
+                                <td  >
+                                    <apex:outputText value="{!mls.MLS_Account_Name__c}" ></apex:outputText>
+                                </td>
+                                <td  >
+                                    <apex:outputText value="{!mls.MLS_Phone__c}" ></apex:outputText>
+                                </td>
+                                <td  >
+                                    <apex:outputText value="{!mls.MLS_Set_Type__c}" ></apex:outputText>
+                                </td>
+                                <td  >
+                                    <apex:outputText value="{!mls.Account_Sub_Type__c}" ></apex:outputText>
+                                </td>
+                                <td  >
+                                    <apex:outputText value="{!mls.Account_Advertiser_id__c}" ></apex:outputText>
+                                </td>
+                                <td  >
+                                    <apex:outputText value="{!mls.HLC__c}" ></apex:outputText>
+                                </td>
+                                <td  >
+                                    <apex:outputText value="{!mls.CLC__c}" ></apex:outputText>
+                                </td>
+                                 <td  >
+                                    <apex:outputText value="{!If(mls.MLS_Set_Type__c == 'Agent' ,mls.Agent__r.LandAMLC__c,mls.Office__r.LandAMLC__c) }" ></apex:outputText>
+                                </td>
+                                 <td  >
+                                    <apex:outputText value="{!If(mls.MLS_Set_Type__c == 'Agent' ,mls.Agent__r.RentalAMLC__c,mls.Office__r.RentalAMLC__c) }" ></apex:outputText>
+                                </td>
+                                 <td  >
+                                     <apex:outputText value="{!If(mls.MLS_Set_Type__c == 'Agent' ,mls.Agent__r.ResidentialAMLC__c,mls.Office__r.ResidentialAMLC__c) }" ></apex:outputText>
+                                </td>
+                                <td  >
+                                    <a  style="display: {!If(mls.MLS_Set_Type__c == 'Agent' ,'','none') }" href="/{!mls.Agent__c}" target="_blank">{!mls.MLS_Set_Party_ID__c}</a>
+                                    <a  style="display: {!If(mls.MLS_Set_Type__c == 'Office' ,'','none') }" href="/{!mls.Office__c}" target="_blank">{!mls.MLS_Set_Party_ID__c}</a>
+                                </td>
+                            </tr>
+                        </apex:repeat>
+                    </table>
+                    <div style="float: left;"> 
+                       
+                        <apex:commandButton style="display: {!If(mlsList.size > 0 ,'','none') }" action="{!updateValuesForURL}" value='Export'  rerender="export" styleClass="btn btn-default" oncomplete="exportData()"></apex:commandButton>
+                       <p style="display: {!If(mlsList.size > 0 ,'','none') }"> Maximum 10,000 records can be exported.  </p> 
+                    </div>
+                    <div style="float: right;">
+                        <apex:commandButton style="display: {!If((mlsList.size > 0 && officeId == '' && Mod(offsetsize, 500)==0 && offsetsize < 1000) ,'','none') }" action="{!getMoreRows}" onclick="loadDiv();" value='Get more rows'  rerender="MLSTable" styleClass="btn btn-default" oncomplete="displayTable()"></apex:commandButton>
+                    </div>
+                    <div style="clear: both;"></div>
+                </div>
+                <div class="help-table-div">
+
+                <table class="table table-bordered help-table" cellpadding="2px" width="60%" >
+                <thead>
+                    <tr><th>Notes and Advanced Search Tips:</th></tr>
+                </thead>
+                <tbody>
+                     <tr><td>Enter values for one or more of the search fields. Entering more information will narrow the search.</td></tr>
+                     <tr><td>This utility will return data for all realtors (customers and prospects, agents and offices) who are currently flagged as active realtors in the homestore realtor database. There may be customers who have active products but are not flagged as active in the realtor database, and they would therefore not show up in this utility.</td></tr>
+                     <tr><td>Click an office name to see all agents who belong to that office.</td></tr>
+                      <tr><td>Use the wildcard character "%" to search for multiple or unknown spellings.
+                      <br/>Example: when searching for re/max use "re%max" to get:
+                      <br/>-<span style="color:red">remax</span>
+                      <br/>-<span style="color:red">re</span>/<span style="color:red">max</span>
+                      <br/>-b<span style="color:red">re</span>nt lo<span style="color:red">max</span>
+                      </td></tr>
+                    
+                </tbody>
+                </table>
+                   </div>
+             <apex:outputPanel id="export">
+             <script type="text/javascript">
+                 function exportData(){
+
+                    //CRM-2148 - When an office account is clicked then show all agents who belong to that  office.
+                    if("{!officeId}" != ''){
+                        window.open('/apex/mlsRecords?officeId={!officeId}', '_blank');
+                    return false;
+                    }
+                      // CRM 2136: encode the values to avoid issues caused by chars like "%", "&" etc
+                      var offName = encodeURIComponent('{!officeName}');
+                      var agnName = encodeURIComponent('{!agentName}');
+                      var mlsActName = encodeURIComponent('{!mlsAcctName}');
+                      var mlsAliasVal = encodeURIComponent('{!mlsAlias}');
+                   
+                    window.open('/apex/mlsRecords?mlsId={!mlsId}&state={!state}&officeName='+offName+'&agentName='+agnName+'&mlsAcctName='+mlsActName+'&mlsType={!mlsType}&mlsStatus={!mlsStatus}&mlsAlias='+mlsAliasVal+'', '_blank');
+                    return false;
+                 }
+             </script>
+             </apex:outputPanel>
+                <script type="text/javascript">
+                   
+                    function search(){
+                      $('#loadingDiv').addClass('loadingDiv');
+                        searchMLS();
+                        event.preventDefault();
+                    }
+
+                    function loadDiv(){
+                         $('#loadingDiv').addClass('loadingDiv');
+                    }
+                    
+                  
+                    function displayTable(){
+                    $('#loadingDiv').removeClass('loadingDiv');
+                    $('#mls-table').DataTable({
+                    "order": [[ 2, "asc" ]]
+                    });
+                    }
+                </script>  
+
+            </apex:outputPanel>
+        </apex:form>
+
+    </body>
+</apex:page>

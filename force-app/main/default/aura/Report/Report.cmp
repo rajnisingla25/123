@@ -1,0 +1,35 @@
+<aura:component controller="System_Monitoring_Controller">
+	<aura:attribute name="report" type="Object"/>
+    <aura:attribute name="background" type="Boolean"/>
+    
+    <aura:handler name="change" value="{!v.background}" action="{!c.fetchReport}"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <tr class="{!if(v.report.count>v.report.red, 'redClass' , if(v.report.count>v.report.yellow, 'yellowClass','slds-hint-parent'))}">
+        <td data-label="Report Name">
+            <div >{!v.report.name}</div>
+        </td>
+        <td data-label="Count">
+            <lightning:spinner aura:id="spinner" variant="brand" size="small" class="slds-hide"/>
+            <div class="slds-truncate">{!v.report.count} </div>
+        </td>
+        <td data-label="Last Ran On">
+            <div >{!v.report.lastRunDateTime}</div>
+        </td>
+        <td data-label="SFDC Report">
+            <div ><ui:outputURL value="{!v.report.reportUrl}" label="{!v.report.reportUrl}"/> </div>
+        </td>
+        <td data-label="Comments">
+            <div ><lightning:textarea placeholder="{!'Add comments here to include in email for ' + v.report.name}" value="{!v.report.comments}"></lightning:textarea> </div>
+        </td>
+         <td data-label="Send Email">
+            <div class="slds-truncate">
+                <lightning:button disabled="{!!v.report.enableEmail || v.report.count==null}" variant="brand" label="Send Email" title="{!if(v.report.enableEmail, 'Send Email', 'Send Email is Disabled for ' + v.report.name)}" onclick="{!c.sendEmail}" />  
+            </div>
+        </td>
+       <td data-label="Respective Team Members">
+            <div class="slds-truncate">
+                {!v.report.toList}
+            </div>
+        </td>
+    </tr>
+</aura:component>

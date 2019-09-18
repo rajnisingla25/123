@@ -1,0 +1,214 @@
+<!-- CRM 3140: Component used in "Realtor.com order Welcome Email" template-->
+<apex:component access="global" controller="RealsuiteWelcomeEmailCompController">
+   <apex:attribute name="orderId" assignTo="{!ordId}" description="This is the relatedTo Id in the order"
+      type="String"/>
+      <!-- REMOVE this outputpanel post GA-->
+<apex:outputPanel rendered="{!IF(DATEVALUE($Label.Connections_Plus_GA_date) <= Today() ,false,true)}">
+    
+    <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+      <tr>
+         <td align="left" style="padding: 20px;font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 400; line-height: 18px;">
+            <p style="font-size: 15px; font-weight: 800; line-height: 18px; color: #2d2926;">
+               Dear {!ordItem.Order.Contact_Name__c},
+            </p>
+            <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF((trialProdNames == '' && ordItem.Order.Account.SSO_Email__c == ''),true,false)}">
+               Thank you for subscribing to {!paidProdNames}. Your account is activated and you are all set to go! <a href="{!urltoCP}">Create a free Realsuite dashboard account</a> to get started.
+            </apex:outputPanel>
+            <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF((paidProdNames == '' && ordItem.Order.Account.SSO_Email__c == ''),true,false)}">
+               Thank you for your interest in the Realsuite℠ platform. Your {!numOfTrialDays} month trial of {!trialProdNames} has started. <a href="{!urltoCP}">Create a free Realsuite dashboard account</a> to get started.
+            </apex:outputPanel>
+            <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF((paidProdNames != '' && trialProdNames != '' && ordItem.Order.Account.SSO_Email__c == ''),true,false)}">
+               Thank you for subscribing to {!paidProdNames}. You have also been given a {!numOfTrialDays} month trial of {!trialProdNames}. <a href="{!urltoCP}">Create a free Realsuite dashboard account</a> to get started.
+            </apex:outputPanel>
+            <!-- CRM-4228: RS bundling-->
+            <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF((!contains(ordItem.Order.products__c, 'COBROKE') && isRSBundle && paidProdNames == '' && trialProdNames == '' && ordItem.Order.Account.SSO_Email__c == ''),true,false)}">
+               Thank you for subscribing to realtor.com® Connections℠ for Buyers, which now includes access to premium features of the Realsuite℠ dashboard. Your account is activated and you are all set to go! <a href="{!urltoCP}">Create a free Realsuite dashboard account</a> to get started.
+            </apex:outputPanel>
+            <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF((trialProdNames == '' && ordItem.Order.Account.SSO_Email__c != ''),true,false)}">
+               Thank you for subscribing to {!paidProdNames}. Your account is activated and you are all set to go! <a href="{!urltoCP}">Log in to your Realsuite dashboard account</a> to get started.
+            </apex:outputPanel>
+            <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF((paidProdNames == '' && ordItem.Order.Account.SSO_Email__c != ''),true,false)}">
+               Thank you for your interest in the Realsuite℠ platform. Your {!numOfTrialDays} month trial of {!trialProdNames} has started. <a href="{!urltoCP}">Log in to your Realsuite dashboard account</a> to get started.
+            </apex:outputPanel>
+            <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF((paidProdNames != '' && trialProdNames != '' && ordItem.Order.Account.SSO_Email__c != ''),true,false)}">
+               Thank you for subscribing to {!paidProdNames}. You have also been given a {!numOfTrialDays} month trial of {!trialProdNames}. <a href="{!urltoCP}">Log in to your Realsuite dashboard account</a> to get started.
+            </apex:outputPanel>
+             <!-- CRM-4228: RS bundling-->
+            <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF((!contains(ordItem.Order.products__c, 'COBROKE') && isRSBundle && paidProdNames == '' && trialProdNames == '' && ordItem.Order.Account.SSO_Email__c != ''),true,false)}">
+               Thank you for subscribing to realtor.com® Connections℠ for Buyers, which now includes access to premium features of the Realsuite℠ dashboard. Your account is activated and you are all set to go! <a href="{!urltoCP}">Log in to your Realsuite dashboard account</a> to get started.
+            </apex:outputPanel>
+         </td>
+      </tr>
+      <tr>
+         <td align="left" style="padding: 10px 20px; padding-bottom:40px;">
+            <table border="0" cellspacing="0" cellpadding="0">
+               <tr>
+                  <td align="center" bgcolor="#475cc7">
+                     <a href="{!urltoCP}" target="_blank" style="font-size: 14px; font-family: Open Sans, Helvetica, Arial, sans-serif; color: #ffffff; text-decoration: none; border-radius: 0; background-color: #475cc7; padding: 10px 25px; display: block;">GET STARTED</a>
+                  </td>
+               </tr>
+            </table>
+         </td>
+      </tr>
+      <tr style=" display:{!IF(paidProdNames == '' && trialProdNames == '','none','')}">
+         <td align="left" style="background-color: #ffffff; border-top: 1px solid #ccc;" bgcolor="#ffffff" height="100%" valign="top" width="100%"></td>
+      </tr>
+      <tr>
+         <apex:variable var="prod" value="{!ordItem.Order.products__c}" />
+         <td align="left" style="padding: 20px;padding-bottom:0;font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 400; line-height: 18px;">
+            <apex:outputPanel rendered="{!IF(paidProdNames == '' && trialProdNames == '',false,true)}">
+               <p style="font-size: 15px; font-weight: 800; line-height: 18px; color: #2d2926;">
+                  ABOUT YOUR SOLUTIONS 
+               </p>
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF(contains(prod, 'ADVANTAGE'),true,false)}">
+                  <b>realtor.com® Advantage℠ Pro</b><br></br>
+                  Stand out with prominent branding on your listings and get all leads from your listings. <br/><br/>
+               </apex:outputPanel>
+               
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF(contains(prod, 'SELLERLEADBUNDLE'),true,false)}">
+                  <b>realtor.com® Connections℠ for Seller Bundle </b><br></br>
+                  Leads from verified sellers wanting to talk with an agent about selling their home.    <br/>  <br/>                      
+               </apex:outputPanel>
+                <!-- CRM-4228: RS bundling-->
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF(contains(prod, 'COBROKE'),true,false)}">
+                  <b>realtor.com® Connections℠ for Buyers</b><br></br>
+                  Build a pipeline of high quality, actionable leads and get access to the premium features of the Realsuite℠ dashboard that can help you capture, communicate and close leads. <br/><br/>
+               </apex:outputPanel>
+               
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF(contains(prod, 'COBROKE') && contains(prod, 'RSRESPOND') && freeRespond,true,false)}">
+                  <b>Included with your purchase: Realsuite℠ Respond℠</b><br></br>
+                  Impress potential clients with fast, personalized responses to inquiries from 150+ sources. <br/><br/>
+               </apex:outputPanel>
+               
+               <!-- CRM-4002 (Standalone RS/ RS bundling): Added condition to hide products if higher RS products or $0 RS products are present-->
+               <!-- CRM-4228: Hide RS products if in bundle-->
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF(contains(prod, 'RSRESPOND') && !contains(prod, 'RSCONNECT') && !freeRespond && !isRSBundle,true,false)}">
+                  <b>Realsuite℠ Respond℠ </b><br></br>
+                  Impress potential clients with fast, personalized responses to inquiries from 150+ sources. <br/><br/>
+               </apex:outputPanel>
+               
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF(contains(prod, 'RSCONNECT') && !isRSBundle,true,false)}">
+                  <b>Realsuite℠ Connect℠</b><br></br>
+                  Helps you respond fast, nurture relationships easily, and can help boost your lead conversion rate. <br/><br/>
+               </apex:outputPanel>
+               
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF(contains(prod, 'RSTRANSACT') && !isRSBundle,true,false)}">
+                  <b>Realsuite℠ Transact℠</b><br></br>
+                  Easily stay on top of transaction details, documents and tasks, and save time with paperless processes. <br/><br/>
+               </apex:outputPanel>
+               
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF(contains(prod, 'LOCALEXPERT') && !containsOnlyCityProd ,true,false)}">
+                  <b>realtor.com® Local Expert Zip Ad℠</b><br></br>
+                  Position yourself as the go-to authority in your neighborhood with highly targeted, consistent and measurable brand exposure.  <br/><br/>
+               </apex:outputPanel>
+                <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF(contains(prod, 'LOCALEXPERTCITY'),true,false)}">
+                  <b>realtor.com® Local Expert City Ad℠</b><br></br>
+                  Position yourself as the go-to authority in your neighborhood with highly targeted, consistent and measurable brand exposure.  <br/><br/>
+               </apex:outputPanel>
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF(ordItem.order.Account.SSO_Email__c=='',true,false)}">
+                  <b>realtor.com® Essentials℠</b><br></br>
+                  Essentials℠ is the simple (and free!) way to manage your realtor.com® leads, listings and profile. By logging in or using the Essentials℠ tools, you agree to our <a href="https://marketing.move.com/terms-of-service">terms and conditions</a>. <br/>
+               </apex:outputPanel>
+               <br></br>
+            </apex:outputPanel>
+         </td>
+      </tr>
+   </table>
+</apex:outputPanel>
+
+
+
+<apex:outputPanel rendered="{!IF(DATEVALUE($Label.Connections_Plus_GA_date) <= Today() ,true,false)}">
+   <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+      <tr>
+         <td align="left" style="padding: 20px;font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 400; line-height: 18px;">
+            <p style="font-size: 15px; font-weight: 800; line-height: 18px; color: #2d2926;">
+               Dear {!ordItem.Order.Contact_Name__c},
+            </p>
+            <apex:outputPanel rendered="{!IF(trialProdNames == '',true,false)}">
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF((ordItem.Order.Account.SSO_Email__c == ''),true,false)}">
+                  Thanks for your recent purchase with realtor.com®. You are all set to go! <a href="{!urltoCP}"> Create a free professional dashboard</a> to get started.
+               </apex:outputPanel>
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF((ordItem.Order.Account.SSO_Email__c == ''),false,true)}">
+                  Thanks for your recent purchase with realtor.com®. You are all set to go! <a href="{!urltoCP}"> Log in to your professional dashboard </a> to get started.
+               </apex:outputPanel>
+            </apex:outputPanel>
+            <apex:outputPanel rendered="{!IF(trialProdNames != '',true,false)}">
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF((ordItem.Order.Account.SSO_Email__c == ''),true,false)}">
+                  Thanks for your interest in Realsuite℠ products. Your free trial has started. <a href="{!urltoCP}"> Create a free professional dashboard</a> to get started.
+               </apex:outputPanel>
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF((ordItem.Order.Account.SSO_Email__c == ''),false,true)}">
+                  Thanks for your interest in Realsuite℠ products. Your free trial has started. <a href="{!urltoCP}"> Log in to your professional dashboard </a> to get started.
+               </apex:outputPanel>
+            </apex:outputPanel>
+         </td>
+      </tr>
+      <tr>
+        <td height="10" style="font-size: 10px; line-height: 10px;" bgcolor="#ffffff">&nbsp;</td>
+     </tr>
+      <tr>
+          <td align="center" style="padding: 0; background-color: #ffffff;" bgcolor="#ffffff">
+            <table cellspacing="0" cellpadding="0" border="0" align="center" style="margin: auto">
+               <tr>
+                  <td style="border-radius: 3px; background: #f20020; text-align: center;" class="button-td">
+                     <a href="{!urltoCP}" target="_blank" style="background: #f20020; border: 15px solid #f20020; padding: 0 10px;color: #ffffff; font-family: sans-serif; font-size: 13px; line-height: 1.1; text-align: center; text-decoration: none; display: block; font-weight: bold;" class="button-a">
+                        <!--[if mso]>&nbsp;&nbsp;&nbsp;&nbsp;<![endif]-->GET STARTED<!--[if mso]>&nbsp;&nbsp;&nbsp;&nbsp;<![endif]--> 
+                     </a>
+                  </td>
+               </tr>
+            </table>
+         </td>
+      </tr>
+     
+      <tr>
+         <apex:variable var="prod" value="{!ordItem.Order.products__c}" />
+         <td align="left" style="padding: 20px;padding-bottom:0;font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 400; line-height: 18px;">
+               <p style="font-size: 15px; font-weight: 800; line-height: 18px; color: #2d2926;">
+                  ABOUT YOUR SOLUTIONS
+               </p>
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF(contains(prod, 'ADVANTAGE'),true,false)}">
+                  <b>realtor.com® Advantage℠ Pro</b><br></br>
+                  Stand out with prominent branding on your listings and get all leads from your listings. <br/><br/>
+               </apex:outputPanel>
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF(contains(prod, 'SELLERLEADBUNDLE'),true,false)}">
+                  <b>realtor.com® Connections℠ for Seller Bundle </b><br></br>
+                  Leads from 100% Verified Sellers wanting to talk with an agent about selling their home.<br/>  <br/>                      
+               </apex:outputPanel>
+               <!-- CRM-4228: RS bundling-->
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF(contains(prod, 'COBROKE'),true,false)}">
+                 <b>realtor.com® {!$Label.COBROKE_Product_Name}</b>
+                  <br></br>
+                 Quality buyer leads to help build your pipeline, plus powerful dashboard features for agents that can help them capture, communicate and connect with leads.<br/><br/>          
+               </apex:outputPanel>
+               <!-- CRM-4002 (Standalone RS/ RS bundling): Added condition to hide products if higher RS products or $0 RS products are present-->
+               <!-- CRM-4228: Hide RS products if in bundle-->
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF(contains(prod, 'RSRESPOND') && !contains(prod, 'RSCONNECT') && !freeRespond && !isRSBundle,true,false)}">
+                  <b>Realsuite℠ Respond℠ </b><br></br>
+                  Impress potential clients with fast, personalized responses to inquiries from 150+ sources. <br/><br/>
+               </apex:outputPanel>
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF(contains(prod, 'RSCONNECT') && !isRSBundle,true,false)}">
+                  <b>Realsuite℠ Connect℠</b><br></br>
+                  Helps you respond fast, nurture relationships easily, and can help boost your lead conversion rate. <br/><br/>
+               </apex:outputPanel>
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF(contains(prod, 'RSTRANSACT') && !isRSBundle,true,false)}">
+                  <b>Realsuite℠ Transact℠</b><br></br>
+                  Easily stay on top of transaction details, documents and tasks, and save time with paperless processes. <br/><br/>
+               </apex:outputPanel>
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF(contains(prod,'LOCALEXPERT') && !containsOnlyCityProd ,true,false)}">
+                  <b>realtor.com® Local Expert Zip Ad℠</b><br></br>
+                  Position yourself as the go-to authority in your neighborhood with highly targeted, consistent and measurable brand exposure.  <br/><br/>
+               </apex:outputPanel>
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF(contains(prod,'LOCALEXPERTCITY'),true,false)}">
+                  <b>realtor.com® Local Expert City Ad℠</b><br></br>
+                  Position yourself as the go-to authority in your city with highly targeted, consistent and measurable brand exposure.  <br/><br/>
+               </apex:outputPanel>
+               <apex:outputPanel style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926;" rendered="{!IF(ordItem.order.Account.SSO_Email__c=='',true,false)}">
+                  <b>realtor.com® Essentials℠</b><br></br>
+                  Essentials℠ is the simple (and free!) way to manage your realtor.com® leads, listings and profile. By logging in or using the Essentials℠ tools, you agree to our <a href="http://app.e.realtor.com/e/er?s=449576939&lid=367&elqTrackId=5e22ed20b42944d1b9c1018d1b3c374a&elq=f9c798cb32594728b0317feccc6b96ce&elqaid=2905&elqat=1">terms and conditions</a>. <br/>
+               </apex:outputPanel>
+               
+         </td>
+      </tr>
+   </table>
+   </apex:outputPanel>
+</apex:component>

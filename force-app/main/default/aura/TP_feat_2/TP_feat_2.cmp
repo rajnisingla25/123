@@ -1,0 +1,30 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,forceCommunity:themeLayout" access="global" >
+	<div class="cTP_feat_2">
+       <div id="features-wrap" class="text-center">
+          <article>
+            <h3 style="color:#004b8d;">Professional real estate websites for agents looking to support and grow their customer base.</h3>
+            <div class="row">
+                <div class="col-md-4 col-sm-4 feature">
+                  <img style="height:100px; width:auto;" src="https://psweb.realtor.com/lp-images/2019/TP-feat-icons/tp-feat-icon1.png" alt="" class="img-responsive center-block"/>
+                    <h4><b>Show your value and personal brand</b> - connect with consumers and  keep them returning with powerful IDX capabilities </h4>
+                </div>
+                <div class="col-md-4 col-sm-4 feature">
+                  <img style="height:100px; width:auto;" src="https://psweb.realtor.com/SFMC-lp-images/tp-website-icon2.png" alt="" class="img-responsive center-block"/>
+                    <h4><b>Fuel lead generation</b> - make every contact count by introducing lead capture forms, daily listings alerts and robust tracking tools </h4>
+                </div>
+                <div class="col-md-4 col-sm-4 feature">
+                  <img style="height:100px; width:auto;" src="https://psweb.realtor.com/SFMC-lp-images/tp-website-icon3.png" alt="" class="img-responsive center-block"/>
+                    <h4><b>Highlight your listings</b> - show your listings with photos, interactive maps, and an open house calendar</h4>
+                </div>
+    		</div>
+              <aura:if isTrue="{!v.themePage == true}" >
+              <div style="margin-top:30px;">
+                <center>
+                    <img src="https://b2bweb.realtor.com/web_assets/rdc/logos/realliving.jpg" alt="United Real Estate"/><br/><br/>
+                </center>
+               </div>
+              </aura:if>
+          </article>
+        </div>
+     </div>
+</aura:component>

@@ -1,0 +1,99 @@
+<apex:page sidebar="false" showHeader="false" controller="ComarketingAccountCtrl" lightningStylesheets="true">
+   <script type="text/javascript">
+
+        function cancelRow(rID) {
+          var reason = prompt('Please enter cancel reason as agent cancellation or lender cancellation','');
+           var desc = prompt('Please enter cancel description. ', '');
+           
+           if(desc != null && reason != null){
+               cancelJS(rID, reason, desc);
+               window.reload();
+           }
+           
+           
+           
+        }
+</script>
+    <apex:form id="form">
+     <apex:actionstatus id="status">
+                <apex:facet name="start">
+                    <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 2000%;opacity:0.65;width:100%;"> 
+                        <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                            <img class="waitingImage" src="/img/loading.gif" title="Loading..." />
+                            <span class="waitingDescription">Please Wait...</span>
+                        </div>
+                    </div>
+                </apex:facet>
+            </apex:actionstatus>
+    <apex:pageblock >
+    <apex:pageBlockButtons location="top">
+        <apex:commandButton value="Add New Relationship" action="{!add}" status="status" disabled="{!!showAdd}"/>
+        <apex:commandButton value="Return to Account" action="{!returnToAccount}"/>
+    </apex:pageBlockButtons>
+    <apex:pageBlockSection Title="{!$CurrentPage.parameters.accountType} Account Information">
+        <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Name"/> 
+           <apex:outputText value="{!$CurrentPage.parameters.name}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Party Id"/> 
+           <apex:outputText value="{!$CurrentPage.parameters.partyId}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Email Address"/> 
+           <apex:outputText value="{!$CurrentPage.parameters.email}"/>
+        </apex:pageBlockSectionItem>
+       <!-- <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Total Assets Price"/> 
+           <apex:outputText value="{!$CurrentPage.parameters.totalassetsPrice}"/>
+        </apex:pageBlockSectionItem> -->
+    </apex:pageBlockSection>
+    <apex:pageblockSection title="Comarketing Relations">
+    <apex:outputPanel rendered="{!IF($CurrentPage.parameters.accountType != 'Lender Individual', true, false)}">
+        <apex:pageBlockTable var="r" value="{!relations}">
+        <apex:column value="{!r.child_account__r.Name}" headerValue="Lender Name"/>
+        <apex:column value="{!r.child_account__r.Party_ID__c}" headerValue="Party ID"/>
+        <apex:column value="{!r.Total_comarketing_assets__c}" headerValue="Co-marketing Assets"/>
+        <apex:column value="{!r.total_relationship_assets_price__c}" headerValue="Purchase Price"/>
+         <apex:column value="{!r.comarketer_Actual_Spend__c}" headerValue="Lender Spend"/>
+<apex:column headerValue="Contribution %">
+                <apex:outputText value="{0, number, ###,###,###,###.00}">
+                <apex:param value="{!r.Current_Comarketer_Spend_Percent__c}" />
+               </apex:outputText>
+            </apex:column>        
+                       <apex:column value="{!r.relationship_CAP__c}" headerValue="Lender Max Spend"/>
+   
+            <apex:column value="{!r.Comarketing_Status__c}" headerValue="Relationship Status"/>
+        <apex:column headerValue="Edit"><apex:outputLink value="/apex/comarketingDetails?rId={!r.id}&id={!$CurrentPage.parameters.id}&name={!$CurrentPage.parameters.name}&totalAssets={!r.Total_comarketing_assets__c}&accounttype={!$CurrentPage.parameters.accounttype}&status={!r.Comarketing_Status__c}&zuoraStatus={!r.Comarketing_Zuora_InProgress__c}" rendered="{!IF(r.Comarketing_Status__c != 'Cancelled' && !r.Comarketing_Zuora_InProgress__c, true, false)}"> Edit </apex:outputLink> </apex:column>
+        <apex:column headerValue="Cancel Relation"><apex:commandLink value="Cancel" onclick="cancelRow('{!r.id}');" status="status" rendered="{!IF(r.Comarketing_Status__c != 'Cancelled' && !r.Comarketing_Zuora_InProgress__c, true, false)}"/> </apex:column>
+        </apex:pageBlockTable>
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!IF($CurrentPage.parameters.accountType == 'Lender Individual', true, false)}">
+        <apex:pageBlockTable var="r" value="{!relations}">
+        <apex:column value="{!r.parent_account__r.Name}" headerValue="Agent Name"/>
+        <apex:column value="{!r.parent_account__r.Party_ID__c}" headerValue="Party ID"/>
+        <apex:column value="{!r.Total_comarketing_assets__c}" headerValue="Co-marketing Assets"/>
+        <apex:column value="{!r.total_relationship_assets_price__c}" headerValue="Purchase Price"/>
+         <apex:column value="{!r.comarketer_Actual_Spend__c}" headerValue="Lender Spend"/>
+           <apex:column headerValue="Contribution %">
+                <apex:outputText value="{0, number, ###,###,###,###.00}">
+                <apex:param value="{!r.Current_Comarketer_Spend_Percent__c}" />
+               </apex:outputText>
+            </apex:column>
+                       <apex:column value="{!r.relationship_CAP__c}" headerValue="Lender Max Spend"/>
+
+           <apex:column value="{!r.Comarketing_Status__c}" headerValue="Relationship Status"/>
+        <apex:column headerValue="Edit"><apex:outputLink value="/apex/comarketingDetails?rId={!r.id}&id={!$CurrentPage.parameters.id}&name={!$CurrentPage.parameters.name}&totalAssets={!r.Total_comarketing_assets__c}&accounttype={!$CurrentPage.parameters.accounttype}&status={!r.Comarketing_Status__c}&zuoraStatus={!r.Comarketing_Zuora_InProgress__c}" rendered="{!IF(r.Comarketing_Status__c != 'Cancelled' && !r.Comarketing_Zuora_InProgress__c, true, false)}"> Edit </apex:outputLink> </apex:column>
+        <apex:column headerValue="Cancel Relation"><apex:commandLink value="Cancel" onclick="cancelRow('{!r.id}');" status="status" rendered="{!IF(r.Comarketing_Status__c != 'Cancelled' && !r.Comarketing_Zuora_InProgress__c, true, false)}"/> </apex:column>
+        </apex:pageBlockTable>
+    </apex:outputPanel>
+    </apex:pageBlockSection>
+    </apex:pageBlock>
+  
+    <apex:actionFunction action="{!cancel}" name="cancelJS" rerender="form">
+        <apex:param name="rId" value="" />
+        <apex:param name="reason" value="" />
+        <apex:param name="desc" value=""/>
+    </apex:actionFunction>
+    </apex:form>
+</apex:page>

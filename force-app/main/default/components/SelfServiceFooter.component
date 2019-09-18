@@ -1,0 +1,22 @@
+<!-- LCM-294 -->
+<apex:component >
+    <!-- Start of global nav footer -->
+    <div id="app-footer" class="app-footer full-width pos-absolute bg-default">
+        
+        <link rel="stylesheet" media="screen" href="//static.gnav-qa.rdc-qa.moveaws.com/assets/realsuite.css" />
+        <div id="footer" class="global-nav-footer">
+            <input type="hidden" name="channel_flag" id="channel_flag" value="false" />
+            <div class="footer-wrapper-links-main">
+                <ul id="footer-links-primary" class="global-nav-list-horizontal">
+                    <li><a class="dashboard-link-footer" href="{!$Label.CustomerDashboard}/dashboard" target="_blank" data-omtag="footer:dashboard">Go to Dashboard</a></li>
+                </ul>
+            </div>
+            <div class="footer-wrapper-copyright">
+                <p id="footer-copyright">
+                    ©1995-2016 <a href="//www.nar.realtor" title="National Association of REALTORS website" data-omtag="footer:corp:nar">National Association of REALTORS<sup>®</sup></a> and <a href="//www.move.com/" title="Move, Inc. website">Move, Inc.</a> All rights reserved.<br />realtor.com<sup>®</sup> is the official site of the National Association of REALTORS<sup>®</sup> and is operated by Move, Inc., a subsidiary of News Corp.
+                </p>
+            </div>
+        </div>
+    </div>
+    <!-- End of global nav footer -->
+</apex:component>

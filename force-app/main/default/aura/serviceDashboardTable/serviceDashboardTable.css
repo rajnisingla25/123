@@ -1,0 +1,18 @@
+.THIS td.details-control {
+    background: url("/resource/1522187883000/addicon") no-repeat center center;
+        cursor: pointer;
+    	text-overflow: ellipsis;
+    }
+.THIS tr.shown td.details-control {
+        background: url("/resource/1522188163000/deleteicon") no-repeat center center;
+    }
+.THIS .shown{
+    background-color:#d1ad98;
+}
+
+.THIS .even{
+    background-color:#F4F4F8;
+}
+.THIS .odd{
+    background-color:#EFF1F1;
+}

@@ -1,0 +1,229 @@
+<!-- saved from url=(0014)about:internet -->
+<html lang="en">
+
+<!-- 
+Smart developers always View Source. 
+
+This application was built using Adobe Flex, an open source framework
+for building rich Internet applications that get delivered via the
+Flash Player or to desktops via Adobe AIR. 
+
+Learn more about Flex at http://flex.org 
+// -->
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<!--  BEGIN Browser History required section -->
+<link rel="stylesheet" type="text/css" href="history/history.css" />
+<!--  END Browser History required section -->
+
+<title></title>
+<script src="AC_OETags.js" language="javascript"></script>
+
+<!--  BEGIN Browser History required section -->
+<script src="history/history.js" language="javascript"></script>
+<!--  END Browser History required section -->
+
+<style>
+body { margin: 0px; overflow:hidden }
+</style>
+<script language="JavaScript" type="text/javascript">
+<!--
+// -----------------------------------------------------------------------------
+// Globals
+// Major version of Flash required
+var requiredMajorVersion = 9;
+// Minor version of Flash required
+var requiredMinorVersion = 0;
+// Minor version of Flash required
+var requiredRevision = 124;
+// -----------------------------------------------------------------------------
+// -->
+</script>
+</head>
+
+<body scroll="no">
+<script language="JavaScript" type="text/javascript" src="FABridge.js">
+</script>
+<script language="JavaScript" type="text/javascript">
+<!--
+// Version check for the Flash Player that has the ability to start Player Product Install (6.0r65)
+var hasProductInstall = DetectFlashVer(6, 0, 65);
+
+// Version check based upon the values defined in globals
+var hasRequestedVersion = DetectFlashVer(requiredMajorVersion, requiredMinorVersion, requiredRevision);
+
+if ( hasProductInstall && !hasRequestedVersion ) {
+	// DO NOT MODIFY THE FOLLOWING FOUR LINES
+	// Location visited after installation is complete if installation is required
+	var MMPlayerType = (isIE == true) ? "ActiveX" : "PlugIn";
+	var MMredirectURL = window.location;
+    document.title = document.title.slice(0, 47) + " - Flash Player Installation";
+    var MMdoctitle = document.title;
+
+	AC_FL_RunContent(
+		"src", "playerProductInstall",
+		"FlashVars", "bridgeName=AccountHierarchyViewer&MMredirectURL="+MMredirectURL+'&MMplayerType='+MMPlayerType+'&MMdoctitle='+MMdoctitle+"",
+		"width", "100%",
+		"height", "100%",
+		"align", "middle",
+		"id", "AccountHierarchyViewer",
+		"quality", "high",
+		"bgcolor", "#869ca7",
+		"name", "AccountHierarchyViewer",
+		"allowScriptAccess","sameDomain",
+		"type", "application/x-shockwave-flash",
+		"pluginspage", "http://www.adobe.com/go/getflashplayer"
+	);
+} else if (hasRequestedVersion) {
+	// if we've detected an acceptable version
+	// embed the Flash Content SWF when all tests are passed
+	AC_FL_RunContent(
+			"src", "AccountHierarchyViewer",
+			"width", "100%",
+			"height", "100%",
+			"flashvars", 'bridgeName=AccountHierarchyViewer',
+			"align", "middle",
+			"id", "AccountHierarchyViewer",
+			"quality", "high",
+			"bgcolor", "#869ca7",
+			"name", "AccountHierarchyViewer",
+			"allowScriptAccess","sameDomain",
+			"type", "application/x-shockwave-flash",
+			"pluginspage", "http://www.adobe.com/go/getflashplayer"
+	);
+  } else {  // flash is too old or we can't detect the plugin
+    var alternateContent = 'Alternate HTML content should be placed here. '
+  	+ 'This content requires the Adobe Flash Player. '
+   	+ '<a href=http://www.adobe.com/go/getflash/>Get Flash</a>';
+    document.write(alternateContent);  // insert non-flash content
+  }
+// -->
+</script>
+<noscript>
+  	<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
+			id="AccountHierarchyViewer" width="100%" height="100%"
+			codebase="http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab">
+			<param name="movie" value="AccountHierarchyViewer.swf" />
+			<param name="quality" value="high" />
+			<param name="bgcolor" value="#869ca7" />
+			<param name="allowScriptAccess" value="sameDomain" />
+			<embed src="AccountHierarchyViewer.swf" quality="high" bgcolor="#869ca7"
+				width="100%" height="100%" name="AccountHierarchyViewer" align="middle"
+				play="true"
+				loop="false"
+				quality="high"
+				allowScriptAccess="sameDomain"
+				type="application/x-shockwave-flash"
+				pluginspage="http://www.adobe.com/go/getflashplayer">
+			</embed>
+	</object>
+</noscript>
+
+<script>
+
+	var flexApp = null;
+
+
+// self executing function here
+(function() {
+
+	alert('on load');
+
+	FABridge.addInitializationCallback("AccountHierarchyViewer", function() {		
+		flexApp = FABridge.AccountHierarchyViewer.root()
+
+		alert('before adding Test Section');
+		flexApp.addSection('test-section', 'Test Section');
+		flexApp.addField('test-section', 'Name', 'Region1');
+		flexApp.addField('test-section', 'Account Status', 'Active');
+		flexApp.addSection('account-summary', 'Account Summary');
+		flexApp.addField('account-summary', 'Phone', '111-222-333-444');
+		flexApp.addField('account-summary', 'Rating__c', null);
+		flexApp.addField('account-summary', 'Total Account Value', '$4000.00');
+		flexApp.addField('account-summary', 'Number of Employees', '50');
+		alert('after adding Test Section');
+
+		flexApp.addInitialAccount('District1', 'District1');
+
+		alert('before adding District1 children');
+		flexApp.addChildAccount('District1', 'AGL1', 'AGL1');
+		flexApp.addChildAccount('District1', 'AGL5', 'AGL5');
+		flexApp.addChildAccount('District1', 'AGL8', 'AGL8');
+		flexApp.addChildAccount('District1', 'AGL10', 'AGL10');
+		flexApp.addChildAccount('District1', 'AGL11', 'AGL11');
+		flexApp.addChildAccount('District1', 'AGL12', 'AGL12');
+		flexApp.addChildAccount('District1', 'AGL15', 'AGL15');
+		alert('after adding District1 children');
+
+		alert('before addParentAccount for District1');
+		flexApp.addParentAccount('District1', 'County44', 'County44');
+		alert('after addParentAccount for District1');
+
+		alert('*** before addChildAccount for County44');
+		flexApp.addChildAccount('County44', 'District1', 'District1');
+		alert('*** after addChildAccount for District1');
+
+		alert('before addParentAccount AGL5');
+		flexApp.addParentAccount('AGL5', 'District2', 'District2');
+		alert('after addParentAccount AGL5');
+
+		alert('before addParentAccount District2');
+		flexApp.addParentAccount('District1', 'County1', 'County1');
+		alert('after addParentAccount District2');
+
+		alert('before adding County1 children');
+		flexApp.addChildAccount('County1', 'District4', 'District4');
+		alert('after adding County1 children');
+
+		alert('before addParentAccount County1');
+		flexApp.addParentAccount('County1', 'State1', 'State1');
+		alert('after addParentAccount County1');
+
+		alert('before adding District4 children');
+		flexApp.addChildAccount('District4', 'AGL22', 'AGL22');
+		flexApp.addChildAccount('District4', 'AGL21', 'AGL21');
+		flexApp.addChildAccount('District4', 'AGL23', 'AGL23');
+		alert('after adding District4 children');
+
+		alert('before adding Another Test Section');
+		flexApp.removeAllSections();
+		flexApp.addSection('test-section', 'Another Test Section');
+		flexApp.addField('test-section', 'Name', 'Region2');
+		flexApp.addField('test-section', 'Account Status', 'Inactive');
+		flexApp.addSection('account-summary', 'Account Summary');
+		flexApp.addField('account-summary', 'Phone', '33-44-55-5165');
+		flexApp.addField('account-summary', 'Rating__c', '***');
+		flexApp.addField('account-summary', 'Total Account Value', '$750.00');
+		flexApp.addField('account-summary', 'Number of Employees', '80');
+		alert('after adding Another Test Section');
+
+
+/*
+		flexApp.addChildAccount('1.1', '1.1.1', 'Account 1.1.1');
+
+		flexApp.addChildAccount('1.2', '1.2.1', 'Account 1.2.1');
+		flexApp.addChildAccount('1.2', '1.2.2', 'Account 1.2.1');
+
+		flexApp.addChildAccount('1.4', '1.1.1', 'Account 1.1.1');
+*/
+
+		alert('before addEventListener nodeSelected');
+		flexApp.getDiagram().addEventListener("nodeSelected", function(evt) {
+			alert('nodeSelected evt.getNode().getId(): ' + evt.getNode().getId());
+		});
+		flexApp.getDiagram().addEventListener("nodeExpanded", function(evt) {
+			alert('nodeExpanded evt.getNode().getId(): ' + evt.getNode().getId());
+		});
+		flexApp.getDiagram().addEventListener("leftNodeExpanded", function(evt) {
+			alert('leftNodeExpanded evt.getNode().getId(): ' + evt.getNode().getId());
+		});
+		alert('after addEventListener nodeSelected');
+
+	});
+})();
+</script>
+
+</body>
+</html>

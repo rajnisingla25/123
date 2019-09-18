@@ -1,0 +1,8 @@
+<design:component>
+    <design:attribute name="linkLabel" label="Link text" placeholder="URL Display Name. Ex: Google"/>
+    <design:attribute name="linkValue" label="Hyperlink" placeholder="URL. Ex: https://www.google.com/"/>
+    <design:attribute name="isTitle" label="Title text."/>
+    <design:attribute name="isSocialTitle" label="Social section Title text."/>
+    <design:attribute name="leftMargin" label="Left margin." placeholder="Space From Left. Ex: 2"/>
+    <design:attribute name="topMargin" label="Top margin." default="2.5" placeholder="Space From Top. Ex: 2"/>
+</design:component>

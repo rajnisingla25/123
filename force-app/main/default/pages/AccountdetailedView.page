@@ -1,0 +1,3 @@
+<apex:page Controller="AccountdetailedViewController" showHeader="true" action="{!reDirect}">
+        <apex:pageMessages id="message"></apex:pageMessages>            
+</apex:page>

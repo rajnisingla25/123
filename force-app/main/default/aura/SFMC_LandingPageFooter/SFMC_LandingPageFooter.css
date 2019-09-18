@@ -1,0 +1,9 @@
+.THIS.footerClass{
+    position: absolute;
+    left: 0;
+    
+    width: 100%;
+}
+.THIS .maxWidth{
+    margin-left: 20%;
+}

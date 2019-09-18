@@ -1,0 +1,4 @@
+<design:component>
+	<design:attribute name="LocalExpert" label="Local Expert" />
+    <design:attribute name="themePage" label="Theme Page" />
+</design:component>

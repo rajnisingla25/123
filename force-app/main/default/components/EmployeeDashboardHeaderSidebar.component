@@ -1,0 +1,167 @@
+<apex:component controller="EmployeeDashboardController">
+    <div id="app-navbar-top" class="hidden-xs app-navbar-top">
+        <ul>
+            <li><label>Go to realtor.com®</label></li>
+            <li><a href="http://realtor.com" id='homepage' data-omtag="header-menu:top-strip:to-realtor" target="_blank">Homepage</a></li>
+            <li class="right"><a href="http://marketing.realtor.com" id='upgrade' data-omtag="header-menu:top-strip:to-upgrade" target="_blank">Upgrade</a></li>
+
+        </ul>
+    </div>
+
+    <div class="app-brand-border"></div>
+
+    <nav class="app-navbar navbar navbar-default navbar-fixed-top app-navbar no-border">
+        <div class="container-fluid pull-right">
+            <div class="dropdown user-profile-dropdown">
+                <a href="#" class="display-inline-block dropdown-toggle hover-bg-gray-softer hover-caret-down hidden-sm hidden-xs" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
+      <span class="display-inline-block valign-middle text-right text-gray-darker font-size-small mar-right-xs">
+        Welcome
+        <strong class="display-block">{!$User.FirstName}</strong>
+      </span>
+      
+    </a>
+                <ul class="dropdown-menu dropdown-menu-right" id="avatar-menu-wrapper">
+                    <li class="switch-panel active on" id="avatar-menu-account">
+                        <!-- Start of avatar menu -->
+                        <div class="avatar-menu pad-top-sm">
+                            <ul class="media-list avatar-menu-current-role">
+                                <li class="media">
+                                    <div class="media-body">
+                                        <h4 class="media-heading mar-top-md">{!$User.FirstName} {!$User.LastName}</h4>
+                                       
+                                    </div>
+                                    <div class="media-right valign-middle">
+                                    </div>
+                                </li>
+                            </ul>
+                            <div role="separator" class="divider"></div>
+                            <ul class="list-inline">
+                                <li>
+                                    <a id="my-account-btn" href="{!$Site.Prefix}/EmployeeMyAccount">Your account</a>
+                                </li>
+                                <li class="pull-right">
+                                    <apex:outputLink value="{!$Site.Prefix}/secur/logout.jsp" styleClass="nav0-link">Logout</apex:outputLink>
+                                </li>
+                            </ul>
+                            <div role="separator" class="divider"></div>
+                            <ul class="vertical-links">
+                                <li class="navigation-provider-link">
+                                    <a href="http://marketing.realtor.com" id="upgrade" target="_blank">Upgrade <i class="pi-android-open"></i></a>
+                                </li>
+                                <li class="navigation-provider-link">
+                                    <a href="http://support.realtor.com" id="support" target="_blank">Support <i class="pi-android-open"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- End of avatar menu -->
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <aside id="app-sidebar" class="app-sidebar">
+        <nav id="sidebar-navbar" class="navbar navbar-default navbar-fixed-top sidebar-navbar">
+            <div class="container-fluid">
+                <span class="sidebar-toggle-xs visible-xs-inline-block pull-right">
+                            <i class="fa fa-close"></i>
+                        </span>
+                <div class="navbar-header pull-left">
+                    <a class="navbar-brand">
+                                <img src="https://secure-static.move.com/ucs/assets/img/logos/realtor-logo-v3.svg" width='134' alt="test"/>
+                            </a>
+                </div>
+            </div>
+        </nav>
+        <div class="sidebar-content">
+            <ul class="sidebar-links list-unstyled">
+                <li>
+                    <a href="{!$Site.Prefix}/EmployeeDashboardHome" class="side-nav-link">Home</a>
+
+                </li>
+                <li>
+                    <hr/>
+                </li>
+                <li>
+                    <a href="{!$Site.Prefix}/EmployeeMyAccount" class="side-nav-link" id="acct-type-sidebar">Broker</a>
+
+                </li>
+                <li>
+                    <hr/>
+                </li>
+                <li>
+                    <a href="{!$Site.Prefix}/EmployeeOffice" class="side-nav-link">Offices</a>
+
+                </li>
+                <li>
+                    <hr/>
+                </li>
+
+                <li style="display: none" id="agentLink">
+                    <a href="{!$Site.Prefix}/EmployeeAgents" class="side-nav-link">Agents</a>
+
+                </li>
+                <li style="display: none" id="agentLinkBorder">
+                    <hr/>
+                </li>
+
+                <li>
+                    <a href="" class="collapse-links collapsed" data-toggle="collapse" data-target="#Account-collapse">Self Service</a>
+                </li>
+                <li>
+                    <ul class="collapse nav sidebar-links list-unstyled" id="Account-collapse">
+                        <li><a href="{!$Site.Prefix}/EmployeeProductSettings" class="side-nav-link">Product Settings</a></li>
+
+                    </ul>
+                </li>
+                <li class='visible-xs'>
+                    <hr/>
+                </li>
+                <li class='visible-xs'>
+                    <label>Go to realtor.com®</label>
+                </li>
+                <li class='visible-xs '>
+                    <a href="http://realtor.com" id='homepage' data-omtag="header-menu:top-strip:to-realtor" target="_blank">Homepage</a>
+                </li>
+                <li class='visible-xs '>
+                    <a href="/redirect/profile" id='profile' data-omtag="header-menu:top-strip:to-my-profile" target="_blank">Your profile</a>
+                </li>
+                <li class='visible-xs'>
+                    <a href="http://marketing.realtor.com" id='upgrade' data-omtag="header-menu:top-strip:to-upgrade" target="_blank">Upgrade</a></li>
+
+            </ul>
+            <li class='visible-xs'>
+                <hr/>
+            </li>
+        </div>
+
+    </aside>
+    <script type="text/javascript">
+        $(function() {
+            getUserDetail();
+        });
+
+        function getUserDetail() {
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.EmployeeDashboardController.getAllParentAccounts}',
+                false,
+                function(result, event) {
+                    console.log(event);
+                    if(result.length == 1){ 
+                        if(result[0]["Type"] == "Realtor Agent"){
+                             $('#acct-type-sidebar').html('Agent');
+                         } else {
+                         $('#agentLink').show();
+                         $('#agentLinkBorder').show();
+                         $('#acct-type-sidebar').html('Broker');
+                    }
+                    } else {
+                        $('#agentLink').show();
+                        $('#agentLinkBorder').show();
+                        $('#acct-type-sidebar').html('Brokers');
+                        $('#acct-type-sidebar').attr("href", "{!$Site.Prefix}/EmployeeAccounts");
+                        $('#my-account-btn').attr("href", "{!$Site.Prefix}/EmployeeAccounts");
+                    }
+                });
+        }
+    </script>
+</apex:component>

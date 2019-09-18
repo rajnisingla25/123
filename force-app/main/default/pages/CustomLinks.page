@@ -1,0 +1,68 @@
+<apex:page showHeader="false" sidebar="false">
+    <style>
+        .theGaugeChartsTable {
+            font-family: sans-serif;
+            margin: 0px;
+        }
+        
+        .theGaugeChartsTable .theHeader {
+            background-color: #1797c0;
+            color: #fff;
+            font-size: 13px;
+            font-weight: bold;
+            margin: 0px;
+        }
+        
+        .theGaugeChartsTable .theBody {
+            background-color: #F8F8F8 ;
+            border: 1px solid #d3d3d3 ;
+        }
+        
+        .theGaugeChartsTable .theAccountHighlights {
+            margin: 0px;
+            padding: 0px;
+        }
+    </style>
+
+    <table width="100%" height="10px" cellpadding="0px" cellspacing="2px" class="theGaugeChartsTable">
+        <tr>
+            <td width="30%" align="left"  style="font-weight:bold;font-size:140%" class="theHeader">
+                Custom Links
+            </td>
+        
+        </tr>
+
+        <tr>
+            <td width="30%" height="90px" class="theBody">
+
+                <table width="100%" height="100%">
+                   <tr>
+                        <td style="color:#848484;font-weight:bold;" align="left"><a onClick="window.open('http://c3tools/star/youroptimiseddataapplication/', '_blank')" href="#">Agent Sales Tool</a></td>
+                        <td style="color:#848484;font-weight:bold;" align="left"><a onClick="window.open('{!$Site.Domain}/00Of1000004jTrF?pv0={!$User.FirstName} {!$User.LastName}', '_blank')" href="#">My Active Pre-Auths</a></td>
+                        <td style="color:#848484;font-weight:bold;" align="left"><a onClick="window.open('http://brokersalestool/', '_blank')" href="#">Broker Sales Tool</a></td>                        
+                        <td style="color:#848484;font-weight:bold;" align="left"><a onClick="window.open('{!$Site.Domain}/00O1h000000JXZi?pv0={!$User.FirstName} {!$User.LastName}', '_blank')" href="#">Manager Escalations</a></td>
+                        <td style="color:#848484;font-weight:bold;" align="left"><a onClick="window.open('http://www.melissadata.com/lists/ezlists/ezHomeowners.aspx?zip=94528', '_blank')" href="#">Melissa Data</a></td>  
+                    </tr>
+                    <tr>
+                        <td style="color:#848484;font-weight:bold;" align="left"><a onClick="window.open('http://c3tools/mlsinfo/info.php?', '_blank')" href="#">MLS DB</a></td>
+                        <td style="color:#848484;font-weight:bold;" align="left"><a onClick="window.open('http://www.realtor.com', '_blank')" href="#">Realtor.com</a></td> 
+                        <td style="color:#848484;font-weight:bold;" align="left"><a onClick="window.open('https://na16.salesforce.com/_ui/search/ui/UnifiedSearchResults?searchType=2&sen=a1S&&str=Yes#!/fen=a1S&initialViewMode=detail&str=Yes', '_blank')" href="#">Zillow / Trullia</a></td>
+                        <td style="color:#848484;font-weight:bold;" align="left"><a onClick="window.open('http://www.zip-codes.com/zip-code-radius-finder.asp?zipMilesLow=0&amp;zipMilesHigh=15&amp;zip1=98006&amp;Submit=Searchv')" href="#">Zip Search Tool</a></td> 
+                        <td style="color:#848484;font-weight:bold;" align="left"><a onClick="window.open('/apex/realtorRosterSearch')" href="#">Realtor Roster Search SFDC</a></td> 
+                      <!--CRM-3168  Remove "Realtor Roster Search" Link Request  -->
+                      <!--  <td style="color:#848484;font-weight:bold;" align="left"><a onClick="window.open('http://calltrack/Realtor/RealtorRosterSearch.asp ', '_blank')" href="#">Realtor Roster Search</a></td>    -->                
+                    </tr>
+                     <tr>
+                      <td style="color:#848484;font-weight:bold;" align="left"><a onClick="window.open('{!$Site.Domain}/00Oj0000004Qxiz?pv0={!$User.FirstName} {!$User.LastName}', '_blank')" href="#">My CPQ Approval List</a></td>
+                      <!-- <td style="color:#848484;font-weight:bold;" align="left"><a onClick="window.open('{!$Site.Domain}/00Oj0000000jpWZ', '_blank')" href="#">Exclusion Approval Group Quotes</a></td> -->
+                      <td style="color:#848484;font-weight:bold;" align="left"><a onClick="window.open('{!$Site.Domain}/00Oj0000000jhUE', '_blank')" href="#">RIS Broker Contact Management</a></td>
+                      <td style="color:#848484;font-weight:bold;" align="left"><a onClick="window.open('{!$Site.Domain}/00Oj0000004qDX3?pv0={!$User.FirstName} {!$User.LastName}', '_blank')" href="#">Past Due Report</a></td>
+                      <td style="color:#848484;font-weight:bold;" align="left"><a onClick="window.open('http://reports/realtorlists/RealtorList.aspx', '_blank')" href="#">Realtor List</a></td>
+                      <td style="color:#848484;font-weight:bold;" align="left"><a onClick="window.open('{!$Site.Domain}/{!$Label.My_Service_Request}')" href="#">My Service Requests</a></td>  
+          
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</apex:page>

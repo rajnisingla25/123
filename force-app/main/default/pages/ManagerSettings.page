@@ -1,0 +1,60 @@
+<apex:page showHeader="true" sidebar="true" controller="ManagerSettingsController">
+
+	<zqu:StatusModal />
+    <apex:actionStatus startText="" stopText="" id="action" onstart="javascript:displayStatusModal()" onstop="javascript:closeStatusModal()" />
+
+	<apex:form rendered="{!isAdmin}">
+		<apex:pageBlock >
+			<apex:pageBlockSection columns="1">
+			<apex:selectList value="{!selectedProfile}" label="Select a Profile: " multiselect="false" size="1">
+				<apex:selectOptions value="{!profileOptions}" />
+				<apex:actionSupport action="{!changeProfile}" event="onchange" reRender="Options, tenantSettings" status="action"/>
+			</apex:selectList>
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection id="tenantSettings" title="Organizational Settings">
+					<apex:selectList value="{!managerSettings.ReturnToPage__c}" multiselect="false" size="1" rendered="{!selectedProfile == DEFAULT_SETTINGS_VALUE}" label="Manager Level: ">
+						<apex:selectOption itemValue="Account" itemLabel="Account" />
+						<apex:selectOption itemValue="Billing Account" itemLabel="Billing Account" />
+					</apex:selectList>
+
+					<apex:outputText value="{!managerSettings.ReturnToPage__c}" rendered="{!selectedProfile != DEFAULT_SETTINGS_VALUE}" label="Manager Level: " />
+
+					<apex:selectList value="{!managerSettings.UseNewHPM__c}" multiselect="false" size="1" rendered="{!selectedProfile == DEFAULT_SETTINGS_VALUE}" label="Use HPM 2.0: ">
+						<apex:selectOption itemValue="Yes" itemLabel="Yes" />
+						<apex:selectOption itemValue="No" itemLabel="No" />
+					</apex:selectList>
+
+					<apex:outputText value="{!managerSettings.UseNewHPM__c}" rendered="{!selectedProfile != DEFAULT_SETTINGS_VALUE}" label="Use HPM 2.0: " />
+			</apex:pageBlockSection>
+
+			<apex:pageBlockSection id="Options" title="Profile Settings">
+				<apex:inputCheckbox value="{!managerSettings.AllowCC__c}" />
+				<apex:inputCheckbox value="{!managerSettings.AllowACH__c}" />
+				<apex:inputText value="{!managerSettings.CCPaymentPageName__c}" />
+				<apex:inputText value="{!managerSettings.ACHPaymentPageName__c}" />
+
+				<apex:inputCheckbox value="{!managerSettings.AllowPayments__c}" />
+				<apex:inputCheckbox value="{!managerSettings.AllowRefunds__c}" />
+
+				<apex:inputCheckbox value="{!managerSettings.AllowCreatePaymentMethod__c}" />
+				<apex:inputCheckbox value="{!managerSettings.AllowEditPaymentMethod__c}" />
+				<apex:inputCheckbox value="{!managerSettings.AllowDefaultPaymentMethod__c}" />
+				<apex:inputCheckbox value="{!managerSettings.AllowDeletePaymentMethod__c}" />
+				
+				<apex:inputCheckbox value="{!managerSettings.AllowCreatePaymentMethodforPayment__c}" />
+
+				<apex:inputCheckbox value="{!managerSettings.ValidatePayments__c}" />
+				<apex:inputCheckbox value="{!managerSettings.HasAdminPermissions__c}" />
+
+			</apex:pageBlockSection>
+			<apex:pageBlockButtons >
+				<apex:commandButton action="{!saveSettings}" value="Save Settings" />
+				<apex:commandButton action="{!setToDefault}" value="Reset To Org Default" />
+			</apex:pageBlockButtons>
+		</apex:pageBlock>
+	</apex:form>
+	<apex:form rendered="{!isAdmin == false}">
+	Permissions Error!  You do not have permission to edit these settings!
+	</apex:form>
+</apex:page>

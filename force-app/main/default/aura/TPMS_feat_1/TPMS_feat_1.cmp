@@ -1,0 +1,30 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,forceCommunity:themeLayout" access="global" >
+	<div class="cTPMS_feat_1">
+       <div id="features-wrap" class="text-center">
+          <article>
+              <h3 style="color:#004b8d;">Show your value and build trust by giving clients the accurate,<br/> hyperlocal, real-time MLS data they need to make informed buying and selling decisions</h3>
+            <div class="row">
+                <div class="col-md-4 col-sm-4 feature">
+                  <img style="height:100px; width:auto;" src="https://psweb.realtor.com/lp-images/2019/TP-feat-icons/tp-feat-icon1.png" alt="" class="img-responsive center-block"/>
+                    <h4><b>Capture lead</b> - Attract potential home sellers with customizable landing pages to capture leads and share on social media</h4>
+                </div>
+                <div class="col-md-4 col-sm-4 feature">
+                  <img style="height:100px; width:auto;" src="https://psweb.realtor.com/SFMC-lp-images/tpms-icon2.png" alt="" class="img-responsive center-block"/>
+                    <h4><b>Make connections</b>- The average real estate email open rate is 19.67% with a 1.8% click through rate. Market Snapshot<sup>&reg;</sup> average open rate is 50.02% with 12.62% click through rate.*</h4>
+                </div>
+                <div class="col-md-4 col-sm-4 feature">
+                  <img style="height:100px; width:auto;" src="https://psweb.realtor.com/lp-images/2019/TP-feat-icons/tp-feat-icon2.png" alt="" class="img-responsive center-block"/>
+                    <h4><b>Personalize and automate follow up</b>- Mobile friendly, client-tailored reports that offer just listed/just sold alerts, satellite images, walk scores and school ratings.</h4>
+                </div>
+    		</div>
+              <aura:if isTrue="{!v.themePage == true}" >
+              <div style="margin-top:30px;">
+                <center>
+                    <img src="https://b2bweb.realtor.com/web_assets/rdc/logos/realliving.jpg" alt="United Real Estate"/><br/><br/>
+                </center>
+               </div>
+              </aura:if>
+          </article>
+        </div>
+     </div>
+</aura:component>

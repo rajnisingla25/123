@@ -1,0 +1,53 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,forceCommunity:themeLayout" access="global" >
+	<!-- Begin Footer -->
+    <footer>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-6 slds-p-top_medium">&nbsp;</div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="clearfix">
+                        <a class="" href="https://marketing.realtor.com"><img src="//success.realtor.com/cp/uploads/default/files/b8abda1c764db455e573ca0f2e9667b6.png" alt="Realtor.com®" class="img-responsive logo" /></a>
+                    </div>
+                    <div class="footer-menu">
+                        <div class="row slds-p-top_x-large">
+                            <div class="col-xs-6">
+                                <ul class="list-unstyled">
+                                    <li><a href="https://marketing.realtor.com">Products</a></li>
+                                    <li><a href="https://hub.realtor.com">Resources</a></li>
+                                    <li><a href="https://industry.realtor.com/success-stories">Success Stories</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-xs-6">
+                                <ul class="list-unstyled">
+                                    <li><a href="https://results.realtor.com/">Events</a></li>
+                                    <li><a href="https://support.realtor.com/">Support</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="social-links">
+                        <ul class="list-unstyled list-inline text-center">
+                            <li><a href="https://www.facebook.com/Realtor.comPro" rel="noreferrer" target="_blank" class="link-primary"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-facebook fa-stack-1x fa-inverse" alt="Facebook"></i></span></a></li>
+                            <li><a href="https://twitter.com/realtorpro" rel="noreferrer" target="_blank" class="link-primary"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-twitter fa-stack-1x fa-inverse" alt="Twitter"></i></span></a></li>
+                            <li><a href="https://www.linkedin.com/company/realtor-com" rel="noreferrer" target="_blank" class="link-primary"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-linkedin fa-stack-1x fa-inverse" alt="LinkedIn"></i></span></a></li>
+                            <li><a href="https://www.youtube.com/realtormarketer" rel="noreferrer" target="_blank" class="link-primary"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-youtube fa-stack-1x fa-inverse" alt="Youtube"></i></span></a></li>
+                            <li><a href="https://www.instagram.com/realtorpro/" rel="noreferrer" target="_blank" class="link-primary"><span class="fa-stack fa-lg"><i class="fa fa-circle fa-stack-2x"></i><i class="fa fa-instagram fa-stack-1x fa-inverse" alt="Instagram"></i></span></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+                <hr />
+            <div class="copyright text-center">
+                <p><small>Product images are representative of site and mobile applications as of publication date.  Site and mobile applications subject to change without notice.</small></p>
+                <p><small>No NAR membership dues are used to operate or support realtor.com<sup>&reg;</sup>.</small></p>
+                <p><small>&copy;1995-2019&nbsp; NATIONAL ASSOCIATION OF REALTORS<sup>&reg;</sup> and Move, Inc. All rights reserved.<br />realtor.com<sup>&reg;</sup> is the official site of the National Association of REALTORS<sup>&reg;</sup> and is operated by Move, Inc.</small></p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- End Footer -->
+</aura:component>

@@ -1,0 +1,258 @@
+<apex:page standardController="Account" rendered="{!IF(Account.Id=='' || Account.Id=='001f100001UvqZeAAJ',false,true)}" extensions="AssetStructureClass" showheader="false" name="finalassetpage" id="page" >
+    <apex:form id="frm">
+        <script> 
+        function ActionShow(rid,sid,rnum){
+            //CRM-1360 :- changed separater from fff to ffffffffff
+            //CRM-1360 :- changed separater from ppp to pppppppppp
+            var pos = rid.lastIndexOf("ffffffffff");
+            if(pos<0){
+                document.getElementById('page:frm:pd:assl:'+rnum+':pp').style.display = "None";
+                document.getElementById('page:frm:pd:assl:'+rnum+':mm').style.display = "block";
+                document.getElementById('page:frm:pd:assl:'+rnum+':mm').style.display = "table-row";
+                for(var ii=0;ii<20;ii++){
+                    if(document.getElementById(rid+'ffffffffff'+0)!=null){
+                        //CRM-1360 :- changed separater from fff to ffffffffff
+                        document.getElementById(rid+'ffffffffff'+ii).style.display = "block";
+                        document.getElementById(rid+'ffffffffff'+ii).style.display = "table-row";
+                    }
+                }
+            }
+            // alert(pos);
+            if(pos>0){
+                document.getElementById('page:frm:pd:assl:'+rnum+':pp').style.display = "None";
+                document.getElementById('page:frm:pd:assl:'+rnum+':mm').style.display = "block";
+                document.getElementById('page:frm:pd:assl:'+rnum+':mm').style.display = "table-row";
+                for(var ii=0;ii<20;ii++){
+                    // alert(document.getElementById(rid+'pppppppppp'+ii));
+                    if(document.getElementById(rid+''+sid+'pppppppppp'+ii)!=null){
+                        
+                        document.getElementById(rid+''+sid+'pppppppppp'+ii).style.display = "block";
+                        document.getElementById(rid+''+sid+'pppppppppp'+ii).style.display = "table-row";
+                    }
+                }
+            }
+        }
+        
+        function ActionHide(rid,sid,rnum){
+            //CRM-1360 :- changed separater from fff to ffffffffff
+            var pos = rid.lastIndexOf("ffffffffff");
+            if(pos<0){
+                document.getElementById('page:frm:pd:assl:'+rnum+':pp').style.display = "block";
+                document.getElementById('page:frm:pd:assl:'+rnum+':pp').style.display = "table-row";
+                document.getElementById('page:frm:pd:assl:'+rnum+':mm').style.display = "none";
+                for(var ii=0;ii<20;ii++){
+                    if(document.getElementById(rid+'ffffffffff'+ii)!=null){
+                        document.getElementById(rid+'ffffffffff'+ii).style.display = "none";
+                    }
+                }
+            }
+            // alert(pos);
+            if(pos>0){
+                for(var ii=0;ii<20;ii++){
+                    document.getElementById('page:frm:pd:assl:'+rnum+':pp').style.display = "block";
+                    document.getElementById('page:frm:pd:assl:'+rnum+':pp').style.display = "table-row";
+                    document.getElementById('page:frm:pd:assl:'+rnum+':mm').style.display = "none";
+                    // alert(document.getElementById(rid+'pppppppppp'+ii));
+                    if(document.getElementById(rid+''+sid+'pppppppppp'+ii)!=null){
+                        
+                        document.getElementById(rid+''+sid+'pppppppppp'+ii).style.display = "none";
+                    }
+                }
+            }
+        }
+        </script>
+        <apex:pageblock id="pd">     
+            <apex:outputPanel id="opp" layout="block" style="width:100%;height:300px;overflow:auto!important" >
+                <!--CRM-2946 Included hideforservicerep Class that hides Asset Performance for Customer Care. Profiles specified in the custom label-->
+                <!--CRM-3126-- Venu Ravilla-- added styling to fit in one page-->
+                <style> 
+                    .AssetStructureClass tr,td{ 
+                    text-align:left;
+                    padding-right: 10px;
+                    padding-left: 10px;
+                    white-space: nowrap;
+                    margin: 15px;
+                    word-wrap:break-word;
+                    overflow-wrap: break-word;
+                    }
+                    
+                    .wrapColumn{      
+                    white-space: normal !important;     
+                    margin: 15px;       
+                    word-wrap:break-word;       
+                    overflow-wrap: break-word;      
+                    }
+                    
+                    .hideforservicerep {display:{!if(contains($Label.Profiles_to_hide_asset_performance,$Profile.Name),"none","")};}  
+                </style>
+                <body>
+                    <table class="AssetStructureClass" id="tbl" style="height: auto;">
+                        <tr>
+                            <!--CRM-2874 : Added Fields 'Asset Performance','License' and'Auto-Renew'-->
+                            <!--CRM-2946 Included CSS Class that hides Asset Performance for Customer Care. Profiles specified in the custom label-->
+                            <!--CRM-3126-- Venu Ravilla-- Modified field visible names and order of the fields in UI-->
+                            <!--CRM-3313-- removed styling to fit the fields in the page-->
+                            <td></td><td><span><b>Asset Name</b></span></td> <td><b>Include</b></td><td><b>Non-Renew</b></td><td><b>NR Reason</b></td><td><b>EG</b></td>  <!--CRM-5916/ 6050 Added NR reason and EG flag-->
+                            <td><b>AR</b><b title="Price Info Status"></b></td>
+                            <td><b>M2M</b></td>
+                            <td><span><b>Start Date</b></span></td> 
+                            <td><span><b>End Date</b></span></td><td><b>Quantity</b></td>
+                            <td><b>Product Type</b></td><td><b>Lead Type</b></td>
+                            <td><b>Monthly($)</b><b title="Contracted Monthly Recurring Revenue"></b></td>
+                            <td><b>Renewal Status</b></td>
+                            <td class="hideforservicerep" ><b>Asset Performance%</b></td>
+                            <td><b>TCV($)</b><b title="Total Contract Value"></b></td>
+                            <!--  <td><b>Status</b></td>    modified as part of CRM-3126  --> 
+                            <td><span><b>Asset Number</b></span></td> 
+                            <td><b>Licenses</b></td>
+                            <td><b>Fulfillment Status</b></td>              
+                            <td><b>Product Bundle</b></td>            
+                            <td><b>MLS Set</b></td>
+                            <td><b>BOP Code</b></td>   
+                            <!--<td width="5%;"><b>Asset Type</b></td>-->        
+                        </tr>
+                        <apex:variable value="{!0}" var="rowNum"/>
+                        <apex:repeat var="asset" value="{!lstAssetDisplay}" id="assl"> 
+                            
+                            <tr id="{!asset.assetrowid}"  style="{!IF(OR(contains(asset.assetrowid,"pppppppppp"),contains(asset.assetrowid,"ffffffffff")),"display:none;","display:block;display: table-row;")}" class="dataRow even  first"  width="100%;">
+                                <td>
+                                    <apex:outputpanel id="plusimage">
+                                        <apex:image url="{!$Resource.Plus_Image}" id="pp" onclick="ActionShow('{!asset.assetrowid}','{!asset.assetId}','{!rowNum}');" style="{!IF(contains(asset.assetrowid,"pppppppppp"),"display:none;","display:block;")}" title="Expand - Asset Name"/> 
+                                    </apex:outputpanel>
+                                    <apex:outputpanel id="minusimage">
+                                        <apex:image url="{!$Resource.Minus_image}" id="mm" onclick="ActionHide('{!asset.assetrowid}','{!asset.assetId}','{!rowNum}');" style="{!IF(contains(asset.assetrowid,"pppppppppp"),"display:none;","display:none;")}" title="Collapse - Asset Name"/>
+                                    </apex:outputpanel>
+                                </td><td>
+                                <apex:outputpanel id="inlinetablesec" style="display:block;">
+                                    <apex:outputpanel rendered="{!IF(contains(asset.assetrowid,"ffffffffff"),true,false)}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:outputpanel>
+                                    <apex:outputpanel rendered="{!IF(contains(asset.assetrowid,"pppppppppp"),true,false)}">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</apex:outputpanel>
+                                    <a onClick="openAsset('{!asset.assetId}');return true" href="#">{!asset.assetName}</a> </apex:outputpanel></td>
+                                <td>
+                                    <apex:outputpanel id="inlinetablesec3" style="display:block;"><apex:inputCheckbox rendered="{!if(asset.assetRenewalStatus =='Do Not Renew',false,true)}" value="{!asset.includeAsset}"/> 
+                                    </apex:outputpanel></td>    
+                                <td>
+                                    <!--//CRM-2441 Added haircut flag -->
+                                    <apex:outputpanel id="inlinetablesec15" style="display:block;"> <apex:inputCheckbox rendered="true" disabled="true" value="{!asset.assetHaircut}" />
+                                    </apex:outputpanel></td>
+                                    <!--CRM-5916 Added NR reason -->    
+                                <td >
+                                    <apex:outputpanel id="inlinetablesec17" style="display:block;"> {!asset.assetnonrenewreason}    
+                                    </apex:outputpanel>
+                                </td>
+                                 <!--CRM-6050 Added EG Flag-->    
+                                <td >      
+                                    <apex:outputpanel id="inlinetablesec177" style="display:block;"> <apex:inputCheckbox rendered="true" disabled="true" value="{!asset.assetevergreen}"/>       
+                                    </apex:outputpanel></td>
+                                <td>
+                                    <apex:outputpanel id="inlinetablesec123" style="display:block;"><apex:inputCheckbox rendered="true" disabled="true" value="{!asset.assetAutoRenew}"/>
+                                    </apex:outputpanel></td>
+                                <td>
+                                    <apex:outputpanel id="inlinetablesec113" style="display:block;"><apex:inputCheckbox rendered="true" disabled="true" value="{!asset.assetnotermsale}"/>
+                                    </apex:outputpanel></td>
+                                <td>
+                                    <apex:outputpanel id="inlinetablesec6" style="display:block;"><apex:outputText value="{0,date,MM/dd/yyyy}"><apex:param value="{!asset.assetStartDate}" /></apex:outputText>
+                                    </apex:outputpanel></td>
+                                <td>
+                                    <apex:outputpanel id="inlinetablesec7" style="display:block;"><apex:outputText value="{0,date,MM/dd/yyyy}"><apex:param value="{!asset.assetEndDate}" /></apex:outputText>
+                                    </apex:outputpanel></td>
+                                <td>
+                                    <apex:outputpanel id="inlinetablesec2" style="display:block;"> {!asset.assetQuantity}  
+                                    </apex:outputpanel></td>
+                                <td>
+                                    <apex:outputpanel id="inlinetablesec21" style="display:block;"> {!asset.assetProductType}  
+                                    </apex:outputpanel></td>
+                                <td>
+                                    <apex:outputpanel id="inlinetablesec18" style="display:block;">{!asset.assetleadtype}
+                                    </apex:outputpanel></td>
+                                <td>
+                                    <apex:outputpanel id="inlinetablesec11" style="display:block;"> {!asset.assetCMMR}
+                                    </apex:outputpanel></td>
+                                <td>
+                                    <apex:outputpanel id="inlinetablesec8" style="display:block;">{!asset.assetRenewalStatus}
+                                    </apex:outputpanel></td>
+                                <td class="hideforservicerep">
+                                    <apex:outputpanel id="inlinetablesec12" style="display:block;" >{!asset.assetPerformance} </apex:outputpanel>
+                                </td>
+                                <td>
+                                    <apex:outputpanel id="inlinetablesec10" style="display:block;"> {!asset.assetTCV}
+                                    </apex:outputpanel></td>
+                                <td>
+                                    <apex:outputpanel id="inlinetablesec19" style="display:block;">{!asset.assetNumber}
+                                    </apex:outputpanel></td> 
+                                
+                                <!-- <td>
+<apex:outputpanel id="inlinetablesec4" style="display:block;"> {!asset.assetStatus}
+</apex:outputpanel></td>  CRM-3126 --Venu Ravilla-- modified as part of  --> 
+                                <td>
+                                    <apex:outputpanel id="inlinetablesec122" style="display:block;"> {!asset.assetLicenses}
+                                    </apex:outputpanel></td>
+                                <td>
+                                    <apex:outputpanel id="inlinetablesec5" style="display:block;">{!asset.assetFulfilmentStatus}
+                                    </apex:outputpanel></td>
+                                <td>
+                                    <apex:outputpanel id="inlinetablesec14" style="display:block;"> {!asset.assetProductBundle}
+                                    </apex:outputpanel></td>
+                                
+                                <!--<td width="4%;">
+<apex:outputpanel id="inlinetablesec12" style="display:block;"> {!asset.assetAutoRenewal}
+</apex:outputpanel></td>-->
+                                <!--CRM-2874 : Added Fields 'Asset Performance','License' and'Renewal Type/ Auto renew'-->
+                                <!--CRM-2946 Included CSS Class that hides Asset Performance for Customer Care. Profiles specified in the custom label-->
+                                
+                                <td>
+                                    <apex:outputpanel id="inlinetablesec9" style="display:block;"> {!asset.assetMlsSet}
+                                    </apex:outputpanel></td>
+                                <td>
+                                    <apex:outputpanel id="inlinetablesec13" style="display:block;"> {!asset.assetBopCode}
+                                    </apex:outputpanel></td>
+                                
+                                <!--<td width="5%;">
+<apex:outputpanel id="inlinetablesec1" style="display:block;"> {!asset.assetType}
+</apex:outputpanel></td>-->
+                                
+                                <!--   <td width="10%;">
+<apex:outputpanel id="inlinetablesec14" style="display:block;"> {!asset.assetProductBundle}
+</apex:outputpanel></td>-->
+                                
+                                
+                                <!--<td width="150px;">
+<apex:outputpanel id="inlinetablesec4" style="display:block;"> {!asset.assetStatus}
+</apex:outputpanel></td>-->
+                            </tr>
+                            <apex:variable var="rowNum" value="{!rowNum + 1}"/>
+                        </apex:repeat>
+                        <tr><td></td><td><!--<apex:commandButton action="{!DisplayAll}" reRender="pd" value="Display All"/>--></td><td><apex:commandButton action="{!SaveAsset}" value="Save"/><!--<apex:commandButton action="{!NewAsset}" value="New Asset"/>--></td><td></td><td></td></tr>
+                        <tr ><td>.</td><td></td><td></td><td></td></tr>
+                    </table></body></apex:outputPanel>
+        </apex:pageblock>
+        <apex:includeScript value="/support/console/44.0/integration.js"/>
+        <!--<apex:includeScript value="/support/console/44.0/collection.js"/>-->
+        <script type="text/javascript">
+        var preRecordId;
+        function openAsset(assetid) {
+            preRecordId = assetid;
+            console.log('assetid'+assetid);
+            if(sforce.console.isInConsole()){
+                sforce.console.getEnclosingPrimaryTabId(openSubtab);
+            }
+            else{
+                window.open('{!baseurl}/'+assetid, '_blank');
+            }
+        }
+        var openSubtab = function openSubtab(result){
+            var primaryTabId = result.id;
+            console.log('preRecordId'+preRecordId);
+            sforce.console.openSubtab(primaryTabId , '/'+preRecordId, true);
+        }
+        var refreshPrimaryTab = function showTabId(result) {
+            var tabId = result.id;
+            sforce.console.refreshPrimaryTabById(tabId, true);
+        };
+        
+        function doPrimaryTabRefresh() {
+            sforce.console.getEnclosingPrimaryTabId(refreshPrimaryTab);            
+        }
+        doPrimaryTabRefresh();
+        </script>
+    </apex:form>
+</apex:page>

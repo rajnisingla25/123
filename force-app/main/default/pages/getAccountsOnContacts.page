@@ -1,0 +1,28 @@
+<apex:page standardController="Lead" extensions="wrapperClassController">
+   <apex:pageMessages />
+    <apex:form >
+        <apex:pageBlock id="abc"><apex:outputPanel rendered="{!displaynofound}"><b>{!norecordfound}</b></apex:outputPanel>
+            <apex:pageBlockTable value="{!listWrapper}" var="w" >
+                <apex:column > 
+                    <apex:inputCheckbox value="{!w.checked}" immediate="true"/>
+                </apex:column>
+                <apex:column value="{!w.acc.Parent_Account__c}"/>
+                <apex:column value="{!w.acc.Parent_Account__r.Type}"/>
+                <apex:column value="{!w.acc.Parent_Account__r.Account_Sub_Type__c}"/>
+                <apex:column value="{!w.acc.Parent_Account__r.Account_Status__c}"/>
+                <apex:column value="{!w.acc.Parent_Account__r.Phone}"/>
+                <apex:column value="{!w.acc.Parent_Account__r.Total_HLC__c}"/>
+                <apex:column value="{!w.acc.Parent_Account__r.Total_CLC__c}"/>
+                <apex:column value="{!w.acc.Parent_Account__r.Total_Contract_Value__c}"/>
+                <apex:column value="{!w.acc.Parent_Account__r.Ownerid}"/>
+                <apex:column value="{!w.acc.Name}"/>
+            </apex:pageBlockTable>
+            <center><apex:commandButton value="   Go to Lead   " action="{!GoLead}" />
+                <apex:commandButton value="   Save   " action="{!Save}" />&nbsp;&nbsp;&nbsp;
+                <apex:outputPanel rendered="{!Open}">
+                    <apex:commandButton value="   CreateNewAccount   " action="{!CreateNewAccount}"/> 
+                </apex:outputPanel>
+            </center>
+         </apex:pageBlock>
+    </apex:form>
+</apex:page>

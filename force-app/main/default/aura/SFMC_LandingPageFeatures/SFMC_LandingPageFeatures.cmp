@@ -1,0 +1,122 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global">
+    
+<aura:attribute name="featureLeftSmallText" type="String"/>
+<aura:attribute name="featureCenterSmallText" type="String"/>
+<aura:attribute name="featureRightSmallText" type="String"/>
+
+<aura:attribute name="featureLeftSmallTextWidth" type="String"/>
+<aura:attribute name="featureRightSmallTextWidth" type="String"/>
+<aura:attribute name="featureCenterSmallTextWidth" type="String"/>
+
+<aura:attribute name="featureLeftSmallTextSize" type="String"/>
+<aura:attribute name="featureRightSmallTextSize" type="String"/>
+<aura:attribute name="featureCenterSmallTextSize" type="String"/>
+
+<aura:attribute name="featureLeftBigText" type="String"/>
+<aura:attribute name="featureLeftBigTextSize" type="String"/>
+
+<aura:attribute name="featureCenterBigText" type="String"/>
+<aura:attribute name="featureCenterBigTextSize" type="String"/>
+
+<aura:attribute name="featureRightBigText" type="String"/>
+<aura:attribute name="featureRightBigTextSize" type="String"/>
+
+<aura:attribute name="featureLeftImagePadding" type="String"/>
+<aura:attribute name="featureCenterImagePadding" type="String"/>
+<aura:attribute name="featureRightImagePadding" type="String"/>
+
+<aura:attribute name="prefixString" type="String"/>
+<aura:attribute name="featureLeftImage" type="String"/>
+<aura:attribute name="featureLeftImageWidth" type="String"/>
+<aura:attribute name="featureCenterImage" type="String"/>
+<aura:attribute name="featureCenterImageWidth" type="String"/>
+<aura:attribute name="featureRightImage" type="String"/>
+<aura:attribute name="featureRightImageWidth" type="String"/>
+<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+<!--<div class="slds-grid slds-wrap slds-gutters slds-grid_align-center" style="background-color : white;">
+    <div class="slds-col">
+        <div style="{!'padding-left:'+ v.featureLeftImagePadding + 'px;'}">
+            <c:SFMC_LandingPageContentImage imageName="{!v.featureLeftImage}"
+            prefixString = "{!v.prefixString}"
+            contentImageWidth="{!v.featureLeftImageWidth}"/>
+        </div>
+        <div>    
+            <h2 class="featureBigText" style="{!'font-size :'+ v.featureLeftBigTextSize +'em;'}">{!v.featureLeftBigText}</h2>
+        </div>
+        <div style="{!'width:'+v.featureLeftSmallTextWidth+'%'}">
+            <span style="{!'font-size:'+ v.featureLeftSmallTextSize +'em;'}">{!v.featureLeftSmallText}</span>
+        </div>
+    </div>
+    <div class="slds-col">
+        <div style="{!'padding-left:'+ v.featureCenterImagePadding + 'px;'}">
+            <c:SFMC_LandingPageContentImage imageName="{!v.featureCenterImage}"
+            prefixString = "{!v.prefixString}"
+            contentImageWidth="{!v.featureCenterImageWidth}"/>
+        </div>
+        <div >
+            <h2 class="featureBigText" style="{!'font-size :'+ v.featureCenterBigTextSize +'em;'}">{!v.featureCenterBigText}</h2>
+        </div>
+        <div style="{!'width:'+v.featureCenterSmallTextWidth+'%'}">
+            <span style="{!'font-size:'+ v.featureCenterSmallTextSize +'em;'}">{!v.featureCenterSmallText}</span>
+        </div>
+    </div>
+    <div class="slds-col">
+        <div style="{!'padding-left:'+ v.featureRightImagePadding + 'px;'}">
+            <c:SFMC_LandingPageContentImage imageName="{!v.featureRightImage}"
+            prefixString = "{!v.prefixString}"
+            contentImageWidth="{!v.featureRightImageWidth}"/>
+        </div>
+        <div>
+            <h2 class="featureBigText" style="{!'font-size :'+ v.featureRightBigTextSize +'em;'}">{!v.featureRightBigText}</h2>
+        </div>
+        <div style="{!'width:'+v.featureRightSmallTextWidth+'%'}">
+            <span style="{!'font-size:'+ v.featureRightSmallTextSize +'em;'}">{!v.featureRightSmallText}</span>
+        </div>
+    </div>
+</div>-->
+    
+    
+    
+    <lightning:layout multipleRows="true">
+        <lightning:layoutItem class="customZIndex" size="12" mediumDeviceSize="4" largeDeviceSize="4" smallDeviceSize="4">
+            <div class="slds-align_absolute-center slds-m-top_medium" style="{!'padding-left:'+ v.featureLeftImagePadding + 'px;'}">
+                <c:SFMC_LandingPageContentImage imageName="{!v.featureLeftImage}"
+                                                    prefixString = "{!v.prefixString}"
+                                                    contentImageWidth="{!v.featureLeftImageWidth}"/>
+            </div>
+            <div class="slds-align_absolute-center">    
+                <h2 class="featureBigText" style="{!'font-size :'+ v.featureLeftBigTextSize +'em;'}">{!v.featureLeftBigText}</h2>
+            </div>
+            <div class="slds-align_absolute-center featureSmallText" style="{!'width:'+v.featureLeftSmallTextWidth+'%'}">
+                <span style="{!'font-size:'+ v.featureLeftSmallTextSize +'em;'}">{!v.featureLeftSmallText}</span>
+            </div>
+        </lightning:layoutItem>
+        <lightning:layoutItem class="customZIndex" size="12" mediumDeviceSize="4" largeDeviceSize="4" smallDeviceSize="4">
+            <div class="slds-align_absolute-center slds-m-top_medium" style="{!'padding-left:'+ v.featureCenterImagePadding + 'px;'}">
+                <c:SFMC_LandingPageContentImage imageName="{!v.featureCenterImage}"
+                                                    prefixString = "{!v.prefixString}"
+                                                    contentImageWidth="{!v.featureCenterImageWidth}"/>
+            </div>
+            <div class="slds-align_absolute-center">
+                <h2 class="featureBigText" style="{!'font-size :'+ v.featureCenterBigTextSize +'em;'}">{!v.featureCenterBigText}</h2>
+            </div>
+            <div class="slds-align_absolute-center featureSmallText" style="{!'width:'+v.featureCenterSmallTextWidth+'%'}">
+                <span style="{!'font-size:'+ v.featureCenterSmallTextSize +'em;'}">{!v.featureCenterSmallText}</span>
+            </div>
+        </lightning:layoutItem >
+        <lightning:layoutItem class="customZIndex" size="12" mediumDeviceSize="4" largeDeviceSize="4" smallDeviceSize="4">
+            <div class="slds-align_absolute-center slds-m-top_medium" style="{!'padding-left:'+ v.featureRightImagePadding + 'px;'}">
+                <c:SFMC_LandingPageContentImage imageName="{!v.featureRightImage}"
+                                                    prefixString = "{!v.prefixString}"
+                                                    contentImageWidth="{!v.featureRightImageWidth}"/>
+            </div>
+            <div class="slds-align_absolute-center">
+                <h2 class="featureBigText" style="{!'font-size :'+ v.featureRightBigTextSize +'em;'}">{!v.featureRightBigText}</h2>
+            </div>
+            <div class="slds-align_absolute-center featureSmallText" style="{!'width:'+v.featureRightSmallTextWidth+'%'}">
+                <span style="{!'font-size:'+ v.featureRightSmallTextSize +'em;'}">{!v.featureRightSmallText}</span>
+            </div>
+        </lightning:layoutItem>
+    </lightning:layout>
+</aura:component>

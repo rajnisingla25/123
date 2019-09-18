@@ -1,0 +1,442 @@
+<apex:page standardStylesheets="false" showHeader="false" controller="EmployeeDashboardController" applyBodyTag="false" applyHtmlTag="false">
+
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta name="description" content="realtor.com® Essentials℠ dashboard" />
+        <link rel="icon" href="{!$Resource.EmployeeSiteFavicon}" />
+        <title>realtor.com® Essentials℠ dashboard</title>
+        <link rel="stylesheet" href="{!URLFOR($Resource.EmployeeDashboard, '/employee/font-awesome.min.css')}" />
+        <link rel="stylesheet" href="{!URLFOR($Resource.EmployeeDashboard, '/employee/googleApisFontCss.css')}" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-bootgrid/1.3.1/jquery.bootgrid.min.css" />
+        <link rel="stylesheet" media="screen" href="{!$Resource.EmployeeDashboardCss}" />
+
+        <style>
+            .load-spinner-lg:after {
+                background-image: url("{!$Resource.EmployeeDashboardLoading}")
+            }
+        </style>
+    </head>
+    <section class="sidebar-open" id="main-body" style="background-color: #f5f5f5 !important;">
+        <div id="app-container" StyleClass="app-container">
+            <c:EmployeeDashboardHeaderSidebar id="headerComp" />
+            <div id="main-container" class="main-container">
+                <div class="container-fluid">
+                    <div class="alertdiv"></div>
+                    <!-- Start of title section -->
+                    <section class="title-section">
+                        <h1 class="title-section-inline mar-right-md">Agents in</h1>
+                        <span id="office-dropdown">
+                     <div class="form-group display-inline">
+                        <span id="selected-text" class="hidden"></span><span id="selected-value" class="hidden"></span>
+                        <div class="btn-group bootstrap-select form-control select-dropdown">
+                            <button type="button" class="btn dropdown-toggle btn-default" data-toggle="dropdown" data-id="dropdown"><span class="filter-option pull-left"><span class="selected-acct-name"></span ><span class="selected-acct-party-id"></span></span>&nbsp;<span class="bs-caret"><span class="caret"></span></span>
+                            </button>
+                            <div class="dropdown-menu open ">
+                                <ul class="dropdown-menu inner office-dropdown" role="menu">
+                                </ul>
+                            </div>
+                        </div>
+                </div>
+                </span>
+                </section>
+                <div class="container-fluid">
+                    <div class="error-div"></div>
+                    <div id="agents-table-div">
+                        <section class="pos-relative">
+                            <div class="bootgrid-container active">
+                                <table id="agents-table" class="table table-tall bootgrid-table">
+                                    <thead>
+                                        <tr>
+                                            <th data-column-id="acctName" data-header-css-class="lg-col">Account Name</th>
+                                            <th data-column-id="email" data-header-css-class="md-col">Primary Email</th>
+                                            <th data-column-id="phone" data-header-css-class="sm-col">Phone</th>
+                                            <th data-column-id="mlsId" data-header-css-class="sm-col">MLS id</th>
+                                            <th data-column-id="partyId" data-header-css-class="sm-col">Party Id</th>
+                                            <th data-column-id="impLink" data-header-css-class="sm-col" headerCssClass="thheader" data-formatter="impLink">Impersonation Link</th>
+                                            <th data-column-id="welcomeLink" data-header-css-class="sm-col" data-formatter="welcomeLink">Welcome Email URL</th>
+                                            <th data-column-id="id" data-visible="false">id</th>
+                                            <th data-column-id="edit" data-header-css-class="xx-sm-col" data-formatter="edit" data-sortable="false"></th>
+                                            <th data-column-id="delete" data-header-css-class="xx-sm-col" data-formatter="delete" data-sortable="false"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <c:SetFooterCommunity id="footerComp" />
+        </div>
+        <div class="modal fade md-width" id="modal-add-account" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"><span class="title-body"></span><br/><span class="selected-acct-name"></span></h4>
+                    </div>
+                    <form>
+                        <div class="modal-body">
+                            <button type="button" onclick="addAccount();" class="btn btn-primary" id="add-account">Okay</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade md-width" id="modal-edit" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Edit account details</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label class="control-label">Account Party Id</label>
+                                <p id="party-id"></p>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Email</label>
+                                <input class="form-control" id="email-edit" type="text" required="required" />
+                                <span id="required-error" class="state-message hidden">This Field is required</span>
+                            </div>
+                            <!-- Last Name -->
+                            <div class="form-group">
+                                <label class="control-label">Phone</label>
+                                <button type="button" class="btn btn-icon" data-container="body" data-toggle="popover" data-placement="bottom" data-content="Enter 10 digit phone number, e.g 5105578977"><i class="pi pi-info-circle"></i>
+                                </button>
+                                <input class="form-control" id="phone-edit" />
+                                <span id="required-error" class="state-message hidden">This Field is required</span>
+                                <span id="limit-error" class="state-message hidden">Phone number should be 10 digit</span>
+                            </div>
+                            <div class="form-group">
+                                <button type="button" onclick="editAccount();" class="btn btn-primary" id="edit-account">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="deleteConfirm" role="dialog">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Confirm Delete</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p>This will delete the agent with party id <span id="selectedPartyId"></span>. Are you sure you want to proceed?</p>
+                        <div hidden="true" id="selectedAcctId"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" id="deleteAccounts">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <apex:includeScript value="{!URLFOR($Resource.EmployeeDashboard, '/employee/jquery-2.2.4.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.EmployeeDashboard, '/employee/prosoft-ui.min.js')}" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-bootgrid/1.3.1/jquery.bootgrid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-bootgrid/1.3.1/jquery.bootgrid.fa.min.js"></script>
+    <apex:includeScript value="{!$Resource.EmployeeDashboardJS}" />
+    <script type="text/javascript">
+        $(function() {
+            getAllOffices();
+            attachHandlers();
+
+        });
+
+        function attachHandlers() {
+            $("#deleteAccounts").click(function() {
+                deleteAccounts();
+            });
+        }
+
+        function getAllOffices() {
+
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.EmployeeDashboardController.getAllOffices}',
+                function(result, event) {
+                    console.log(event);
+                    if (event.status) {
+
+                        $(".office-dropdown").empty();
+                        for (var i = 0; i < result.length; i++) {
+
+                            $(".office-dropdown").append("<li><a data-value=" + result[i]["Id"] + "><span class='text'><span class='account-name'>" + result[i]["Name"] + "</span><span class='party-id'> - PARTY ID " + result[i]["Party_ID__c"] + "</span></span></a></li>");
+                        }
+
+                        $(".office-dropdown li a").click(function() {
+                            reinit($(this));
+                        });
+                        reinit($(".office-dropdown li:first a"));
+
+                    } else if (event.type === 'exception') {
+                        displayError(event.message);
+                    }
+
+                });
+
+        }
+
+        function reinit(thisObj) {
+            $(".selected-acct-name").html(thisObj.find(".account-name").html());
+            $(".selected-acct-party-id").html(thisObj.find(".party-id").html());
+            $(".selected-acct-name").data("id", thisObj.data("value"));
+            $(".office-dropdown li").each(function() {
+                $(this).removeClass("selected");
+            });
+            thisObj.parent().addClass("selected");
+            $("#agents-table").bootgrid('destroy');
+            getAgentAccounts(thisObj.data("value"));
+        }
+
+        function populateModalData() {
+
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.EmployeeDashboardController.getNumberOfAgents}',
+                $(".selected-acct-name").data("id"),
+                function(result, event) {
+                    if (event.status) {
+                        console.log(result);
+                        if (result > 9) {
+                            $('#modal-add-account .title-body').html('You cannot have more than 10 agent accounts.');
+                            $('#add-account').hide();
+                        } else {
+                            $('#add-account').show();
+                            $('#modal-add-account .title-body').html('This will create an agent account under: ');
+                        }
+                    }
+                });
+        }
+
+
+        function getAgentAccounts(officeAcctId) {
+            $('#agents-table tbody tr').remove();
+            populateModalData();
+            var offArr = [officeAcctId];
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.EmployeeDashboardController.getAgentAccounts}',
+                offArr,
+                function(result, event) {
+                    console.log(result);
+                    if (event.status) {
+                        for (var i = 0; i < result.length; i++) {
+                            var impLink = "";
+                            var welcomeLink = "";
+                            var partyId = "";
+                            if (result[i]["ImpersonationLink__c"] && result[i]["Advertiserid__c"]) {
+                                impLink = result[i]["ImpersonationLink__c"];
+                            }
+                            if (result[i]["WelcomeEmailURL__c"] && result[i]["WelcomeEmailURL__c"]) {
+                                welcomeLink = result[i]["WelcomeEmailURL__c"];
+                            }
+                            if (result[i]["Party_ID__c"]) {
+                                partyId = result[i]["Party_ID__c"];
+                            }
+
+                            var tr = "<tr>";
+                            var td1 = "<td>" + result[i]["Name"] + "</td>";
+                            var td2 = "<td>" + result[i]["Email_Address__c"] + "</td>";
+                            var td3 = "<td>" + result[i]["Phone"] + "</td>";
+                            var td4 = "<td>" + result[i]["MLS_Set_Id__c"] + "</td>";
+                            var td5 = "<td>" + partyId + "</td>";
+                            var td6 = "<td>" + impLink + "</td>";
+                            var td7 = "<td>" + welcomeLink + "</td>";
+                            var td8 = "<td>" + result[i].Id + "</td></tr>";
+                            $('#agents-table tbody').append(tr + td1 + td2 + td3 + td4 + td5 + td6 + td7 + td8);
+                        }
+
+                    } else if (event.type === 'exception') {
+                        displayError(event.message);
+                    }
+                    $("#agents-table").bootgrid({
+                        templates: {
+                            search: '<div class="bootgrid-search"><div class="input-group"><div class="input-group-btn"><button type="button" class="btn btn-search"><i class="pi pi-search"></i></button></div><input type="text" class="form-control no-border {{css.searchField}}" placeholder="{{lbl.search}}"/><div class="input-group-btn"><button type="button" class="btn btn-close"><i class="pi pi-ios-close-empty"></i></button></div></div></div>',
+                            header: '<div id="{{ctx.id}}" class="{{css.header}}"><div class="row"><div class="{{css.search}}"></div><ul class="nav bootgrid-header-nav"><li><div class="{{css.actions}}"><li><button type="button" class="btn js-btn-add" data-title="Add"><i class="pi pi-plus"></i></button></li></div></li></ul><div class="bootgrid-multi-actions"><ul class="nav"></ul><button type="button" class="btn btn-close"><i class="pi pi-ios-close-empty"></i></button></div></div></div>',
+
+                            actionDropDown: ''
+
+                        },
+                        formatters: {
+                            "impLink": function(column, row) {
+                                return "<a target='_blank' href=\"" + row.impLink + "\">" + row.impLink + "</a>";
+                            },
+                            "welcomeLink": function(column, row) {
+                                return "<a target='_blank' href=\"" + row.welcomeLink + "\">" + row.welcomeLink + "</a>";
+                            },
+                            "edit": function(column, row) {
+                                return "<a href=\"\" class=\"btn btn-xs edit-btn\" data-row-partyid=\"" + row.partyId + "\" data-row-email=\"" + row.email + "\" data-row-phone=\"" + row.phone + "\" data-row-id=\"" + row.id + "\"><img class='edit-img' height = 20 src='{!$Resource.editImg}'></a> ";
+                            },
+                            "delete": function(column, row) {
+                                return "<a href=\"\" class=\"btn btn-xs delete-btn\" data-row-partyid=\"" + row.partyId + "\" data-row-email=\"" + row.email + "\" data-row-phone=\"" + row.phone + "\" data-row-id=\"" + row.id + "\"><img class='delete-img' height = 20 src='{!$Resource.deleteImg}'></a> ";
+                            }
+                        }
+
+                        
+                    }).on("loaded.rs.jquery.bootgrid", function(e) {
+
+                        $('.edit-btn').click(function() {
+
+                            $("#edit-account").data("id", $(this).data("row-id"));
+                            $("#email-edit").val($(this).data("row-email"));
+                            $("#phone-edit").val($(this).data("row-phone"));
+                            $("#party-id").html($(this).data("row-partyid"));
+
+                            $(".form-group").each(function() {
+                                removeValidationError('required', this);
+                                removeValidationError('limit', this);
+                            });
+                            $('#modal-edit').modal('show');
+                            return false;
+                        });
+                        $('.delete-btn').click(function() {
+
+                            $("#selectedAcctId").html($(this).data("row-id"));
+                            $("#selectedPartyId").html($(this).data("row-partyid"));
+                            $('#deleteConfirm').modal('show');
+                            return false;
+                        });
+
+                        $("table tr td").each(function() {
+                            $(this).attr("title", $(this).text());
+                        });
+
+                    });
+
+                    $('.js-btn-add').attr('data-target', '#modal-add-account');
+                    $('.js-btn-add').attr('data-toggle', 'modal');
+                    $('.js-btn-add').attr('data-backdrop', 'static');
+                });
+        }
+
+        function addAccount() {
+            var offId = $(".selected-acct-name").data("id");
+            var offName = $(".selected-acct-name").html();
+            var brokerNum = 1;
+            var arr = offName.match("Acc(.*) Office");
+            if (arr != null) {
+                brokerNum = arr[1];
+            }
+            var offNum = offName.substring(offName.length - 1, offName.length);
+            var agnNum = $("#agents-table").bootgrid("getTotalRowCount") + 1;
+            //generate some random number
+            if (offNum.isNAN || brokerNum.isNAN) {
+                var d = new Date();
+                brokerNum = offNum = d.getDay() + d.getMonth() + 5;
+            }
+
+            console.log(brokerNum + offNum + agnNum);
+            removeError();
+            showSpinner();
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.EmployeeDashboardController.addAccount}',
+                'Agent', offId, brokerNum, offNum, agnNum,
+                function(result, event) {
+                    $("#modal-add-account").modal('hide');
+                    if (event.status) {
+                        displayAlert("success", "success", "New agent account has been created");
+                        $("#agents-table").bootgrid('destroy');
+                        getAgentAccounts(offId);
+                        populateModalData();
+
+                    } else {
+                        displayError(event.message);
+                    }
+                    hideSpinner();
+
+                    console.log(event);
+                });
+        }
+
+        // CRM-2972
+        function editAccount() {
+
+            showSpinner();
+            var isError = false;
+            $("#modal-edit .form-group").each(function() {
+                removeValidationError('required', this);
+                removeValidationError('limit', this);
+                if ($(".form-control", this).val() == '') {
+                    addError('required', this);
+                    isError = true;
+                    console.log(isError);
+                }
+            });
+
+            if ($("#phone-edit").val().length != 10) {
+                addError('limit', $("#phone-edit").parent());
+                isError = true;
+                console.log(isError);
+            }
+            console.log(isError);
+            if (!isError) {
+                function Account() {
+                    this.id = null;
+                    this.Email_Address__c = null;
+                    this.Phone = null;
+                }
+
+                var a = new Account();
+                a.id = $("#edit-account").data("id");
+                a.Email_Address__c = $("#email-edit").val();
+                a.Phone = $("#phone-edit").val();
+                console.log(a);
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.EmployeeDashboardController.editAccount}',
+                    a,
+                    function(result, event) {
+                        $("#modal-edit").modal('hide');
+                        if (event.status) {
+                            displayAlert("success", "success", "Account has been updated");
+                            $("#agents-table").bootgrid('destroy');
+                            getAllOffices();
+
+                        } else {
+                            displayError(event.message);
+                        }
+                        hideSpinner();
+                        console.log(event);
+                    });
+            } else {
+                hideSpinner();
+                return false;
+            }
+
+        }
+
+        //CRM-3230: VF remote action call to controller to delete all accounts
+        function deleteAccounts() {
+            removeError();
+            showSpinner();
+            var offId = $(".selected-acct-name").data("id");
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.EmployeeDashboardController.deleteAll}',
+                $('#selectedAcctId').html(),
+                'realtor agent',
+                function(result, event) {
+                    $("#deleteConfirm").modal('toggle');
+                    hideSpinner();
+                    console.log(result);
+                    if (event.status) {
+                        displayAlert("success", "success", "Account has been deleted");
+                        $("#agents-table").bootgrid('destroy');
+                        getAgentAccounts(offId);
+                        populateModalData();
+                    } else {
+                        displayError(event.message);
+                    }
+                });
+        }
+    </script>
+</apex:page>

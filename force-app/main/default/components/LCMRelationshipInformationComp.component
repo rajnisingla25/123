@@ -1,0 +1,162 @@
+<!-- LCM-67, LCM-239: Component for all LCM related email templates -->
+
+<apex:component access="global" controller="LCMRelationshipInformationCntrl" >
+    <apex:attribute name="acctRelId" assignTo="{!relId}" description="Relationship Id" type="String"/>
+    <apex:attribute name="accountType" assignTo="{!acctType}" description="Account Type" type="String"/>
+    <apex:attribute name="partnerType" assignTo="{!partnerActType}" description="Partner Account Type" type="String"/>
+    <apex:attribute name="actType" assignTo="{!actionType}" description="Action Type" type="String"/>
+  
+      <!-- Comarketing Relationship Amend table-->
+     <apex:outputPanel rendered="{!IF(actionType = 'Amend',true,false)}">
+        <table width="560" border="1" cellspacing="0" cellpadding="5" bgcolor="#ffffff" align="center" style="border-collapse: collapse;">
+            <tr>
+                <th>Market</th>
+                <th>Slots</th>
+                <th>Total Cost</th>
+                <th>
+                    <apex:outputText rendered="{!IF(acctType != 'Lender Individual',true,false)}">Lender Spend</apex:outputText> 
+                    <apex:outputText rendered="{!IF(acctType = 'Lender Individual',true,false)}">Your Spend</apex:outputText> 
+                </th>
+                <th>End Date</th>
+                <th>Comments</th>
+            </tr>
+            <apex:repeat var="rel" value="{!amendComarRels}">
+                <tr style="color: {!IF(rel.status__c == 'Cancelled', 'red', IF(CONTAINS(rel.Amendment_Description__c,'Co-marketing Started'),'green', ''))}" >
+                    <td align="center">{!rel.CFCB_Asset__r.Market__c}</td>
+                      <td align="center" style="white-space : nowrap" >
+                         <apex:outputText id="Connections" value="{0, number, integer}">
+                            <apex:param value="{!rel.CFCB_Asset__r.Quantity__c}" />
+                        </apex:outputText>
+                          {!rel.CFCB_Asset__r.Lead_Type__c}</td>
+                     <td align="center"  style="color: {!IF(CONTAINS(rel.Amendment_Description__c,'Renewal') && rel.status__c != 'Cancelled', 'green','')}">
+                        <apex:outputtext value="{0,Number,currency}" >
+                            <apex:param value="{!rel.Agent_Total_Contribution__c}" />
+                        </apex:outputtext>/mo
+                    </td>
+                    <td align="center" style="color: {!IF(CONTAINS(rel.Amendment_Description__c,'Lender Spend Adjustment') && rel.Status__c != 'Cancelled', 'green','')}">
+                        <apex:outputtext value="{0,Number,currency}" >
+                            <apex:param value="{!rel.Lender_Asset_Monthly_Contribution__c}" />
+                        </apex:outputtext>/mo
+                    </td>
+                    <td align="center" style="color: {!IF(CONTAINS(rel.Amendment_Description__c,'Renewal') && rel.Status__c != 'Cancelled', 'green','')}">
+                        <apex:outputText value="{0,date,MM/dd/yy}">
+                            <apex:param value="{!rel.CFCB_Asset__r.End_Date__c}" />
+                        </apex:outputText>
+                    </td>
+              		<td align="center" style="color: {!IF(CONTAINS(rel.Amendment_Description__c,'Lender Spend Adjustment') && rel.Status__c != 'Cancelled', 'green','')}">
+              		    <apex:outputText rendered="{!IF(rel.Status__c != 'Cancelled',true,false)}">{!rel.Amendment_Description__c}</apex:outputText> 
+                        <apex:outputText rendered="{!IF(rel.Status__c = 'Cancelled',true,false)}">{!rel.Cancel_Description__c}</apex:outputText> 
+              		</td>
+                </tr>
+            </apex:repeat>
+        </table><br/>
+    </apex:outputPanel>
+    
+    <!-- Summary of Account Relationship table-->
+    <apex:outputPanel rendered="{!IF(actionType = 'New' || actionType = 'Amend',true,false)}" >
+        <div align="center">
+            <strong>Co-marketing Summary:</strong>
+        </div><br/>
+        <table width="560" border="1" cellspacing="0" cellpadding="5" bgcolor="#ffffff" align="center" style="border-collapse: collapse;">
+            <tr>
+                <th>Markets</th>
+                <th>Total Cost</th>
+                <th>
+                    <apex:outputText rendered="{!IF(acctType != 'Lender Individual',true,false)}">Lender Spend</apex:outputText> 
+                    <apex:outputText rendered="{!IF(acctType = 'Lender Individual',true,false)}">
+                        <apex:outputText rendered="{!IF(partnerActType = 'Realtor Agent',true,false)}">Agent Spend</apex:outputText> 
+                        <apex:outputText rendered="{!IF(partnerActType = 'Broker',true,false)}">Broker Spend</apex:outputText> 
+                    </apex:outputText> 
+                </th>
+                <th>Your Spend</th>
+                <th>
+                    <apex:outputText rendered="{!IF(acctType != 'Lender Individual',true,false)}">Lender Cont. %</apex:outputText> 
+                    <apex:outputText rendered="{!IF(acctType = 'Lender Individual',true,false)}">Your Cont. %</apex:outputText> 
+                </th>
+                <th>LCM Start Date</th>
+                
+            </tr>
+            <apex:repeat var="rel" value="{!acctRelList}">
+                <tr>
+                     <td align="center">
+                        <apex:outputtext value="{0,Number,integer}" >
+                            <apex:param value="{!rel.Total_comarketing_assets__c}" />
+                        </apex:outputtext>
+                    </td>
+                    <td align="center">
+                        <apex:outputText value="{0,Number,currency}" >
+                            <apex:param value="{!rel.total_relationship_assets_price__c}" />
+                        </apex:outputText>/mo
+                    </td>
+                     <td align="center">
+                        <apex:outputText value="{0,Number,currency}" rendered="{!IF(acctType != 'Lender Individual',true,false)}">
+                           <apex:param value="{!rel.comarketer_Actual_Spend__c}" />
+                        </apex:outputText> 
+                        <apex:outputText value="{0,Number,currency}" rendered="{!IF(acctType = 'Lender Individual',true,false)}" >
+                            <apex:param value="{!rel.total_relationship_assets_price__c - rel.comarketer_Actual_Spend__c}" />
+                        </apex:outputText>/mo
+                    </td>
+                    <td align="center">
+                        <apex:outputText value="{0,Number,currency}" rendered="{!IF(acctType != 'Lender Individual',true,false)}">
+                           <apex:param value="{!rel.total_relationship_assets_price__c - rel.comarketer_Actual_Spend__c}" />
+                        </apex:outputText> 
+                        <apex:outputText value="{0,Number,currency}" rendered="{!IF(acctType = 'Lender Individual',true,false)}" >
+                           <apex:param value="{!rel.comarketer_Actual_Spend__c}" />
+                        </apex:outputText>/mo
+                    </td>
+                    <td align="center">
+                        <apex:outputText value="{!ROUND(rel.Current_Comarketer_Spend_Percent__c , 2 )}" ></apex:outputtext>
+                        %
+                    </td>
+                    <td align="center">
+                        <apex:outputText value="{0,date,MM/dd/yy}">
+                            <apex:param value="{!rel.Comarketing_start_date__c}" />
+                        </apex:outputText>
+                    </td>
+                   
+                </tr>
+            </apex:repeat>
+        </table>
+    </apex:outputPanel>
+    
+     <!-- Comarketing Relationship All active markets table -->
+     <apex:outputPanel rendered="{!IF(actionType = 'New' || actionType = 'Amend',true,false)}">
+         <br/>
+         <Strong>Markets:</Strong>
+         <br/> <br/>
+        <table width="560" border="1" cellspacing="0" cellpadding="5" bgcolor="#ffffff" align="center" style="border-collapse: collapse;">
+            <tr>
+                <th>Market</th>
+                <th>Slots</th>
+                <th>Total Cost</th>
+                <th>End Date</th>
+                <th>LCM Start Date</th>
+            </tr>
+            <apex:repeat var="rel" value="{!comarRels}">
+                <tr  >
+                    <td align="center">{!rel.CFCB_Asset__r.Market__c}</td>
+                     <td align="center" style="white-space : nowrap" >
+                         <apex:outputText id="Connections" value="{0, number, integer}">
+                            <apex:param value="{!rel.CFCB_Asset__r.Quantity__c}" />
+                        </apex:outputText>
+                          {!rel.CFCB_Asset__r.Lead_Type__c}</td>
+                     <td align="center">
+                        <apex:outputtext value="{0,Number,currency}" >
+                            <apex:param value="{!rel.Agent_Total_Contribution__c}" />
+                        </apex:outputtext>/mo
+                    </td>
+                     <td align="center">
+                        <apex:outputText value="{0,date,MM/dd/yy}">
+                            <apex:param value="{!rel.CFCB_Asset__r.End_Date__c}" />
+                        </apex:outputText>
+                    </td>
+                    <td align="center">
+                        <apex:outputText value="{0,date,MM/dd/yy}">
+                            <apex:param value="{!rel.Start_Date__c}" />
+                        </apex:outputText>
+                    </td>
+                </tr>
+            </apex:repeat>
+        </table>
+    </apex:outputPanel>
+</apex:component>

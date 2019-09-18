@@ -1,0 +1,15 @@
+<aura:component controller="BulkApproveQuotes_Controller">
+	<aura:attribute name="cQuoteId" type="String"/>
+    <aura:attribute name="columns" type="Object[]"/>
+    <aura:attribute name="quoteProducts" type="BigMachines__Quote_Product__c[]" />
+    <aura:attribute name="height" type="integer" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="change" value="{!v.cQuoteId}" action="{!c.onQuoteIdChange}"/>
+    <div class="slds" style="{!'height:'+v.height+'rem;'}">
+        <lightning:datatable keyField="Id" class="quoteProducts"
+        	data="{!v.quoteProducts }"
+            columns="{!v.columns}"
+            hideCheckboxColumn="true"/>
+    </div>  
+    <lightning:spinner aura:id="spinner" variant="brand" size="large" class="slds-hide"/>
+</aura:component>

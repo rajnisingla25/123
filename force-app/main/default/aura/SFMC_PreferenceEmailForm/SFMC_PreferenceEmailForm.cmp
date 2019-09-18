@@ -1,0 +1,93 @@
+<aura:component access="global" controller="SFMC_PreferenceCenterController">
+    <aura:attribute name="brandType" type="String" />
+    <aura:attribute name="contactMethodId" type="String" />   
+    <aura:attribute name="checkBoxErrorMsg" type="String" />
+    <aura:attribute name="contactMethodIdErrorMsg" type="String"/>	
+    <aura:attribute name="brandName" type="String" />
+    <aura:attribute name="emailAddress" type="String" />
+    <aura:attribute name="checkBoxError" type="Boolean" default="false"/>
+    <aura:attribute name="contactMethodIdError" type="Boolean" default="false"/>
+    <aura:attribute name="isDataSteward" type="Boolean" default="false"/>
+    <aura:attribute name="isError" type="Boolean"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <aura:registerEvent name="perferenceEvent" type="c:SFMC_PreferenceEvent"></aura:registerEvent>
+    
+    <div class="{!if(v.brandType == $Label.c.SFMC_Brand_RDC , 'rdc_banner' , '') }">   
+        <div class="banner-form slds-box ">
+            <div class="slds-m-around_small">
+                <div class="email-header">Email Messages</div>
+                <aura:if isTrue="{!v.contactMethodIdError}">
+                    <ui:message title="Error" severity="error" closable="false">
+                        {!v.contactMethodIdErrorMsg}
+                    </ui:message>
+                    <aura:set attribute="else">
+                        <h4>
+                            <div class="slds-text-heading--small slds-p-top_small">Make emails more relevant to your needs – choose everything you are interested in receiving. Your current subscriptions are indicated with a check mark below.</div>
+                        </h4>
+                        <div class="note-text">
+                            Note: Your selections below will not affect your receipt of any transactional emails
+                        </div>
+                        <ui:inputText placeholder="Email Address" class="email-field" value="{!v.emailAddress}" disabled="true"/>
+                        
+                        <div class="slds-p-top_x-small">
+                            <aura:if isTrue="{!v.checkBoxError}">
+                                <ui:message title="Error" severity="error" closable="false">
+                                    {!v.checkBoxErrorMsg}
+                                </ui:message>
+                            </aura:if> 
+                            <div class="slds-grid">
+                                <div class="slds-col checkboxText">		
+                                    <div class="  slds-p-vertical_medium">                                        
+                                        <div class="slds-col">
+                                            <ui:inputCheckbox aura:id="optInForInformational" change="{!c.optInChecked}" class="checkboxStyle"/>  
+                                            <div class="checkboxLabel"><aura:unescapedHtml value="{!$Label.c.SFMC_Preference_Deals_Promotions}" /></div>
+                                        </div> 
+                                    </div>
+                                    <div class="slds-grid slds-p-vertical_medium">                                        
+                                        <div class="slds-col">
+                                            <ui:inputCheckbox aura:id="optInForPromotional" change="{!c.optInChecked}" class="checkboxStyle"/>
+                                            <div class="checkboxLabel"><aura:unescapedHtml value="{!$Label.c.SFMC_Preference_Product_Info}"/></div>
+                                        </div>
+                                    </div>
+                                    <div class="slds-grid slds-p-vertical_medium">                                        
+                                        <div class="slds-col">
+                                            <ui:inputCheckbox aura:id="optInForEvents" change="{!c.optInChecked}" class="checkboxStyle"/>
+                                            <div class="checkboxLabel"><aura:unescapedHtml value="{!$Label.c.SFMC_Preference_Webinars_Events}"/></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="slds-grid slds-p-vertical_medium">                            
+                                        <div class="slds-col">
+                                            <img src="{!$Resource.PreferenceCenterResource + '/assets/images/or-image.png'}" />
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="slds-grid slds-p-vertical_medium">                                        
+                                        <div class="slds-col">
+                                            <ui:inputCheckbox aura:id="optOut" change="{!c.optOutChecked}" class="checkboxStyle"/>
+                                            <div class="checkboxLabel"><aura:unescapedHtml value="{!format($Label.c.SFMC_Preference_Opt_out,v.brandName)}"/></div>
+                                        </div>
+                                    </div>
+                                </div>                               
+                            </div>
+                        </div>
+                        
+                        <div class="note-text slds-p-vertical_small">
+                            <aura:unescapedHtml value="{!format($Label.c.SFMC_Preference_Bottom_Note,v.brandName)}"/>                        
+                        </div>
+                        
+                        <aura:if isTrue="{!!v.isDataSteward}">
+                            <div class="slds-grid slds-gutters slds-p-top_medium">
+                                <div class="slds-col btn-div">
+                                    <lightning:button variant="destructive" class="{!if(v.brandType == $Label.c.SFMC_Brand_RDC , 'RDCClass' , 'TPClass') }" label="Update" title="Update" onclick="{! c.handleUpdate }" />
+                                </div>
+                            </div>
+                        </aura:if>
+                    </aura:set>
+                </aura:if>
+            </div>
+        </div>
+    </div>
+</aura:component>

@@ -1,0 +1,260 @@
+<apex:page standardController="Asset" extensions="TurboImpressionReport" applyBodytag="false" showHeader="false" sidebar="false" title="Turbo Impression Report" standardStyleSheets="false">
+<!--   <title>Turbo Impression Report</title> -->
+  <apex:includeScript value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/DataTables-1.10.11/media/js/jquery.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/DataTables-1.10.11/media/js/jquery.dataTables.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/DataTables-1.10.11/extensions/Buttons/js/dataTables.buttons.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/DataTables-1.10.11/extensions/Buttons/js/buttons.flash.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/DataTables-1.10.11/extensions/export/jszip.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/DataTables-1.10.11/extensions/export/pdfmake.min.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/DataTables-1.10.11/extensions/export/vfs_fonts.js')}"/>
+  <apex:includeScript value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/DataTables-1.10.11/extensions/Buttons/js/buttons.html5.min.js')}"/>
+<!--   <apex:includeScript value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/DataTables-1.10.11/extensions/Buttons/js/buttons.print.min.js')}"/> -->
+  
+<!--   <script src="//code.jquery.com/jquery-1.10.2.js"></script> -->
+<!--   <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script> -->
+  <apex:includeScript value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/jquery-ui-1.11.4.custom/jquery-ui.js')}"/>
+<!--   <apex:includeScript value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/jquery-ui-1.11.4.custom/.js')}"/> -->
+  
+  <apex:stylesheet value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/jquery-ui-1.11.4.custom/jquery-ui.css')}" />
+  <apex:stylesheet value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/DataTables-1.10.11/extensions/Buttons/css/buttons.dataTables.min.css')}" />    
+  <apex:stylesheet value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/DataTables-1.10.11/media/css/jquery.dataTables.min.css')}"/>
+  
+  <script> 
+  	//Global variable
+  	var astStartDate; 
+  	var astEndDate;
+  	var selectedEndDate;
+  </script>
+  
+  <style type="text/css">
+  	 
+  	 .impr-rep-body *{color:#4a4a56;font-family: Arial,Helvetica,sans-serif;}
+  	 .impr-rep-body{ width:70%;font-size: 70%;}
+  	.filter{ display:inline-block;width:30%;margin:0 auto;margin:10px 0;}
+	.ast-date,#eDate,#sDate{padding:2px;}
+	.asset-detail-attribute{ display:inline-block;width:48%;text-align:left;padding:4px;}
+	.section-header{ color: #4d91b3;display:inline-block;width:100%;text-align:left;fonth-weight:bold;border-bottom: 1px solid #888;font-size: 13px;}
+	.item-label{font-weight:bold;padding-right:2px;}
+	.impression-table-cointainer{padding-top:4px}
+	#imp-accordion h3{border-color:#4d91b3 !important;background-color:#4d91b3 !important;color: #fff !important;font-weight: bold;}
+	.attr-section{margin-top:6px;}
+	.section-content{margin-top:6px;}
+	.get-imp-btn{padding: 0.4em 1em !important;}
+ 	.action-button{padding:0px !important;font-weight: bold;}
+ 	#impression-table th{text-align:left;}
+  </style>
+  <body class="impr-rep-body">
+  <apex:form >
+	  <apex:actionFunction status="loadStatus" name="getDeliverdImpressionListAF" action="{!getDeliverdImpressionList}" 
+	  						onComplete=" initializeDataTable();initializeAccordion( 1 );" reRender="impression-table-panel">
+	  	 <apex:param name="startDate" value="" />
+         <apex:param name="endDate" value="" />						
+	  </apex:actionFunction>
+	  <apex:actionStatus id="loadStatus" onstart="disablePageByModal();" onstop="enablePageByModal();"></apex:actionStatus>
+	  <div id="main-container">
+	  	
+	  	<div id="imp-accordion">
+	  	
+		  	<h3>Date Filter</h3>
+		  	<div id="filter-container">
+		  		<div class="filter">
+		  			<label for="sDate">Start Date</label>
+					<input type="text" id="sDate" name="Start Date" readonly="true"/>
+		  		</div>
+		  		<div class="filter">
+		  			<label for="eDate">End Date</label>
+					<input type="text" id="eDate" name="End Date" readonly="true"/>
+		  		</div>
+		  		<div class="filter">
+		  			<input type="button" class="get-imp-btn" onclick="getDelieverdImpressionJS();" value="Get Impressions"/>
+	            </div>
+		  	</div>
+		  	
+		  	<h3>Impressions Details</h3>
+		  	<div id="attr-detail-container">
+			   
+			   <div class="attr-section">
+			   		<div class="section-header"><b>Asset Details</b></div>
+			   		<div class="section-content">
+			   			<div class="asset-detail-attribute">
+			   					<apex:outputLabel styleClass="item-label" value="Campaign Id: "/><apex:outputfield value="{!Asset.CampaignID__c}"/>
+			   			</div>
+			   			<div class="asset-detail-attribute">
+			   					<apex:outputLabel styleClass="item-label" value="Party Id: "/><apex:outputfield value="{!Asset.Account_Party_ID__c}"/> 
+			   			</div>
+			   			<div class="asset-detail-attribute">
+			   					<apex:outputLabel styleClass="item-label" value="Term Start Date: "/><apex:outputfield value="{!Asset.Term_Start_Date__c}"/> 
+			   			</div>
+			   			<div class="asset-detail-attribute">
+			   					<apex:outputLabel styleClass="item-label" value="Term End Date: "/><apex:outputfield value="{!Asset.Term_End_Date__c}"/>
+			   			</div>
+			   			<div class="asset-detail-attribute">
+			   					<apex:outputLabel styleClass="item-label" value="Contracted Impressions: "/><apex:outputfield value="{!Asset.Contractedimpressions__c}"/>
+			   			</div>
+			   			<div class="asset-detail-attribute">
+			   					<apex:outputLabel styleClass="item-label" value="Price Per Impression Sold: "/><apex:outputfield value="{!Asset.PricePerImpressionSold__c}"/>
+			   			</div>
+			   		</div>
+			   </div>
+			   
+			   <div class="attr-section">
+			   		<div class="section-header"><b>Impression Table</b></div>
+				  	<div class="section-content">
+					  	<apex:outputPanel id="impression-table-panel">
+						  	
+							  	<table id="impression-table" class="display nowrap" cellspacing="0" width="100%">
+							        <thead>
+							            <tr>
+							                <th>Impression Date</th>
+							                <th>Impression Count</th>
+							            </tr>
+							        </thead>
+							        <tfoot>
+							            <tr>
+							                <th class="impression-Total-th">Total Delivered Impression </th>
+							                <th> <apex:outputText value="{!totalImpressionCount}"/></th>
+							            </tr>
+							        </tfoot>
+							        <tbody>
+							            <apex:repeat var="dailyAggrImpr" value="{!dailyAggrImprList}">
+							            <tr>
+							                <td> <apex:outputText value="{0,date,MM/dd/yy}"> <apex:param value="{!dailyAggrImpr.eventDate}" /> </apex:outputText></td>
+							                <td><apex:outputText value="{!dailyAggrImpr.count}"/></td>
+							            </tr>
+							            </apex:repeat>
+							        </tbody>
+							    </table>
+						</apex:outputPanel>
+			    	</div>
+			    </div>
+		    </div><!-- End impression Table container -->
+	    </div><!-- End Accordian -->
+	  </div><!-- End main container -->
+	  
+	  <div id="overlayblock" style="display:none;height:100%;width:100%;z-index:1000;vertical-align:middle;text-align:center;position:fixed;top:0;background-color:#FFFFFF;opacity:0.6;">
+      </div>
+      <script>
+	  	$(document).ready(function() {
+		    setStartAndEndDate();
+		    initializeAllComponent();
+		   	$('.action-button,.get-imp-btn').button();
+		});
+		
+		function initializeAllComponent(){
+			initializeDataTable();
+		    initilizeDatePicker();
+		   	initializeAccordion( 0 );
+		}
+		function initializeAccordion( activeHeader ){
+			$( "#imp-accordion" ).accordion({
+			    heightStyle :'content',
+			    collapsible: true,
+			    active: activeHeader
+			});
+		}
+		function initializeDataTable(){
+			$('#impression-table').DataTable( {
+		        dom: 'Bfrtip',
+		        buttons: [
+		        	{	extend: 'excel',
+		        		text: 'Export As Excel',
+		        		footer:true,
+		        		className: 'action-button',
+		        		filename:'Turbo Impression Report',
+		        		extension: '.xlsx'}],
+		        pageLength: 5
+		    });
+		    $('.action-button').button();
+		    if(  typeof $('#eDate').val() !== "undefined" ){
+		    	$('.impression-Total-th').html(" Total Delivered Impressions from "+ $('#sDate').val()+' to '+$('#eDate').val());
+		    }
+		}
+		//This function converts date provided by salesforce to Ui format
+	     //it converts to mm/dd/yyyy format
+	     function formatToUIDate( sfDate ) {
+	     	
+	         if( typeof sfDate !== "undefined" ) {
+	             return  (sfDate.getMonth() + 1) + '/' + (sfDate.getDate() + 1)+ '/' +  sfDate.getFullYear();
+	         }
+	         else {
+	             return null;
+	         }
+	     }
+	     
+	     //This function is used to convert date from UI to Salesforce data format
+	     //This method converts date from mm/dd/yyyy format to yyyy-mm-dd format
+	     function formatToSalesforceDate( uiDate ) {
+	         if( typeof uiDate !== "undefined" && uiDate.length > 0) {
+	             var uiDateSplitted = uiDate.split("/");
+	             return uiDateSplitted[2] + '-' + uiDateSplitted[0] + '-' + uiDateSplitted[1];
+	         }
+	         else {
+	             return null;
+	         }
+	     }
+		
+		function setStartAndEndDate(){
+			astStartDate = formatToUIDate(new Date('{!Asset.Start_Date__c}'));
+		  	astEndDate = formatToUIDate(new Date('{!Asset.End_Date__c}'));
+		}
+		function initilizeDatePicker(){
+			var defaultEndDate;
+			if( (new Date()) > (new Date('{!Asset.End_Date__c}')) ){
+				defaultEndDate = astEndDate;
+			}else{
+				defaultEndDate = formatToUIDate( new Date());
+			}
+			$( "#sDate" ).val( astStartDate );
+			$( "#eDate" ).val( defaultEndDate );
+			$( "#sDate" ).datepicker({
+		      changeMonth: true,
+		      numberOfMonths: 1,
+		      defaultDate:astStartDate,
+		      minDate: astStartDate,
+		      maxDate: astEndDate,
+		      onClose: function( selectedDate ) {
+		        
+		      }
+		    });
+		    $( "#eDate" ).datepicker({
+		      changeMonth: true,
+		      numberOfMonths: 1,
+		      defaultDate:defaultEndDate,
+		      minDate: astStartDate,
+		      maxDate: astEndDate,
+		      onClose: function( selectedDate ) {
+		        
+		      }
+		    });
+		}
+		
+		function getDelieverdImpressionJS(){
+			
+			var sdate = $('#sDate').val();
+			var edate = $('#eDate').val();
+			
+			if( typeof sdate !== "undefined" && sdate.length > 0 && typeof edate !== "undefined" && edate.length > 0 ){
+				getDeliverdImpressionListAF( formatToSalesforceDate( sdate ), formatToSalesforceDate( edate ));
+			}else{
+				alert('Select the start date and end date');
+				return null;
+			}
+			
+		}
+		
+		//This function disables the page by showing a modal and loading icon
+	     function disablePageByModal() {
+	     	 $('#overlayblock').show();
+	     }
+	     
+	     //This function enables the page by hiding a modal and loading icon
+	     function enablePageByModal() {
+	         	$('#overlayblock').hide();
+	     }
+	     
+	       
+	  </script>
+  </apex:form>
+  </body>
+  
+</apex:page>

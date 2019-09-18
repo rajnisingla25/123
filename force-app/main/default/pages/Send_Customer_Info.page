@@ -1,0 +1,457 @@
+<apex:page controller="Send_Custom_Email" showHeader="false" >
+    <head>
+    <meta charset="utf-8" />
+        <apex:includeScript value="{!URLFOR($Resource.ckeditor, 'ckeditor/ckeditor.js')}" />
+        <!-- Bootstrap core CSS -->
+        <apex:stylesheet value="{!URLFOR($Resource.Bootstrap, 'css/bootstrap.min.css')}" /> 
+        <apex:includeScript value="/canvas/sdk/js/publisher.js" />        
+        <!-- Resources for Dropdown Combobox plugin -->  
+                
+        <apex:includeScript value="{!$Resource.jquery_QuickText}"/> 
+        <apex:includeScript value="{!URLFOR($Resource.BootstrapRes, 'BootstrapRes/JS/bootstrap.min.js')}" /> 
+        <apex:includeScript value="{!URLFOR($Resource.BootstrapRes, 'BootstrapRes/JS/bootstrap-select.min.js')}" /> 
+        <apex:stylesheet value="{!URLFOR($Resource.BootstrapRes, 'BootstrapRes/CSS/bootstrapmincss.css')}"  /> 
+        <apex:stylesheet value="{!URLFOR($Resource.BootstrapRes, 'BootstrapRes/CSS/bootstrap-select.min.css')}"  /> 
+        
+     
+   
+       
+    
+        <script type="text/javascript">
+            function reloadCKEditor(){
+                  CKEDITOR.replaceAll('ckeditor');
+            } 
+            function setCKEditorValues(){
+                //here we assign to our hidden textarea the value of the visible one  
+                $("[id$='hidden_text_area_field']").val(CKEDITOR.instances[$("[id$='idBody']").attr('id')].getData());                          
+                $("[id$='hidden_fileName_field']").val(fileNames);
+                if (attachments != undefined || attachments.length > 0) { 
+                    paraFunction(JSON.stringify(attachments));                 
+                }
+            }              
+        </script> 
+        
+        <script type="text/javascript">      
+            function loadPicker(){
+                $('.selectpicker').selectpicker({          
+                size: 8
+                });                  
+            }      
+        </script>  
+        <script>
+            var fileNames ='';
+            var attachments=[];
+            function uploadFile(){       
+            var input = document.getElementById('file-input');            
+            var filesToUpload = input.files;
+
+            for(var i = 0, f; f = filesToUpload[i]; i++){
+                var reader = new FileReader();     
+
+                // Keep a reference to the File in the FileReader so it can be accessed in callbacks
+                reader.file = f; 
+
+            reader.onerror = function(e) {
+                switch(e.target.error.code) 
+                {
+                    case e.target.error.NOT_FOUND_ERR:
+                        alert('File Not Found!');
+                        break;
+                    case e.target.error.NOT_READABLE_ERR:
+                        alert('File is not readable');
+                        break;
+                    case e.target.error.ABORT_ERR:
+                        break; // noop
+                    default:
+                        alert('An error occurred reading this file.');
+                };
+            };     
+
+            reader.onabort = function(e) {
+                alert('File read cancelled');
+            };
+
+            reader.onload = function(e) {
+                var att = new sforce.SObject("Attachment");
+                att.Name = this.file.name;
+                fileNames += this.file.name+',';
+                att.ContentType = this.file.type;                
+
+                att.Body = (new sforce.Base64Binary(e.target.result)).toString();
+                attachments.push(att);
+                $("[id$='hidden_fileName_field']").val(fileNames);                  
+                updateAttachment('fileNames');                
+            };
+
+            reader.readAsBinaryString(f);            
+        }
+        }          
+        </script>
+        <script> 
+        function removeFiles(fileName,i){
+           // alert('Hi'+i);
+            attachments.splice(i,1); 
+            var tempfileName = '';
+            tempfileName = fileName+',';
+            fileNames = fileNames.replace(tempfileName,"");
+           // alert('@@ fileNames'+fileNames);
+            $("[id$='hidden_fileName_field']").val(fileNames);                  
+            removeAttachment('fileNames'); 
+        }
+        </script>
+        <script>
+        function refreshPage(isSuccess){
+            //alert('isSuccess'+isSuccess);
+            if(isSuccess=='true'){
+                setTimeout(function() { location.reload() },2000);return false;
+            }               
+        }
+        </script>
+        <script type="text/javascript">
+            var __sfdcSessionId = '{!GETSESSIONID()}';
+        </script>
+        <script src="/soap/ajax/39.0/connection.js" type="text/javascript"></script>
+        <script>
+            function getFileName(){
+                var a = document.getElementById("myFile").name;
+            }
+        </script>
+        <script>
+        function replaceund(str){
+                 if(str == undefined){
+                        str ='';
+                     }
+                  return str;
+                }
+        CKEDITOR.editorConfig = function( config ) {
+            config.allowedContent = true;         
+        };
+        CKEDITOR.config.allowedContent = true; 
+           var intialvalue;
+            var intialMLSvalue;
+            function createTable(textId,json){ 
+                console.log('json'+json); 
+                var arrayOfObjects = eval(json);                   
+                var replaceWith = "";      
+                var value = CKEDITOR.instances[textId].getData();
+                if(value.includes("[CustomerAsset]") || value.includes("assetTableJS")){
+                    replaceWith = "<table id='assetTableJS' border='1'><th>Asset Number</th><th> Product Name </th><th>Market</th><th>Billing Period</th><th>Start Date</th><th>End Date</th><th>Total Net</th><th>Extended Net Price</th>";
+                    for (var i = 0; i < arrayOfObjects.length; i++){
+                        var object = arrayOfObjects[i];             
+                        for (var property in object) {
+                            if(property=="at"){
+                                var object2 = object["at"];
+                                console.log('object2'+object2);
+                                console.log('object["at"].innerProp'+object2.Asset_Number__c);
+                                replaceWith+= "<tr><td>"+replaceund(object2.Asset_Number__c)+"</td><td>"+replaceund(object2.Name)+"</td><td>"+replaceund(object2.Market__c)+"</td><td>"+replaceund(object2.Billing_Period__c)+"</td><td>"+replaceund(object2.Start_Date__c)+"</td><td>"+replaceund(object2.End_Date__c)+"</td><td>"+replaceund(object2.Total_Net__c)+"</td><td>"+replaceund(object2.Extended_Net_Price__c)+"</td></tr>";                    
+                            }                
+                        }            
+                    }
+                    replaceWith+= "</table>";  
+                } else {//CRM-6128
+                    replaceWith = "<table id='assetPriceTableJS' border='1'><th>Product Name</th><th>Monthly Price</th>";
+                    for (var i = 0; i < arrayOfObjects.length; i++){
+                        var object = arrayOfObjects[i];             
+                        for (var property in object) {
+                            if(property=="at"){
+                                var object2 = object["at"];
+                                replaceWith+= "<tr><td align='center'>"+replaceund(object2.Name)+"</td><td align='center'>$ "+replaceund(object2.Extended_Net_Price__c).toFixed(2)+"</td></tr>";                    
+                            }                
+                        }            
+                    }
+                    replaceWith+= "</table>";  
+                }
+                
+                if(value.includes("[CustomerAsset]")){
+                    console.log('in customer asset');
+                    intialvalue = CKEDITOR.instances[textId].getData(); 
+                    var replaced_text = value.replace("[CustomerAsset]", replaceWith);                  
+                }
+                if(value.includes("assetTableJS")){
+                    console.log('in assetTableJS');                                                                
+                    var replaced_text = intialvalue.replace("[CustomerAsset]", replaceWith);                                
+                }
+                //CRM-6128
+                if(value.includes("[AssetNamePrice]")){
+                    console.log('in customer asset');
+                    intialvalue = CKEDITOR.instances[textId].getData(); 
+                    var replaced_text = value.replace("[AssetNamePrice]", replaceWith);                  
+                }
+                if(value.includes("assetPriceTableJS")){
+                    console.log('in assetPriceTableJS');                                                                
+                    var replaced_text = intialvalue.replace("[AssetNamePrice]", replaceWith);                                
+                }
+                CKEDITOR.instances[textId].setData(replaced_text);
+            }
+            
+            function createMLSTable(textId,json){                                            
+                console.log('json'+json); 
+                var arrayOfObjects = eval(json);                   
+                var replaceWith = "<table id='MLSTableJS' border='1'><th>MLS City</th> <th> MLS Set Id </th>";
+                for (var i = 0; i < arrayOfObjects.length; i++){
+                    var object = arrayOfObjects[i];             
+                    for (var property in object) {
+                        if(property=="mlist"){
+                            var object2 = object["mlist"];
+                            console.log('object2'+object2);
+                            console.log('object["mlist"].innerProp'+object2.MLS_City__c);
+                            replaceWith+= "<tr><td>"+replaceund(object2.MLS_City__c)+"</td><td>"+replaceund(object2.MLS_Set_ID__c)+"</td></tr>";                    
+                        }                
+                    }            
+                }
+                replaceWith+= "</table>";        
+                       
+                var value = CKEDITOR.instances[textId].getData();
+                if(value.includes("[MLS]")){
+                intialMLSvalue = CKEDITOR.instances[textId].getData(); 
+                 var replaced_text = value.replace("[MLS]", replaceWith); 
+                }
+                if(value.includes("MLSTableJS")){                                                                              
+                    var replaced_text = intialMLSvalue.replace("[MLS]", replaceWith);                                 
+                }
+               
+                CKEDITOR.instances[textId].setData(replaced_text);
+            }
+        </script>
+        <style>
+        .inputheight{
+            height:24px;
+        }
+        </style>
+          
+      
+    </head>
+
+    <body>
+          <apex:outputPanel id="pg2">
+            <apex:pageMessages escape="false"/>
+        </apex:outputPanel>
+        <apex:actionstatus id="counterStatus">
+        <apex:facet name="start">
+        <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb; height:100%;opacity:0.65;width:100%;">
+            <div class="waitingHolder" style="top: 100px; width: 91px;">
+            <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+            <span class="waitingDescription">Loading...</span>
+            </div>
+        </div>
+        </apex:facet>
+        </apex:actionstatus>
+        <apex:form styleClass="form-horizontal" id="form"> 
+            <apex:actionFunction name="paraFunction" action="{!sendmail}" rerender="pg2,pg1,pg3,pg4,pgSub,pgFrom" oncomplete="refreshPage('{!isEmailSuccess}');reloadCKEditor();">
+                <apex:param id="anode" name="node" value="" />
+            </apex:actionFunction>
+            <apex:actionFunction name="updateAttachment" action="{!updateAttach}"   rerender="pg2,pgAttach,pgFileNames" oncomplete="reloadCKEditor();">                          
+                <apex:param id="fname" name="fname" value="" />
+            </apex:actionFunction>
+            <apex:actionFunction name="removeAttachment" action="{!removeAttach}" reRender="pg2,pgAttach,pgFileNames" oncomplete="reloadCKEditor();">                          
+                <apex:param id="fname2" name="fname2" value="" />
+            </apex:actionFunction>
+            <div class="col-sm-12">
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                          <h4 class="panel-title">
+                          <a data-toggle="collapse" href="#collapse1"><i class="glyphicon glyphicon-chevron-right"></i> Email</a>
+                          </h4>
+                        </div>
+                        <div id="collapse1" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                            
+                                <div class="form-group row">
+                                
+                              <!--      <label for="tmpListId" class="col-sm-1 col-form-label">Category</label>
+                                    <div class="col-sm-2">
+                                       <apex:selectList size="1"  styleClass="form-control input-sm" value="{!selectedCategory}" >
+                                        <apex:selectOptions value="{!categoryList}"/>
+                                         <apex:actionSupport event="onchange"  reRender="tempdropdown,pg1,pg2,pg3,pg4,pgSub,pgFrom" status="counterStatus"  action="{!templateList}" oncomplete="loadPicker();reloadCKEditor();"/> 
+                                      </apex:selectList>        
+                                    </div>         
+                                    <div class="col-sm-2">
+                                    </div>  -->
+                                    
+                                    <label for="tmpListId" class="col-sm-1 col-form-label">Template</label>
+                                    <div class="col-sm-4">
+                                    <apex:outputPanel id="tempdropdown">
+                                        <apex:selectList styleClass="selectpicker form-control input-sm" html-data-live-search="true" value="{!selectedTemplate}" >
+                                            <apex:selectOptions value="{!templateList}"/>                                            
+                                            <apex:actionSupport event="onchange" action="{!QueryTemplateInfo}" reRender="pg1,pg2,pg3,pg4,pgSub,pgFrom" status="counterStatus" oncomplete="reloadCKEditor();"/>                                            
+                                        </apex:selectList>
+                                    </apex:outputPanel>
+                                    </div> 
+                                    
+                                </div>
+                                <apex:outputPanel id="pgFrom">
+                                <div class="form-group row">
+                                    <label class="col-sm-1 col-form-label" for="fromId">From</label>
+                                    <div class="col-sm-4 ">
+                                        <input type="email" class="form-control input-sm" id="fromId" placeholder="Enter email" required="true" value="{!fromAddress}" />
+                                    </div>
+                                    <apex:inputHidden value="{!toAddress}" id="myHiddenVar1" />
+                                    <label class="col-sm-1 col-form-label" for="toId">To</label>
+                                    <div class="col-sm-4">
+                                      <input type="email" class="form-control input-sm" id="toId" placeholder="Enter email" required="true" value="{!toAddress}" onblur="document.getElementById('{!$Component.myHiddenVar1}').value = this.value;"/>
+                                    </div>
+                                </div>
+                                
+                                    <apex:inputHidden value="{!ccAddress}" id="myHiddenVar2" />
+                                <div class="form-group row">
+                                    <label class="col-sm-1 col-form-label" for="ccId">CC</label>
+                                    <div class="col-sm-4">                          
+                                        <input type="text" class="form-control input-sm" id="ccId" placeholder="Enter email" name="ccAddress" value="{!ccAddress}" onblur="document.getElementById('{!$Component.myHiddenVar2}').value = this.value;" />
+                                    </div>
+                                    
+                                    <apex:inputHidden value="{!bccAddress}" id="myHiddenVar3" />
+                                    <label class="col-sm-1 col-form-label" for="bccId">BCC</label>
+                                    <div class="col-sm-4">                          
+                                      <input type="text" class="form-control input-sm" id="bccId" placeholder="Enter email" name="bccAddress" value="{!bccAddress}" onblur="document.getElementById('{!$Component.myHiddenVar3}').value = this.value;"/>
+                                    </div>        
+                                </div>
+                                </apex:outputPanel>
+                                <apex:outputPanel id="pg3">
+                                    <div class="panel-group" style="display: {!IF(noAssetExists, 'block', 'none')};">
+                                        <div class="panel panel-default">
+                                                <div class="panel-heading">
+                                                    <h4 class="panel-title">
+                                                        <a data-toggle="collapse" href="#collapse2">No Assets to Display</a>
+                                                    </h4>
+                                                </div>
+                                        </div>
+                                    </div> 
+                                    <div class="panel-group" style="display: {!IF(assetWrapperList.size>0, 'block', 'none')};">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">
+                                                    <h4 class="panel-title">
+                                                        <a data-toggle="collapse" href="#collapse2">Asset List</a>
+                                                    </h4>
+                                                </div>
+                                        
+                                                <div id="collapse2" class="panel-collapse collapse in">
+                                                    <div class="panel-body">                                                                        
+                                    <div class="form-group row" style="overflow: {!IF(assetWrapperList.size>10, 'scroll', 'auto')}; height: {!IF(assetWrapperList.size>10, '200px', '100%')}; display: {!IF(assetWrapperList.size>0, 'block', 'none')};">            
+                                        
+                                                        <apex:pageBlock rendered="{!assetWrapperList.size>0}" mode="maindetail">                                     
+                                                            <apex:pageBlockTable value="{!assetWrapperList}" var="a" id="table" >
+                                                                <apex:column >
+                                                                    <apex:inputCheckbox value="{!a.selected}"/>
+                                                                </apex:column>                
+                                                                <apex:column value="{!a.at.Asset_Number__c}" />
+                                                                <apex:column value="{!a.at.Name}" />                                                          
+                                                                <apex:column value="{!a.at.Market__c}" />
+                                                                <apex:column value="{!a.at.Start_Date__c}" />
+                                                                <apex:column value="{!a.at.End_Date__c}" />   
+                                                                <apex:column value="{!a.at.Total_Net__c}" />
+                                                                <apex:column value="{!a.at.Extended_Net_Price__c}" />
+                                                                <apex:column value="{!a.at.Renewal_Status__c}" />
+                                                                <apex:column value="{!a.at.Billing_Period__c}" /> 
+                                                                <apex:column value="{!a.at.Product_Type__c}" />
+                                                                <apex:column value="{!a.at.Lead_Type__c}" /> 
+                                                            </apex:pageBlockTable>                                                        
+                                                        </apex:pageBlock>
+                                                    </div>
+                                     <apex:commandButton value="Apply" action="{!displayAssets}" oncomplete="createTable('{!$Component.idBody}','{!selectedWrapperList}');reloadCKEditor();" status="counterStatus"/>  
+                                                </div> 
+                                            </div>
+                                        </div>
+                                    </div>
+                                </apex:outputPanel>
+                
+                                <apex:outputPanel id="pg4">
+                                  <div class="panel-group" style="display: {!IF(noMLSExists, 'block', 'none')};">
+                                        <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                          <h4 class="panel-title">
+                                            <a data-toggle="collapse" href="#collapse3">No MLS records to display</a>
+                                          </h4>
+                                        </div>
+                                        </div>
+                                  </div>
+                                  <div class="panel-group" style="display: {!IF(MLSWrapperList.size>0, 'block', 'none')};">
+                                        <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                          <h4 class="panel-title">
+                                            <a data-toggle="collapse" href="#collapse3">MLS List</a>
+                                          </h4>
+                                        </div>
+                                     
+                                     <div id="collapse3" class="panel-collapse collapse in">
+                                        <div class="panel-body">      
+                                    <div class="form-group row" id="MLSlistTable" style="overflow: {!IF(MLSWrapperList.size>10, 'scroll', 'none')}; height: {!IF(MLSWrapperList.size>10, '200px', '100%')}; display: {!IF(MLSWrapperList.size>0, 'block', 'none')};">
+            
+                            
+                                                        <apex:pageBlock rendered="{!MLSWrapperList.size>0}"  mode="maindetail">               
+                                                            <apex:pageBlockTable value="{!mlsWrapperList}" var="m" id="table2" >
+                                                                <apex:column >  
+                                                                    <apex:inputCheckbox value="{!m.selected}"/>
+                                                                </apex:column>
+                                                                <apex:column value="{!m.mlist.MLS_City__c}" />
+                                                                <apex:column value="{!m.mlist.MLS_Set_ID__c}" />       
+                                                            </apex:pageBlockTable>   
+                                                            
+                                                        </apex:pageBlock>   
+                                                    </div>
+                                             <apex:commandButton value="Apply" action="{!displayMLS}"  oncomplete="createMLSTable('{!$Component.idBody}','{!selectedMWrapperList}');reloadCKEditor();" status="counterStatus"/> 
+                                                </div> 
+                                            </div>
+                                        </div>
+                                    </div>
+                            
+                                </apex:outputPanel>                                  
+                 
+                                <apex:outputPanel id="pgSub">
+                                    <div class="form-group row">
+                                        <apex:inputHidden value="{!subject}" id="myHiddenVar4" />
+                                        <label class="col-sm-1 col-form-label" for="subject">Subject</label>
+                                        <div class="col-sm-9">                          
+                                            <input type="text" class="form-control input-sm" id="subject" placeholder="Enter Subject" required="true" value="{!subject}" onblur="document.getElementById('{!$Component.myHiddenVar4}').value = this.value;"/>
+                                        </div>        
+                                    </div>
+                                </apex:outputPanel> 
+                                <div class="form-group row">
+                                    <div class="col-sm-4">
+                                    <apex:outputPanel id="pgAttach">
+                                        
+                                        <apex:inputHidden id="hidden_fileName_field" value="{!fileNames}"/>
+                                        <label class="col-sm-3 col-form-label" for="Attach">Attach</label>
+                                        <div class="col-sm-9">
+                                        <input id="file-input" type="file" name="file" multiple="multiple"/>
+                                       
+                                        <apex:commandButton value="Upload" onclick="uploadFile();return false;" status="counterStatus"  />
+                                         </div>
+                                    </apex:outputPanel>
+                                    </div>
+                                    <div class="col-sm-4">
+                                    <apex:outputPanel id="pgFileNames">                                
+                                    <label class="col-sm-4 col-form-label" for="upAttach">Uploaded Attachments</label>
+                                    <div class="col-sm-8">
+                                    <apex:variable var="i" value="{!0}"/>
+                                    <apex:repeat value="{!fileNameList}" var="fileName">                                        
+                                        <apex:outputText value="{!fileName}" style="word-wrap: break-word;" />                                                                     
+                                        <apex:commandLink status="counterStatus" onclick="removeFiles('{!fileName}','{!i}');return false;"><img src="/img/func_icons/remove12_on.gif" /></apex:commandLink>
+                                        <apex:variable var="i" value="{!i+1}"/>
+                                        <br/>
+                                    </apex:repeat>
+                                    </div>
+                                    </apex:outputPanel>
+                                    </div>
+                                </div>
+                            </div>      
+                        </div>
+                    </div>
+                </div>
+                <apex:outputPanel id="pg1">
+                    <div>
+                        <apex:inputtextarea id="idBody" richtext="false" styleClass="ckeditor" value="{!body}"/>           
+                        <apex:inputHidden id="hidden_text_area_field" value="{!body}"/>                                        
+                    </div>
+                </apex:outputPanel>
+
+
+                <div class="form-group"> 
+                    <div class="col-sm-10">                                        
+                        <apex:commandButton value="Send" onclick="setCKEditorValues();return false;"  status="counterStatus" />
+                    </div>
+                </div>
+            </div>
+        </apex:form>
+    </body>
+</apex:page>

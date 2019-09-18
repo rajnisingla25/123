@@ -1,0 +1,265 @@
+<apex:page standardStylesheets="false" showHeader="false" controller="SelfServiceController" applyBodyTag="false" applyHtmlTag="false">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta name="description" content="Layout prototype for Prosoft" />
+        <meta name="author" content="Move Prosoft UX" />
+        <link rel="shortcut icon" href="{!$Resource.CustomerCommunityFavicon}" type="image/x-icon"/>
+        <link rel="stylesheet" href="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/css/prosoft-ui.css')}" />
+        <link rel="stylesheet" media="screen" href="{!$Resource.SelfServiceCss}" />
+    </head>
+    <style>
+        .load-spinner-lg:after {
+            background-image: url("{!$Resource.EmployeeDashboardLoading}")
+        }
+    </style>
+    <body class="credit-card-details-body">
+        <div id="app-container" class="app-container">
+            <c:SelfServiceHeader id="app-header" />
+            <c:SelfServiceTopMenu id="app-menu" />
+            <div class="main-container">
+                <div class="container-fluid credit-cards-container">
+                    <div id="my-credit-cards-root">
+                        <section class="title-section">
+                            <div class="title-section-breadcrumb hidden-xs">
+                                <a rel="external" class="back-link list-credit-cards-link" href="{!$Label.CustomerCommunityDomain}/SelfServiceCreditCards?id={!sfdcAcctId}&iscommunityuser=true">Credit Cards <i class="pi pi-angle-right"></i></a>
+                                <span class="text-gray">Card Details</span>
+                            </div>
+                             <div class="alertdiv"></div>
+                            <div class="title-section-header">
+                                <a rel="external" href="{!$Label.CustomerCommunityDomain}/SelfServiceCreditCards?id={!sfdcAcctId}&iscommunityuser=true" class="back-arrow display-inline-block list-credit-cards-link"><i class="pi pi-android-arrow-back"></i></a>
+                                <div class="display-inline-block hidden-xs"><strong class="mar-left-md">Card Details</strong></div>
+                            </div>
+                        </section>
+                        <div class="section-body">
+                            <div class="panel">
+                              <div class="panel-heading border-bottom-grey hidden-xs">
+                                <h3 class="panel-title"></h3>
+                              </div>
+                              <div class="panel-body">
+                                <div class="credit-card-details">
+                                </div>
+                                <div class="border-bottom-grey visible-xs mar-bottom-sm">
+                                </div>
+                                <div class="credit-card-actions">
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                        <!-- Start of edit credit card modal -->
+                        <div class="modal fade" id="edit-card" tabindex="-1" role="dialog">
+                            <div class="modal-dialog modal-full-screen" role="document">
+                                <div class="modal-content">
+                                    <div class="alertdiv"></div>
+                                    <!-- Start of Fullscreen modal header -->
+                                    <div class="modal-header modal-header-secondary">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="pi pi-ios-close-empty"></span></button>
+                                        <h4 class="modal-title text-center hidden-xs">Your credit card details</h4>
+                                        <h4 class="modal-title hidden-sm hidden-md hidden-lg hidden-xl">Edit credit card</h4>
+                                    </div>
+                                    <!-- End of Fullscreen modal header -->
+                        
+                                    <!-- Start of Fullscreen modal body -->
+                                    <div class="modal-body">
+                                        <div class="col-sm-10 col-sm-push-1 col-md-8 col-md-push-2 col-lg-8 col-lg-push-2 mar-top-xl">
+                                            <div class="credit-card">
+                                                <div class="panel">
+                                                    <div class="panel-body">
+                                                        <form>
+                                                            <div class="popup">
+                                                                <div class="form">
+                                                                    <div class="content">
+                                                                        <h3>Card Details</h3>
+                                                                        <!--Credit Card Type Begin-->
+                                                                        <div class="form-group" id="form-group-creditCardType">
+                                                                            <div class="form-element" id="form-element-creditCardType">
+                                                                                <img class="width-md mar-left-sm mar-right-md" src="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/CreditCard/CreditCardIcon.svg')}" alt="Credit Card Logo" />
+                                                                                <span class="mar-right-md credit-card-number"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <!--Credit Card Type End-->
+                                                                        <!--Credit Card Holder Name Begin-->
+                                                                        <div class="form-group" id="form-group-creditCardHolderName">
+                                                                          <label class="form-label required" for="input-creditCardHolderName" id="form-label-creditCardHolderName">Name on card</label>
+                                                                          <div class="form-element required" id="form-element-creditCardHolderName">
+                                                                            <input class="text-input" id="input-creditCardHolderName" maxlength="50" name="field_creditCardHolderName" type="text" value=""/>
+                                                                          </div>
+                                                                          <a class="tooltip" href="#" id="tooltip-creditCardHolderName"><span class="tooltip-text" id="tooltip-text-creditCardHolderName"></span></a>
+                                                                          <div class="error-field" id="error-creditCardHolderName"></div>
+                                                                        </div>
+                                                                        <!--Credit Card Holder Name End-->
+                                                                        <!--Credit Card Expiration Date Begin-->
+                                                                        <div class="form-group" id="form-group-creditCardExpirationMonth">
+                                                                            <label class="form-label required" for="input-creditCardExpirationMonth" id="form-label-creditCardExpirationMonth">Expiration Date</label>
+                                                                            <div class="form-element required" data-role="none" id="form-element-creditCardExpirationMonth">
+                                                                                <select class="select-input" data-role="none" id="input-creditCardExpirationMonth" name="field_creditCardExpirationMonth">
+                                                                                </select>
+                                                                                <span>&nbsp;</span><span>&nbsp;</span><span>&nbsp;</span>
+                                                                                <span class="date-separator text-gray" id="date-separator">/</span>
+                                                                                <select class="select-input" data-role="none" id="input-creditCardExpirationYear" name="field_creditCardExpirationYear">
+                                                                                </select>
+                                                                            </div>
+                                                                            <a class="tooltip" href="#" id="tooltip-creditCardExpirationMonth">
+                                                                                <span class="tooltip-text" id="tooltip-text-creditCardExpirationMonth"></span>
+                                                                            </a>
+                                                                            <div class="error-field" id="error-creditCardExpirationMonth"></div>
+                                                                        </div>
+                                                                        <!--Credit Card Expiration Date End-->
+                                                                        <div class="hidden-xs visible-sm visible-md visible-lg visible-xl">
+                                                                            <br/>
+                                                                            <br/>
+                                                                            <br/>
+                                                                            <br/>
+                                                                            <br/>
+                                                                            <br/>
+                                                                            <br/>
+                                                                            <br/>
+                                                                            <br/>
+                                                                            <br/>
+                                                                        </div>
+                                                                        <span class="hidden paymentMethodId"></span>
+                                                                        <span class="hidden zuoraPaymentMethodId"></span>
+                                                                        <div class="border-bottom-grey mar-bottom-md visible-xs hidden-sm hidden-md hidden-lg hidden-xl"></div>
+                                                                        <h3 class="billing-address-h3">Billing Address</h3>
+                                                                        <!--Credit Card Address1 Begin-->
+                                                                        <div class="form-group" id="form-group-creditCardAddress1">
+                                                                            <label class="form-label" for="input-creditCardAddress1" id="form-label-creditCardAddress1">Address 1</label>
+                                                                            <div class="form-element" id="form-element-creditCardAddress1">
+                                                                                <input class="text-input" id="input-creditCardAddress1" maxlength="255" name="field_creditCardAddress1" type="text" value=""/>
+                                                                            </div>
+                                                                            <a class="tooltip" href="#" id="tooltip-creditCardAddress1"><span class="tooltip-text" id="tooltip-text-creditCardAddress1"></span></a>
+                                                                            <div class="error-field" id="error-creditCardAddress1">
+                                                                            </div>
+                                                                        </div>
+                                                                        <!--Credit Card Address1 End-->
+                                                                        <!--Credit Card Address2 Begin-->
+                                                                        <div class="form-group" id="form-group-creditCardAddress2">
+                                                                            <label class="form-label" for="input-creditCardAddress2" id="form-label-creditCardAddress2">Address 2</label>
+                                                                            <div class="form-element" id="form-element-creditCardAddress2">
+                                                                            <input class="text-input" id="input-creditCardAddress2" maxlength="255" name="field_creditCardAddress2" type="text" value=""/>
+                                                                            </div>
+                                                                            <a class="tooltip" href="#" id="tooltip-creditCardAddress2"><span class="tooltip-text" id="tooltip-text-creditCardAddress2"></span></a>
+                                                                            <div class="error-field" id="error-creditCardAddress2">
+                                                                            </div>
+                                                                        </div>
+                                                                        <!--Credit Card Address2 End-->
+                                                                        <!--Credit Card City Begin-->
+                                                                        <div class="form-group" id="form-group-creditCardCity">
+                                                                            <label class="form-label" for="input-creditCardCity" id="form-label-creditCardCity">City</label>
+                                                                            <div class="form-element" id="form-element-creditCardCity">
+                                                                                <input class="text-input" id="input-creditCardCity" maxlength="40" name="field_creditCardCity" type="text" value=""/>
+                                                                            </div>
+                                                                            <a class="tooltip" href="#" id="tooltip-creditCardCity"><span class="tooltip-text" id="tooltip-text-creditCardCity"></span></a>
+                                                                            <div class="error-field" id="error-creditCardCity">
+                                                                            </div>
+                                                                        </div>
+                                                                        <!--Credit Card City End-->
+                                                                        <!--Credit Card State Begin-->
+                                                                        <div class="form-group" id="form-group-creditCardState">
+                                                                            <label class="form-label required" for="input-creditCardState" id="form-label-creditCardState">State</label>
+                                                                            <div class="form-element" data-role="none" id="form-element-creditCardState">
+                                                                            <select class="select-input" data-role="none" id="input-creditCardState" name="field_creditCardState">
+                                                                            </select>
+                                                                            </div>
+                                                                            <a class="tooltip" href="#" id="tooltip-creditCardState"><span class="tooltip-text" id="tooltip-text-creditCardState"></span></a>
+                                                                            <div class="error-field" id="error-creditCardState"></div>
+                                                                        </div>
+                                                                        <!--Credit Card State End-->
+                                                                        <!--Credit Card Zip Begin-->
+                                                                        <div class="form-group" id="form-group-creditCardPostalCode">
+                                                                            <label class="form-label" for="input-creditCardPostalCode" id="form-label-creditCardPostalCode">Postal Code</label>
+                                                                            <div class="form-element" id="form-element-creditCardPostalCode">
+                                                                                <input class="text-input" id="input-creditCardPostalCode" maxlength="20" name="field_creditCardPostalCode" type="text" value=""/>
+                                                                            </div>
+                                                                            <a class="tooltip" href="#" id="tooltip-creditCardPostalCode"><span class="tooltip-text" id="tooltip-text-creditCardPostalCode"></span></a>
+                                                                            <div class="error-field" id="error-creditCardPostalCode"></div>
+                                                                        </div>
+                                                                        <!--Credit Card Zip End-->
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- End of Fullscreen modal body -->
+                                    
+                                    <!-- Start of Fullscreen modal footer -->
+                                    <div class="modal-footer modal-footer-secondary pos-static">
+                                        <div class="container-fluid">
+                                          <div class="row">
+                                            <div class="col-md-10 col-md-offset-1">
+                                              <ul class="nav">
+                                                <li><button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button></li>
+                                                <li><button type="button" class="btn btn-primary updateCardDetails" onClick="editCardDetails('{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/CreditCard/CreditCardIcon.svg')}')">Save</button></li>
+                                              </ul>
+                                            </div>
+                                          </div>
+                                        </div>
+                                    </div>
+                                    <!-- End of Fullscreen modal footer -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End of edit credit card modal -->
+                        <!-- Start of enter password modal -->
+                      <div role="dialog" class="modal fade" id="enter-password-modal">
+                       <div class="modal-dialog modal-full-screen modal-dialog">
+                          <div class="modal-content" role="document">
+                             <div class="modal-header modal-header-secondary mar-bottom-lg">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="pi pi-ios-close-empty"></span></button>
+                                     <h4 class="modal-title text-center">&nbsp;</h4>
+                             </div>
+                             <div class="col-sm-10 col-sm-push-1 col-md-8 col-md-push-2 col-lg-6 col-lg-push-3 mar-top-lg">
+                                <h1 class="text-center mar-top-lg">Enter your password to continue</h1>
+                                <div class="text-center mar-top-sm mar-bottom-sm mar-bottom-huge-sm mar-top-huge-sm">
+                                   <div class="avatar-xl margin-center img-circle bg-white has-borders pad-top-lg pad-left-lg pad-right-lg hidden-xs"><img class="img-responsive" src="https://d260ckbc6brolt.cloudfront.net/prosoft-ui/releases/latest/img/avatar.svg" alt="SSO avatar" /></div>
+                                   <div class="avatar-md margin-center img-circle bg-white has-borders pad-top-sm pad-left-sm pad-right-sm visible-xs"><img class="img-responsive" src="https://d260ckbc6brolt.cloudfront.net/prosoft-ui/releases/latest/img/avatar.svg" alt="SSO avatar" /></div>
+                                </div>
+                                <form  id="password-verify-form">
+                                   <div class="sign-in-form col-sm-10 col-sm-push-1 col-md-8 col-md-push-2">
+                                      <div class="row">
+                                         <div class="col-md-12 col-sm-11">
+                                            <div class="form-group has-feedback " style="padding-right: 0px;">
+                                               <div class="control-label"><label class="control-label">Password</label></div>
+                                               <div class="input-group">
+                                                  <div class="input-group state-control pos-relative"><input type="password" class="form-control" id="edit-credit-card-password" maxlength="255" pattern="" value="" /></div>
+                                               </div>
+                                               <span class="help-block focus-visible">Enter your password</span>
+                                            </div>
+                                         </div>
+                                      </div>
+                                      <div class="text-center mar-top-xl mar-top-huge-sm"><button id="verify-password-btn" type="submit" class="btn btn-primary" disabled="true">Continue</button></div>
+                                   </div>
+                                </form>
+                             </div>
+                          </div>
+                       </div>
+                    </div>   
+                        <!-- End of enter password modal -->
+                    </div>
+                </div>
+                <div class="card-id"></div>
+            </div>
+            <c:SelfServiceFooter id="app-footer" />
+        </div>
+    </body>
+    
+    <script type="text/javascript">
+        var cardId = window.location.search.substring(1).split("=")[1];
+        $(".card-id").data('cardId', cardId);
+         $(".credit-card-details-body").on("pagecreate", function(event) {
+            $("#credit-card-icon").attr("src", "{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/Nav/Active/CreditCards.svg')}");
+            getCreditCardDetails("{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/CreditCard/CreditCardIcon.svg')}", true);
+            attachHandlersCCDetailPage();
+        });
+
+    </script>
+    <apex:includeScript value="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/js/jquery.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/js/bootstrap.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/js/jquery.mobile-1.4.5.min.js')}" />
+    <apex:includeScript value="{!$Resource.SelfServiceJS}" />
+</apex:page>

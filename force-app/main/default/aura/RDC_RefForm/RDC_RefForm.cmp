@@ -1,0 +1,371 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" controller="SFMC_LandingPageController">
+    <aura:attribute name="newFormSubmission" type="Object"/>
+    <aura:attribute name="simpleNewFormSubmission" type="Object" />
+    <aura:attribute name="newFormSubmissionError" type="String"/>
+        
+    <aura:attribute name="buttonText" type="String"/>
+    <aura:attribute name="formTitle" type="String"/>
+    <aura:attribute name="firstWordInFormTitle" type="String"/> 
+    <aura:attribute name="showBigWord" type="boolean"/>
+    <aura:attribute name="formBackground" type="boolean"/>
+    <aura:attribute name="showPicklist" type="Boolean" default="false"/>
+    <aura:attribute name="showValidationError" type="boolean" default="false"/>
+    <aura:attribute name="errorMessage" type="String" />
+    
+    <aura:attribute name="selectedValue" type="String" />  
+    <aura:attribute name="values" type="String[]" default="Select one...,Test 19,Test 29,Test 39"/>
+    <aura:attribute name="urlParamMap" type="String" />
+    <aura:attribute name="isOpen" type="Boolean" default="false"/>
+    <aura:attribute name="cellNumber" type="String"/>
+    
+    <aura:attribute name="popUpImageTest" type="String" />
+    <aura:attribute name="prefixString" type="String" />
+    <aura:attribute name="popUpImageWidth" type="String" />
+    <aura:attribute name="popUpImageHeight" type="String" />
+    <aura:attribute name="popUpImageLink" type="String" />
+    <aura:attribute name="optionList" type="String[]"/>
+    <aura:attribute name="picklistLabelvalueMap" type="Map"/>
+    <aura:attribute name="productType" type="String" />
+    <aura:attribute name="submissionType" type="String" />
+    <aura:attribute name="campaignId" type="String" />
+    <aura:attribute name="popUpProduct" type="String" />
+    <aura:attribute name="popupProductType" type="String" />
+    <aura:attribute name="formSubmissionId" type="String" />
+    <aura:attribute name="enablePopUp" type="Boolean"/>
+    <aura:attribute name="showThankYou" type="Boolean" default="false"/>
+    <aura:handler event="c:ConfigurationEvent" action="{!c.handleValueChange}"/>
+    <aura:attribute name="firstName" type="String"/>
+    <aura:attribute name="lastName" type="String"/>
+    <aura:attribute name="emailId" type="String"/>
+    <aura:attribute name="thankYouMsg" type="String" />
+    <aura:attribute name="thankYouMsgContent" type="String"/>
+    <aura:attribute name="phoneNumber" type="String"/>
+    <aura:attribute name="Spinner" type="boolean" default="false"/>
+    <aura:attribute name="specialChars" type="String"/>
+    <aura:attribute name="displayFriendSection2" type="string" default=""/>
+    <aura:attribute name="displayFriendSection3" type="string" default=""/>
+    <aura:attribute name="displayFriendSection4" type="string" default=""/>
+    <aura:attribute name="displayFriendSection5" type="string" default=""/>
+    <!--aura:handler name="change" value="{!v.submissionType}" action="{!c.handleValueChange2}"/-->
+    
+     <aura:if isTrue="{!v.Spinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+           <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+             <span class="slds-assistive-text">Loading</span>
+             <div class="slds-spinner__dot-a"></div>
+             <div class="slds-spinner__dot-b"></div>
+           </div>
+        </div>
+     </aura:if>
+    <force:recordData aura:id="formSubmissionRecordCreator"
+                      layoutType="FULL"
+                      targetRecord="{!v.newFormSubmission}"
+                      targetFields ="{!v.simpleNewFormSubmission}"
+                      targetError="{!v.newFormSubmissionError}"
+                      />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <!-- Display the new contact form -->
+  <aura:if isTrue="{!!v.showThankYou}">  
+    <lightning:card class="formStyle">
+        <aura:set attribute="title">
+            <lightning:layout>
+            <!-- Headline -->
+            <aura:if isTrue="{!v.showBigWord}">
+                <span class="slds-size_2-of-12 TextWhite" style="{!$Browser.isTablet ? 'font-size: 2.5rem;margin-right: 1.5rem;':'width: 30%;font-weight: bolder;font-size: 2.5rem;margin-right: 0.5rem;'}" >
+                    {!v.firstWordInFormTitle}
+                </span>
+            </aura:if>
+                <div class="slds-size_8-of-12 wrapTitle TextWhite" style="{!$Browser.isTablet ? 'margin-left:5px;max-width:40rem;' : ''}">
+                	<span >{!v.formTitle}</span>
+                </div>
+            
+                </lightning:layout>
+        </aura:set>
+        
+        <aura:if isTrue="{!v.showValidationError}">
+	        <ui:message severity="error" closable="false">
+					{!v.errorMessage}
+			</ui:message>
+		</aura:if>
+        <h5>1. Enter your information</h5>
+        <div class="slds-p-horizontal---small">
+            <div class="slds-grid slds-gutters">
+                <lightning:input aura:id="stId"  label="Submission Type" value="{!v.simpleNewFormSubmission.Form_Type__c}"  class="slds-hide" style="display : none;"/>
+                <lightning:input aura:id="prodTypeId"  label="Product Type" value="{!v.simpleNewFormSubmission.Product_Type__c}"  class="slds-hide" style="display : none;"/>
+                <lightning:input aura:id="camId"  label="Campaign Id" value="{!v.simpleNewFormSubmission.Campaign_Id__c}"  class="slds-hide" style="display : none;"/>                        
+                <lightning:input aura:id="contactMethodId"  label="contact Method" value="{!v.simpleNewFormSubmission.Contact_Method__c}" class="slds-hide" />
+                
+                <!-- FN,LN,E,Ph -->
+                    <div class="slds-col slds-p-top_medium">
+                        <lightning:input aura:id="contactField"
+                                        value="{!v.simpleNewFormSubmission.First_Name__c}"
+                                        placeholder="First Name" required="true" 
+                                        messageWhenValueMissing = "{!$Label.c.SFMC_First_Name_Validation}" variant="label-hidden"/>
+                    </div>
+                    <div class="slds-col slds-p-top_medium">
+                        <lightning:input aura:id="contactField"
+                                        value="{!v.simpleNewFormSubmission.Last_Name__c}"
+                                        placeholder="Last Name" required="true" 
+                                         messageWhenValueMissing = "{!$Label.c.SFMC_Last_Name_Validation}" variant="label-hidden"/>
+                   </div>
+              </div>
+              <div class="slds-grid slds-gutters">
+                   <div class="slds-col slds-p-top_medium">
+                        <lightning:input aura:id="contactField"
+                         type="email" value="{!v.simpleNewFormSubmission.Email__c}"
+                                     placeholder="Email" pattern="^[\w\.=-]+@[\w\.-]+\.[\w]{2,3}$"
+                                     messageWhenPatternMismatch="{!$Label.c.SFMC_Email_Address_Validation}" required="true" messageWhenValueMissing="{!$Label.c.SFMC_Email_Validation}" variant="label-hidden"/>
+                   </div>
+                   <div class="slds-col slds-p-top_medium">
+                         <lightning:input aura:id="contactField" value="{!v.simpleNewFormSubmission.Phone__c}"
+                                     placeholder="Phone Number" 
+                                         maxlength="10" required="true" 
+                                         messageWhenValueMissing="{!$Label.c.SFMC_Phone_Validation}" 
+                                         onblur="{!c.changePhoneNumber}" 
+                                         variant="label-hidden" 
+                                         />
+                    </div>
+            </div>
+            <h5>2. Enter your friend’s information</h5>
+            <h6>Friend 1</h6>
+            <div class="slds-grid slds-gutters">
+                     <div class="slds-col slds-p-top_medium">
+                        <lightning:input aura:id="contactField"
+                                        value="{!v.simpleNewFormSubmission.Friend_First_Name_1__c}"
+                                    placeholder="First Name" required="fasle" 
+                                    messageWhenValueMissing = "{!$Label.c.SFMC_First_Name_Validation}" variant="label-hidden"/>
+                    </div>
+                    <div class="slds-col slds-p-top_medium">
+                         <lightning:input aura:id="contactField"
+                                    value="{!v.simpleNewFormSubmission.Friend_Last_Name_1__c}"
+                                    placeholder="Last Name" required="fasle" 
+                                     messageWhenValueMissing = "{!$Label.c.SFMC_Last_Name_Validation}" variant="label-hidden"/>
+                    </div>
+            </div>
+             <div class="slds-grid slds-gutters">
+                     <div class="slds-col">
+                         <lightning:input aura:id="contactField"
+                             type="email" value="{!v.simpleNewFormSubmission.Friend_Email_1__c}"
+                             placeholder="Email" pattern="^[\w\.=-]+@[\w\.-]+\.[\w]{2,3}$"
+                             messageWhenPatternMismatch="{!$Label.c.SFMC_Email_Address_Validation}" />
+                    </div>
+                    <div class="slds-col">
+                         <lightning:input aura:id="contactField" value="{!v.simpleNewFormSubmission.Friend_Phone_1__c}"
+                             placeholder="Phone Number" pattern="([(+]*[0-9]+[()+. -]*)" maxlength="10"
+                             messageWhenPatternMismatch="{!$Label.c.SFMC_Phone_number_validation}" />
+                    </div>
+            </div>
+            
+            <div aura:id="firstsection" class="{!if(v.displayFriendSection2 == 'section2','slds-show','slds-hide')}">  
+                <h6>Friend 2</h6>
+                
+                	<div class="slds-grid slds-gutters">
+                         <div class="slds-col">
+                            <lightning:input aura:id="contactField"
+                                            value="{!v.simpleNewFormSubmission.Friend_First_Name_2__c}"
+                                        placeholder="First Name" required="false" 
+                                        messageWhenValueMissing = "{!$Label.c.SFMC_First_Name_Validation}" variant="label-hidden"/>
+                        </div>
+                        <div class="slds-col">
+                             <lightning:input aura:id="contactField"
+                                        value="{!v.simpleNewFormSubmission.Friend_Last_Name_2__c}"
+                                        placeholder="Last Name" required="false" 
+                                         messageWhenValueMissing = "{!$Label.c.SFMC_Last_Name_Validation}" variant="label-hidden"/>
+                        </div>
+                	</div>
+                 	<div class="slds-grid slds-gutters">
+                         <div class="slds-col">
+                             <lightning:input aura:id="contactField"
+                                 type="email" value="{!v.simpleNewFormSubmission.Friend_Email_2__c}"
+                                 placeholder="Email" pattern="^[\w\.=-]+@[\w\.-]+\.[\w]{2,3}$"
+                                 messageWhenPatternMismatch="{!$Label.c.SFMC_Email_Address_Validation}" />
+                        </div>
+                        <div class="slds-col">
+                             <lightning:input aura:id="contactField" value="{!v.simpleNewFormSubmission.Friend_Phone_2__c}"
+                                 placeholder="Phone Number" pattern="([(+]*[0-9]+[()+. -]*)" maxlength="13"
+                                 messageWhenPatternMismatch="{!$Label.c.SFMC_Phone_number_validation}" />
+                        </div>
+                	</div>
+                    <div class="slds-grid slds-gutters slds-show slds-p-top_medium" aura:id="addMoreDiv3">
+                        <div class="col-sm-12 form-group" onclick="{!c.displayFriend3}">
+                                        <h6 class="add-btn"><img src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2019/LP/referral/icon-plus.png" width="17" height="17"
+                                                                 alt="+" />Add more
+                                        friends</h6>
+                        </div>
+                    </div> 
+    		</div>
+            
+            <div aura:id="secondsection" class="{!if(v.displayFriendSection3 == 'section3','slds-show','slds-hide')}">
+                <h6>Friend 3</h6>
+                <div class="slds-grid slds-gutters">
+                         <div class="slds-col">
+                            <lightning:input aura:id="contactField"
+                                            value="{!v.simpleNewFormSubmission.Friend_First_Name_3__c}"
+                                        placeholder="First Name" required="false" 
+                                        messageWhenValueMissing = "{!$Label.c.SFMC_First_Name_Validation}" variant="label-hidden"/>
+                        </div>
+                        <div class="slds-col">
+                             <lightning:input aura:id="contactField"
+                                        value="{!v.simpleNewFormSubmission.Friend_Last_Name_3__c}"
+                                        placeholder="Last Name" required="false" 
+                                         messageWhenValueMissing = "{!$Label.c.SFMC_Last_Name_Validation}" variant="label-hidden"/>
+                        </div>
+                </div>
+                 <div class="slds-grid slds-gutters">
+                         <div class="slds-col">
+                             <lightning:input aura:id="contactField"
+                                 type="email" value="{!v.simpleNewFormSubmission.Friend_Email_3__c}"
+                                 placeholder="Email" pattern="^[\w\.=-]+@[\w\.-]+\.[\w]{2,3}$"
+                                 messageWhenPatternMismatch="{!$Label.c.SFMC_Email_Address_Validation}" />
+                        </div>
+                        <div class="slds-col">
+                             <lightning:input aura:id="contactField" value="{!v.simpleNewFormSubmission.Friend_Phone_3__c}"
+                                 placeholder="Phone Number" pattern="([(+]*[0-9]+[()+. -]*)" maxlength="13"
+                                 messageWhenPatternMismatch="{!$Label.c.SFMC_Phone_number_validation}" />
+                        </div>
+                 </div>
+                 <div class="slds-grid slds-gutters slds-show slds-p-top_medium" aura:id="addMoreDiv4">
+                    <div class="col-sm-12 form-group" onclick="{!c.displayFriend4}">
+                                    <h6 class="add-btn"><img src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2019/LP/referral/icon-plus.png" width="17" height="17"
+                                                             alt="+" />Add more
+                                    friends</h6>
+                   </div>
+                </div>    
+    		</div>
+            
+            <div aura:id="thirdsection" class="{!if(v.displayFriendSection4 == 'section4','slds-show','slds-hide')}">
+                <h6>Friend 4</h6>
+                <div class="slds-grid slds-gutters">
+                         <div class="slds-col">
+                            <lightning:input aura:id="contactField"
+                                            value="{!v.simpleNewFormSubmission.Friend_First_Name_4__c}"
+                                        placeholder="First Name" required="false" 
+                                        messageWhenValueMissing = "{!$Label.c.SFMC_First_Name_Validation}" variant="label-hidden"/>
+                        </div>
+                        <div class="slds-col">
+                             <lightning:input aura:id="contactField"
+                                        value="{!v.simpleNewFormSubmission.Friend_Last_Name_4__c}"
+                                        placeholder="Last Name" required="false" 
+                                         messageWhenValueMissing = "{!$Label.c.SFMC_Last_Name_Validation}" variant="label-hidden"/>
+                        </div>
+                </div>
+                 <div class="slds-grid slds-gutters">
+                         <div class="slds-col">
+                             <lightning:input aura:id="contactField"
+                                 type="email" value="{!v.simpleNewFormSubmission.Friend_Email_4__c}"
+                                 placeholder="Email" pattern="^[\w\.=-]+@[\w\.-]+\.[\w]{2,3}$"
+                                 messageWhenPatternMismatch="{!$Label.c.SFMC_Email_Address_Validation}" />
+                        </div>
+                        <div class="slds-col">
+                             <lightning:input aura:id="contactField" value="{!v.simpleNewFormSubmission.Friend_Phone_4__c}"
+                                 placeholder="Phone Number" pattern="([(+]*[0-9]+[()+. -]*)" maxlength="13"
+                                 messageWhenPatternMismatch="{!$Label.c.SFMC_Phone_number_validation}" />
+                        </div>
+                </div>
+                 <div class="slds-grid slds-gutters slds-show slds-p-top_medium" aura:id="addMoreDiv5">
+                    <div class="col-sm-12 form-group" onclick="{!c.displayFriend5}">
+                                    <h6 class="add-btn"><img src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2019/LP/referral/icon-plus.png" width="17" height="17"
+                                                             alt="+" />Add more
+                                    friends5</h6>
+                    </div>
+                </div>    
+    		</div>
+            
+            <div aura:id="fourthsection" class="{!if(v.displayFriendSection5 == 'section5','slds-show','slds-hide')}">
+                <h6>Friend 5</h6>
+                <div class="slds-grid slds-gutters">
+                         <div class="slds-col">
+                            <lightning:input aura:id="contactField"
+                                            value="{!v.simpleNewFormSubmission.Friend_First_Name_5__c}"
+                                        placeholder="First Name" required="false" 
+                                        messageWhenValueMissing = "{!$Label.c.SFMC_First_Name_Validation}" variant="label-hidden"/>
+                        </div>
+                        <div class="slds-col">
+                             <lightning:input aura:id="contactField"
+                                        value="{!v.simpleNewFormSubmission.Friend_Last_Name_5__c}"
+                                        placeholder="Last Name" required="false" 
+                                         messageWhenValueMissing = "{!$Label.c.SFMC_Last_Name_Validation}" variant="label-hidden"/>
+                        </div>
+                </div>
+                 <div class="slds-grid slds-gutters">
+                         <div class="slds-col">
+                             <lightning:input aura:id="contactField"
+                                 type="email" value="{!v.simpleNewFormSubmission.Friend_Email_5__c}"
+                                 placeholder="Email" pattern="^[\w\.=-]+@[\w\.-]+\.[\w]{2,3}$"
+                                 messageWhenPatternMismatch="{!$Label.c.SFMC_Email_Address_Validation}" />
+                        </div>
+                        <div class="slds-col">
+                             <lightning:input aura:id="contactField" value="{!v.simpleNewFormSubmission.Friend_Phone_5__c}"
+                                 placeholder="Phone Number" pattern="([(+]*[0-9]+[()+. -]*)" maxlength="13"
+                                 messageWhenPatternMismatch="{!$Label.c.SFMC_Phone_number_validation}" />
+                        </div>
+                </div>
+    		</div>
+           
+            <div  class="slds-show slds-p-top_medium" aura:id="addMoreDiv">
+                                <div class="col-sm-12 form-group" onclick="{!c.displayFriend2}">
+                                    <h6 class="add-btn"><img src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2019/LP/referral/icon-plus.png" width="17" height="17"
+                                                             alt="+" />Add more
+                                    friends</h6>
+                                </div>
+           </div>
+             
+            
+            <aura:if isTrue="{!v.showPicklist}">
+            <lightning:select aura:id="picklistId" name="select1" label="" value="{!v.simpleNewFormSubmission.RDC_Contact_Type__c}">
+                    <option value="" selected="{!equals(v.simpleNewFormSubmission.RDC_Contact_Type__c,'')}">Select Preference</option>
+                    <aura:iteration items="{!v.optionList}" var="option">
+                        <option value="{!option}" selected="{!equals(v.simpleNewFormSubmission.RDC_Contact_Type__c,option)}">{!option}</option>
+                    </aura:iteration>
+            </lightning:select>
+            </aura:if>
+            
+            <br/>
+             <lightning:button class="{!$Browser.formFactor == 'TABLET' ? 'slds-align_absolute-center demoButtonTablet' : 'slds-align_absolute-center demoButton' }" label="{!v.buttonText}" variant="brand" onclick="{!c.saveFormSubmission}"/>
+                    
+                <div class="privacy-policy">
+                                    <a href="http://marketing.move.com/privacy-policy/" target="_blank">Privacy Policy</a>
+                                  </div>     
+                    
+                </div>
+                <div style="{!or(v.cellNumber == '',v.cellNumber == null) ? 'display : none;' : 'display : block;'}">
+                    <div class="slds-align_absolute-center" style="margin-top: 35px; margin-bottom: 5px;">
+                    	<img src="{!$Resource.LandingPageImages + '/assets/images/divider-or.png'}" />
+                    </div>
+                    <h3 class="slds-align_absolute-center ">
+                        <div class="slds-grid">
+                        	<h3 class="slds-col slds-text-heading_large TextWhite" style="text-align: center;"> Call&nbsp;<a style="color: #fff;text-decoration: none;" href="{!'tel:'+v.cellNumber}"> {!v.cellNumber} </a>
+                             to get a demo.</h3>
+                        </div>
+                        
+                    </h3>
+                </div>
+        </lightning:card>
+    </aura:if>
+
+    <aura:if isTrue="{!v.showThankYou}">
+        <div class="Thankyou" style="height: 100%; background-color: white; border: 5px; border-color: black; border-radius: 5px;">
+            <div class="ThankyouTopText">
+                {!$Label.c.Landing_page_thank_you_message}<br/>
+            </div>
+            <div class="ThankyouMiddleText">
+                {!$Label.c.Landing_page_thank_you_message_content}
+            </div>
+            <div class="ThankyouBottomText">
+                Name:&nbsp;<b>{!v.firstName}&nbsp;{!v.lastName}</b><br/>
+                Email:&nbsp;<b>{!v.emailId}</b><br/>
+                Phone:&nbsp;<b>{!v.phoneNumber}</b><br/>
+            </div>
+        </div>
+    </aura:if>
+
+    <aura:if isTrue="{!and(v.enablePopUp,v.isOpen)}">
+        <c:SFMC_PopUp  Spinner="{!v.Spinner}" isOpen="{!v.isOpen}" popUpImageLink="{!v.popUpImageLink}" popUpImageTest="{!v.popUpImageTest}" prefixString="{!v.prefixString}" popUpImageWidth="{!v.popUpImageWidth}" popUpImageHeight="{!v.popUpImageHeight}" popupProductType="{!v.popupProductType}" />
+    </aura:if>
+    <!-- Display Lightning Data Service errors -->
+    <aura:if isTrue="{!not(empty(v.newFormSubmissionError))}">
+        <div class="recordError">
+            {!v.newFormSubmissionError}
+        </div>
+    </aura:if>
+</aura:component>

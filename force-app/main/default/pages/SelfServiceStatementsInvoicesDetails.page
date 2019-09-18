@@ -1,0 +1,248 @@
+<apex:page standardStylesheets="false" showHeader="false" controller="SelfServiceController" applyBodyTag="false" applyHtmlTag="false">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta name="description" content="Layout prototype for Prosoft" />
+        <meta name="author" content="Move Prosoft UX" />
+        <link rel="shortcut icon" href="{!$Resource.CustomerCommunityFavicon}" type="image/x-icon"/>
+        <link rel="stylesheet" href="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/css/prosoft-ui.css')}" />
+        <link rel="stylesheet" media="screen" href="{!$Resource.SelfServiceCss}" />
+    </head>
+    <body class="statements-details-body">
+        <div id="app-container" class="app-container">
+            <c:SelfServiceHeader id="app-header" />
+            <c:SelfServiceTopMenu id="app-menu" />
+            <div class="main-container">
+                <div class="container-fluid statements-details-container">
+                    <div id="my-statements-details-root">
+                        <section class="title-section">
+                            <div class="title-section-breadcrumb hidden-xs">
+                                <a rel="external" data-ajax="false" class="back-link" href="{!$Label.CustomerCommunityDomain}/SelfServiceStatementsInvoices">Statements &amp; Invoices <i class="pi pi-angle-right"></i></a>
+                                <span class="month-year text-gray"></span>
+                            </div>
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-sm-9 nopadding">
+                                         <div class="title-section-header">
+                                            <a rel="external" data-ajax="false" href="{!$Label.CustomerCommunityDomain}/SelfServiceStatementsInvoices" class="back-arrow display-inline-block"><i class="pi pi-android-arrow-back"></i></a>
+                                            <div class="display-inline-block"><strong class="mar-left-md month-year"></strong></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <div class="section-body">
+                            <div class="panel">
+                                <div class="panel-heading border-bottom-grey">
+                                    <div class="row">
+                                        <div class="col-sm-3 col-sm-offset-9">
+                                            <a id='download-statement' data-ajax="false" download="AccountStatement" target="_blank">Download as PDF</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                <button id="prev"><i class="pi pi-angle-left"></i></button>
+                                                <span>Page: <span id="page_num"></span>/<span id="page_count"></span></span>
+                                                <button id="next"><i class="pi pi-angle-right"></i></button>
+                                            </div>
+                                            <div class="col-sm-4 col-sm-offset-4">
+                                                <button title="Zoom Out" id="zoomOut"><i class="pi pi-minus"></i></button>
+                                                <span>Zoom</span>
+                                                <button title="Zoom In" id="zoomIn"><i class="pi pi-plus"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="panel-spinner"></div>
+                                    <div id="canvas-div" style="overflow-x: auto; white-space: nowrap;">
+                                        <div style="display: inline-block; float: none;">
+                                            <canvas id='statement-canvas'></canvas>
+                                            <div id="annotation-layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <c:SelfServiceFooter id="app-footer" />
+        </div>
+    </body>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf_viewer.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf_viewer.js"></script>
+    <apex:includeScript value="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/js/jquery.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/js/bootstrap.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/js/jquery.mobile-1.4.5.min.js')}"/>
+    <apex:includeScript value="{!$Resource.SelfServiceJS}" />
+    
+    <script type="text/javascript">
+        $(".statements-details-body").on("pagecreate", function(event) {
+            showPanelSpinner();
+            var params = {};
+            var url = "{!$Label.CustomerCommunityDomain}/accountstatement?" + decodeURI(window.location.search.substring(1));
+            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+                params[key] = value;
+            });
+            $('.month-year').html(decodeURI(params['title']));
+            $('#download-statement').attr('href',url);
+    
+            var PDFJS = window['pdfjs-dist/build/pdf'];
+            var container = document.getElementById('canvas-div');
+            var pdfScale = 1;
+            var shownPdf;
+            PDFJS.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.2.2/pdf.worker.js';
+            var pdfDoc = null,
+            pageNum = 1,
+            pageRendering = false,
+            pageNumPending = null,
+            canvas = document.getElementById('statement-canvas'),
+            ctx = canvas.getContext('2d');
+            
+            /**
+             * Get page info from document, resize canvas accordingly, and render page.
+             * @param num Page number.
+             */
+            function renderPage(num) {
+                pageRendering = true;
+                // Using promise to fetch the page
+                pdfDoc.getPage(num).then(function(page) {
+                    var viewport = page.getViewport({ scale: (1 / pdfScale)});
+                    
+                    console.log("=========================");
+                    console.log(container.clientWidth);
+                    console.log(viewport.width);
+                    console.log("========================= \n\n");
+                    
+                    var scale = container.clientWidth / viewport.width;
+                    viewport = page.getViewport({scale: scale});
+                    canvas.height = viewport.height;
+                    // canvas.width = $('.panel-body').width();
+                    canvas.width = viewport.width;
+                    
+                    // Render PDF page into canvas context
+                    var renderContext = {
+                        canvasContext: ctx,
+                        viewport: viewport
+                    };
+                    var renderTask = page.render(renderContext);
+                    
+                    // Wait for rendering to finish
+                    renderTask.promise.then(function () {
+                        return setupAnnotations(page, viewport, canvas, $('.annotationLayer'));
+                    }).then(function() {
+                        pageRendering = false;
+                        if (pageNumPending !== null) {
+                            // New page rendering is pending
+                            renderPage(pageNumPending);
+                            pageNumPending = null;
+                        }
+                    });
+                });
+                
+                // Update page counters
+                document.getElementById('page_num').textContent = num;
+            }
+            
+            
+            function setupAnnotations(page, viewport, canvas, $annotationLayerDiv) {
+                var pdf_canvas = $(canvas);
+                
+                return page.getAnnotations().then(function (annotationsData) {
+                    // Canvas height
+                    var canvas_height = pdf_canvas.get(0).height;
+                
+                    // Canvas width
+                    var canvas_width = pdf_canvas.get(0).width;
+                
+                    // CSS for annotation layer
+                    $("#annotation-layer").css({ height: canvas_height + 'px', width: canvas_width + 'px' });
+                
+                    // Render the annotation layer
+                    PDFJS.AnnotationLayer.render({
+                        viewport: viewport.clone({ dontFlip: true }),
+                        div: $("#annotation-layer").get(0),
+                        annotations: annotationsData,
+                        page: page,
+                        linkService: new pdfjsViewer.PDFLinkService({
+                            externalLinkRel: "external",
+                            externalLinkTarget: pdfjsLib.LinkTarget.BLANK
+                        })
+                    });
+                });
+            }
+            
+            /**
+             * If another page rendering in progress, waits until the rendering is
+             * finised. Otherwise, executes rendering immediately.
+             */
+            function queueRenderPage(num) {
+              if (pageRendering) {
+                pageNumPending = num;
+              } else {
+                renderPage(num);
+              }
+            }
+            
+            /**
+             * Displays previous page.
+             */
+            function onPrevPage() {
+              if (pageNum <= 1) {
+                return;
+              }
+              pageNum--;
+              queueRenderPage(pageNum);
+            }
+            document.getElementById('prev').addEventListener('click', onPrevPage);
+            
+            /**
+             * Displays next page.
+             */
+            function onNextPage() {
+              if (pageNum >= pdfDoc.numPages) {
+                return;
+              }
+              pageNum++;
+              queueRenderPage(pageNum);
+            }
+            document.getElementById('next').addEventListener('click', onNextPage);
+            
+            /**
+             * Zoom in
+             */
+            var zoominbutton = document.getElementById("zoomIn");
+            zoominbutton.onclick = function() {
+                pdfScale = pdfScale + 0.25;
+                // displayPage(shownPdf, pageNum);
+                queueRenderPage(pageNum);
+            }
+            
+            /**
+             * Zoom out
+             */
+            var zoomoutbutton = document.getElementById("zoomOut");
+            zoomoutbutton.onclick = function() {
+                if (pdfScale <= 0.25) {
+                   return;
+                }
+                pdfScale = pdfScale - 0.25;
+                // displayPage(shownPdf, pageNum);
+                queueRenderPage(pageNum);
+            }
+                
+            pdfjsLib.getDocument(url).promise.then(function(pdfDoc_) {
+                pdfDoc = pdfDoc_;
+                document.getElementById('page_count').textContent = pdfDoc.numPages;
+                
+                // Initial/first page rendering
+                renderPage(pageNum);
+                hidePanelSpinner();
+            });
+        });
+    </script>
+</apex:page>

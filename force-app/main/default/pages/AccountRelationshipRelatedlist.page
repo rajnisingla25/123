@@ -1,0 +1,260 @@
+<apex:page sidebar="false" showHeader="false" standardController="Account" extensions="AccountRelationshipRelatedlistController"
+           id="pageID">
+    <apex:includeScript value="/support/console/22.0/integration.js"/>
+    <apex:includeScript value="/support/console/44.0/integration.js" />
+    <script src="/support/console/28.0/integration.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        
+        //CRM-5599 View All from the Account Relationship section to open in Console view
+        function ViewAllChildAccounts(id, name) {
+        preRecordId= id;
+        if(sforce.console.isInConsole()){
+            sforce.console.getEnclosingPrimaryTabId(openSubtabViewAll);
+        }
+        else{
+            window.open('/apex/AccountsViewall?tab=childAcc&accid='+preRecordId, '_blank');
+        }
+        return true;
+    }
+    var openSubtabViewAll= function openSubtabViewAll(result) {
+        //Now that we have the primary tab ID, we can open a new subtab in it
+        var primaryTabId = result.id;
+        console.log('result :'+ result);
+        sforce.console.openSubtab(primaryTabId , '/apex/AccountsViewall?tab=childAcc&accid='+preRecordId, true, 'View All', null);
+    };
+    
+    var url;
+    // Method used to send user to new record url.
+    function createNewRecordURL(info) {
+        
+        // CRM-1722: Restrict users to add another relationship on customer accounts when primary contact already exists.
+        // CRM-2125: Make Exception for users and allow them access to add relationships.
+        var usersList = "{!$Label.EmailEditExceptionForUsers}";
+        var userArr = usersList.split(',');
+        var userName = '{!$User.Username}';
+        var profiles = "{!$Label.RestrictProfilesForContactCreation}";
+        var arr = profiles.split(',');
+        var userProfile = '{!$Profile.Name}';
+        if(arr.indexOf(userProfile) != -1 && userArr.indexOf(userName) == -1 && '{!isPrimaryContactExist}' == 'true'){
+            alert('You do not have access to create another contact on customer account');
+        } else {
+            url = '/{!accountRelationShipobjectId}/e?&saveURL=%2F' + '{!account.Id}&retURL=%2F' + '{!account.Id}';
+            var accountname="{!JSENCODE(account.Name)}";;//('{!account.Name}').replace(/'/i, ""));
+            //alert(accountname);
+            if (info.indexOf('Account') > -1) {
+                url += encodeURI('&RecordType='
+                                 + '{!$Setup.Account_Relationship_RelatedList_Setting__c.Account_Relationship_RecordType__c}'
+                                );
+                if (info.indexOf('Parent') > -1) {
+                    url += encodeURI('&'
+                                     + '{!$Setup.Account_Relationship_RelatedList_Setting__c.Child_Account_Field_Id__c}'
+                                     + '_lkid=' + '{!account.Id}' + '&'
+                                     + '{!$Setup.Account_Relationship_RelatedList_Setting__c.Child_Account_Field_Id__c}'
+                                     + '=' + accountname);
+                } else if (info.indexOf('Child') > -1) {
+                    url += encodeURI('&'
+                                     + '{!$Setup.Account_Relationship_RelatedList_Setting__c.Parent_Account_Field_Id__c}'
+                                     + '_lkid=' + '{!account.Id}' + '&'
+                                     + '{!$Setup.Account_Relationship_RelatedList_Setting__c.Parent_Account_Field_Id__c}'
+                                     + '=' + accountname);
+                }
+            }/* else if (info.indexOf('Contact') > -1) {
+                url += encodeURI('&RecordType='
+                                 + '{!$Setup.Account_Relationship_RelatedList_Setting__c.Contact_Relationship_RecordType__c}'
+                                 + '&'
+                                 + '{!$Setup.Account_Relationship_RelatedList_Setting__c.Parent_Account_Field_Id__c}'
+                                 + '_lkid=' + '{!account.Id}' + '&'
+                                 + '{!$Setup.Account_Relationship_RelatedList_Setting__c.Parent_Account_Field_Id__c}'
+                                 +  '=' + accountname);
+            }*/
+            if (info.indexOf('NewContact') > -1) {
+                
+                url = '/003/e?&saveURL=%2F' + '{!account.Id}&retURL=%2F' + '{!account.Id}'; 
+                var accountType = '{!account.Type}';
+                var accountRecordType = '{!account.RecordType.Name}';
+                var recordTypeId ='';
+                console.log(accountType + '  ' + accountType.includes('Moving'));
+                if  (accountType.includes('Moving')) {
+                    recordTypeId ='{!$Setup.Account_Relationship_RelatedList_Setting__c.Moving_Contact_Record_Type__c}';
+                }
+                else if  (accountRecordType=='Mortgage') {
+                    recordTypeId ='{!$Setup.Account_Relationship_RelatedList_Setting__c.Mortgage_Contact_Record_Type__c}';
+                }
+                    else {
+                        recordTypeId ='{!$Setup.Account_Relationship_RelatedList_Setting__c.Standard_Record_Type__c}';
+                    }
+                url += encodeURI('&RecordType='+recordTypeId           
+                                 //  + '&nooverride=0&'
+                                 + '&con4_lkid=' + '{!account.Id}' + '&'
+                                 + 'con4=' + accountname          
+                                 + '&00Ng000000186RK=1'         
+                                );
+            } 
+            if(info.indexOf('ViewAll') > -1 ){
+                url = '/apex/AccountsViewall?accid=' + '{!account.Id}'+'&retURL=%2F' + '{!account.Id}';  
+            }     
+            
+            if (!sforce.console.isInConsole()) {
+                window.parent.location.href = url;
+            } else {
+                sforce.console.getEnclosingPrimaryTabId(openSubtabForButton);
+            }
+            
+        }
+        
+    }
+    
+    var openSubtabForButton = function openSubtabForButton(result) {
+        //Now that we have the primary tab ID, we can open a new subtab in it
+        var primaryTabId = result.id;
+        sforce.console.openSubtab(primaryTabId, url, true,
+                                  'New Account Relationship', null);
+    };
+    
+    function refreshParent() {
+        //alert('{!accid}');
+        window.parent.location.href='/{!accid}';
+        
+    }
+    
+    </script>
+    
+    <apex:form Id="formId">
+        <!-- Define Tab panel .css styles -->
+        <style>
+            .activeTab {
+            background-color: #236FBD;
+            color: white;
+            background-image: none;
+            width: 81px;
+            height: 21px;
+            }
+            
+            .inactiveTab {
+            background-color: lightgrey;
+            color: black;
+            background-image: none;
+            width: 81px;
+            height: 21px;
+            }
+            
+            .myButton {
+            background: none !important;
+            text-decoration: underline !important;
+            border: none !important;
+            color: black !important;
+            cursor: pointer !important;
+            font-size: 11px !important;
+            font-weight: unset !important;
+            }
+            
+        </style>
+        
+        <!-- Action Status -->
+        <apex:actionstatus id="status">
+            <apex:facet name="start">
+                <div class="waitingSearchDiv" style="background-color: #fbfbfb; height: 100%; opacity: 0.65; width: 100%;">
+                    <div class="waitingHolder" style="top: 50px; width: 91px;">
+                        <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                        <span class="waitingDescription">Loading...</span>
+                    </div>
+                </div>
+            </apex:facet>
+        </apex:actionstatus>
+        
+        
+        <!-- Create Tab panel -->
+        <apex:tabPanel switchType="client" value="{!selectedTab}" id="AccountTabPanel" tabClass="activeTab"
+                       inactiveTabClass="inactiveTab">
+            
+            
+            <apex:tab label="Parent Accounts" name="parentTab" id="tabOne" ontabenter="setSelectedTab('parentTab')">
+                <center>
+                    <input type="button" value="New Parent Account" onclick="createNewRecordURL('Parent Account');"
+                           class="btn" />
+                </center>
+                <c:Related_List p_objectName="Account_Relationship__c" p_fieldsCSV="Parent_Account__c,Parent_Account__r.Type,Parent_Account__r.Phone,Parent_Account__r.Email_Address__c,Relationship_Type__c,Parent_Account__r.BillingStreet,Parent_Account__r.BillingCity,Parent_Account__r.BillingState,Parent_Account__r.BillingPostalCode,Is_Parent_Primary__c,Active__c"
+                                p_pageSize="5" p_parentFieldId="{!Account.Id}" p_parentFieldName="Child_Account__c"
+                                p_hideActionLinks="false" p_orderByFieldName="Name" p_sortDirection="asc"
+                                p_filter="RecordType.DeveloperName = 'Account_Relationship'" p_title="Accounts"
+                                p_showAsStandardRelatedList="false" p_hideButtons="true" rendered="{!selectedTab == 'parentTab'}"/>
+            </apex:tab>
+            <!-- CRM-4886 - Added Child Party ID to the View -->
+            <apex:tab label="Child Accounts" name="childTab" id="tabTwo" ontabenter="setSelectedTab('childTab')">
+                <center>
+                    <input type="{!ChildAccBtnVisibile}"  value="New Child Account" onclick="createNewRecordURL('Child Account')"
+                           class="btn" />
+                    <apex:commandButton value="Recalculate ADV. Price" action="{!syncWithOds}" disabled="{!disableODSbtn==TRUE}" oncomplete="refreshParent()">
+                    </apex:commandButton>
+                    <!-- CRM - 1313 -->
+                    <apex:outputpanel id="message">
+                        <apex:pageMessage rendered="{!brokerAffiliationODSbtn==true}" summary="Recalculate ADV. Price is InProgress" severity="info" strength="3"/>
+                    </apex:outputpanel>
+                </center>
+                
+                <c:Related_List p_objectName="Account_Relationship__c" p_fieldsCSV="Child_Account__c,Child_Account__r.Party_ID__c,Child_Account__r.Green__c,Child_Account__r.Yellow_Score__c,Child_Account__r.Red_Score__c,Child_Account__r.Type,Child_Account__r.MLS_Set_Id__c,Child_Account__r.Phone,Child_Account__r.Email_Address__c,Relationship_Type__c,Child_Account__r.BillingStreet,Child_Account__r.BillingCity,Child_Account__r.BillingState,Child_Account__r.BillingPostalCode,Active__c"
+                                p_pageSize="5" p_parentFieldId="{!Account.Id}" p_parentFieldName="Parent_Account__c"
+                                p_orderByFieldName="Name" p_hideActionLinks="false" p_sortDirection="asc"
+                                p_filter="RecordType.DeveloperName = 'Account_Relationship'" p_title="Accounts"
+                                p_showAsStandardRelatedList="false" p_hideButtons="true" rendered="{!selectedTab == 'childTab'}"/>
+                <!--<apex:outputlink value="/apex/AccountsViewall?tab=childAcc&accid={!$CurrentPage.parameters.ID}&retURL={!$CurrentPage.parameters.ID}">View All</apex:outputlink>-->
+                <!-- Added for CRM-5599  ----->
+                <apex:commandButton styleClass="myButton" value="View All" onclick="ViewAllChildAccounts('{!$CurrentPage.parameters.ID}', '{!$CurrentPage.parameters.ID}');return false" />
+                <!-- onclick="createNewRecordURL('ViewAll');return false;"-->        
+            </apex:tab>
+            <!-- <apex:tab label="Agents" name="AgentTab" id="tabThree">
+
+<c:Related_List p_objectName="Account_Relationship__c" p_fieldsCSV="Child_Account__c,Child_Account__r.Party_ID__c,Child_Account__r.Green__c,Child_Account__r.Yellow_Score__c,Child_Account__r.Red_Score__c, Child_Account__r.Type,Child_Account__r.Phone,Child_Account__r.Email_Address__c,Child_Account__r.BillingStreet,Child_Account__r.BillingCity,Child_Account__r.BillingState,Child_Account__r.BillingPostalCode,Child_Account__r.BillingCountry,Active__c"
+p_pageSize="5" p_parentFieldId="{!Account.Id}" p_parentFieldName="Parent_Account__c"
+p_orderByFieldName="Name" p_hideActionLinks="false" p_sortDirection="asc"
+p_filter="RecordType.DeveloperName = 'Account_Relationship'" p_title="Agents"
+p_showAsStandardRelatedList="false" p_hideButtons="true" />
+<apex:outputlink value="/apex/AccountsViewall?tab=Agent&accid={!$CurrentPage.parameters.ID}&retURL={!$CurrentPage.parameters.ID}">View All</apex:outputlink>        
+</apex:tab>
+-->
+            <!-- CRM-1625 - Added MLS Account Name to the View -->
+            <!-- Added For Task # T-381870 -->
+            <!-- Modified For Task # T-393149 -->
+            <!-- CRM-4064 add Supports_Realsuite__c-->
+            <!-- CODE STARTS -->
+            <apex:tab label="MLS" name="MLSTab" id="tabFour" ontabenter="setSelectedTab('MLSTab')">
+                <c:Related_List p_objectName="MLS__c"
+                                p_fieldsCSV="MLS_Set_ID_Hypelink__c,HLC__c,CLC__c,NAR_ID__c,MLS__c,MLS__r.Supports_Realsuite__c,MLS__r.Signed_Agreement__c,MLS__r.Display_Name__c,Start_Date__c,End_Date__c,Office__c,Parent_MLS_Set_ID__c,Agent__c,Status__c,Primary_MLS_Set__c,MLS_Account_Name__c"
+                                p_pageSize="5"
+                                p_parentFieldId="{!Account.Id}"
+                                p_parentFieldName="{!parentFieldName}"
+                                p_orderByFieldName="CreatedDate"
+                                p_hideActionLinks="true"
+                                p_sortDirection="desc"
+                                p_filter="{!IF(MLSRecordTypeName != '', 'RecordType.DeveloperName = ' & MLSRecordTypeName, '')}"
+                                p_title="MLS"
+                                p_showAsStandardRelatedList="false"
+                                p_hideButtons="true" rendered="{!selectedTab == 'MLSTab'}"/>
+            </apex:tab>
+            <!-- Commented Out as part of Marketing Cloud Project -->
+            <!-- <apex:tab label="Contacts" name="contactTab" id="tabFive" ontabenter="setSelectedTab('contactTab')">
+                
+                <center>
+                    <input type="button" value="New Contact Relationship" onclick="createNewRecordURL('Contact')"
+                           class="btn" />
+                    <input type="button" value="New Contact" onclick="createNewRecordURL('NewContact')"
+                           class="btn" />                
+                </center>
+                <c:Related_List p_objectName="Account_Relationship__c" p_fieldsCSV="{!contactCSV}"
+                                p_pageSize="5" p_parentFieldId="{!Account.Id}" p_parentFieldName="Parent_Account__c"
+                                p_orderByFieldName="Name" p_hideActionLinks="false" p_sortDirection="asc"
+                                p_filter="RecordType.DeveloperName = 'Contact_Relationship' AND Active__c = true" p_title="Contacts"
+                                p_showAsStandardRelatedList="false" p_hideButtons="true" rendered="{!selectedTab == 'contactTab'}"/>
+            </apex:tab> -->
+            <!-- CODE ENDS -->
+            
+            
+            
+        </apex:tabPanel>
+        
+        <apex:actionFunction id="af" action="{!setSelectedTab}" name="setSelectedTab" reRender="AccountTabPanel" status="status">
+            <apex:param name="selectedTab" value="" assignTo="{!selectedTab}" />
+        </apex:actionFunction>
+        
+    </apex:form>
+</apex:page>

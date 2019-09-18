@@ -1,0 +1,289 @@
+<apex:page title="Make a Payment" showHeader="false" sidebar="false" tabStyle="Account" controller="MakePayment">
+    <apex:includeScript value="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" />>
+    <apex:includeScript value="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.8/js/jquery.tablesorter.min.js" />
+   
+    <script>
+        function sortInvoiceTable() {
+            $("[id$='PaymentTable']").tablesorter( {sortList: [[2,1]],  headers: {0:{sorter: false},1:{sorter: false},2 :{sorter: false},3:{sorter: false},4:{sorter: false},5:{sorter: false},6:{sorter: false}  }} );
+        }
+        
+        $(document).ready(function()
+        {
+            sortInvoiceTable();
+            //$("[id$='PaymentTable']").tablesorter( {sortList: [[2,1]],  headers: {0:{sorter: false},1:{sorter: false},2 :{sorter: false},3:{sorter: false},4:{sorter: false},5:{sorter: false},6:{sorter: false}  }} );
+        });
+  
+        function boolFunction(variable) {
+            var bool = variable.value;
+            if(bool == 'external') {
+                document.getElementById('externalDiv').style.display = 'block';
+                document.getElementById('electronicDiv').style.display = 'none';
+                document.getElementById('notNewCard').style.display = 'block';
+                document.getElementById('newCard').style.display = 'none';
+            }
+            else{
+                document.getElementById('externalDiv').style.display = 'none';
+                document.getElementById('electronicDiv').style.display = 'block';
+            }
+        }
+        function addNewCard(variable) {
+            var bool = variable.value;
+            if(bool == 'newCard') {
+                document.getElementById('notNewCard').style.display = 'none';
+                document.getElementById('newCard').style.display = 'block';
+            }
+            else{
+                document.getElementById('notNewCard').style.display = 'block';
+                document.getElementById('newCard').style.display = 'none';
+            }
+        }
+        function callbacksuccess(pmid, displayMessage) {
+            performSuccessActions(pmid, displayMessage);
+            //window.location = "{!$Page.Manage_Billing_Account}?pmid=" + pmid + '&id=' + '{!$CurrentPage.parameters.accId}' + '&zId=' + '{!$CurrentPage.parameters.zId}' + '&billId=' + '{!$CurrentPage.parameters.id}' + '&displayMessage=' + displayMessage;
+        } 
+        function setFocusOnLoad() {
+            if ({!preset} == true){
+                document.getElementById('externalDiv').style.display = 'none';
+                document.getElementById('electronicDiv').style.display = 'block';
+                document.getElementById('notNewCard').style.display = 'none';
+                document.getElementById('newCard').style.display = 'block';
+            }
+        }
+        
+    </script>
+    <style>
+        .headerRow .invoiceHeaderStyle {
+            background-color: #E5FFD5 !important;
+            color: #000000 !important
+        }
+        table .roundedEdges {
+            border-bottom-left-radius: 20px !important;
+            border-bottom-right-radius: 20px !important
+        }
+        .custPopup{
+            background-color: white;
+            border-width: 2px;
+            border-style: solid;
+            z-index: 2;
+            left: 50%;
+            padding:10px;
+            position: absolute;
+            /* These are the 3 css properties you will need to change so the popup 
+            displays in the center of the screen. First set the width. Then set 
+            margin-left to negative half of what the width is. You can add 
+            the height property for a fixed size pop up if you want.*/
+            width: 500px;
+            margin-left: -250px;
+            top:100px;
+        }
+        .popupBackground{
+            background-color:black;
+            opacity: 0.20;
+            filter: alpha(opacity = 20);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+    </style>
+    <apex:form >
+        <zqu:StatusModal />
+        <apex:actionStatus startText="" stopText="" id="action" onstart="javascript:displayStatusModal()" onstop="javascript:closeStatusModal()" />
+        <apex:outputPanel id="error">
+            <zqu:Notification options="{!notificationOptions}" />
+            <apex:actionFunction name="continueToNextPage" action="{!confirmError}" immediate="true" rerender="error" />
+        </apex:outputPanel>
+        <!--Ravi: Added Customer Details Page Block for displaying Customer Name and Party Id CRM-2427 10/13-->
+        <apex:pageBlock title="Customer Details">
+            <table width="35%">
+                        <tr>
+                            <td width="50%">Customer Name:</td>
+                            <td width="50%">
+                                <apex:outputText value="{!zAccount.Name}" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="50%">Party Id:</td>
+                            <td width="50%">
+                                <apex:outputText value="{!zAccount.Zuora__AccountNumber__c}" />
+                            </td>
+                        </tr>
+                    </table>
+        </apex:pageBlock>
+        <apex:pageBlock title="Payment Information" id="payment">
+            <table width="35%" cellspacing="0" border="0" cellpadding="0" height="30px">
+                <tr>
+                    <td width="50%">
+                    Payment Type:
+                    </td>
+                    <td width="50%" align="left"><!--Switched from align right based on LEAP 5637  -->
+                    <apex:selectRadio value="{!paymentType}"  onclick="boolFunction(this);">
+                        <apex:selectOptions value="{!paymentTypeOptions}" />
+                        <apex:actionSupport event="onclick" action="{!updateDate}" rerender="electronicPanel, externalPanel"/>
+                    </apex:selectRadio>
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <div id="externalDiv" style="display: none;"> <!-- added style="display: none;" for LEAP 5637 --> 
+                <apex:outputPanel id="externalPanel">
+                    <table width="35%">
+                        <tr>
+                            <td width="50%">Payment Date:</td>
+                            <td width="50%">
+                                <apex:inputText value="{!paymentDate}" size="10" id="demo1" onfocus="DatePicker.pickDate(false, this , false);" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="50%">Payment Method:</td>
+                            <td width="50%">
+                                <apex:selectList value="{!xpmId}" size="1">
+                                    <apex:selectOptions value="{!externalPaymentMethodOptions}"/>
+                                </apex:selectList>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="50%">Payment Total</td>
+                            <td width="50%">
+                                <apex:inputText value="{!paymentAmount}">
+                                    <apex:actionSupport event="onchange" action="{!updateRemaining}" rerender="externalPanel, electronicPanel" />
+                                </apex:inputText>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="50%">Applied to Invoices</td>
+                            <td width="50%"><apex:outputText value="{!invoiceAmount}" /></td>
+                        </tr>
+                        <tr>
+                            <td width="50%">Remaining Amount</td>
+                            <td width="50%"><apex:outputText value="{!remainingAmount}" /></td>
+                        </tr>
+                    </table>
+                </apex:outputPanel>
+            </div>
+            <div id="electronicDiv" > <!-- Removed style="display: none;" for LEAP 5637 --> 
+                <apex:outputPanel id="electronicPanel">
+                    <table width="35%">
+                        <tr>
+                            <td width="50%">Payment Date:</td>
+                            <td width="50%">
+                                <apex:outputText value="{!paymentDate}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="50%">Payment Method:</td>
+                            <td width="50%">
+                                <apex:selectList value="{!pmId}" size="1" onchange="addNewCard(this);">
+                                    <apex:selectOptions value="{!paymentMethodOptions}"/>
+                                    <apex:actionSupport event="onclick" action="{!toACH}" rerender="newPM"/>
+                                </apex:selectList>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="50%">Payment Total</td>
+                            <td width="50%">
+                                <apex:outputText value="{!paymentAmount}" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="50%">Applied to Invoices</td>
+                            <td width="50%"><apex:outputText value="{!invoiceAmount}" /></td>
+                        </tr>
+                        <tr>
+                            <td width="50%">Remaining Amount</td>
+                            <td width="50%">
+                                <apex:inputText value="{!remainingAmount}">
+                                    <apex:actionSupport event="onchange" action="{!updateTotal}" rerender="electronicPanel, externalPanel" />
+                                </apex:inputText>
+                            </td>
+                        </tr>
+                    </table>
+                </apex:outputPanel>
+            </div>
+        </apex:pageBlock>
+        <apex:pageBlock id="invoices" title="Invoice(s) associated with this Payment">
+            <apex:pageBlockTable id="PaymentTable" value="{!invoiceSelect}" var="i">
+                <apex:column headerValue="" headerClass="invoiceHeaderStyle">
+                    <apex:inputCheckbox id="invoice" value="{!i.isSelected}" >
+                        <apex:actionSupport event="onclick" action="{!updateInvoiceTotal}" rerender="payment, total, externalPanel, electronicPanel, invoiceTotal"/>
+                    </apex:inputCheckbox>
+                </apex:column>
+                <apex:column headerValue="Invoice Date" headerClass="invoiceHeaderStyle">
+                    <apex:outputField value="{!i.Invoice.Zuora__InvoiceDate__c}" /></apex:column>
+                <apex:column headerValue="Due Date" headerClass="invoiceHeaderStyle">
+                    <apex:outputField style="color:black" value="{!i.Invoice.Zuora__DueDate__c}" rendered="{!i.Invoice.Zuora__DueDate__c >= TODAY()}" />
+                    <apex:outputField style="color:red" value="{!i.Invoice.Zuora__DueDate__c}" rendered="{!i.Invoice.Zuora__DueDate__c < TODAY()}" /></apex:column>
+                <apex:column headerValue="Invoice Number" headerClass="invoiceHeaderStyle">
+                    <apex:outputText value="{!i.Invoice.Name}" /></apex:column>             
+                <apex:column headerValue="Total Invoice Amount" headerClass="invoiceHeaderStyle">
+                    <apex:outputText value="${!i.Invoice.Zuora__TotalAmount__c}" /></apex:column>
+                <apex:column headerValue="Remaining Balance" headerClass="invoiceHeaderStyle">
+                    <apex:outputText value="${!i.Invoice.Zuora__Balance2__c}" /></apex:column>
+                <apex:column headerValue="Payment Applied" headerClass="invoiceHeaderStyle">
+                    <apex:inputText value="{!i.appliedAmount}" id="payment">
+                        <apex:actionSupport event="onchange" action="{!updateValues}" rerender="invoice, total, electronicPanel, externalPanel, error"/>
+                    </apex:inputText>
+                </apex:column>
+            </apex:pageBlockTable>
+            <div align="right">Invoice Total: &nbsp; <apex:outputText value="{!invoiceTotal}" id="total"/></div>
+        </apex:pageBlock>
+        <div align="center" id="notNewCard">
+            <apex:commandButton value="Select All" action="{!SelectAll}" status="action" rerender="invoices, externalPanel, electronicPanel, invoiceTotal" oncomplete="sortInvoiceTable();"/>
+            <apex:commandButton value="Create Payment" action="{!openBINValidation}" status="action" rerender="error, BINValidation" rendered="{!userSettings.ValidatePayments__c == false}"/>
+            <apex:commandButton value="Create Payment" action="{!openValidation}" status="action" rerender="error, tstpopup" rendered="{!userSettings.ValidatePayments__c}"/>
+            <apex:commandButton value="Cancel" action="{!cancel}" />
+        </div>
+        
+       <apex:outputPanel id="BINValidation">
+            <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!validateBIN}"/>
+            <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!validateBIN}">
+                Please Enter BIN:<br/><br/>
+                <apex:inputText value="{!strBIN}" maxlength="4" />
+                <br /> <br />
+                <apex:commandButton value="Confirm Payment" action="{!validatePmBIN}"/>
+                <apex:commandButton value="Cancel" action="{!cancelBINValidation}" reRender="BINValidation" />
+            </apex:outputPanel>
+        </apex:outputPanel>
+
+        <apex:outputPanel id="tstpopup">
+            <apex:outputPanel styleClass="popupBackground" layout="block" rendered="{!validate}"/>
+            <apex:outputPanel styleClass="custPopup" layout="block" rendered="{!validate}">
+                Please validate the Credit Card Expiration Date:<br/><br/>
+                <apex:selectList value="{!validateMonth}" size="1">
+                    <apex:selectOptions value="{!validateMonthOptions}"/>
+                </apex:selectList> / <apex:selectList value="{!validateYear}" size="1">
+                    <apex:selectOptions value="{!validateYearOptions}"/>
+                </apex:selectList>
+                <br /> <br />
+                <apex:commandButton value="Confirm Payment" action="{!validateInfo}" status="action" rerender="error" />
+                <apex:commandButton value="Cancel" action="{!cancelValidation}" reRender="tstpopup" />
+            </apex:outputPanel>
+        </apex:outputPanel>
+    </apex:form>
+    <div align="center" id="newCard" style="display: none;">
+        <apex:form id="buttons">
+            <apex:actionFunction name="performSuccessActions" action="{!successActions}" rerender="buttons, error">
+                <apex:param name="pmid" value="pmid" assignTo="{!pmId}" />
+                <apex:param name="displayMessage" value="dispayMessage" assignTo="{!displayMessage}" />
+            </apex:actionFunction>
+            <table width="35%">
+                <tr>
+                    <td width="50%">Set AutoPay for Billing Account ON?
+                        <apex:inputCheckbox value="{!isAutopay}" />
+                    </td>
+                    <td width="20" />
+                    <td width="50%">Set new Credit Card as Default Payment Method?
+                        <apex:inputCheckbox value="{!isDefault}" />
+                    </td>
+                </tr>
+            </table>
+        </apex:form>
+        <apex:outputPanel id="newPM">
+            <zqu:HostedPage injectedController="{!thisController}" includeButtonBar="true" hostedPageSettingName="NewCreditCard" id="CCHPM" rendered="{!userSettings.UseNewHPM__c == 'No'}"/>
+            <zqu:PaymentPage zuoraPageId="{!ccPageId}" style="inline" submitEnabled="false" rendered="{!userSettings.UseNewHPM__c == 'Yes' && paymentPage=='cc'}"/>
+            <zqu:PaymentPage zuoraPageId="{!achPageId}" style="inline" submitEnabled="false" rendered="{!userSettings.UseNewHPM__c == 'Yes' && paymentPage=='ach'}}"/>
+        </apex:outputPanel>
+    </div>
+</apex:page>

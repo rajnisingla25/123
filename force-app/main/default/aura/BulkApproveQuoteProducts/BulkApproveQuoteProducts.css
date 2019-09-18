@@ -1,0 +1,9 @@
+.THIS .quoteProducts thead th span {
+    background-color: gray;
+    color: white;
+    font-weight: bold;
+}
+.THIS .quoteProducts thead :hover {
+    background-color: gray;
+    color: white
+}

@@ -1,0 +1,37 @@
+<design:component>
+    
+    <!-- Image Attributes -->
+    <design:attribute name="featureLeftImage" label="Left Feature Image" datasource = "Effortless.png, Identify.png, tablet.png"/>
+    <design:attribute name="featureLeftImageWidth" label="Left Feature Image Size" placeholder="Resize Image Width. Ex: 500"/>
+    <!--<design:attribute name="featureLeftImagePadding" label="Left Image Padding" placeholder="Enter image padding in pixel example 50px"/>-->
+    <!-- Text Attributes -->
+    <design:attribute name="featureLeftSmallText" label="Left Feature Small Text" placeholder="Enter Left Feature text"/>
+    <design:attribute name="featureLeftSmallTextSize" label="Left Feature Small Text Size" placeholder="Ex: 1 or 2.5"/>
+    <design:attribute name="featureLeftSmallTextWidth" label="Left Feature Small Text Width" placeholder="Ex: 1 or 2.5"/>
+    <design:attribute name="featureLeftBigText" label="Left Feature Big Text" placeholder="Enter Left Feature Heading"/>
+    <design:attribute name="featureLeftBigTextSize" label="Left Feature Big Text Size" placeholder="Ex: 1 or 2.5"/>
+
+    <!-- Image Attributes -->
+    <design:attribute name="featureCenterImage" label="Centre Feature Image" datasource = "Effortless.png, Identify.png, tablet.png"/>    
+    <design:attribute name="featureCenterImageWidth" label="Centre Feature Image Size" placeholder="Resize Image Width. Ex: 500"/>
+    <!--<design:attribute name="featureCenterImagePadding" label="Centre Image Padding" placeholder="Enter image padding in pixel example 50px"/>-->
+    <!-- Text Attributes -->
+    <design:attribute name="featureCenterSmallText" label="Center Feature Small Text" placeholder="Enter Center Feature Heading"/>
+    <design:attribute name="featureCenterSmallTextSize" label="Center Feature Small Text Size" placeholder="Ex: 1 or 2.5"/>
+    <design:attribute name="featureCenterSmallTextWidth" label="Center Feature Small Text Width" placeholder="Ex: 1 or 2.5"/>
+    <design:attribute name="featureCenterBigText" label="Center Feature Big Text" placeholder="Enter Center Feature Heading"/>
+    <design:attribute name="featureCenterBigTextSize" label="Center Feature Big Text Size" placeholder="Ex: 1 or 2.5"/>
+
+    <!-- Image Attributes -->
+    <design:attribute name="featureRightImage" label="Right Feature Image" datasource = "Effortless.png, Identify.png, tablet.png"/>
+    <design:attribute name="featureRightImageWidth" label="Right Feature Image Size" placeholder="Resize Image Width. Ex: 500"/>
+    <!--<design:attribute name="featureRightImagePadding" label="Right Image Padding" placeholder="Enter image padding in pixel example 50px"/>-->
+    
+    <!-- Text Attributes -->
+    <design:attribute name="featureRightSmallText" label="Right Feature Small Text" placeholder="Enter Right Feature Heading"/>
+    <design:attribute name="featureRightSmallTextSize" label="Right Feature Small Text Size" placeholder="Ex: 1 or 2.5"/>
+    <design:attribute name="featureRightSmallTextWidth" label="Right Feature Small Text Width" placeholder="Ex: 1 or 2.5"/>  
+    <design:attribute name="featureRightBigText" label="Right Feature Big Text" placeholder="Enter Right Feature Heading"/>
+    <design:attribute name="featureRightBigTextSize" label="Right Feature Big Text Size" placeholder="Ex: 1 or 2.5"/>
+
+</design:component>

@@ -1,0 +1,11 @@
+<apex:component access="global" controller="Mortgage_Email_Controller">
+    <apex:attribute name="record" type="sObject" description="Record to display" access="global" required="true"/>
+    <apex:attribute name="fieldSet" type="Schema.FieldSetMember[]" description="FieldSet to display" access="global" required="true"/>
+    <apex:attribute name="entityName" type="String" description="Entity Name" access="global" required="true"/>
+    <apex:attribute name="rendered" type="boolean" default="true" description="A Boolean value that specifies whether the component is rendered on the page. If not specified, this value defaults to true." access="global"/>
+    
+    <apex:repeat value="{!fieldSet}" var="field" rendered="{!rendered}">
+         <apex:outputText escape="false" value="{!NewLine}{!quotes}{!entityName}:{!field.Label}{!quotes},{!quotes}{!IF(record[field]!=null, IF(field.Type!='string',record[field],SUBSTITUTE(record[field], '\"','\"\"')),'')}{!quotes}"/>
+    </apex:repeat>
+    
+</apex:component>

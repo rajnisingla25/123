@@ -1,0 +1,30 @@
+<apex:page controller="zqu.PaymentPageCallbackController" showHeader="false" sidebar="false">
+    <apex:includeScript value="{!$Resource.zqu__jquery_1_9_1}" />
+        <script>  
+        function callback() {
+        // Call the process callback method of the parent frame and pass the serialized callback parameters
+            //if(parent.processCallback) parent.processCallback('{!JSENCODE(callbackParameterString)}');
+            if (getParameterByName('success') == 'true' && parent.callbacksuccess) {
+                //Does this have valid JS characters
+                //
+                parent.callbacksuccess(getParameterByName('refId'), "The reference id is " + getParameterByName('refId') + '.');
+            } else if (parent.callbackfailure) {
+                parent.callbackfailure("{!JSENCODE( callbackParameterString ) }");
+            }
+      }
+    
+    function getParameterByName(name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+            results = regex.exec(location.search);
+        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+       
+      // Execute the callback when the document finishes loading
+      var $jq = jQuery.noConflict();
+      $jq(function() {
+        callback();
+      });
+    </script>
+    <body style="background-color: rgb(248, 248, 248);" /> 
+</apex:page>

@@ -1,0 +1,6 @@
+<design:component>
+    <design:attribute name="showFacebook" label="Show Facebook"/>
+    <design:attribute name="showYoutube" label="Show YouTube"/>
+    <design:attribute name="showTwitter" label="Show Twitter"/>
+    <design:attribute name="showGooglePlus" label="Show Google+"/>
+</design:component>

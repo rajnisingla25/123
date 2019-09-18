@@ -1,0 +1,38 @@
+<apex:page Controller="MovingLeadcontroller" action="{!NewLead}" showHeader="false" sidebar="false">
+    <!-- Page Header -->
+    <apex:form >
+        <script>
+        function CloseAndRefresh(){
+            window.opener.location.href="/apex/MovingLeads";
+            self.close();
+        }
+        window.onbeforeunload = RefreshParent;
+        </script>       
+        <apex:pageBlock >
+            <apex:pageMessages ></apex:pageMessages>
+            <apex:sectionHeader title="New Moving Lead">
+                <apex:pageBlockSection columns="2" showHeader="true" title="New Lead"> 
+                    <apex:inputField id="Asset" value="{!movingLead.Asset__c}" required="true" />
+                    <apex:inputField id="AccountID" value="{!movingLead.Account_ID__c}"  />
+                    <apex:inputField id="StartDate" value="{!movingLead.Start_Date__c}" required="true" />
+                    <apex:inputField id="EndDate" value="{!movingLead.End_Date__c}" required="true" />
+                    <!--<apex:inputField id="Price" value="{!movingLead.Price__c}" required="true" />-->
+                    
+                    <apex:inputField id="Quantity" value="{!movingLead.Quantity__c}" required="true" />
+                    <apex:inputField id="Status" value="{!movingLead.Status__c}" required="true" />
+                    <apex:inputField id="Description" value="{!movingLead.Description__c}" required="true" />
+                    <apex:inputField id="PerUnitPrice" value="{!movingLead.Per_Unit_Price__c}" required="true" />
+                                        
+                </apex:pageBlockSection>
+                
+               <!--  <apex:pageBlockSection > -->
+                 <div style = "text-align:center;background-color: #F0FDFC;"> 
+                    <apex:commandButton action="{!insertNewLead}" value="Save" rendered="{!showSaveBtn}" />
+                    <apex:commandButton value="Close" onclick="CloseAndRefresh();" />   
+                        </div> 
+              <!--  </apex:pageBlockSection>  -->
+                    
+            </apex:sectionHeader>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

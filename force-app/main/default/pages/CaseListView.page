@@ -1,0 +1,151 @@
+<apex:page controller="CaseListViewContoller">
+<apex:includeScript value="/support/console/34.0/integration.js"/>
+    
+    <apex:form id="frm">    
+      
+      <script type="text/javascript">
+            function selectAllCheckboxes(obj,receivedInputID){
+                var inputCheckBox = document.getElementsByTagName("input");                  
+                    for(var i=0; i<inputCheckBox.length; i++){          
+                        if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){                                     
+                            inputCheckBox[i].checked = obj.checked;
+                        }
+                    }
+                }
+             function checkconsole()
+             {
+             alert('{!caseid}');
+             }           
+          
+           </script>       
+        
+        <apex:selectList size="1" value="{!Queue}" id="Queue" >
+            <apex:selectOptions value="{!QueueList}"> </apex:selectOptions>
+            <apex:actionSupport event="onchange" action="{!displaycaselist}"/>
+        </apex:selectList> 
+        
+        <apex:pageBlock id="table1"> 
+         <apex:panelGrid columns="2" style="float:Left;">         
+            <apex:commandButton value="Accept" action="{!Accept}" reRender="jspanel" oncomplete="checkconsole();" />                     
+            <apex:commandButton action="{!Refresh}" id="theButton" image="{!URLFOR($Resource.Refresh)}" reRender="table1" style="height:10px;width:15px;border-width:2px;cursor:pointer;"/> 
+            </apex:panelGrid>
+        <apex:pageMessages ></apex:pageMessages>        
+            <apex:pageBlockTable value="{!caselstnew}" var="cse" id="block">
+                <apex:column >    
+                 <apex:facet name="header">
+                   <apex:inputCheckbox onclick="selectAllCheckboxes(this,'inputId')"/>
+                  </apex:facet>                          
+                <apex:inputCheckbox value="{!cse.checked}" id="inputId"/>
+                </apex:column> 
+               <!-- <apex:column headerValue="Action" styleClass="actionColumn">       
+                <apex:outputLink rendered="{!AND($ObjectType.case.accessible, $ObjectType.case.updateable)}" value="/{!cse.cs.id}/e?retURL=/apex/CaseListView" styleClass="actionLink edit{!cse.cs.id}">Edit</apex:outputLink>
+                <apex:outputText rendered="{!AND($ObjectType.case.accessible, $ObjectType.case.updateable)}" > |&nbsp; </apex:outputText>
+                <apex:commandLink rendered="{!AND($ObjectType.case.accessible, $ObjectType.case.deletable)}" value="Del" onclick="if(!confirm('Are you sure?')) return false;" action="{!deleteRecord}" rerender="pageBlock" styleClass="actionLink" status="myStatus">
+                    <apex:param name="deleteRecordId" assignTo="{!deleteRecordId}" value="{!cse.cs.id}"/>
+                </apex:commandLink>                
+            </apex:column>-->                             
+                <apex:column >            
+                   <apex:facet name="header" >PRIORITY</apex:facet>  
+                  {!cse.cs.Priority}    
+             </apex:column>
+            <apex:column >
+                <apex:facet name="header">Case Number</apex:facet>
+                <apex:outputlink value="{!URLFOR($Action.Case.View, cse.cs.id)}">
+                  {!cse.cs.CaseNumber}  </apex:outputlink>
+            </apex:column>
+            <apex:column >            
+                   <apex:facet name="header" >Status</apex:facet>  
+                  {!cse.cs.Status}    
+             </apex:column>
+             <apex:column >            
+                   <apex:facet name="header" >Status As Of Date</apex:facet>  
+                  {!cse.cs.StatusAsOfDate__c}    
+             </apex:column> 
+            <!--<apex:column >            
+                   <apex:facet name="header" >OWNER NAME</apex:facet>  
+                  <apex:outputLink target="_blank" value="/{!cse.cs.OwnerId}">{!cse.cs.owner.name}</apex:outputLink> 
+             </apex:column>-->           
+             <apex:column >            
+                   <apex:facet name="header" >Primary MLS Set Id</apex:facet>  
+                  {!cse.cs.Primary_MLS_Set_Id__c}    
+             </apex:column> 
+             <apex:column >            
+                   <apex:facet name="header" >Account Name</apex:facet>  
+                  <apex:outputLink target="_blank" value="/{!cse.cs.Account}">{!cse.cs.Account.name}</apex:outputLink> 
+             </apex:column>
+             <apex:column >            
+                   <apex:facet name="header" >Last Worked(Date/Time)</apex:facet>  
+                   {!cse.cs.Last_Worked__c}                              
+             </apex:column>
+             <apex:column >    
+                <apex:facet name="header" >Last Worked By</apex:facet>                 
+                <apex:outputLink target="_blank" value="/{!cse.cs.Last_Worked_By__c}">{!cse.cs.Last_Worked_By__r.name}</apex:outputLink>                       
+             </apex:column>
+             <apex:column >            
+                   <apex:facet name="header" >Contact Name</apex:facet>  
+                  <apex:outputLink target="_blank" value="/{!cse.cs.Contact}">{!cse.cs.Contact.name}</apex:outputLink>     
+             </apex:column>
+             <!--<apex:column >            
+                  <apex:facet name="header" >TYPE</apex:facet>  
+                  {!cse.cs.Type}    
+             </apex:column>
+                <apex:column >            
+                   <apex:facet name="header" >AREA</apex:facet>  
+                  {!cse.cs.Area__c}    
+             </apex:column>   
+             <apex:column >            
+                   <apex:facet name="header" >SUB AREA</apex:facet>  
+                  {!cse.cs.Sub_Area__c}    
+             </apex:column> 
+             <apex:column >            
+                   <apex:facet name="header" >SUBJECT</apex:facet>  
+                  {!cse.cs.Subject}    
+             </apex:column> 
+             <apex:column >            
+                   <apex:facet name="header" >SUB STATUS</apex:facet>  
+                  {!cse.cs.SubStatus__c}    
+             </apex:column>
+             <apex:column >            
+                   <apex:facet name="header" >PARENT CASE NUMBER</apex:facet>  
+                  <apex:outputLink target="_blank" value="/{!cse.cs.ParentId}">{!cse.cs.Parent.CaseNumber}</apex:outputLink> 
+             </apex:column>                         
+             <apex:column >            
+                   <apex:facet name="header" >DATE/TIME OPENED</apex:facet>  
+                  {!cse.cs.CreatedDate}    
+             </apex:column>
+             <apex:column >            
+                   <apex:facet name="header" >CASE RECORD TYPE</apex:facet>  
+                  <apex:outputLink target="_blank" value="/{!cse.cs.RecordTypeId}">{!cse.cs.RecordType.name}</apex:outputLink> 
+             </apex:column>-->                          
+            </apex:pageBlockTable> 
+        </apex:pageBlock>
+        <apex:outputPanel id="jspanel">
+              <script type="text/javascript">
+
+             function checkconsole()
+             {
+                try
+             {
+               if('{!caseId}' != ''){
+
+                 if (sforce.console.isInConsole()) { 
+                    sforce.console.openPrimaryTab(undefined,'/'+'{!caseId}', true, {!caseNumber});                 
+                    }
+                 else
+                 {
+                    window.location.href = '/'+'{!caseId}';                      
+                 }   
+               }
+             }
+             catch(err)  
+             {
+                 alert(err.message);
+             }
+             
+             }           
+          
+           </script> 
+           
+        </apex:outputPanel>
+    </apex:form>
+</apex:page>

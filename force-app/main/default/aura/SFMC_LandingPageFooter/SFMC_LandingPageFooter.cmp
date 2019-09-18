@@ -1,0 +1,18 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" >
+    <aura:attribute name="backgroundColour" type="string"/>
+    <aura:attribute name="footerText" type="string"/>
+    <aura:attribute name="footerTextColour" type="string"/>
+    
+    <div style="{!'background-color: ' + v.backgroundColour}" class="footerClass">
+        <lightning:layout horizontalAlign="center" verticalAlign="center">
+            <lightning:layoutItem padding="around-small" class="maxWidth slds-list_horizontal">
+                <div class="slds-m-around_x-small">
+                    <img src="//www.topproducer.com/jfiles/tp/sm/logo-nar-grey.png" />
+                </div>
+                <span style="{!'color: ' + v.footerTextColour +';width:60%'}" class="slds-m-around_x-small">
+                    {!v.footerText}
+                </span>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </div>
+</aura:component>

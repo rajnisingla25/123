@@ -1,0 +1,15 @@
+
+{
+[ "data":
+    {
+      "Waitlist Id": "101",
+      "Market": "Postal Code",
+      "Product": "$Connection for Brokerage",
+      "Lead Routing": "Flex",
+      "Slot Size": "Full",
+      "Status": "Hot"
+    } 
+	
+	
+  ]
+}

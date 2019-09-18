@@ -1,0 +1,558 @@
+<apex:page standardStylesheets="false" sidebar="true" showHeader="true" controller="Apex_C1ASExtendedConfig">   
+
+<h1>
+        C1AS CloudConnector Extended Config Administration
+</h1>
+    
+<apex:pageBlock id="msgblock"><apex:pageMessages /></apex:pageBlock>
+ 
+<apex:form >
+    <!-- Hidden field to store a new value of the variable -->
+    <apex:inputHidden value="{!toBeSavedAdminValues}" id="toBeSavedAdminValues"/>
+    <apex:inputHidden value="{!tobeSavedType}" id="tobeSavedType"/>
+
+    <!-- Action function for the rerendering -->
+    <apex:actionFunction name="saveValue" action="{!saveAdminValues}"  reRender="msgblock"/>
+
+</apex:form>            
+<html x-ng-app="CtiApp">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+
+    <meta charset="UTF-8"/>
+
+    <apex:stylesheet value="{!URLFOR($Resource.softphoneStylecss, '')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.AngularJS, '')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.JQuery, '')}"/>
+  
+ </head>
+ <script type="text/javascript">
+ 
+ /**
+  * Created by SPalanisamy on 1/5/15.
+  */
+ var CtiApp = angular.module("CtiApp", []);
+ 
+ CtiApp.controller("CCConfigController", function($scope, $filter, $timeout, $log) {
+     $scope.customFuncs = {};
+     $scope.uiInfo = {};
+     $scope.stateMachine = {};
+     $scope.stateMachine.dialpad = {};
+     $scope.uiState = {};
+     $scope.uiState.speedDial = {};
+     $scope.uiState.speedDial["new"] = false;
+     $scope.uiState.speedDial.edit = false;
+     $scope.uiState.speedDial.selected = null;
+     $scope.uiState.speedDial.show = false;
+     $scope.uiState.preComments = {};
+     $scope.uiState.preComments.lastEdit = false;
+     $scope.uiState.preComments.edit = false;
+     $scope.uiState.preComments.selected = null;
+     $scope.localVars = {};
+     $scope.localVars.speedDialNumbers = [];
+     $scope.localVars.preComments = [{
+                index: 1,
+                comment: "comment 1",
+                color: "black",
+                bgColor: "#EB3B3B"
+            }, {
+                index: 2,
+                comment: "comment 2",
+                color: "black",
+                bgColor: "#EB613B"
+            }, {
+                index: 3,
+                comment: "comment 3",
+                color: "black",
+                bgColor: "#EB873B"
+            }, {
+                index: 4,
+                comment: "comment 2",
+                color: "black",
+                bgColor: "#EB613B"
+            }, {
+                index: 5,
+                comment: "comment 3",
+                color: "black",
+                bgColor: "#EB873B"
+            }, {
+                index: 6,
+                comment: "comment 2",
+                color: "black",
+                bgColor: "#EB613B"
+            }, {
+                index: 7,
+                comment: "comment 3",
+                color: "black",
+                bgColor: "#EB873B"
+            }, {
+                index: 8,
+                comment: "comment 2",
+                color: "black",
+                bgColor: "#EB613B"
+            }, {
+                index: 9,
+                comment: "comment 3",
+                color: "black",
+                bgColor: "#EB873B"
+            }, {
+                index: 10,
+                comment: "comment 3",
+                color: "black",
+                bgColor: "#EB873B"
+            }];
+     $scope.localeLabels = {
+         "clickToClose": "click to close",
+         "aboutVendor": "Platform",
+         "aboutUIVersion": "ClientUI version",
+         "aboutFrameworkVersion": "Cloud Connector Server version",
+         "aboutBackendVersion": "Backend version",
+         "infoLabel": "Trying to get server configuration",
+         "infoWait": "please wait ...",
+         "errorLabel": "Error to connect to server",
+         "loginProcessing": "Processing...",
+         "loginStop": "Stop",
+         "loginUserName": "Username",
+         "loginPassword": "Password",
+         "loginExtension": "Extension",
+         "loginLogin": "Login",
+         "loginInfo": "Can't access your account?",
+         "loginHelp": "Please contact your Desktop/Salesforce CRM administrator",
+         "loggedInAgent": "Agent",
+         "loggedInExtension": "Extension",
+         "loggedInReasonCode": "Reason Code",
+         "loggedInSelectReasonCode": "Please Select Reason Code",
+         "loggedInEnterPhoneNumber": "Enter phone number to dial ...",
+         "loggedInBtnDial": "Dial",
+         "loggedInBtnOutBound": "OutBound Call",
+         "loggedInBtnInitTransfer": "Initialize Transfer",
+         "loggedInBtnOneStepTransfer": "One Step Transfer",
+         "loggedInBtnInitConference": "Initialize Conference",
+         "loggedInBtnOneStepConference": "One Step Conference",
+         "loggedInBtnHideDialpad": "Hide Dialpad",
+         "loggedInBtnCancel": "Hide Dialpad",
+         "loggedInBtnHideOptions": "Hide Call Options",
+         "loggedInLine": "Line",
+         "loggedInOpen": "Open",
+         "loggedInConnectTo": "Connect To",
+         "loggedInDuration": "Duration",
+         "loggedInHold": "Hold",
+         "loggedInWrapUp": "WrapUp",
+         "loggedInBtnAlternate": "Alternate",
+         "loggedInBtnReconnect": "Reconnect",
+         "loggedInBtnAnswer": "Answer",
+         "loggedInBtnRetrieve": "Retrieve",
+         "loggedInBtnCompleteTransfer": "Complete Transfer",
+         "loggedInBtnCompleteConference": "Complete Conference",
+         "loggedInBtnEndCall": "EndCall",
+         "loggedInBtnDTMF": "DTMF",
+         "loggedInBtnDivert": "Divert",
+         "loggedInTipHold": "Hold Call",
+         "loggedInTipTransfer": "Transfer Call",
+         "loggedInTipConference": "Conference Call",
+         "loggedInTipNewCall": "New Line Call",
+         "loggedInCallLog": "Call Log",
+         "loggedInCallLogCallerId": "Caller Id",
+         "loggedInCallLogDialedNumber": "Dialed Number",
+         "loggedInCallLogConference": "Conference",
+         "loggedInCallLogSubject": "Subject",
+         "loggedInCallLogName": "Name",
+         "loggedInCallLogRelatedTo": "Related To",
+         "loggedInCallLogNone": "None",
+         "loggedInCallLogComments": "Comments",
+         "loggedInCallLogWrapUpCode": "WrapUp Code",
+         "loggedInCallLogSelectWrapUpCode": "Please Select WrapUp Code",
+         "loggedInCallLogDone": "Done",
+         "loggedInLastCalls": "Last Calls",
+         "loggedInLastCallsTime": "Time",
+         "loggedInLastCallsANI": "ANI",
+         "loggedInLastCallsSubj": "Subj",
+         "loggedInLastCallsName": "Name",
+         "loggedInLastCallsRelatedTo": "Related To",
+         "loggedInLastCallsBtnSave": "Save",
+         "loggedInLastCallsBtnCancel": "Cancel",
+         "loggedInBookmark": "Bookmark",
+         "loggedInBookmarkScreenPop": "Bookmark Screenpop",
+         "loggedInBtnSpeedDial": "Speed Dial",
+         "loggedInSpeedDialName": "name",
+         "loggedInSpeedDialPhone": "phone",
+         "loggedInSpeedDialFontColor": "color",
+         "loggedInSpeedDialBackgroundColor": "bgcolor",
+         "loggedInSpeedDialBtnSave": "Save",
+         "loggedInSpeedDialBtnDelete": "Delete",
+         "loggedInSpeedDialBtnExit": "Close",
+         "loggedInClickToDialOptions": "Click to Dial Options",
+         "loggedInClickToDialNumberToDial": "Number to Dial",
+         "loggedInPreComment": "Pre-Defined Comments",
+         "loggedInPreCommentFontColor": "font color",
+         "loggedInPreCommentBackgroundColor": "background color",
+         "loggedInPreCommentSave": "Save",
+         "loggedInPreCommentDelete": "Delete",
+         "loggedInPreCommentExit": "Close"
+     };
+     if (angular.isDefined(window.localeLabels))
+         for (var key in window.localeLabels)
+             if (window.localeLabels.hasOwnProperty(key)) $scope.localeLabels[key] = window.localeLabels[key];
+ 
+     $scope.colorSupport = function() {
+            try {
+                return navigator.userAgent.indexOf("Chrome") > -1 || navigator.userAgent.indexOf("Firefox") > -1
+            } catch (er) {}
+            return false
+     };
+     $scope.speedDial = function(num) {
+         $scope.stateMachine.dialpad.num = num;
+     };
+     $scope.speedDialSave = function() {
+         if ($scope.uiState.speedDial["new"])
+             if ($scope.uiState.speedDial.selected != null && $scope.uiState.speedDial.selected.name.length > 0 && $scope.uiState.speedDial.selected.phone.length > 0) $scope.localVars.speedDialNumbers.push($scope.uiState.speedDial.selected);
+         $scope.uiState.speedDial["new"] = false;
+         Salesforce_SaveC1ASExtendedConfig("speedDial", toSpeedDialNumbersStr())
+     };
+     $scope.speedDialDelete = function() {
+         try {
+             var od = $scope.localVars.speedDialNumbers;
+             $scope.localVars.speedDialNumbers = [];
+             for (var i = 0; i < od.length; i++)
+                 if (!angular.equals(od[i], $scope.uiState.speedDial.selected)) $scope.localVars.speedDialNumbers.push(od[i]);
+             $scope.uiState.speedDial.edit = false;
+             Salesforce_SaveC1ASExtendedConfig("speedDial", toSpeedDialNumbersStr())
+         } catch (er) {
+             $log.error(er.message)
+         }
+     };
+ 
+     function toSpeedDialNumbersStr() {
+         var data = [];
+         angular.forEach($scope.localVars.speedDialNumbers,
+                 function(sdn) {
+                     data.push({
+                         n: sdn.name,
+                         p: sdn.phone,
+                         c: sdn.color,
+                         bc: sdn.bgColor
+                     })
+                 });
+         return JSON.stringify(data)
+     }
+     $scope.speedDialExit = function() {
+         $scope.uiState.speedDial["new"] = false;
+         $scope.uiState.speedDial.edit = false;
+     };
+     $scope.speedDialEdit = function() {
+         $scope.uiState.speedDial["new"] = false;
+         $scope.uiState.speedDial.edit = true;
+         if ($scope.localVars.speedDialNumbers.length > 0) $scope.uiState.speedDial.selected = $scope.localVars.speedDialNumbers[0];
+     };
+     $scope.speedDialAdd = function() {
+         $scope.uiState.speedDial.selected = {
+             name: "",
+             phone: "",
+             color: "black",
+             bgColor: "#EB3B3B"
+         };
+         $scope.uiState.speedDial["new"] = true;
+         $scope.uiState.speedDial.edit = true;
+     };
+     $scope.speedDialTangle = function() {
+         $scope.uiState.speedDial.show = !$scope.uiState.speedDial.show;
+         if (!$scope.uiState.speedDial.show) {
+             $scope.uiState.speedDial["new"] = false;
+             $scope.uiState.speedDial.edit = false
+         }
+     };
+ 
+     $scope.addComment = function(aCall, comment) {
+         aCall.description = aCall.description + comment
+     };
+     $scope.preCommentsSave = function() {
+         Salesforce_SaveC1ASExtendedConfig("comment", toPreCommentsStr())
+     };
+     $scope.preCommentsDelete = function() {
+         try {
+             angular.forEach($scope.localVars.preComments, function(c) {
+                 if (angular.equals(c, $scope.uiState.preComments.selected)) c.comment = ""
+             });
+             $scope.uiState.preComments.edit = false;
+             Salesforce_SaveC1ASExtendedConfig("comment", toPreCommentsStr())
+         } catch (er) {
+             $log.error(er.message)
+         }
+     };
+ 
+     function toPreCommentsStr() {
+         var data = [];
+         angular.forEach($scope.localVars.preComments, function(sdn) {
+             data.push({
+                 i: sdn.index,
+                 n: sdn.comment.substr(0, 160),
+                 c: sdn.color,
+                 bc: sdn.bgColor
+             })
+         });
+         return JSON.stringify(data)
+     }
+     $scope.preCommentsExit = function() {
+         $scope.uiState.preComments.edit = false;
+         $scope.uiState.preComments.lastEdit = false;
+     };
+     $scope.preCommentsEdit = function(area) {
+         switch (area) {
+             case 1:
+                 $scope.uiState.preComments.edit = true;
+                 $scope.uiState.preComments.lastEdit = false;
+                 break;
+             case 2:
+                 $scope.uiState.preComments.lastEdit = true;
+                 $scope.uiState.preComments.edit = false;
+                 break
+         }
+         if ($scope.localVars.preComments.length > 0) $scope.uiState.preComments.selected =
+                 $scope.localVars.preComments[0];
+     };
+     $scope.preComments = function() {
+         var data = [];
+         angular.forEach($scope.localVars.preComments, function(c) {
+             if (c.comment.length > 0) data.push(c)
+         });
+         return data
+     };
+     $scope.preCommentChange = function() {
+         if ($scope.uiState.preComments.selected.comment.length > 160) $scope.uiState.preComments.selected.comment = $scope.uiState.preComments.selected.comment.substr(0, 160)
+     };
+ 
+     $scope.preCommentTangle = function() {
+         $scope.uiState.preComments.show = !$scope.uiState.preComments.show;
+         if (!$scope.uiState.preComments.show) {
+             $scope.uiState.preComments.edit = false
+         }
+     };
+     function Salesforce_GetC1ASExtendedConfig() {
+         try {
+             var AllAdminValues = '{! AdminValues}';
+             // if (!angular.isDefined($scope.localVars.extendedConfig)) sforce.interaction.runApex("Apex_C1ASExtendedConfig", "getAllValues", "key=", function(response) {
+             //   if (response.result) {
+                     var setting = angular.fromJson(AllAdminValues);
+                     if (angular.isArray(setting)) {
+                         angular.forEach(setting, function(item) {
+                             try {
+                                 var val = angular.fromJson(decodeURIComponent(item.Value));
+                                 switch (item.Type) {
+                                     case "speedDial":
+                                         $scope.localVars.speedDialNumbers = [];
+                                         angular.forEach(val, function(d) {
+                                             $scope.localVars.speedDialNumbers.push({
+                                                 name: d.n,
+                                                 phone: d.p,
+                                                 color: d.c,
+                                                 bgColor: d.bc
+                                             })
+                                         });
+                                         break;
+                                     case "comment":
+                                         $scope.localVars.preComments = [];
+                                         angular.forEach(val, function(d) {
+                                             $scope.localVars.preComments.push({
+                                                 index: d.i,
+                                                 comment: d.n,
+                                                 color: d.c,
+                                                 bgColor: d.bc
+                                             })
+                                         });
+                                         break
+                                 }
+                             } catch (err) {
+                                 $log.error("Salesforce_GetC1ASExtendedConfig speedDial: " + err.message)
+                             }
+                         });
+                         $scope.localVars.extendedConfig = setting;
+                         $scope.saveLocalVars()
+                     }
+             //}
+                 $log.debug("Salesforce_GetC1ASExtendedConfig:  getAllValues: " +
+                         JSON.stringify(setting))
+                 //})
+         } catch (err) {
+             $log.error("Salesforce_GetC1ASExtendedConfig: Failed: " + err.message)
+         }
+     }
+ 
+ 
+     function Salesforce_SaveC1ASExtendedConfig(type, value) {
+            try {
+                //      var dataStr = buildQueryString({
+                //   key: "",
+                //    type: type,
+                //    value: value
+                //});
+                //sforce.interaction.runApex("Apex_C1ASExtendedConfig", "saveValue", dataStr, function(response) {
+                //    if (response.error) $scope.setSvrError("save CloudConnectorConfig: " + response.error);
+                //    else if (response.result.indexOf("Success") == -1) $scope.setSvrError("save CloudConnectorConfig: " + response.result);
+                //    $log.debug("Salesforce_SaveC1ASExtendedConfig:  saveValue: " + JSON.stringify(response));
+                //});
+                //$scope.saveLocalVars()
+                jQuery('[id$=toBeSavedAdminValues]').val(encodeURIComponent(value));
+                jQuery('[id$=tobeSavedType]').val(encodeURIComponent(type));
+                saveValue();
+            } catch (err) {
+                $log.error("Salesforce_SaveC1ASExtendedConfig: Failed: " + err.message)
+            }
+        }
+ 
+      function buildQueryString(params) {
+            var qs = "";
+            for (var key in params)
+                if (params.hasOwnProperty(key)) qs += key + "=" + encodeURIComponent(params[key]) + "&";
+            qs = qs.length > 0 ? qs.substr(0, qs.length - 1) : qs;
+            return qs
+        }
+     
+     (function() {
+         Salesforce_GetC1ASExtendedConfig();
+     })();
+ });
+ </script>    
+ 
+ <body id="body" x-ng-controller="CCConfigController">
+ 
+ <div id="container">
+    <div id="Dialpad" class="Dialpad" style="text-align: center;position: relative;">
+ <div style="background-color:#d0eef8; border: 1px solid #cccccc; overflow: auto;margin: 5px; padding: 0px 3px 3px 3px;" >
+     <div style="margin: 0px 0px 3px 0px;text-align: center;">
+         <!--<img src="https://na9.salesforce.com/resource/1420642684000/editpng" style="float: right;margin-top: 8px;" ng-click="speedDialEdit()" ng-show="uiState.speedDial.show && !uiState.speedDial.edit"/>-->
+       <img src="{!URLFOR($Resource.editpng, '')}" style="float: right;margin-top: 8px;" ng-click="speedDialEdit()" ng-show="uiState.speedDial.show && !uiState.speedDial.edit"/> 
+        
+         <button class="dialpadBtn2" ng-click="speedDialTangle()"  title="Speed Dial">{{localeLabels.loggedInBtnSpeedDial}}</button>
+     </div>
+     <div class="speedDial" ng-show="uiState.speedDial.show">
+         <div ng-hide="uiState.speedDial.edit" style="text-align: center;">
+             <button  ng-repeat="spd in localVars.speedDialNumbers" ng-click="speedDial(spd.phone)" ng-attr-style="color: {{spd.color}};background-color: {{spd.bgColor}};" title="{{spd.phone}}">{{spd.name}}</button>
+             <button ng-show="localVars.speedDialNumbers.length < 10" ng-click="speedDialAdd()">+</button>
+         </div>
+ 
+         <div ng-show="uiState.speedDial.edit" style="position: relative;top: 0; z-index: 20;text-align: left;">
+             <table style="margin-top: 0;">
+                 <tbody>
+                 <tr>
+                     <td colspan="2">
+                         <select style="width: 150px;margin-top: 5px;" ng-hide="uiState.speedDial.new" ng-model="uiState.speedDial.selected" ng-options="a.phone + ' ' + a.name for a in localVars.speedDialNumbers"></select>
+                     </td>
+                 </tr>
+                 <tr>
+                     <td>{{localeLabels.loggedInSpeedDialName}}:</td>
+                     <td>
+                         <input style="width: 100px;margin-top: 5px;" ng-model="uiState.speedDial.selected.name" type="text"/>
+                     </td>
+                 </tr>
+                 <tr>
+                     <td>{{localeLabels.loggedInSpeedDialPhone}}:</td>
+                     <td>
+                         <input style="width: 100px;margin-top: 5px;" ng-model="uiState.speedDial.selected.phone" type="text"/>
+                     </td>
+                 </tr>
+                 <tr>
+                     <td>{{localeLabels.loggedInSpeedDialFontColor}}:</td>
+                     <td>
+                         <input ng-show="colorSupport()" style="width: 100px;margin: 5px 0;" ng-model="uiState.speedDial.selected.color" type="color"/>
+                         <select ng-hide="colorSupport()" style="width: 100px;margin: 5px 0;" ng-model="uiState.speedDial.selected.color" ng-options="k for (k,v) in uiInfo.colors"></select>
+                     </td>
+                 </tr>
+                 <tr>
+                     <td>{{localeLabels.loggedInSpeedDialBackgroundColor}}:</td>
+                     <td>
+                         <input ng-show="colorSupport()" style="width: 100px;margin: 5px 0;" ng-model="uiState.speedDial.selected.bgColor" type="color"/>
+                         <select ng-hide="colorSupport()" style="width: 100px;margin: 5px 0;" ng-model="uiState.speedDial.selected.bgColor" ng-options="k for (k,v) in uiInfo.colors"></select>
+                     </td>
+                 </tr>
+                 <tr>
+                     <td colspan="2" style="text-align: center;">
+                         <button style="margin: 2px;width: 50px;" ng-click="speedDialSave()">{{localeLabels.loggedInSpeedDialBtnSave}}</button>
+                         <button style="margin: 2px;width: 50px;" ng-click="speedDialDelete()" ng-hide="uiState.speedDial.new">{{localeLabels.loggedInSpeedDialBtnDelete}}</button>
+                         <button style="margin: 2px;width: 50px;" ng-click="speedDialExit()">{{localeLabels.loggedInSpeedDialBtnExit}}</button>
+                     </td>
+                 </tr>
+                 </tbody>
+             </table>
+         </div>
+     </div>
+ </div>
+     </div>
+ 
+ 
+ <!--div style="background-color:#d0eef8; border: 1px solid #cccccc; overflow: auto;margin: 5px; padding: 0px 3px 3px 3px;" -->
+    <!--div style="margin: 0px 0px 3px 0px;text-align: center;"-->
+     <div class="MyCallsAppearance dialpad">
+        <div class="MyLine" style="background-color:#ffffff; border: 1px solid #cccccc; overflow: auto;">
+                <div class="logPanel" style="background-color: #d0eef8; margin: 5px;width: 180px;">
+                    <table class="logPanelTable">
+                        <tr>
+                            <td class="content">
+                                <div class="preComment" style="margin: 1px;text-align: center;">
+         <!--<img src="https://na9.salesforce.com/resource/1420642684000/editpng" style="float: right;margin-top: 8px;" ng-click="preCommentsEdit(1)" ng-show="uiState.preComments.show && !uiState.preComments.edit"/>-->
+         <img src="{!URLFOR($Resource.editpng, '')}" style="float: right;margin-top: 8px;" ng-click="preCommentsEdit(1)" ng-show="uiState.preComments.show && !uiState.preComments.edit"/>
+         
+         <button class="dialpadBtn2" ng-click="preCommentTangle()"  title="Pre-Defined Comments" >{{localeLabels.loggedInPreComment}}</button>
+                                </div>
+                                 <div ng-show="uiState.preComments.show" class="preComment">
+                                    <div ng-repeat="c in preComments()" ng-attr-style="color: {{c.color}};background-color: {{c.bgColor}};" title="{{c.comment}}">{{c.index}}
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+     <!--/div-->
+         
+         
+     <!--div ng-show="uiState.preComments.show"  -->
+        <div ng-show="uiState.preComments.edit" style="position: relative;top: 0; z-index: 20;">
+        <table style="margin-top: 0;">
+         <tbody>
+         <tr>
+             <td colspan="2">
+                 <select style="width: 150px;margin-top: 5px;" ng-model="uiState.preComments.selected" ng-options="'comment ' + a.index for a in localVars.preComments"></select>
+             </td>
+         </tr>
+         <tr>
+             <td colspan="2" style="margin-top: 5px;">{{localeLabels.loggedInPreComment}}:</td>
+         </tr>
+         <tr>
+             <td colspan="2">
+                 <textarea style="width: 150px;height: 50px;" ng-model="uiState.preComments.selected.comment" ng-change="preCommentChange()" title="Only first 160 characters can be saved"></textarea>
+             </td>
+         </tr>
+         <tr>
+             <td style="width:20%;">{{localeLabels.loggedInPreCommentFontColor}}:</td>
+             <td>
+                 <input ng-show="colorSupport()" style="width:80px;margin: 5px 0;" ng-model="uiState.preComments.selected.color" type="color"/>
+                 <select ng-hide="colorSupport()" style="width: 80px;margin: 5px 0;" ng-model="uiState.preComments.selected.color" ng-options="k for (k,v) in uiInfo.colors"></select>
+             </td>
+         </tr>
+         <tr>
+             <td>{{localeLabels.loggedInPreCommentBackgroundColor}}:</td>
+             <td>
+                 <input ng-show="colorSupport()" style="width:80px;margin: 5px 0;" ng-model="uiState.preComments.selected.bgColor" type="color"/>
+                 <select ng-hide="colorSupport()" style="width: 80px;margin: 5px 0;" ng-model="uiState.preComments.selected.bgColor" ng-options="k for (k,v) in uiInfo.colors"></select>
+             </td>
+         </tr>
+         <tr>
+             <td colspan="2" style="text-align: center;" class="speedDial">
+                 <button style="margin: 2px;width: 50px;" ng-click="preCommentsSave()">{{localeLabels.loggedInPreCommentSave}}</button>
+                 <button style="margin: 2px;width: 50px;" ng-click="preCommentsDelete()">{{localeLabels.loggedInPreCommentDelete}}</button>
+                 <button style="margin: 2px;width: 50px;" ng-click="preCommentsExit()">{{localeLabels.loggedInPreCommentExit}}</button>
+             </td>
+         </tr>
+         </tbody>
+     </table>
+    </div>
+ <!--/div-->
+<!--/div-->
+     </div>
+            </div>
+        </div>
+    </div>
+
+
+ </body>
+ </html>
+    
+</apex:page>

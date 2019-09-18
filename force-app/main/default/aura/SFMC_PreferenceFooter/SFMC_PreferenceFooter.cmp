@@ -1,0 +1,16 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="SFMC_PreferenceHeaderController">
+	<aura:attribute name="brandType" type="String" />
+	<aura:attribute name="footerTopText" type="String" />
+    <aura:attribute name="footerSecondText" type="String" />
+    
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <div class="slds-p-top_xx-large">
+        <p class="copyright">
+            {!v.footerTopText} 
+            <br/>
+            {!v.footerSecondText}             
+        </p>
+    </div>
+    
+</aura:component>

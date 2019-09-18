@@ -1,0 +1,477 @@
+<apex:page action="{!doRedirect}" id="AdvancedScreenPopClientConsoleModeJS" controller="MoveSalesScrpopRulephase2" 
+
+title="Search 
+
+Results" sidebar="true" showHeader="true">
+    
+    <script> var previousOnload = window.onload; window.onload = function() { if (previousOnload) { previousOnload(); 
+
+} init(); } 
+
+</script>
+    
+    <apex:outputPanel layout="block" style="font-weight:bold;font-size:20px;" >
+        Search Results
+    </apex:outputPanel>
+ 
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <apex:includeScript value="/support/console/25.0/integration.js"/>
+        <script type="text/javascript">
+    </script>
+    
+      <script language="javascript">
+        function init()
+        {
+                sforce.console.setTabTitle('Search Results');
+        }
+
+     </script>
+     
+    <script type="text/javascript">
+        function testOpenPrimaryTab(url, name) {
+        //alert(url);
+        //alert(name);
+            //Open a new primary tab 
+            sforce.console.openPrimaryTab(null, url, false, 
+                name, openSuccess, name);
+        }
+        
+        var openSuccess = function openSuccess(result) {
+            //Report whether opening the new tab was successful
+            if (result.success == true) {
+                //alert('Primary tab successfully opened');
+                sforce.console.focusPrimaryTabById(result.id, focusSuccess);
+            } else {
+                //alert('Primary tab cannot be opened');
+            }
+        };
+        
+        var focusSuccess = function focusSuccess(result) {
+            //Report whether going to the primary tab was successful
+            if (result.success == true) {
+               // alert('Going to the primary tab was successful');
+            } else {
+               // alert('Going to the Primary tab was not successful');
+            }
+        };
+        
+        $(function(){
+        $('.ifunc').click(function(){
+            var $this = $(this);
+            var p1 = $this.data('p1');
+            var p2 = $this.data('p2');
+            testOpenPrimaryTab(p1, p2);
+        });
+    });
+
+        
+  </script>
+
+
+    
+    <apex:form id="frm">
+        
+
+        <apex:pageMessages />
+        
+        
+        <apex:pageBlock title="Campaigns()" rendered="{!NOT(ISNULL(CampaignResults))}">
+            <apex:actionStatus id="statusSave">
+                <apex:facet name="start">
+                    <span style="font-weight:bold; color: red;">
+                        Saving...<img src="/img/loading.gif" />
+                    </span>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:pageBlockTable value="{!CampaignResults}" var="record" id="thepageBlock" >
+                
+                <apex:column headerValue="Action" width="30">
+                    <A class="ifunc" href="javascript:;" style="color:blue" data-p1='/{!record.ID}/e' data-p2='{!
+
+record.Name}'>Edit</A>
+                </apex:column>
+                
+                <apex:column headerValue="Name" width="200">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.Name}</A>
+                    
+
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Type" width="200"> 
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.Type}</A>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Status" width="50"> 
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.Status}</A>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Start Date" width="200"> 
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.StartDate}</A>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="End Date" width="200"> 
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.EndDate}</A>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Owner Alias" width="200"> 
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.OwnerID}' data-p2='{!record.OwnerID}'>{!
+
+record.Owner.Alias}</A>    
+                </apex:column>
+                
+            </apex:pageBlockTable>
+            <apex:pageBlockButtons >
+                
+            </apex:pageBlockButtons>
+        </apex:pageBlock>   
+        
+        <apex:pageBlock title="Accounts ()" rendered="{!NOT(ISNULL(AccountResults))}">
+            <apex:actionStatus id="statusSave">
+                <apex:facet name="start">
+                    <span style="font-weight:bold; color: red;">
+                        Saving...<img src="/img/loading.gif" />
+                    </span>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:pageBlockTable value="{!AccountResults}" var="record" id="thepageBlock" >
+                
+                <apex:column headerValue="Action" width="30">
+                    <A class="ifunc" href="javascript:;" style="color:blue" data-p1='/{!record.ID}/e' data-p2='{!
+
+record.Name}'>Edit</A>
+                </apex:column>
+                
+                <apex:column headerValue="Account Name" width="150" >
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.Name}</A>
+                </apex:column>
+                
+                <apex:column headerValue="Account Type" width="150" >
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.Type}</A>
+                </apex:column>
+                
+                <apex:column headerValue="Phone" width="200"> 
+                    <support:clickToDial number="{!record.Phone}"
+                                         params="{'DN='{!record.Phone}"/>
+                </apex:column>
+                
+                <apex:column headerValue="Account Email Address" width="150" >
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.Email_Address__c }
+
+</A>
+                </apex:column>
+     
+                <apex:column headerValue="Primary MLS Set Id" width="150" >
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.MLS_Set_Id__c}</A>
+                </apex:column>
+                
+                <apex:column headerValue="Billing Street" width="150" >
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.BillingStreet}</A>
+                </apex:column>
+                
+                <apex:column headerValue="Billing City" width="150" >
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.BillingCity}</A>
+                </apex:column>
+                
+                <apex:column headerValue="Billing State" width="150" >
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.BillingState}</A>
+                </apex:column>
+                
+                <apex:column headerValue="Billing Country" width="150" >
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.BillingCountry}</A>
+                </apex:column>
+                
+                
+                <apex:column headerValue="Account Owner " width="200">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.OwnerID}' data-p2='{!record.OwnerID}'>{!
+
+record.Owner.Name}
+
+</A>    
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:pageBlockButtons >
+                
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        
+        <apex:pageBlock title="Contacts ()" rendered="{!NOT(ISNULL(ContactResults))}">
+            <apex:actionStatus id="statusSave">
+                <apex:facet name="start">
+                    <span style="font-weight:bold; color: red;">
+                        Saving...<img src="/img/loading.gif" />
+                    </span>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:pageBlockTable value="{!ContactResults}" var="record" id="thepageBlock" >
+                
+                <apex:column headerValue="Action" width="30">
+                    <A class="ifunc" href="javascript:;" style="color:blue" data-p1='/{!record.ID}/e' data-p2='{!
+
+record.Name}'>Edit</A>
+                </apex:column>
+                
+                <apex:column headerValue="Name" width="100">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.Name}</A>
+                </apex:column>
+                
+                <apex:column headerValue="Account Name" width="100">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.AccountId}' data-p2='{!
+
+record.Account.Name}'>{!
+
+record.Account.Name}</A>    
+                </apex:column>
+                
+                <apex:column headerValue="Account Site" width="100">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.AccountId}' data-p2='{!
+
+record.Account.Name}'>{!
+
+record.Account.Site}</A>    
+                </apex:column>
+                
+                
+                <apex:column headerValue="Phone" width="50"> 
+                    <support:clickToDial number="{!record.Phone}"
+                                         params="{'DN='{!record.Phone}"/>
+                </apex:column>
+                
+                <apex:column headerValue="Email" width="150">
+                    <apex:outputField value="{!record.Email}"></apex:outputField>
+                    
+                </apex:column>
+                
+                
+                
+                <apex:column headerValue="Contact Owner Alias" width="200">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.OwnerID}' data-p2='{!record.OwnerID}'>{!
+
+record.Owner.Alias}</A>    
+                </apex:column>
+                
+                
+            </apex:pageBlockTable>
+            <apex:pageBlockButtons >
+                
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        
+        
+        <apex:pageBlock title="Leads ()"  rendered="{!NOT(ISNULL(LeadResults))}">
+            <apex:actionStatus id="statusSave">
+                <apex:facet name="start">
+                    <span style="font-weight:bold; color: red;">
+                        Saving...<img src="/img/loading.gif" />
+                    </span>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:pageBlockTable value="{!LeadResults}" var="record" id="thepageBlock" >
+                
+                <apex:column headerValue="Action" width="30">
+                    <A class="ifunc" href="javascript:;" style="color:blue" data-p1='/{!record.ID}/e' data-p2='{!
+
+record.Name}'>Edit</A>
+                </apex:column>
+                
+                <apex:column headerValue="Name" width="200">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.Name}</A>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Title" width="200">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.Title}</A>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Company" width="200">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.Company}</A>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Email" width="50">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.Email}</A>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Lead Status" width="200">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.Status}</A>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Owner Alias" width="200">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.OwnerID}' data-p2='{!record.OwnerID}'>{!
+
+record.Owner.Alias}</A>    
+                </apex:column>
+                
+            </apex:pageBlockTable>
+            <apex:pageBlockButtons >
+                
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        
+//------------
+        <apex:pageBlock title="Cases ()" rendered="{!NOT(ISNULL(CaseResults))}">
+            <apex:actionStatus id="statusSave">
+                <apex:facet name="start">
+                    <span style="font-weight:bold; color: red;">
+                        Saving...<img src="/img/loading.gif" />
+                    </span>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:pageBlockTable value="{!CaseResults}" var="record" id="thepageBlock" >
+                
+             <apex:column headerValue="Action" width="30">
+                    <A class="ifunc" href="javascript:;" style="color:blue" data-p1='/{!record.ID}/e' data-p2='{!
+
+record.ID}'>record.ID}');return false">Edit</A>
+                </apex:column>
+                
+                <apex:column headerValue="CaseNumber" width="200">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.ID}'>{!
+
+record.CaseNumber}</A>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Subject" width="100">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.ID}'>{!
+
+record.Subject}</A>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Date/Time Opened" width="200">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.ID}'>{!
+
+record.CreatedDate}</A>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Case Owner Alias" width="200">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.OwnerID}' data-p2='{!
+
+record.Owner.Alias}'>{!
+
+record.Owner.Alias}</A>    
+                </apex:column>   
+                
+            </apex:pageBlockTable>
+            <apex:pageBlockButtons >
+                
+            </apex:pageBlockButtons>
+        </apex:pageBlock>    
+//-------------------------            
+        
+        <apex:pageBlock title="Opportunities ()" rendered="{!NOT(ISNULL(OpportunityResults))}">
+            <apex:actionStatus id="statusSave">
+                <apex:facet name="start">
+                    <span style="font-weight:bold; color: red;">
+                        Saving...<img src="/img/loading.gif" />
+                    </span>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:pageBlockTable value="{!OpportunityResults}" var="record" id="thepageBlock" >
+                
+                <apex:column headerValue="Action" width="30">
+                    <A class="ifunc" href="javascript:;" style="color:blue" data-p1='/{!record.ID}/e' data-p2='{!
+
+record.ID}'>Edit</A>
+                </apex:column>
+                
+                <apex:column headerValue="Name" width="200">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.Name}</A>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Account Name" width="100">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.AccountId}' data-p2='{!
+
+record.Account.Name}'>{!
+
+record.Account.Name}</A>    
+                </apex:column>
+                
+                <apex:column headerValue="Account Site" width="100">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.AccountId}' data-p2='{!
+
+record.Account.Name}'>{!
+
+record.Account.Site}</A>    
+                </apex:column>
+                
+                <apex:column headerValue="Stage" width="200">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.StageName}</A>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Close Date" width="200">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.ID}' data-p2='{!record.Name}'>{!
+
+record.CloseDate}</A>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Opportunity Owner Alias" width="200">
+                    <A class="ifunc" href="javascript:;" data-p1='/{!record.OwnerID}' data-p2='{!record.OwnerID}'>{!
+
+record.Owner.Alias}</A>    
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:pageBlockButtons >
+                
+            </apex:pageBlockButtons>
+        </apex:pageBlock>      
+        
+  
+        
+    </apex:form>
+    
+</apex:page>

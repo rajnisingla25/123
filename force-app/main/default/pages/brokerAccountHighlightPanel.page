@@ -1,0 +1,103 @@
+<apex:page standardController="Account" extensions="CallsAndSalesQuotaExtension" showHeader="false" sidebar="false">
+  <style>
+    .theGaugeChartsTable {
+      font-family: sans-serif;
+      margin: 0px;
+    }
+    .theGaugeChartsTable .theHeader {
+      background-color: #2a94d6;
+      color: #fff;
+      font-size: 13px;
+      font-weight: bold;
+      margin: 0px;
+    }
+    .theGaugeChartsTable .theBody {
+      border: 1px solid #1f8dd6;
+    }
+    .theGaugeChartsTable .theAccountHighlights {
+      margin: 0px;
+      padding: 0px;
+    }
+  </style>
+  <apex:variable value="{!Account}" var="a"/>
+  <table width="100%" height="10px" cellpadding="0px" cellspacing="2px" class="theGaugeChartsTable">
+    <tr>
+      <td align="center" height="10px" class="theHeader">
+          Account Highlights
+      </td>
+    </tr>
+    <tr>
+      <td height="90px" class="theBody">
+                <table width="100%" cellpadding="2px" cellspacing="2px" class="theAccountHighlights">
+                    <tr>
+                        <td style="color:#848484;" width="25%">Last Sales Contact Date</td>
+                        <td style="color:#848484;" width="25%">Total Contract Value</td>
+                        <td style="color:#848484;" width="25%">Office / Agents</td>
+                        <td style="color:#848484;" width="25%">Days Past Due</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold;" width="25%">
+              <apex:outputText value="{0, date, MM'/'dd'/'yyyy}">
+                  <apex:param value="{!a.Last_Sales_Contact_Date__c}"/> 
+              </apex:outputText>
+                        </td>
+                        <td style="color:#088A08; font-weight: bold;" width="25%">
+                            <apex:outputText value="${0,number,###,###.00}" rendered="{!IF(TEXT(a.Total_Contract_Value__c) != '', true, false)}">
+                                <apex:param value="{!a.Total_Contract_Value__c}"/>
+                            </apex:outputText>
+                        </td>
+                        <td style="font-weight:bold;" width="25%">
+              <apex:outputPanel layout="block">
+                {!a.Total_Offices__c}
+                <apex:outputPanel rendered="{!IF(TEXT(a.Total_Agents__c) != '', true, false)}">/</apex:outputPanel>
+                {!a.Total_Agents__c}
+              </apex:outputPanel>
+                        </td>
+                        <td style="font-weight:bold; color:#FF0000;" width="25%">
+                          <apex:outputText value="{!theDaysPastDue}" rendered="{!IF(theDaysPastDue > 0, true, false)}"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="color:#848484;" width="25%">Next Renewal Date</td>
+                        <td style="color:#848484;" width="25%">Strategic Notes / Flags</td>
+                        <td style="color:#848484;" width="25%">Total HLC / Total CLC</td>
+                        <td style="color:#848484;" width="25%">Past Due Amount</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:bold;" width="25%">
+              <apex:outputText value="{0, date, MM'/'dd'/'yyyy}">
+                  <apex:param value="{!a.Next_Renewal_Date__c}"/>
+              </apex:outputText>
+                        </td>
+                        <td style="font-weight:bold;" width="25%">
+                          <apex:image url="{!$Resource.TheRedFlag}" width="30" height="30" rendered="{!showRedFlag}"/>
+                          <apex:image url="{!$Resource.TheGreenFlag}" width="30" height="30" rendered="{!!showRedFlag}"/>
+                        </td>
+            <td style="font-weight:bold;" width="25%">
+              <apex:outputPanel layout="block">
+                {!a.Total_HLC__c}
+                <apex:outputPanel rendered="{!IF(TEXT(a.Total_CLC__c) != '', true, false)}">/</apex:outputPanel>
+                {!a.Total_CLC__c}
+              </apex:outputPanel>
+            </td>
+                <td style="color:#FF0000; font-weight: bold;" width="25%">
+                    <apex:outputText value="${0,number,###,###.00}">
+                        <apex:param value="{!thePastDueAmount}"/>
+                    </apex:outputText>
+                    <apex:outputText value="0.00" rendered="{!IF(TEXT(thePastDueAmount) == '', true, false)}"/>
+                </td>
+                    </tr>
+                </table>
+      </td>
+    </tr>
+  </table>
+  <apex:chart name="MyChart1" height="150" width="200" animate="true" data="{!dailyCallsData}">
+       <apex:axis type="Gauge" position="gauge" title="Daily Calls Data"  minimum="0" maximum="100" steps="10"/>
+       <apex:gaugeSeries dataField="size" donut="50" colorSet="#78c953,#ddd"/>
+   </apex:chart>
+  
+   <apex:chart name="MyChart3" height="250" width="400" animate="true" data="{!monthlySalesData}">
+       <apex:axis type="Gauge" position="gauge" title="Monthly Sales Data"  minimum="0" maximum="100" steps="10"/>
+       <apex:gaugeSeries dataField="size" donut="50" colorSet="#78c953,#ddd"/>
+   </apex:chart>
+</apex:page>

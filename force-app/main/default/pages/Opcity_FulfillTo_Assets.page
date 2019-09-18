@@ -1,0 +1,209 @@
+<apex:page controller="Opcity_FulfillTo_Assets_Controller" sidebar="false">
+    <apex:includeScript value="/support/console/45.0/integration.js"/>
+    
+    <style type="text/css">
+        .table.officeTable { 
+              border: 1px solid #eeeeff;
+              border-radius: 13px; 
+              border-spacing: 0;
+          }
+          table.officeTable  td, table.officeTable th {   
+              border-bottom: 1px solid #eeeeff;
+              padding: 5px; 
+          }
+        .officeTable .officeDetailHeader {text-align:center;!important; font-size: 18px;!important;}
+        .officeTable thead {background-color: #00485F;color: #fff;}
+        .officeTable td {padding-top: .2em; padding-bottom: .2em;}
+        .headerTable td, brokerHeader { padding-top: .3em;}
+        .officeNameRow {font-size: 15px; border-top:5px solid #ccccee; background-color: #85C8DD; font-weight: bold;}
+        .officeTable tr:hover {background-color: #eeeeff;}
+        .outerDiv{
+              padding:1em;
+              border-radius: 15px;
+              border: 1px solid #85C8DD;
+            }
+        .brokerHeader{border-radius: 15px;border: 1px solid #85C8DD;text-align:center;!important; font-size: 18px;!important; font-weight: bold; background-color:  #eeeeff;}
+        .blaHeader {text-align:center;!important; font-weight: bold; border-radius: 15px; border: 1px solid #85C8DD;background-color: #eeeeff;width:100%;}
+        .buttonDiv input{margin:1px}
+    </style>
+    
+    <script type="text/javascript">
+        var preRecordId;
+        var recordName;
+        function funOpenSubtab(id, name) {
+             preRecordId = id;
+             recordName = name
+             if (sforce.console.isInConsole()) {
+                sforce.console.getEnclosingPrimaryTabId(openSubtab);
+             }
+             else {
+                  window.open('/' + id, '_blank');
+             }
+        }
+        
+        var openSubtab = function openSubtab(result) 
+        {
+            var primaryTabId = result.id;
+            sforce.console.openSubtab(primaryTabId , '/'+preRecordId , true, 
+                name , null , null, 'salesforceSubtab');
+        };
+   
+        function checkAll(cb) {
+            var inputElem = document.getElementsByTagName("input");
+            for(var i=0; i<inputElem.length; i++) {
+                var input = inputElem[i];
+                if (input.type == "checkbox") {
+                    input.checked = cb.checked;
+                }
+            }
+        }
+        
+        function checkUncheckCheckAll(cb) {
+            var checkAll = true;
+            var inputElem = document.getElementsByTagName("input");
+            var checkAllElem;
+            for(var i=0; i<inputElem.length; i++) {
+                var input = inputElem[i];
+                if (input.type == "checkbox" && !input.id.includes("checkAll")) {
+                    if (!input.checked) {
+                        checkAll = false;
+                    }
+                }
+                else if (input.type == "checkbox" && input.id.includes("checkAll")) {
+                    checkAllElem = input;
+                }
+
+            }
+            checkAllElem.checked = checkAll;
+        }
+    </script>
+    
+    <apex:form >
+        <apex:slds />      
+        <div class="slds-scope">
+        <apex:pagemessages id="msg"/>
+        <apex:actionstatus id="status">
+            <apex:facet name="start">
+                <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height:1000%;opacity:0.65;width:100%;"> 
+                    <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                        <img class="waitingImage" src="/img/loading.gif" title="Loading..." />
+                        <span class="waitingDescription">Please Wait...</span>
+                    </div>
+                </div>
+            </apex:facet>
+        </apex:actionstatus>
+        
+        <div class="brokerHeader">
+        {!borkerAccountName}
+        </div>
+        <div class="slds-align_absolute-center buttonDiv">
+            <apex:commandButton value="{!$Label.Opcity_Complete_FocusFire_Task}" action="{!updateAssetToFulfilled}" rerender="msg,rows,blaSection" status="status"/>
+            <apex:commandButton value="Save" action="{!save}" rerender="msg,rows,blaSection" status="status"/>
+           
+        </div>  
+        <div class="outerDiv">
+          <apex:outputPanel id="rows">
+            <table class="officeTable" width="100%">
+                <thead>
+                    <tr>
+                        <th colspan="7"><apex:inputCheckBox onclick="checkAll(this)" id="checkAll"/> </th>
+                    </tr>
+                </thead>
+                <tbody>
+                   
+                    <apex:repeat value="{!fulfillToAssets}" var="fulfillToAsset" rendered="{!fulfillToAssets.size>0}">  
+                        <tr class="officeNameRow">
+                           <td colspan="2">
+                           <apex:inputCheckBox disabled="{!fulfillToAsset.fulfillToAsset.Fulfillment_Status__c != 'Manual'}" value="{!fulfillToAsset.selected}" onclick="checkUncheckCheckAll(this)" rendered="{!fulfillToAsset.fulfillToAsset.Fulfillment_Status__c == 'Manual'}"/>
+                           <a href="#" onclick="funOpenSubtab('{!fulfillToAsset.fulfillToAsset.AccountId}', '{!fulfillToAsset.fulfillToAsset.Account.Name}');return false">{!fulfillToAsset.fulfillToAsset.Account.Name}</a>
+                           </td>
+                          <td colspan="1" style="text-align:center;">Party Id: {!fulfillToAsset.fulfillToAsset.Account.Party_ID__c}</td>
+                          <td colspan="3" style="text-align:right;">{!fulfillToAsset.fulfillToAsset.Account.ShippingStreet} {!fulfillToAsset.fulfillToAsset.Account.ShippingCity} {!fulfillToAsset.fulfillToAsset.Account.ShippingState} {!fulfillToAsset.fulfillToAsset.Account.ShippingPostalCode} {!fulfillToAsset.fulfillToAsset.Account.ShippingCountry}</td>
+                          
+                        </tr>
+                        
+                        <tr>
+                            <th> Action </th>
+                            <td> <apex:outputText value="{!If(fulfillToAsset.fulfillToAsset.Line_Type__c=='Cancel', 'Remove', 'Add')} Office" /> </td>
+                            <th> Product Code</th>
+                            <td> <apex:outputText value="{!If(fulfillToAsset.fulfillToAsset.Product_Code__c=='OPCITYCORE', 'CORE', 'BLA')}"></apex:outputText></td>
+                            <th> Fulfillment Status</th>
+                            <td> {!fulfillToAsset.fulfillToAsset.Fulfillment_Status__c}  </td>
+                       
+                        </tr>
+                            <th> Focus Fire Id </th>
+                            <td> 
+                                <apex:inputField value="{!fulfillToAsset.fulfillToAsset.Focus_Fire_Id__c}" rendered="{!fulfillToAsset.fulfillToAsset.Fulfillment_Status__c == 'Manual'}"/>
+                                <apex:outputField value="{!fulfillToAsset.fulfillToAsset.Focus_Fire_Id__c}" rendered="{!fulfillToAsset.fulfillToAsset.Fulfillment_Status__c != 'Manual'}"/>
+                            </td>
+                            <th> Stage </th>
+                            <td> 
+                                <apex:inputField value="{!fulfillToAsset.fulfillToAsset.Stage__c}" rendered="{!fulfillToAsset.fulfillToAsset.Fulfillment_Status__c == 'Manual'}"/>
+                                <apex:outputField value="{!fulfillToAsset.fulfillToAsset.Stage__c}" rendered="{!fulfillToAsset.fulfillToAsset.Fulfillment_Status__c != 'Manual'}"/>
+                            </td>
+                        
+                            <th>Contract Signed Date</th>
+                            <td> 
+                                <apex:inputField value="{!fulfillToAsset.fulfillToAsset.Contract_Signed_Date__c}" rendered="{!fulfillToAsset.fulfillToAsset.Fulfillment_Status__c == 'Manual'}"/>
+                                <apex:outputField value="{!fulfillToAsset.fulfillToAsset.Contract_Signed_Date__c}" rendered="{!fulfillToAsset.fulfillToAsset.Fulfillment_Status__c != 'Manual'}"/>
+                            </td>
+             
+                        <tr>
+                            <th>Broker Asset Number</th>
+                            <td> {!fulfillToAsset.fulfillToAsset.Parent_Asset__r.Asset_Number__c} </td>
+                                   <th> Asset Number</th>
+                            <td>{!fulfillToAsset.fulfillToAsset.Asset_Number__c}</td>
+                     
+                       
+                             <th> Asset Owner </th>
+                            <td> {!fulfillToAsset.fulfillToAsset.Sign_in_AE__r.Name} </td>
+                        </tr>
+                        
+                        <!-- CRM-6098,CRM-6197 & CRM-6063 Added BLA Section -->
+                        <tr  style="display:{!If(fulfillToAsset.fulfillToAsset.Product_Code__c=='OPCITYCORE', 'none', 'table-row')};"> 
+                        <td colSpan="7"><div class="blaHeader">BLA Section </div></td>
+                        </tr>
+                        <tr style="display:{!If(fulfillToAsset.fulfillToAsset.Product_Code__c=='OPCITYCORE', 'none', 'table-row')};">
+                            <th > Setup Fee </th>
+                            <td > {!fulfillToAsset.fulfillToAsset.Setup_Fee__c}</td>
+                            <th> Product Type </th>
+                            <td> {!fulfillToAsset.fulfillToAsset.Product_Type__c} </td>
+                            <th> Contract Term </th>
+                            <td> {!fulfillToAsset.fulfillToAsset.Contract_Term__c} </td>
+                            
+                        </tr>
+                        
+                        <tr style="display:{!If(fulfillToAsset.fulfillToAsset.Product_Code__c=='OPCITYCORE', 'none', 'table-row')};">
+                            <th> Expected Monthly Lead Volume</th>
+                            <td>{!fulfillToAsset.fulfillToAsset.Expected_Monthly_Lead_Volume__c}</td>
+                            <th> Backup Monthly Plan </th>
+                            <td> {!fulfillToAsset.fulfillToAsset.Backup_Monthly_Plan__c} </td>
+                            <th>Launch Date</th>
+                            <td> <apex:inputField value="{!fulfillToAsset.fulfillToAsset.Launch_Date__c}"/> </td>
+                            
+                        </tr>
+                        <tr style="display:{!If(fulfillToAsset.fulfillToAsset.Product_Code__c=='OPCITYCORE', 'none', 'table-row')};">
+                            <th>Source</th>
+                            <td> {!fulfillToAsset.fulfillToAsset.Source__c} </td>
+                            <th> Markets</th>
+                            <td>{!fulfillToAsset.fulfillToAsset.Opcity_MSA__c}
+                            </td>
+                        </tr>
+                        
+                        <tr style="display:{!If(fulfillToAsset.fulfillToAsset.Product_Code__c=='OPCITYCORE', 'none', 'table-row')};">
+                            <th colSpan="2">Agents can choose to receive leads outside of brokerage licensed state(s) </th> 
+                            <td><apex:outputField value="{!fulfillToAsset.fulfillToAsset.unlicensed_state_leads__c}"/></td>
+                            <th  colSpan="2">Opcity has permission to disclose referral fees to agents</th> 
+                            <td><apex:outputField value="{!fulfillToAsset.fulfillToAsset.can_disclose_fees__c}"/></td>
+                        </tr>
+                        <tr class="spacer"><td colspan="7"><br/></td></tr>
+                    </apex:repeat>
+                    
+                </tbody>
+                
+            </table>
+        </apex:outputPanel>
+     </div>  
+     </div>
+    </apex:form> 
+</apex:page>

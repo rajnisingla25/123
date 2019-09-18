@@ -1,0 +1,22 @@
+<design:component>
+	<design:attribute name="headline" label="Headline" />
+    <design:attribute name="subheadline" label="Subheadline" />
+    <design:attribute name="imagePath" label="Image path"/>
+    <design:attribute name="imageSize" label="Image Size"/>
+    <design:attribute name="subimagePath" label="Sub Image path"/>
+    <design:attribute name="subimageSize" label="Sub Image Size"/>
+    <design:attribute name="backgroundPath" label="Background Image" />
+    <design:attribute name="formheadline" label="Form Headline" placeholder="Ex: 'For Home Buyers'"/> 
+    <design:attribute name="formsubheadline" label="Form Sub-headline" placeholder="Ex: 'For Home Buyers'"/> 
+    <design:attribute name="bannerTextFont" datasource = "cursive,fantasy,monospace,Arial,sans-serif,Helvetica,Lato" label="Banner Text Font." />
+    <design:attribute name="bannersubTextFont" datasource = "cursive,fantasy,monospace,Arial,sans-serif,Helvetica,Lato" label="Banner Sub-text Font." />
+    
+    <!--Form Attributes.-->
+    <design:attribute name="formButtonText" label="Button Label." placeholder="Ex: 'REGISTER'"/>
+    <design:attribute name="formTitle" label="Form Title." placeholder="Ex: 'Register me'"/>
+    <design:attribute name="showBigWord" label="Show the big form title word."/>
+    <design:attribute name="firstWordInFormTitle" label="Big form title word." placeholder="Ex: 'YES!'"/>
+    <design:attribute name="cellNumber" label="Form Bottom Cell Number" placeholder="Ex: '1.833.387.1911'"/>
+
+    <!--Form Attributes.-->
+</design:component>

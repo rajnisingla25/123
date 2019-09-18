@@ -1,0 +1,296 @@
+<apex:page showHeader="false" standardStylesheets="true" sidebar="false" docType="html-5.0" controller="MovingLeadcontroller">    
+    <!-- <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en"> -->   
+    <apex:form id="theForm"> 
+    <apex:slds />      
+    <div class="slds-scope">
+        <body>        
+            <apex:pageMessages />
+            <style>
+                .LeadsImportSection1 span{padding-left:10px;}
+                .LeadsImportSection1 input{margin-left:10px;}
+                .LeadsImportSection1 {float:left;padding:5px}
+                .LeadImportbuton1 {float: left;width: 70%;}
+                .HomeDiv{float: right;margin-right: 10px;}
+                .BulkUpdateSection {float:right;margin-right:10px;padding:5px}
+                .BulkUpdateSection span {margin-left:10px;}
+                .BulkUpdateSection input {margin-left:10px;}
+                ..BulkUpdateSection select {margin-left:10px;}
+                .LeadImportbuttonSection{}
+                .LeadImportbuttonSection input {margin:10px}
+                .bottompage input, .bottompage select{margin-left:15px}
+                .bottompage {margin:5px}
+            </style>
+                          
+                    <apex:actionFunction name="refreshPageSize" action="{!refreshPageSize}" status="fetchStatus" reRender="pbId"/>
+                    <apex:actionFunction name="getthevalues" action="{!getthevalues}"  status="fetchStatus"/>
+                    <apex:actionFunction name="leadsCall" action="{!importLeads}"   reRender="theForm,pbId,rpttable" />     
+                    <!--<apex:actionFunction name="selectall" action="{!SelectAll}" status="fetchStatus" reRender="pbId"/> -->
+               <!--    <apex:outputPanel rendered="{!IsNew}" >
+                       Asset    <apex:inputField value="{!movingLead.Asset__c}"/> 
+                       Comments <apex:inputField value="{!movingLead.Comments__c}"/>
+                       Description <apex:inputField value="{!movingLead.Description__c}"/>
+                       EndDate   <apex:inputField value="{!movingLead.End_Date__c}"/>
+                       Ischanged    <apex:inputField value="{!movingLead.Ischanged__c}"/>
+                       PerUnitPrice<apex:inputField value="{!movingLead.Per_Unit_Price__c}"/>
+                       Quantity <apex:inputField value="{!movingLead.Quantity__c}"/>
+                    </apex:outputPanel>-->
+                 
+                       <!--  <apex:outputPanel style="text-align:center;" layout="block">   
+                       <div style = "text-align:center;background-color: #F0FDFC;">
+                           <apex:commandButton action="{!insertNewLead}" value="Insert New Lead"/> 
+                       </div>
+
+                    </apex:outputPanel>  -->
+                <div class="LeadImportbuttonSection" style = "background-color: #F0FDFC;"> 
+                    <div class="LeadImportbuton1">
+                        <apex:commandButton onclick="newRecord();" value="New"/> 
+                        <apex:commandButton action="{!save}" value="Save"/> 
+                        <apex:commandButton action="{!deleteSelectedLeads}" value="Delete" onclick="return confirm('Are you sure you want to delete?');"/>
+                        <apex:commandButton value="Send to Zuora" action="{!Sendtozuora}"/>
+                        <apex:commandButton action="{!Changestatusselected}" value="Change Status "/>
+                        <apex:selectList value="{!changestatusvalue}" multiselect="false" size="1" id="se">
+                                <apex:selectOptions value="{!Changestatus}"/>               
+                        </apex:selectList>
+                    </div>
+                    <div class="HomeDiv">
+                        <apex:commandButton value="Home" status="action" action="{!ReturntoHome}"/>
+                        <apex:commandButton value="Back" status="action" onclick="window.history.go();" />
+                    </div>
+                </div>
+                <div class="LeadImportSection" style = "background-color: #F0FDFC;">
+                    <div class="LeadsImportSection1">
+                         <span class="LeadImportbuttonLabels">Start Date: </span><apex:input type="date" value="{!startDate}"/>
+                        <span class="LeadImportbuttonLabels">End Date: </span>
+                        <apex:input type="date" value="{!endDate}"  />
+                        <apex:commandButton styleClass="LeadImportButtons" value="Import Leads" onclick="return leads();"/> <!--//oncomplete="Reload()" reRender="theForm,pbId" action="{!importLeads}" -->
+                    </div>
+                    <div class="BulkUpdateSection">
+                        <apex:selectList value="{!Fieldapi}" multiselect="false" size="1">
+                            <apex:selectOptions value="{!Fields}"/>               
+                        </apex:selectList>                                        
+                        <apex:inputText value="{!Fieldvalue}"/>  
+                        <apex:commandButton action="{!Search}" value="Search" reRender="pbId"/> 
+                    </div>
+                </div>
+                
+                <!-- <div class="slds-scrollable_x" style="height: 300rem; width: 300rem;">-->
+                <apex:outputPanel style="text-align:center;" layout="block" id="pbId">        
+                    
+                    <table class = "slds-table slds-table--bordered slds-table--cell-buffer slds-table--striped ">
+                        <thead id="pbIdhead">
+                            <tr class="slds-text-title--caps">
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Action">Edit                                
+                                    </div>
+                                </th>
+                                  <th scope="col">                                    
+                                    <!--<apex:inputCheckbox id="selectAll" value="{!Selectall}" onchange="selectall();"/> -->
+                                    <apex:inputCheckbox id="selectAll" value="{!Selectall}" onchange="toggleSelectAll(this);"/>
+                                </th>  
+                                  <th scope="col">
+                                    <apex:selectList Id="stt" value="{!statusvalue}" multiselect="false" size="1" onchange="getthevalues();">
+                                        <apex:selectOptions value="{!status}"  Id="sttl" />               
+                                    </apex:selectList>
+                                </th>
+                                 <th scope="col">
+                                    <div class="slds-truncate" title="Account">Account                                
+                                    </div>
+                                </th>
+                                 <th scope="col">
+                                    <div class="slds-truncate" title="Party">Party Id                                
+                                    </div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Name">Lead                                
+                                    </div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Asset">Asset                                
+                                    </div>
+                                </th>
+                                  <th scope="col">
+                                    <div class="slds-truncate" title="SubName">Subscription Name                               
+                                    </div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Asset">Asset 18 digit                               
+                                    </div>
+                                </th>
+                                <th scope="col">
+                                    <apex:commandLink action="{!Search}" value="QTY" reRender="pbId">
+                                        <apex:param name="orderByColumn" value="Quantity__c" assignTo="{!orderByColumn}" />
+                                    </apex:commandLink>
+                                </th>
+                                <th scope="col">
+                                    <apex:commandLink action="{!Search}" value="Per Unit price" reRender="pbId">
+                                        <apex:param name="orderByColumn" value="Per_Unit_Price__c" assignTo="{!orderByColumn}" />
+                                    </apex:commandLink>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Price"> Price                              
+                                    </div>
+                                </th>
+                              
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Description"> Description                               
+                                    </div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Asset">Comment                                
+                                    </div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Zuora Comment"> Zuora Comment                              
+                                    </div>
+                                </th>
+                                <th scope="col">
+                                    <apex:commandLink action="{!Search}" value="Created Date" reRender="pbId">
+                                        <apex:param name="orderByColumn" value="Created_Date__c" assignTo="{!orderByColumn}" />
+                                    </apex:commandLink>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Batch">Batch                                
+                                    </div>
+                                </th>
+                                 <th scope="col">
+                                    <div class="slds-truncate" title="Billing">BillingFeed                               
+                                    </div>
+                                </th>
+                            </tr>                       
+                        </thead>
+                        <tbody>
+                            <apex:repeat value="{!wrapperRecordList}" var="c" id="rpttable">
+                                <tr>
+                                    <td>
+                                        <apex:commandButton image="{!$Resource.zqu__iconPen}" rerender="pbId" rendered="{!NOT(c.isEdit)}" action="{!editmethid}">
+                                            <apex:param name="rowNumber" value="{!c.rowNo}" assignTo="{!rowIndex}"/>
+                                        </apex:commandButton>
+                                        <apex:commandlink value="Save" rerender="pbId" rendered="{!c.isEdit}" action="{!savemethid}">
+                                            <apex:param name="rowNumber" value="{!c.rowNo}" assignTo="{!rowIndex}"/>
+                                        </apex:commandLink>         
+                                    </td>
+                                    <td>
+                                        <apex:inputCheckbox styleClass="contactCb"  value="{!c.isSelected}"/>
+                                    </td>
+                                    <td>
+                                        <apex:outputField value="{!c.Leads.Status__c}"> 
+                                            <apex:inlineEditSupport event="ondblClick" />
+                                        </apex:outputField>
+                                    </td>
+                                    <td>
+                                        <apex:outputField value="{!c.Leads.Account_ID__c}"/> 
+                                    </td>
+                                     <td>
+                                        <apex:outputField value="{!c.Leads.Account_ID__r.Party_ID__c}"/> 
+                                    </td>
+                                    <td>                          
+                                        
+                                        <apex:outputlink value="/{!c.Leads.Id}">{!c.Leads.Name}</apex:outputlink>
+                                    </td>
+                                    <td>
+                                        <apex:outputField value="{!c.Leads.Asset__c}"/> 
+                                    </td>
+                                      <td>
+                                        <apex:outputField value="{!c.Leads.Asset__r.Zuora_Subscription_Name__c}"/> 
+                                    </td>
+                                    <td>                                                                  
+                                        <apex:outputlink value="/{!c.Leads.Asset__r.Asset_ID_18_Digit__c}">{!c.Leads.Asset__r.Asset_ID_18_Digit__c}</apex:outputlink>
+                                    </td>
+                                   
+                                    
+                                    <td>
+                                        <apex:outputField value="{!c.Leads.Quantity__c}" rendered="{!NOT(c.isEdit)}">
+                                            <apex:inlineEditSupport event="ondblClick" />
+                                        </apex:outputField>
+                                        <apex:inputField value="{!c.Leads.Quantity__c}" rendered="{!c.isEdit}"/>                                           
+                                    </td>
+                                    <td>                                           
+                                        <apex:inputField value="{!c.Leads.Per_Unit_Price__c}" rendered="{!c.isEdit}"/>
+                                        <apex:outputField value="{!c.Leads.Per_Unit_Price__c}" rendered="{!!c.isEdit}"> 
+                                            <apex:inlineEditSupport event="ondblClick" />
+                                        </apex:outputField>
+                                    </td>
+                                    <td>
+                                        <apex:outputField value="{!c.Leads.Price__c}"/> 
+                                    </td>
+                                    
+                                    <td>
+                                        <apex:outputField value="{!c.Leads.Description__c}">  
+                                            <apex:inlineEditSupport event="ondblClick" />
+                                        </apex:outputField>  
+                                    </td> 
+                                    <td>
+                                        <apex:outputField value="{!c.Leads.Comments__c}">  
+                                            <apex:inlineEditSupport event="ondblClick" />
+                                        </apex:outputField>  
+                                    </td> 
+                                    <td>
+                                        <apex:outputField value="{!c.Leads.Zuora_Comment__c}">  
+                                            <apex:inlineEditSupport event="ondblClick" />
+                                        </apex:outputField>  
+                                    </td> 
+                                    <td>
+                                        <apex:outputField value="{!c.Leads.Created_Date__c}"/> 
+                                    </td>
+                                    <td>
+                                        <apex:outputField value="{!c.Leads.Batch_Number__c}"/> 
+                                    </td>
+                                    <td>
+                                        <apex:outputField value="{!c.Leads.Asset__r.Billing_Feed__c}"/> 
+                                    </td>
+                                </tr>
+                            </apex:repeat>
+                        </tbody>
+                    </table>
+                    <div class="bottompage">
+                    <apex:selectList value="{!size}" multiselect="false" size="1" onchange="refreshPageSize();" >
+                        <apex:selectOptions value="{!paginationSizeOptions}"/>
+                    </apex:selectList>
+                    <apex:commandButton value="First" reRender="pbId" action="{!first}" disabled="{!NOT(hasPrevious)}" status="paginationStatus"/>
+                    <apex:commandButton value="Previous" rerender="pbId" action="{!previous}" disabled="{!NOT(hasPrevious)}" status="paginationStatus"/>
+                    <span>&nbsp;Page {!pageNumber} of {!totalPages}&nbsp;</span>
+                    <apex:commandButton value="Next" rerender="pbId" action="{!next}" disabled="{!NOT(hasNext)}" status="paginationStatus"/>
+                    <apex:commandButton value="Last" rerender="pbId" action="{!last}" disabled="{!NOT(hasNext)}" status="paginationStatus"/>
+                    <apex:actionStatus id="paginationStatus">
+                        <apex:facet name="start">
+                        </apex:facet>
+                    </apex:actionStatus>
+                     </div>
+                </apex:outputPanel>
+               
+                <!-- </div>-->
+            
+        </body>
+    </div>
+    
+    <!--</html>-->
+    <apex:includeScript value="{!$Resource.JQuery}"/> 
+    <apex:includeScript value="{!$Resource.zqu__jquery_1_9_1}" /> 
+    <script type="text/javascript"> 
+            function newRecord() {
+            var url= '/apex/NewLeadRecord';             
+            window.open(url,'New Lead Record','width=1000,height=400, left=200,scrollbars=no,toolbar=no,menubar=no,resizable=no,status=no,location=no');   
+         }
+    function Reload()
+    {
+        console.log('done');
+            location.reload(); 
+    }
+    function leads() {
+        leadsCall();
+        return false;
+    }
+    function toggleSelectAll(checkbox){       
+        var $j = jQuery.noConflict();           
+        
+        if(checkbox.checked){                
+            $j( ".contactCb" ).prop('checked', true);                
+        }
+        else{               
+            $j( ".contactCb" ).prop('checked', false);                
+        }           
+    }
+    
+    </script>
+</apex:form>        
+</apex:page>

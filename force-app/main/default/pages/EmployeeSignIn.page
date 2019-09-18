@@ -1,0 +1,110 @@
+<apex:page standardStylesheets="false" showHeader="false" controller="SiteLoginController"  applyBodyTag="false" applyHtmlTag="false">
+   <head>
+      <meta charset="utf-8"/>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+      <meta name="description" content="Employee Sign Up"/>
+       <link rel="icon" href="{!$Resource.EmployeeSiteFavicon}" />
+      <apex:includeScript value="{!URLFOR($Resource.EmployeeDashboard, '/employee/jquery-2.2.4.min.js')}"/>
+      <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,500" rel="stylesheet" type="text/css"/>
+      <link rel="stylesheet" media="screen" href="{!$Resource.EmployeeDashboardCss}" />
+   </head>
+   
+   <body>
+      <div id="app-container" class="app-container">
+         <div class="app-brand-border"></div>
+         <nav class="app-navbar navbar navbar-default navbar-fixed-top app-navbar no-border">
+            <div class="container-fluid">
+               <div class="pull-right pad-top-md"> <a href="{!$Site.Prefix}/EmployeeSignUp" class="btn btn-default">Sign up</a></div>
+            </div>
+         </nav>
+         <aside class="app-sidebar app-sidebar-fixed-height">
+            <nav class="navbar navbar-default navbar-fixed-top sidebar-navbar no-border">
+               <div class="container-fluid">
+                  <div class="navbar-header pull-left"><a class="navbar-brand"><img src="https://d260ckbc6brolt.cloudfront.net/prosoft-ui/20161007-a70f17b/img/realtor-logo-v3.svg" width="134"/></a></div>
+               </div>
+            </nav>
+         </aside>
+         <div id="main-container" class="main-container mar-left-none bg-white">
+            <div class="container-fluid">
+               <div id="alert"></div>
+               <div class="row">
+                  <div class="col-sm-10 col-sm-push-1 col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">
+                     <div class="" id="page-signin">
+                        <h1 class="text-center mar-top-lg">Sign in with your employee account</h1>
+                        <div class="sign-in-form col-sm-10 col-sm-push-1 col-md-8 col-md-push-2">
+                           <apex:form id="theForm" forceSSL="true"> 
+                              <apex:pageMessages id="error"/>
+                              
+                              <div class="form-group" >
+                                  <!-- CRM-2818 : updated label-->
+                                 <apex:outputLabel value="Work Email" for="lastName"/>
+                                 <div class="input-group">
+                                    <apex:inputText styleClass="form-control" required="true" id="userName" value="{!username}" label="UserName"/>
+                                 </div>
+                                 <span id="required-error" class="state-message hidden">This Field is required</span>
+                              </div>
+                              <div class="form-group" >
+                                 <apex:outputLabel value="Password" for="email"/>
+                                 <div class="input-group">
+                                    <apex:inputSecret styleClass="form-control" required="true" id="password" value="{!password}"  label="Password"/>
+                                 </div>
+                                  <span id="required-error"  class="state-message hidden">This Field is required</span>
+                              </div>
+                              <div class="form-group mar-top-xl">
+                                 <button class="btn btn-primary" id="signin-btn" onclick="validate(event)" type="submit">Sign in</button>
+                              <!--    <apex:commandButton styleClass="btn btn-primary signin" onclick="validate(event)" value="Sign in1" id="validate" reRender="error"/>-->
+                                  <apex:actionFunction name="login" action="{!login}" rerender="error" oncomplete="displayError()"></apex:actionFunction>
+                                   <!--  <apex:commandButton  styleClass="btn btn-primary signin" action="{!login}" value="" id="signin"/>-->
+
+                              </div>
+                              <div class="mar-top-xl">
+                                <a class="pull-left" href="{!$Site.Prefix}/EmployeeForgotPassword">Forgot Password</a>
+                                <a class="pull-right" href="{!$Site.Prefix}/EmployeeSignUp">Sign up</a>
+                                 <div style="clear: both;"></div>
+                              </div>
+                              <br/>
+                              <script type="text/javascript">
+
+                                function validate(event){
+                                event.preventDefault();
+                                var isBlank = false;
+
+                               // Show error if any field is blank
+                               // Else remove any previous error messages
+                                $( ".form-group" ).each(function() {
+                                  if($(".form-control",this).val() == ''){
+                                    $("#required-error",this).removeClass('hidden');
+                                    $("#required-error",this).addClass('help-block');
+                                    $(this).addClass('has-error');
+                                    isBlank = true;
+                                  } else {
+                                     $("#required-error",this).addClass('hidden');
+                                    $("#required-error",this).removeClass('help-block');
+                                    $(this).removeClass('has-error');
+                                  }
+                                });
+          
+                                if(isBlank){
+                                 return false;
+                                } else{
+                                  var a = login();
+                                }
+                               
+                                 //$('[id$="signin"]').trigger("click");
+                              
+                                }
+
+                              </script>
+                           </apex:form>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- Footer Component -->
+       <c:SetFooterCommunity id="footerComp" />
+   </body>
+</apex:page>

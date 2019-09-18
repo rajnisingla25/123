@@ -1,0 +1,51 @@
+<apex:component access="global" controller="CPLoginDetails">
+         <apex:attribute name="quoteId" assignTo="{!qId}" description="This is the relatedTo Id in the quote"
+
+        type="String"/>
+    <!--
+        <table border="1" >
+            <tr>
+                
+                <th>SSO Email</th>
+                <th>UserName</th>
+                <th>Password</th>
+                <th>AgentName</th>
+                <th>MLS ID</th>
+                <th>AccountType</th>
+            </tr>
+           <apex:repeat var="cp" value="{!cpLogins}">
+            <tr>
+                <td>{!cp.SSOEmail__c}</td> 
+                <td>{!cp.UserName__c}</td>
+                <td>{!cp.Password__c}</td>
+                <td>{!cp.AgentName__c}</td>
+                <td>{!cp.Name}</td>
+                <td>{!cp.AccountType__c}</td>
+                </tr>
+            </apex:repeat> 
+        </table>
+-->
+    
+    
+        
+        
+        
+        <table border="1" >
+            <tr>
+                <th>Agent Name</th>
+                <th>MLS Name</th>
+                <th>MLS ID</th>
+                <th>SSO Email</th>           
+            </tr>
+            <apex:repeat var="cp" value="{!cpLogins}">
+            <tr>
+                <td>{!cp.AgentName__c}</td>
+                <td>{!cp.Name}</td>
+                <td>{!cp.UserName__c}</td>
+                <td>{!cp.SSOEmail__c}</td>               
+                </tr>
+            </apex:repeat>
+        </table>
+      
+        
+</apex:component>

@@ -1,0 +1,33 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" 
+                			access="global" controller="ServiceDashboardController"> 
+    <aura:attribute name="recordId" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>  
+     <ltng:require styles="{! $Resource.sd_datatable + '/DataTables-1.10.16/media/css/jquery.dataTables.min.css'}" 
+                  scripts="{!join(',', 
+                           $Resource.jquery224 , 
+                           $Resource.sd_datatable + '/DataTables-1.10.16/media/js/jquery.dataTables.min.js')
+                           }" afterScriptsLoaded="{!c.scriptsLoaded}"/>
+    <div class="slds-box slds-m-bottom_large">
+    <div class="slds-page-header slds-card">
+        	<br/>
+            <div class="slds-card__body">
+                <table id="listingTable" class="">
+                    <thead class="font-size-heading-medium">
+                        <tr>
+                            <th style="font-weight: bold;font-size: 15px;" >MLS ID</th>
+                            <th style="font-weight: bold;font-size: 15px;" >Price</th>
+                            <th style="font-weight: bold;font-size: 15px;" >Address</th>
+                            <th style="font-weight: bold;font-size: 15px;" >Photo count</th>
+                            <th style="font-weight: bold;font-size: 15px;" >Days on market</th>
+                            <th style="font-weight: bold;font-size: 15px;" >Listed on RDC</th>
+                            <th style="font-weight: bold;font-size: 15px;" >Source</th>
+                        </tr>
+                    </thead>
+                    <tbody class="font-size-text-medium ">
+                       
+                    </tbody>
+				</table>
+            </div>
+        </div>
+    </div>
+</aura:component>

@@ -1,0 +1,3 @@
+<design:component>
+	<design:attribute name="phoneNumber" label="Phone Number" />
+</design:component>

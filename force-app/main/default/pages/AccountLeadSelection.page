@@ -1,0 +1,19 @@
+<apex:page standardController="Account" extensions="AccountLeadSelectionClassController" >
+<apex:form >
+<apex:pageMessages />
+    <apex:pageBlock >
+        <apex:pageBlockTable value="{!LeadWrapper}" var="ledWrap" >
+            <apex:column > 
+                <apex:inputCheckbox value="{!ledWrap.checked}"/>
+            </apex:column>
+            <apex:column value="{!ledWrap.led.Name}"/>
+            <apex:column value="{!ledWrap.led.Account__c}"/>
+            <apex:column value="{!ledWrap.led.Contact__c}"/>
+            <apex:column value="{!ledWrap.led.Status}"/>
+            <apex:column value="{!ledWrap.led.Recent_Campaign__c}"/>
+            <apex:column value="{!ledWrap.led.Marketing_Lead_Type__c}"/>
+        </apex:pageBlockTable>
+        <center><apex:commandButton value="  Save  " action="{!Save}" /></center>
+    </apex:pageBlock>    
+</apex:form>
+</apex:page>

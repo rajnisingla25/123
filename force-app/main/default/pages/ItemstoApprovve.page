@@ -1,0 +1,59 @@
+<apex:page controller="ItemstoApprovvecontroller" sidebar="false" showHeader="false">
+    <apex:form >
+        <apex:pageBlock title="Items To Approve">
+            <apex:pageBlockTable value="{!items_to_approve}" var="item_to_approve">
+                <apex:column headerValue="Action" width="160 px" >
+                                    <apex:commandLink target="_top" value="Reassign |" action="{!REASSIGNnavigation}" style="text-decoration:none;color: #015ba7;" styleClass="cactionLink">
+                                                       <apex:param name="myParam" value="{!item_to_approve.approvalid }" />
+                                                                                              
+                                                                    </apex:commandLink>
+
+                    <apex:commandLink target="_top" value=" Approve / Reject" action="{!ApproveRejectnavigation}" style="text-decoration:none;color: #015ba7;"  >
+
+                   <apex:param name="myParam" value="{!item_to_approve.approvalid }" />
+                </apex:commandLink>                         
+             </apex:column>
+              <apex:column headerValue="Case Number" width="100 px">
+                    <apex:outputLink target="_top" value="/{!item_to_approve.CaseId}">{!item_to_approve.CaseNumber}
+                      </apex:outputLink>
+                </apex:column>
+                    
+                <apex:column headerValue="Case Owner">
+                    <apex:outputLink target="_top" value="/{!item_to_approve.OwnerId}">{!item_to_approve.OwnerName}
+                      </apex:outputLink>
+                </apex:column>
+                
+               <apex:column headerValue="Date Submitted">
+                    <apex:outputtext >{!item_to_approve.DateSubmited }
+                      </apex:outputtext>  
+                  </apex:column>
+                  
+               <apex:column headerValue="Record Type">
+                    <apex:outputText >{!item_to_approve.recordType}
+                      </apex:outputText>
+                </apex:column>
+                  
+               <apex:column headerValue="Request Type">
+                    <apex:outputText >{!item_to_approve.requestType}
+                      </apex:outputText>
+                </apex:column>
+                  
+                <apex:column headerValue="Subject">
+                    <apex:outputtext >{!item_to_approve.subject}
+                      </apex:outputtext>
+                </apex:column>
+                
+                <apex:column headerValue="Description">
+                    <apex:outputText >{!item_to_approve.Description}
+                      </apex:outputText>
+                </apex:column>
+                
+               <apex:column headerValue="Case Asset Total Net">
+                    <apex:outputText >{!item_to_approve.AssetsTotalNet}
+                      </apex:outputText>
+                </apex:column>
+
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

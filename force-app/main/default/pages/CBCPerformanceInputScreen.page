@@ -1,0 +1,391 @@
+<apex:page standardController="Account" extensions="CBCPerformanceSearch" sidebar="false" readOnly="true" showHeader="true" tabstyle="Asset">
+     <!--   <apex:stylesheet value="{!$Resource.bootstrapcss}"/> 
+        
+     -->
+      <apex:includeScript value="/support/console/40.0/integration.js"/>
+    <script type="text/javascript">
+    //CRM-1855 - Srinivas Vadla : added this javascript function to Set the button/link label to the subtab title.
+    function testGetFocusedSubtabId() {
+            sforce.console.getFocusedSubtabId(showTabId);
+        }
+        var showTabId = function showTabId(result) {
+                sforce.console.setTabTitle('CBC Performance');
+        };
+         var pageLoad = window.onload;
+          window.onload = function() {
+            if (pageLoad) {
+                pageLoad();
+            }
+                testGetFocusedSubtabId();
+          }
+    </script>
+    <style>
+        table tr:nth-child(even) {
+        background: #f2f3f3;
+        }
+        table tr:nth-child(odd) {
+        }
+        div.pbSubheader{
+        font-size:13px;
+        }
+        input {
+        display:inline-block; margin-right: 1em;
+        }
+        .HoverPopup {
+        position: relative;
+        z-index: 0;
+        }
+        .headerRow .headerclass{text-align: right;}
+        .HoverPopup:hover {
+        background-color: #eeeeee;
+        Text-decoration: none;
+        z-index: 50;
+        }
+        
+        .HoverPopup div {
+        position: absolute;
+        visibility: hidden;
+        }
+        
+        .HoverPopup:hover div {
+        visibility: visible;
+        top: 20px;
+        left: 0px;
+        border: 1px solid black;
+        background-color: #eeeeee;
+        padding: 10px;
+        color: black;
+        Text-decoration: none;
+        white-space: pre;
+        }
+    </style>
+    
+    <!--<script>
+    //alert(" Error");
+     function ErrorLoad() {
+    // var errormsg = document.getElementById('theErrorPage:theError').value;
+        alert(" Error");
+      }
+      window.onload = ErrorLoad;
+    </script>-->
+    <apex:form >
+                    
+        <apex:pageMessages id="errors" />
+        
+        
+        <table width="100%" border="0">
+            <td valign="top" >
+             
+               <c:PageBlockTableEnhancerADV targetPbTableIds="pbt1" pageSizeOptions="10,20,30,50" defaultPageSize="10" enableExport="false"/>
+                <apex:pageBlock id="results3">
+                <apex:pageBlockButtons >
+                    
+               <!--  action="/apex/CBCPerformanceExportToExcel?whatId={!accountId}"  -->
+                </apex:pageBlockButtons>
+                    
+                    <apex:outputPanel >
+                        
+                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <apex:selectList size="1" value="{!selectedStatusValue}" >
+                                <apex:selectOption itemValue="Active" itemLabel="Active"/>
+                                <apex:selectOption itemValue="Expired" itemLabel="Expired"/>
+                                <apex:selectOption itemValue="Cancelled" itemLabel="Cancelled"/>                                        
+                            </apex:selectList>
+                            &nbsp;&nbsp;&nbsp;
+                            <apex:commandLink style="text-decoration:none;" action="{!exportToExcel}" target="_blank">
+                                <apex:commandButton value="Export to Excel"/>   
+                            </apex:commandLink>
+                       
+                    </apex:outputPanel>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <apex:outputPanel id="refreshPanel">
+                    <apex:repeat value="{!relatedAssets}" var="acc">
+                        <apex:pageBlocksection id="CollapseDefault" title="Account Name: {!acc.Name}" columns="1" collapsible="true" >
+                            <apex:pageBlockTable value="{!relatedAssets}" var="account" >
+                                <apex:column headerValue="PartyId">
+                                    <!--<apex:outputText value="{!acc.PartyId}"/> -->
+                                    <apex:outputLink target="_blank" value="{!$Label.CBC_Party_ID_URL}{!acc.PartyId}&uid={!$Setup.MicroStrategyReportCredentials__c.User_Name_1__c}&pwd={!$Setup.MicroStrategyReportCredentials__c.Password_1__c}">{!acc.PartyId}</apex:outputLink>
+                                </apex:column>
+                                <apex:column headerValue="Name">
+                                    <apex:outputText value="{!acc.Name}"/>
+                                </apex:column>
+                                <apex:column headerValue="Billing City">
+                                    <apex:outputText value="{!acc.BillingCity}"/>
+                                </apex:column>                                
+                                <apex:column headerValue="Billing State">
+                                    <apex:outputText value="{!acc.BillingState}"/>
+                                </apex:column>
+                                <apex:column headerValue="Postal Code">
+                                    <apex:outputText value="{!acc.BillingPostalCode}"/>
+                                </apex:column>                                
+                                <apex:column headerValue="Billing Country">
+                                    <apex:outputText value="{!acc.BillingCountry}"/>
+                                </apex:column>                                
+                                <apex:column headerValue="Type">
+                                    <apex:outputText value="{!acc.Type}"/>
+                                </apex:column>                                
+                                <apex:column headerValue="Primary Email">
+                                    <apex:outputText value="{!acc.PrimaryEmail}"/>
+                                </apex:column>
+                                <apex:column headerValue="Phone">
+                                    <apex:outputText value="{!acc.Phone}"/>
+                                </apex:column>                                
+                                <apex:column headerValue="BrokerNARId">
+                                    <apex:outputText value="{!acc.BrokerNARId}"/> 
+                                </apex:column>                                   
+                            </apex:pageBlockTable>
+                            <!-- Account Table ends here -->
+                            
+                             
+                            <!-- Asset Table begins -->
+                            <apex:pageBlocksection id="results8" title="Customer Assets" columns="1" collapsible="true"  rendered="{! IF(ISBLANK(acc.dwrap), false, IF(acc.dwrap.size == 0, false, true)) }">
+                            
+                                <apex:pageBlockTable value="{!acc.dwrap}" var="asset" id="pbt">
+                                    <apex:column headerValue="Child Asset" style="font-weight:{!IF(asset.AssetId == 'Total',800,'default')};">
+                                        <!--<apex:outputText value="{!asset.AssetId}"/>-->
+                                        <apex:outputLink target="_blank" value="{!$Label.CBC_Child_Asset_URL}{!Asset.Id}">{!asset.Name}</apex:outputLink>    
+
+                                    </apex:column>                                    
+                                    <apex:column headerValue="Status">
+                                        <apex:outputText value="{!asset.Status}"/>
+                                    </apex:column>                                    h`
+                                    <apex:column headerValue="Quantity">
+                                        <apex:outputText value="{!asset.Quantity}"/>
+                                    </apex:column>
+                                    <apex:column headerValue="Size">
+                                        <apex:outputText value="{!asset.ProductType}"/>
+                                    </apex:column>                                    
+                                    <apex:column headerValue="Routing">
+                                        <apex:outputText value="{!asset.LeadType}"/>
+                                    </apex:column>
+                                    <apex:column headerValue="BOP">
+                                        <apex:outputText value="{!asset.BOPCode}"/>
+                                    </apex:column>
+                                    <apex:column headerValue="Market">
+                                        <apex:commandLink action="/apex/CBCMarketPerformance?marketid={!asset.MarketZip}">
+                                            <apex:outputText value="{!asset.MarketZip}"/>
+                                        </apex:commandLink>
+                                    </apex:column>
+                                    <apex:column headerValue="Start">
+                                        <apex:outputText value="{0, date,MM'/'dd'/'yyyy}">
+                                            <apex:param value="{!asset.StartDate}"/>
+                                        </apex:outputText>
+                                    </apex:column>                                    
+                                    <apex:column headerValue="Expiration">
+                                        <apex:outputText value="{0, date,MM'/'dd'/'yyyy}">
+                                            <apex:param value="{!asset.End_Date}"/>
+                                        </apex:outputText>
+                                    </apex:column>
+                                    <apex:column headerValue="Last Unit Price">
+                                        <apex:outputText value="{0, number, currency}">
+                                            <apex:param value="{!asset.ListPrice}"/>
+                                        </apex:outputText>
+                                    </apex:column>                                    
+                                    <apex:column headerValue="Renewal Amount" style="font-weight:{!IF(asset.AssetId == 'Total',800,'default')};">
+                                        <apex:outputText value="{0, number, currency}">
+                                                <apex:param value="{!asset.RenewalPrice}"/>
+                                        </apex:outputText>
+                                    </apex:column>
+                                    <!-- <apex:column headerValue="Lead Count">
+                                        <apex:outputText value="{!asset.AssetLeadDetailCount}"/>
+                                    </apex:column>  -->
+                                    <apex:column headerValue="Avg Listing Price Web" style="font-weight:{!IF(asset.AssetId == 'Total',800,'default')};">
+                                        <apex:outputText value="{0, number, currency}">
+                                            <apex:param value="{!asset.AverageListingPriceWebLead}"/>
+                                        </apex:outputText>
+                                    </apex:column>
+                                    <apex:column headerValue="Avg Listing Price Mobile" style="font-weight:{!IF(asset.AssetId == 'Total',800,'default')};">
+                                        <apex:outputText value="{0, number, currency}">
+                                            <apex:param value="{!asset.AverageListingPriceMobileLead}"/>
+                                        </apex:outputText>
+                                    </apex:column>
+                                    <apex:column headerValue="Avg Listing Price Total" style="font-weight:{!IF(asset.AssetId == 'Total',800,'default')};">
+                                        <apex:outputText value="{0, number, currency}">
+                                            <apex:param value="{!asset.AverageListingPriceAllLead}"/>
+                                        </apex:outputText>
+                                    </apex:column>
+                                    <apex:column headerValue="Web" style="font-weight:{!IF(asset.AssetId == 'Total',800,'default')};">
+                                        <apex:outputText value="{!asset.WebLead}"/>
+                                    </apex:column>
+                                    <apex:column headerValue="Mobile" style="font-weight:{!IF(asset.AssetId == 'Total',800,'default')};">
+                                        <apex:outputText value="{!asset.MobileLead}"/>
+                                    </apex:column>                                    
+                                    <apex:column headerValue="Paid" style="font-weight:{!IF(asset.AssetId == 'Total',800,'default')};">
+                                        <apex:outputText value="{!asset.PaidLead}"/>
+                                    </apex:column>                                    
+                                    <apex:column headerValue="Courtesy" style="font-weight:{!IF(asset.AssetId == 'Total',800,'default')};">
+                                        <apex:outputText value="{!asset.CourtesyLead}"/>
+                                    </apex:column>                                    
+                                    <apex:column headerValue="Total" style="font-weight:{!IF(asset.AssetId == 'Total',800,'default')};">
+                                        <apex:outputText value="{!asset.TotalLeads}"/>                                        
+                                    </apex:column>
+                                    <!-- <apex:column headerValue="Over Sold Full">
+                                        <apex:outputText value="{!asset.OverSoldFull}"/>
+                                    </apex:column>
+                                    <apex:column headerValue="Over Sold Half">
+                                        <apex:outputText value="{!asset.OverSoldHalf}"/>  
+                                    </apex:column>-->
+                                    <apex:column headerValue="Terms">
+                                        <apex:outputText value="{!asset.ContractTerm}"/>
+                                    </apex:column> 
+                                    <apex:column headerValue="Performance" style="background-color:{!IF(asset.i < 100, '#FF0000','default')};">
+                                        <apex:outputText value="{!asset.Performance}" />
+                                    </apex:column>
+                                    <apex:column headerValue="Full Flex Available" rendered="{!IF(fast == false, true, false)}" style="background-color:{!IF(asset.AssetId == 'Total','default',IF(asset.FullFlexAvailable > 0, '#00FF7F','#FFCC33'))};">
+                                        <apex:commandButton value="Switch To Fast" action="{!fastFlex}" rerender="results8" rendered="{!IF(asset.AssetId == 'Total', true, false)}">
+                                            <apex:param name="Fast" value="Switch To Fast" assignTo="{!fast}" />
+                                        </apex:commandButton>
+                                        <apex:outputText value="{!asset.FullFlexAvailable}" rendered="{!IF(asset.AssetId == 'Total', false, true)}" style="text-align:right;"/>
+                                    </apex:column>
+                                    <apex:column headerValue="Half Flex Available" rendered="{!IF(fast == false, true, false)}" style="background-color:{!IF(asset.AssetId == 'Total','default',IF(asset.HalfFlexAvailable > 0, '#00FF7F','#7575FF'))};">
+                                        <apex:outputText value="{!asset.HalfFlexAvailable}" style="text-align:right;"/>
+                                    </apex:column>
+                                    <apex:column headerValue="Full Flex Each" rendered="{!IF(fast == false, true, false)}" style="background-color:{!IF(asset.AssetId == 'Total', 'default','#00CCFF')};">
+                                        <apex:outputText value="{0, number, currency}">
+                                            <apex:param value="{!asset.FullFlexUnitPrice}"/>
+                                        </apex:outputText>
+                                    </apex:column>
+                                    <apex:column headerValue="Half Flex Each" rendered="{!IF(fast == false, true, false)}" style="background-color:{!IF(asset.AssetId == 'Total', 'default','#00FFFF')};">
+                                        <apex:outputText value="{0, number, currency}">
+                                            <apex:param value="{!asset.HalfFlexUnitPrice}"/>
+                                        </apex:outputText>
+                                    </apex:column>
+                                    <apex:column headerValue="Full Flex All" rendered="{!IF(fast == false, true, false)}" style="background-color:{!IF(asset.AssetId == 'Total', 'default','#FF00FF')};">
+                                        <apex:outputText value="{0, number, currency}">
+                                            <apex:param value="{!asset.FullFlexAll}"/>
+                                        </apex:outputText>
+                                    </apex:column>
+                                    <apex:column headerValue="Half Flex All" rendered="{!IF(fast == false, true, false)}" style="background-color:{!IF(asset.AssetId == 'Total', 'default','#FF66FF')};" >
+                                        <apex:outputText value="{0, number, currency}">
+                                            <apex:param value="{!asset.HalfFlexAll}"/>
+                                        </apex:outputText>
+                                    </apex:column>
+                                    <apex:column headerValue="Full Fast Available" rendered="{!fast}" style="background-color:{!IF(asset.AssetId == 'Total','default',IF(asset.FullFastAvailable > 0, '#00FF7F','#FF6633'))};">
+                                        <apex:commandButton value="Go back to Flex" action="{!flexFast}" rerender="results8" rendered="{!IF(asset.AssetId == 'Total', true, false)}">
+                                            <apex:param name="Flex" value="Go back to Flex" assignTo="{!fast}" />
+                                        </apex:commandButton>
+                                        <apex:outputText value="{!asset.FullFastAvailable}" rendered="{!IF(asset.AssetId == 'Total', false, true)}" style="text-align:right;"/>
+                                    </apex:column>
+                                    <apex:column headerValue="Half Fast Available" rendered="{!fast}" style="background-color:{!IF(asset.AssetId == 'Total','default',IF(asset.HalfFastAvailable > 0, '#00FF7F','#FF9933'))};">
+                                        <apex:outputText value="{!asset.HalfFastAvailable}" style="text-align:right;"/>
+                                    </apex:column>                                    
+                                    <apex:column headerValue="Full Fast Each" rendered="{!fast}" style="background-color:{!IF(asset.AssetId == 'Total', 'default','#FFCC33')};">
+                                        <apex:outputText value="{0, number, currency}">
+                                            <apex:param value="{!asset.FullFastUnitPrice}"/>
+                                        </apex:outputText>
+                                    </apex:column>
+                                    <apex:column headerValue="Half Fast Each" rendered="{!fast}" style="background-color:{!IF(asset.AssetId == 'Total', 'default','#FFFF33')};" >
+                                        <apex:outputText value="{0, number, currency}">
+                                            <apex:param value="{!asset.HalfFastUnitPrice}"/>
+                                        </apex:outputText>
+                                    </apex:column>
+                                    <apex:column headerValue="Full Fast All" rendered="{!fast}" style="background-color:{!IF(asset.AssetId == 'Total', 'default','#CC00CC')};" >
+                                        <apex:outputText value="{0, number, currency}">
+                                            <apex:param value="{!asset.FullFastAll}"/>
+                                        </apex:outputText>
+                                    </apex:column>
+                                    <apex:column headerValue="Half Fast All" rendered="{!fast}" style="background-color:{!IF(asset.AssetId == 'Total', 'default','#CC66CC')};">
+                                        <apex:outputText value="{0, number, currency}">
+                                            <apex:param value="{!asset.HalfFastAll}"/>
+                                        </apex:outputText>
+                                    </apex:column>
+                                </apex:pageBlockTable>
+              
+               
+                 <apex:panelGroup >   
+                    <apex:outputPanel id="buttonsec">
+                    <apex:commandButton action="{!first}" value="|<First" disabled="{!if(hasPrevious == False,True,False)}" reRender="buttonsec,refreshPanel" />
+                    <apex:commandButton action="{!previous}" disabled="{! !hasPrevious}" value="<Previous" reRender="buttonsec,refreshPanel"/>
+                    Page {!pageNumber} of {!totalPages}
+                    <apex:commandButton action="{!next}" disabled="{! !hasNext}" value="Next>" reRender="buttonsec,refreshPanel"/>
+                    <apex:commandButton action="{!last}" value="Last>|" disabled="{!if(hasNext == False,True,False)}" reRender="buttonsec,refreshPanel"/>
+                
+                    </apex:outputPanel>
+                </apex:panelGroup>
+               
+                            
+                            </apex:pageBlocksection>
+                               <apex:outputPanel rendered="{! IF(ISBLANK(acc.dwrap), true, IF(acc.dwrap.size == 0, true, false)) }"> 
+                                        <apex:pageMessage summary="Data Not Available, Please Click on the PARTY ID" severity="info"  strength="3"> </apex:pageMessage> 
+                                </apex:outputPanel>
+               </apex:pageBlocksection>
+                       
+                    </apex:repeat>
+                    </apex:outputPanel>
+                     <apex:pageBlocksection id="results7" title="Asset Lead Details" columns="1" collapsible="true">
+                           <!--   <apex:commandButton value="Export To Excel" action="/apex/CBCPerfExport" /> -->
+                            <apex:pageBlockTable styleclass="list" id="pbt1" value="{!getLeadDetails}" var="lead" rendered="{! IF(ISBLANK(getLeadDetails), false, IF(getLeadDetails.size == 0, false, true)) }">
+                                <apex:column headerValue="Created Date">
+                                    <apex:outputText value="{!lead.CreateDate}"/>
+                                </apex:column>
+                                <apex:column headerValue="Source">
+                                    <apex:outputText value="{!lead.Source}"/>
+                                </apex:column>
+                                <apex:column headerValue="Child Asset">
+                                    <apex:outputText value="{!lead.AssetId}"/>
+                                </apex:column>
+                                <apex:column headerValue="Type">
+                                    <apex:outputText value="{!lead.LeadType}"/>
+                                </apex:column>
+                                <apex:column headerValue="MasterProperty">
+                                    <apex:outputLink target="_blank" value="http://www.realtor.com/realestateandhomes-detail/M{!lead.MasterPropertyRecordId}">                                                
+                                        <apex:outputText value="{!lead.MasterPropertyRecordId}"/>
+                                    </apex:outputLink>
+                                </apex:column>
+                                <apex:column headerValue="First Name">
+                                    <apex:outputText value="{!lead.FirstName}"/>
+                                </apex:column>
+                                <apex:column headerValue="Last Name">
+                                    <apex:outputText value="{!lead.LastName}"/>
+                                </apex:column>
+                                <apex:column headerValue="Phone">
+                                    <apex:outputText value="{!lead.Phone}"/>
+                                </apex:column>
+                                <apex:column headerValue="Email">
+                                    <apex:outputText value="{!lead.Email}"/>
+                                </apex:column>
+                               <!--  <apex:column headerValue="Comment">
+                                    <apex:outputlink onmouseout="this.nextSibling.style.visibility='hidden';" onmouseover="this.nextSibling.style.visibility='visible';" style="z-index: 0;" value="/{!lead.Comment}">
+                                        Notes
+                                    </apex:outputlink><div style="background-color: #eeeeee; border: 1px solid black; padding: 10px; position: absolute; visibility: hidden; z-index: 50;"><apex:outputtext value="{!lead.Comment}"></apex:outputtext></div>
+                                </apex:column>
+                                 -->
+                                
+                                <apex:column headerValue="Listing Address">
+                                    <apex:outputText value="{!lead.ListingAddress}"/>
+                                </apex:column>
+                                <apex:column headerValue="Listing City">
+                                    <apex:outputText value="{!lead.ListingCity}"/>
+                                </apex:column>
+                                <apex:column headerValue="Listing State">
+                                    <apex:outputText value="{!lead.ListingStateId}"/>
+                                </apex:column>
+                                <apex:column headerValue="Listing Zip">
+                                    <apex:outputText value="{!lead.ListingPostalCode}"/>
+                                </apex:column>
+                                <apex:column headerValue="Listing Status">
+                                    <apex:outputText value="{!lead.ListingStatus}"/>
+                                </apex:column>
+                                <apex:column headerValue="Listing Price">
+                                    <apex:outputText value="{0, number, currency}">
+                                        <apex:param value="{!lead.ListingPrice}"/>
+                                    </apex:outputText>
+                                </apex:column>
+                                <apex:column headerValue="Source Email">
+                                    <apex:outputText value="{!lead.SourceEmailAddress}"/>
+                                </apex:column>
+                            </apex:pageBlockTable>
+                        </apex:pageBlocksection>
+                    
+                     <apex:outputPanel rendered="{!IF(ISBLANK(getLeadDetails), true, IF(getLeadDetails.size == 0, true, false)) }"> 
+                            <apex:pageMessage summary="Data Not Available, Please Click on the PARTY ID" severity="info"  strength="3"> </apex:pageMessage> 
+                     </apex:outputPanel>
+                </apex:pageBlock>
+            </td>
+        </table>
+         
+    </apex:form>
+   
+</apex:page>

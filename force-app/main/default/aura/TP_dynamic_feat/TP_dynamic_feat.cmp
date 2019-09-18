@@ -1,0 +1,39 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,forceCommunity:themeLayout" access="global" >
+    <aura:attribute name="headline" type="String" />
+    <aura:attribute name="headline1" type="String" />
+    <aura:attribute name="headline2" type="String" />
+    <aura:attribute name="headline3" type="String" />
+    <aura:attribute name="icon1" type="String" />
+    <aura:attribute name="icon2" type="String" />
+    <aura:attribute name="icon3" type="String" />
+    
+	<div class="cTP_dynamic_feat">
+        
+       <div id="features-wrap" class="text-center">
+          <article>
+              <h3 style="" id="feaheadline">{!v.headline}</h3>
+            <div class="row">
+                <div class="col-md-4 col-sm-4 feature">
+                  <img style="height:100px; width:auto;" src="{!'https://psweb.realtor.com/' + v.icon1}" alt="" class="img-responsive center-block"/>
+                    <h4 id="headline1">{!v.headline1}</h4>
+                </div>
+                <div class="col-md-4 col-sm-4 feature">
+                  <img style="height:100px; width:auto;" src="{!'https://psweb.realtor.com/' + v.icon2}" alt="" class="img-responsive center-block"/>
+                    <h4 id="headline2">{!v.headline2}</h4>
+                </div>
+                <div class="col-md-4 col-sm-4 feature">
+                  <img style="height:100px; width:auto;" src="{!'https://psweb.realtor.com/' + v.icon3}" alt="" class="img-responsive center-block"/>
+                    <h4 id="headline3">{!v.headline3}</h4>
+                </div>
+    		</div>
+              <aura:if isTrue="{!v.themePage == true}" >
+              <div style="margin-top:30px;">
+                <center>
+                    <img src="https://b2bweb.realtor.com/web_assets/rdc/logos/realliving.jpg" alt="United Real Estate"/><br/><br/>
+                </center>
+               </div>
+              </aura:if>
+          </article>
+        </div>
+     </div>
+</aura:component>

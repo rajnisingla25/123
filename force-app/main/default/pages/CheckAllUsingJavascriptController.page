@@ -1,0 +1,27 @@
+<apex:page controller="CheckAllUsingJavascriptController">
+    <script type="text/javascript">
+        function selectAllCheckboxes(obj,receivedInputID){
+            var inputCheckBox = document.getElementsByTagName("input");                  
+            for(var i=0; i<inputCheckBox.length; i++){          
+                if(inputCheckBox[i].id.indexOf(receivedInputID)!=-1){                                     
+                    inputCheckBox[i].checked = obj.checked;
+                }
+            }
+        }
+    </script>
+    <apex:form >
+        <apex:pageBlock >
+            <apex:pageBlockTable value="{!wrapAccountList}" var="accWrap" id="table" title="All Accounts">
+                <apex:column >
+                    <apex:facet name="header">
+                        <apex:inputCheckbox onclick="selectAllCheckboxes(this,'inputId')"/>
+                    </apex:facet>
+                    <apex:inputCheckbox value="{!accWrap.selected}" id="inputId"/>
+                </apex:column>
+                <apex:column value="{!accWrap.acc.Name}" />
+                <apex:column value="{!accWrap.acc.BillingState}" />
+                <apex:column value="{!accWrap.acc.Phone}" />
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

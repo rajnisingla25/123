@@ -1,0 +1,464 @@
+<!-- Component:productInformation-->
+
+<apex:component access="global" controller="ProductInformationController">
+
+    <apex:attribute name="orderId" assignTo="{!ordId}" description="This is the relatedTo Id in the order or quote" type="String" />
+    <apex:outputPanel rendered="{!IF((orderType == 'New' || renewOrder) && NOT(sellerBundle) && NOT(isBMS), true, false)}">
+        <table width="560" border="1" cellspacing="0" cellpadding="5" bgcolor="#ffffff" align="center" style="border-collapse: collapse;">
+            <tr>
+
+                <th>Contract #</th>
+                <th>Description</th>
+                <th>Start Date</th>
+                <th>Initial Term (in Months)</th>
+                <th>Initial Term End Date</th>
+                <!-- <th style="display: {!If(nonAutoRenew == true ,'none','') }">Automatic Renewal Term (In Months)</th> -->
+                <th>Market (Quantity)</th>
+                <th>Billing Frequency</th>
+                <th>Monthly Payment</th>
+                <!-- CRM-4718 : hide column if month2month-->
+                <th style="display: {!If(hasMonthToMonth == true ,'none','') }">Total Product Cost for Initial Term*</th>
+                <!-- CRM-2839 - Added below two new columns Product Type & Lead Type-->
+                <th>Product Type</th>
+                <th>Lead Type</th>
+
+            </tr>
+
+            <apex:repeat var="ox" value="{!items}">
+                <tr>
+
+                    <td align="center">{!ox.contractNum}</td>
+                    <td align="center">{!ox.description}</td>
+                    <td align="center">
+                        <apex:outputText value="{0,date,MM/dd/yyyy}" styleClass="search_main_inner_table_input3" style="width:98.5%">
+                            <apex:param value="{!ox.startDate}" /></apex:outputText>
+                    </td>
+                    <td align="center">{!ox.terms}</td>
+                    <!-- CRM-4705: Added new text-->
+                    <td align="center">
+                        <apex:outputText value="{0,date,MM/dd/yyyy}" styleClass="search_main_inner_table_input3" style="width:98.5%">
+                            <apex:param value="{!ox.endDate}" /> </apex:outputText> <apex:outputText value=" -- Continuing on a month-to-month basis thereafter" rendered="{!IF(ox.noTermSale = true,true,false)}"></apex:outputText>
+                    </td>
+                    <!-- <td align="center" style="display: {!If(nonAutoRenew == true ,'none','') }">{!ox.defaultRenewalTerm}</td> -->
+
+                    <td align="center">
+                        <apex:outputPanel rendered="{!IF((ox.description != 'Broker Marketing Solution' && ox.description != 'Agent Marketing Solution' && ox.productCode != sellerLeadProductCode),TRUE,FALSE)}">
+                            {!ox.market}
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(ox.productCode == sellerLeadProductCode ,TRUE,FALSE)}">
+                            {!ox.market}**
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(ox.productCode != 'LOCALEXPERT' && ox.productCode != 'LOCALEXPERTCITY',TRUE,FALSE)}">
+                            ({!ox.quantity})
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(ox.productCode == 'LOCALEXPERT' || ox.productCode == 'LOCALEXPERTCITY' ,TRUE,FALSE)}">
+                            ({!ox.percentage})
+                        </apex:outputPanel>
+                    </td>
+
+                    <td align="center">{!ox.billingFrequency}</td>
+
+                    <td align="center">
+                        <!-- CRM-3070 Add filter ox.billingFrequency=='Monthly'-->
+                        <apex:outputText rendered="{!IF(( ox.billingFrequency=='Monthly' && ox.productCode != sellerLeadProductCode),TRUE,FALSE)}" value="{0,Number,currency}">
+                            <apex:param value="{!ox.monthlyPayment}" />
+                        </apex:outputText>
+                        <apex:outputText rendered="{!IF( ox.productCode == sellerLeadProductCode,true,false )}" value="TBD" />
+                        <!-- CRM-3070 - Added below to show "N/A" in the Monthly Payment column instead of $0.00-->
+                        <apex:outputText rendered="{!IF( ox.billingFrequency!='Monthly',true,false)}" value="N/A" />
+                    </td>
+                    <!-- CRM-4718 : hide column if month2month-->
+                    <td align="center" style="display: {!If(hasMonthToMonth == true ,'none','') }">
+                        <apex:outputText rendered="{!IF( ox.productCode == sellerLeadProductCode,false,true )}" value="{0,Number,currency}">
+                            <apex:param value="{!ox.totalProductCost}" /> </apex:outputText>
+                        <apex:outputText rendered="{!IF( ox.productCode == sellerLeadProductCode,true,false )}" value="TBD" />
+                    </td>
+
+                    <!-- CRM-2839 - Added below two new values Product Type & Lead Type-->
+                    <td align="center">{!ox.productType}</td>
+                    <td align="center">{!ox.leadType}</td>
+
+                </tr>
+            </apex:repeat>
+
+        </table>
+        <br/>
+    </apex:outputPanel>
+    <apex:outputPanel rendered="{!IF(displayRSModifyTable == true, true, false)}">
+       <apex:outputText rendered="{!IF(isStdPSBundleModify == true, false, true)}"><p><b><u>MODIFICATION INFORMATION</u> </b><br/><br/> </p></apex:outputText> 
+
+        <table width="560" border="1" cellspacing="0" cellpadding="5" bgcolor="#ffffff" align="center" style="border-collapse: collapse;">
+            <tr>
+
+                <th>Contract #</th>
+                <!-- for showcase and non showcase products -->
+                <th>Description</th>
+                <!-- for showcase and non showcase products -->
+                <th>Modify Type**</th>
+                <!-- for showcase and non showcase products -->
+                <th>Start Date</th>
+                <!-- for showcase and non showcase products -->
+                <th>Initial Term (in Months)</th>
+                <!-- for non showcase products -->
+                <th><apex:outputText rendered="{!IF(hasMonthToMonth == true,false,true)}">Initial End Date</apex:outputText><apex:outputText rendered="{!IF(hasMonthToMonth == true,true,false)}">Initial Term End Date</apex:outputText></th>
+                <!-- for showcase and non showcase products -->
+                <!-- <th>Automatic Renewal Term (In Months)</th> -->
+                
+                <th>Market (Quantity)</th>
+                <!-- for non showcase products -->
+                <th>Billing Frequency</th>
+                <th><apex:outputText rendered="{!IF(hasMonthToMonth == true,false,true)}">Updated Monthly/Annual Payment</apex:outputText><apex:outputText rendered="{!IF(hasMonthToMonth == true,true,false)}">Updated Monthly Payment</apex:outputText></th>
+                <!-- for showcase products only -->
+
+            </tr>
+
+            <apex:repeat var="ox" value="{!rsBundleModifyItems}">
+                <tr>
+
+                    <td align="center">{!ox.contractNum}</td>
+                    <td align="center">{!ox.description}</td>
+                    <td align="center">{!ox.lineType}</td>
+                    <td align="center">
+                        <apex:outputText value="{0,date,MM/dd/yyyy}" styleClass="search_main_inner_table_input3" style="width:98.5%">
+                            <apex:param value="{!ox.startDate}" /></apex:outputText>
+                    </td>
+                     <td align="center">{!ox.terms}</td> 
+                    <td align="center">
+                        <apex:outputText value="{0,date,MM/dd/yyyy}" styleClass="search_main_inner_table_input3" style="width:98.5%">
+                            <apex:param value="{!ox.endDate}" /> </apex:outputText> <apex:outputText value=" -- Continuing on a month-to-month basis thereafter" rendered="{!IF(ox.noTermSale = true,true,false)}"></apex:outputText>
+                    </td>
+                    <td align="center">
+                        <apex:outputPanel rendered="{!IF(ox.description != 'Broker Marketing Solution' && ox.description != 'Agent Marketing Solution' && (ox.License = null || ox.License = 0),TRUE,FALSE)}">{!ox.market}</apex:outputPanel>
+                        <!--CRM-4303:not needed <apex:outputPanel rendered="{!IF(ox.showLicenseTier = True && (ox.License = null || ox.License = 0) ,TRUE,FALSE)}"> ({!ox.LicenseTier})</apex:outputPanel>
+                                   <apex:outputPanel rendered="{!IF(ox.showLicenseTier = False && (ox.License = null || ox.License = 0),TRUE,FALSE)}"> ({!ox.quantity})</apex:outputPanel>-->
+                        <apex:outputPanel rendered="{!IF((ox.License = null || ox.License = 0),TRUE,FALSE)}"> ({!ox.quantity})</apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF((ox.License = null || ox.License = 0),FALSE,TRUE)}"> ({!ox.license})</apex:outputPanel>
+                    </td>
+                    <td align="center">{!ox.billingFrequency}</td>
+                    <td align="center">
+                        <apex:outputText value="{0,Number,currency}">
+                            <apex:param value="{!ox.extendedPrice}" /> </apex:outputText>
+                    </td>
+                </tr>
+            </apex:repeat>
+
+        </table>
+    </apex:outputPanel>
+
+    <apex:outputPanel rendered="{!IF((orderType == 'New' || renewOrder) && sellerBundle && NOT(isBMS), true, false)}">
+        <table width="560" border="1" cellspacing="0" cellpadding="5" bgcolor="#ffffff" align="center" style="border-collapse: collapse;">
+            <tr>
+
+                <th>Contract #</th>
+                <th>Description</th>
+                <th>Start Date</th>
+                <th>Initial Term (in Months)</th>
+                <th>Initial Term End Date</th>
+                <!--  <th>Automatic Renewal Term (In Months)</th> -->
+                <th>Market (Quantity)</th>
+                <th>Billing Frequency</th>
+                <th>Cost per Lead</th>
+                <th>Monthly Payment</th>
+                <!-- CRM-4718 : hide column if month2month-->
+                <th style="display: {!If(hasMonthToMonth == true ,'none','') }">Total Product Cost for Initial Term*</th>
+
+            </tr>
+
+            <apex:repeat var="ox" value="{!items}">
+                <tr>
+
+                    <td align="center">{!ox.contractNum}</td>
+                    <td align="center">{!ox.description}</td>
+                    <td align="center">
+                        <apex:outputText value="{0,date,MM/dd/yyyy}" styleClass="search_main_inner_table_input3" style="width:98.5%">
+                            <apex:param value="{!ox.startDate}" /></apex:outputText>
+                    </td>
+
+                    <td align="center">{!ox.terms}</td>
+                     <!-- CRM-4705: Added new text-->
+                    <td align="center">
+                        <apex:outputText value="{0,date,MM/dd/yyyy}" styleClass="search_main_inner_table_input3" style="width:98.5%">
+                            <apex:param value="{!ox.endDate}" /> </apex:outputText> <apex:outputText value=" -- Continuing on a month-to-month basis thereafter" rendered="{!IF(ox.noTermSale = true,true,false)}"></apex:outputText>
+                    </td>
+                    <!--  <td align="center">{!ox.defaultRenewalTerm}</td> -->
+                    <td align="center">
+                        <apex:outputPanel rendered="{!IF((ox.description != 'Broker Marketing Solution' && ox.description != 'Agent Marketing Solution' && ox.productCode != sellerLeadProductCode),TRUE,FALSE)}">
+                            {!ox.market}
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(ox.productCode == sellerLeadProductCode ,TRUE,FALSE)}">
+                            {!ox.market}**
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(ox.productCode != 'LOCALEXPERT' && ox.productCode != 'LOCALEXPERTCITY',TRUE,FALSE)}">
+                            ({!ox.quantity})
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(ox.productCode == 'LOCALEXPERT' || ox.productCode == 'LOCALEXPERTCITY' ,TRUE,FALSE)}">
+                            ({!ox.percentage})
+                        </apex:outputPanel>
+                    </td>
+
+                    <td align="center">{!ox.billingFrequency}</td>
+                    <td align="center">
+                        <apex:outputText rendered="{!IF( ox.productCode == sellerLeadProductCode,true,false )}" value="{0,Number,currency}">
+                            <apex:param value="{!ox.costPerLead}" />
+                        </apex:outputText>
+                        <apex:outputText rendered="{!IF( ox.productCode == sellerLeadProductCode,false,true )}" value="N/A" />
+                    </td>
+                    <td align="center">
+                        <apex:outputText rendered="{!IF( ox.productCode == sellerLeadProductCode,false,true )}" value="{0,Number,currency}">
+                            <apex:param value="{!ox.monthlyPayment}" /> </apex:outputText>
+                        <apex:outputText rendered="{!IF( ox.productCode == sellerLeadProductCode,true,false )}" value="TBD" />
+                    </td>
+                    <!-- CRM-4718 : hide column if month2month-->
+                    <td align="center" style="display: {!If(hasMonthToMonth == true ,'none','') }">
+                        <apex:outputText rendered="{!IF( ox.productCode == sellerLeadProductCode,false,true )}" value="{0,Number,currency}">
+                            <apex:param value="{!ox.totalProductCost}" /> </apex:outputText>
+                        <apex:outputText rendered="{!IF( ox.productCode == sellerLeadProductCode,true,false )}" value="TBD" />
+                    </td>
+
+
+                </tr>
+            </apex:repeat>
+
+        </table>
+
+    </apex:outputPanel>
+
+    <apex:outputPanel rendered="{!IF(bmsOrderType != null && bmsOrderType == 'New' && isBMS, true, false)}">
+        <table width="560" border="1" cellspacing="0" cellpadding="5" bgcolor="#ffffff" align="center" style="border-collapse: collapse;">
+            <tr>
+
+                <th>Contract #</th>
+                <th>Description</th>
+                <th>Start Date</th>
+                <th>Initial Term (in Months)</th>
+                <th>Initial Term End Date</th>
+                <th>Market (Quantity)</th>
+                <th>Billing Frequency</th>
+                <th>Monthly Payment</th>
+                <!-- CRM-4718 : hide column if month2month-->
+                <th style="display: {!If(hasMonthToMonth == true ,'none','') }">Total Product Cost for Initial Term*</th>
+
+            </tr>
+
+            <apex:repeat var="ox" value="{!items}">
+                <tr>
+
+                    <td align="center">{!ox.contractNum}</td>
+                    <td align="center">{!ox.description}</td>
+                    <td align="center">
+                        <apex:outputText value="{0,date,MM/dd/yyyy}" styleClass="search_main_inner_table_input3" style="width:98.5%">
+                            <apex:param value="{!ox.startDate}" /></apex:outputText>
+                    </td>
+                    <td align="center">{!ox.terms}</td>
+                     <!-- CRM-4705: Added new text-->
+                    <td align="center"><!-- CRM-4825: month-to-month --> <!-- CRM-5053: Updated rendered condition to use noTermSale flag instead of contract term value-->
+                        <apex:outputText value="{0,date,MM/dd/yyyy}" styleClass="search_main_inner_table_input3" style="width:98.5%">
+                            <apex:param value="{!ox.endDate}" /> </apex:outputText> <apex:outputText value=" -- Continuing on a month-to-month basis thereafter" rendered="{!IF(ox.noTermSale = true,true,false)}"></apex:outputText>
+                    </td>
+
+                    <td align="center">
+                        <apex:outputPanel rendered="{!IF((ox.description != 'Broker Marketing Solution' && ox.description != 'Agent Marketing Solution' && ox.productCode != sellerLeadProductCode),TRUE,FALSE)}">
+                            {!ox.market}
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(ox.productCode == sellerLeadProductCode ,TRUE,FALSE)}">
+                            {!ox.market}**
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(ox.productCode != 'LOCALEXPERT' && ox.productCode != 'LOCALEXPERTCITY',TRUE,FALSE)}">
+                            ({!ox.quantity})
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(ox.productCode == 'LOCALEXPERT' || ox.productCode == 'LOCALEXPERTCITY' ,TRUE,FALSE)}">
+                            ({!ox.percentage})
+                        </apex:outputPanel>
+                    </td>
+
+                    <td align="center">{!ox.billingFrequency}</td>
+
+                    <td align="center">
+                        <apex:outputText rendered="{!IF( ox.productCode == sellerLeadProductCode,false,true )}" value="{0,Number,currency}">
+                            <apex:param value="{!ox.monthlyPayment}" /> </apex:outputText>
+                        <apex:outputText rendered="{!IF( ox.productCode == sellerLeadProductCode,true,false )}" value="TBD" />
+                    </td>
+                    <!-- CRM-4718 : hide column if month2month-->
+                    <td align="center" style="display: {!If(hasMonthToMonth == true ,'none','') }">
+                        <apex:outputText rendered="{!IF( ox.productCode == sellerLeadProductCode,false,true )}" value="{0,Number,currency}">
+                            <apex:param value="{!ox.totalProductCost}" /> </apex:outputText>
+                        <apex:outputText rendered="{!IF( ox.productCode == sellerLeadProductCode,true,false )}" value="TBD" />
+                    </td>
+
+
+                </tr>
+            </apex:repeat>
+
+        </table>
+
+    </apex:outputPanel>
+   <!-- CRM-5197: Added outpanel to hide modify table if order contains prosoft bundle product-->
+    <apex:outputPanel rendered="{!IF(displayRSModifyTable == true, false, true)}">
+        <apex:outputPanel rendered="{!IF(bmsOrderType != null && bmsOrderType == 'Modify' && isBMS, true, false)}">
+            <table width="560" border="1" cellspacing="0" cellpadding="5" bgcolor="#ffffff" align="center" style="border-collapse: collapse;">
+                <tr>
+    
+                    <th>Contract #</th>
+                    <!-- for showcase and non showcase products -->
+                    <th>Description</th>
+                    <!-- for showcase and non showcase products -->
+                    <th>Modify Type*</th>
+                    <!-- for showcase and non showcase products -->
+                    <th>Start Date</th>
+                    <!-- for showcase and non showcase products -->
+                    <th><apex:outputText rendered="{!IF(hasMonthToMonth == true,false,true)}">Initial End Date</apex:outputText><apex:outputText rendered="{!IF(hasMonthToMonth == true,true,false)}">Initial Term End Date</apex:outputText></th>
+                    <!-- for showcase and non showcase products -->
+                    <th>Initial Term (in Months)</th>
+                    <!-- for non showcase products -->
+                    <th>Market (Quantity)</th>
+                    <!-- for non showcase products -->
+                    <th>Billing Frequency</th>
+                    <th><apex:outputText rendered="{!IF(hasMonthToMonth == true,false,true)}">Updated Monthly/Annual Payment</apex:outputText><apex:outputText rendered="{!IF(hasMonthToMonth == true,true,false)}">Updated Monthly Payment</apex:outputText></th>
+                    <!-- for showcase products only -->
+                    <th style="display: {!If(hasMonthToMonth == true ,'none','') }">Total Add On Cost for Initial Term</th>
+                    <!-- for showcase products only-->
+    
+                </tr>
+    
+                <apex:repeat var="ox" value="{!items}">
+                    <tr>
+    
+                        <td align="center">{!ox.contractNum}</td>
+                        <td align="center">{!ox.description}</td>
+                        <td align="center">{!ox.lineType}</td>
+                        <td align="center">
+                            <apex:outputText value="{0,date,MM/dd/yyyy}" styleClass="search_main_inner_table_input3" style="width:98.5%">
+                                <apex:param value="{!ox.startDate}" /></apex:outputText>
+                        </td>
+                        <td align="center">
+                            <apex:outputText value="{0,date,MM/dd/yyyy}" styleClass="search_main_inner_table_input3" style="width:98.5%">
+                                <apex:param value="{!ox.endDate}" /> </apex:outputText> <apex:outputText value=" -- Continuing on a month-to-month basis thereafter" rendered="{!IF(ox.noTermSale = true,true,false)}"></apex:outputText>
+                        </td>
+                        <td align="center">{!ox.terms}</td>
+                        <td align="center">
+                            <apex:outputPanel rendered="{!IF(ox.description != 'Broker Marketing Solution' && ox.description != 'Agent Marketing Solution' && (ox.License = null || ox.License = 0),TRUE,FALSE)}">{!ox.market}</apex:outputPanel>
+                            <!-- CRM-4303: not needed <apex:outputPanel rendered="{!IF(ox.showLicenseTier = True && (ox.License = null || ox.License = 0) ,TRUE,FALSE)}"> ({!ox.LicenseTier})</apex:outputPanel>
+                                       <apex:outputPanel rendered="{!IF(ox.showLicenseTier = False && (ox.License = null || ox.License = 0),TRUE,FALSE)}"> ({!ox.quantity})</apex:outputPanel>-->
+                            <apex:outputPanel rendered="{!IF((ox.License = null || ox.License = 0),TRUE,FALSE)}"> ({!ox.quantity})</apex:outputPanel>
+                            <apex:outputPanel rendered="{!IF((ox.License = null || ox.License = 0),FALSE,TRUE)}"> ({!ox.license})</apex:outputPanel>
+                        </td>
+                        <td align="center">{!ox.billingFrequency}</td>
+                        <td align="center">
+                            <apex:outputText value="{0,Number,currency}">
+                                <apex:param value="{!ox.extendedPrice}" /> </apex:outputText>
+                        </td>
+                        <td align="center" style="display: {!If(hasMonthToMonth == true ,'none','') }">
+                            <apex:outputText value="{0,Number,currency}">
+                                <apex:param value="{!ox.deltaPrice}" /> </apex:outputText>
+                        </td>
+    
+    
+                    </tr>
+                </apex:repeat>
+    
+            </table>
+        </apex:outputPanel>
+        <apex:outputPanel rendered="{!IF(orderType == 'Modify' && NOT(renewOrder) && NOT(isBMS), true, false)}">
+            <table width="560" border="1" cellspacing="0" cellpadding="5" bgcolor="#ffffff" align="center" style="border-collapse: collapse;">
+                <tr>
+    
+                    <th>Contract #</th>
+                    <!-- for showcase and non showcase products -->
+                    <th>Description</th>
+                    <!-- for showcase and non showcase products -->
+                    <th>Modify Type*</th>
+                    <!-- for showcase and non showcase products -->
+                    <th>Start Date</th>
+                    <!-- for showcase and non showcase products -->
+                     <!-- CRM-4825-->
+                    <th><apex:outputText rendered="{!IF(hasMonthToMonth == true,false,true)}">Initial End Date</apex:outputText><apex:outputText rendered="{!IF(hasMonthToMonth == true,true,false)}">Initial Term End Date</apex:outputText></th>
+                    <!-- for showcase and non showcase products -->
+                    <!-- <th>Automatic Renewal Term (In Months)</th> -->
+                    <th>Initial Term (in Months)</th>
+                    <!-- for non showcase products -->
+                    <th>Market (Quantity)</th>
+                    <!-- for non showcase products -->
+                    <th>Billing Frequency</th> <!-- CRM-4825-->
+                    <th><apex:outputText rendered="{!IF(hasMonthToMonth == true,false,true)}">Updated Monthly/Annual Payment</apex:outputText><apex:outputText rendered="{!IF(hasMonthToMonth == true,true,false)}">Updated Monthly Payment</apex:outputText></th>
+    
+                    <!-- for showcase products only -->
+                    <th style="display: {!If(hasMonthToMonth == true ,'none','') }">Total Add On Cost for Initial Term</th>
+                    <!-- for showcase products only-->
+    
+                </tr>
+    
+                <apex:repeat var="ox" value="{!items}">
+                    <tr>
+    
+                        <td align="center">{!ox.contractNum}</td>
+                        <td align="center">{!ox.description}</td>
+                        <td align="center">{!ox.lineType}</td>
+                        <td align="center">
+                            <apex:outputText value="{0,date,MM/dd/yyyy}" styleClass="search_main_inner_table_input3" style="width:98.5%">
+                                <apex:param value="{!ox.startDate}" /></apex:outputText>
+                        </td>
+                        <td align="center">
+                            <apex:outputText value="{0,date,MM/dd/yyyy}" styleClass="search_main_inner_table_input3" style="width:98.5%">
+                                <apex:param value="{!ox.endDate}" /> </apex:outputText> <apex:outputText value=" -- Continuing on a month-to-month basis thereafter" rendered="{!IF(ox.noTermSale = true,true,false)}"></apex:outputText>
+                        </td>
+                        <!--   <td align="center">{!ox.defaultRenewalTerm}</td> -->
+                        <td align="center">{!ox.terms}</td>
+                        <td align="center">
+                            <apex:outputPanel rendered="{!IF(ox.description != 'Broker Marketing Solution' && ox.description != 'Agent Marketing Solution' && (ox.License = null || ox.License = 0),TRUE,FALSE)}">{!ox.market}</apex:outputPanel>
+                            <!--CRM-4303:not needed <apex:outputPanel rendered="{!IF(ox.showLicenseTier = True && (ox.License = null || ox.License = 0) ,TRUE,FALSE)}"> ({!ox.LicenseTier})</apex:outputPanel>
+                                       <apex:outputPanel rendered="{!IF(ox.showLicenseTier = False && (ox.License = null || ox.License = 0),TRUE,FALSE)}"> ({!ox.quantity})</apex:outputPanel>-->
+                            <apex:outputPanel rendered="{!IF(((ox.License = null || ox.License = 0) && ox.productCode != 'LOCALEXPERT' && ox.productCode != 'LOCALEXPERTCITY'),TRUE,FALSE)}"> ({!ox.quantity})</apex:outputPanel>
+                            <apex:outputPanel rendered="{!IF(((ox.License = null || ox.License = 0) && (ox.productCode == 'LOCALEXPERT' || ox.productCode == 'LOCALEXPERTCITY')),TRUE,FALSE)}"> ({!ox.percentage})</apex:outputPanel>
+
+                            <apex:outputPanel rendered="{!IF((ox.License = null || ox.License = 0),FALSE,TRUE)}"> ({!ox.license})</apex:outputPanel>
+                            
+                        </td>
+                        <td align="center">{!ox.billingFrequency}</td>
+                        <td align="center">
+                            <apex:outputText value="{0,Number,currency}">
+                                <apex:param value="{!ox.extendedPrice}" /> </apex:outputText>
+                        </td>
+                        <!-- CRM-4825-->
+                        <td align="center" style="display: {!If(hasMonthToMonth == true ,'none','') }">
+                            <apex:outputText value="{0,Number,currency}">
+                                <apex:param value="{!ox.deltaPrice}" /> </apex:outputText>
+                        </td>
+    
+    
+                    </tr>
+                </apex:repeat>
+    
+            </table>
+        </apex:outputPanel>
+   </apex:outputPanel>
+       <font style="font-family:Arial, Verdana, sans serif; color: #2c3134; font-size:11px;font-weight:normal;">
+        <p><b>* Above mentioned prices are excluding applicable taxes.  </b></p>
+    </font>
+    <apex:outputPanel rendered="{!IF(displayRSModifyTable == true, true, false)}">
+        <font style="font-family:Arial, Verdana, sans serif; color: #2c3134; font-size:11px;font-weight:normal;">
+            <p><b> **
+                <apex:outputText rendered="{!IF(DATEVALUE($Label.Connections_Plus_GA_date) <= Today() ,false,true)}" >
+                    Connection(SM) for Co-Brokerage now includes premium software capabilities; the functionality of Realsuite Respond, Connect and Transact are part of your solution. Your existing software products remain active, but your billing has been reduced. Call (800) 878-4166 or email <a href="mailto:customercare@realtor.com" target="_blank">customercare@realtor.com</a> if you have any questions. 
+                </apex:outputText>
+                <apex:outputText rendered="{!IF(DATEVALUE($Label.Connections_Plus_GA_date) <= Today() ,true,false)}" >
+                    {!$Label.COBROKE_Product_Name} includes premium software capabilities; your existing software products remain active, but your billing has been reduced. Call (800) 878-4166 or email <a href="mailto:customercare@realtor.com" target="_blank">customercare@realtor.com</a> if you have any questions. 
+                </apex:outputText>
+                </b></p>
+        </font>
+    </apex:outputPanel>
+    <font style="font-family:Arial, Verdana, sans serif; color: #2c3134; font-size:11px;font-weight:normal;">
+        <apex:repeat var="ox" value="{!items}">
+            <apex:outputpanel rendered="{!IF((ox.productCode = 'SELLERLEADBUNDLE'),true,false)}">
+                <p><b>** {!ox.market} includes the following ZIPs: {!ox.fulfilledZipList}. </b></p>
+            </apex:outputpanel>
+        </apex:repeat>
+        <!-- CRM-3081 Modified to print the Sentence for the  Lead Products (COBROKE and SELLERLEADBUNDLE)  || ox.productCode = 'COBROKE' -->
+        <!--- <apex:outputpanel rendered="{!IF((ox.productCode = 'SELLERLEADBUNDLE'),true,false)}">      
+             <p><b>** {!ox.market} includes the following ZIPs: {!ox.fulfilledZipList}. </b></p>              
+             <apex:variable var="count" value="{!count + 1}"/>
+            </apex:outputpanel>            --->
+        <apex:outputPanel rendered="{!isDisplayLeadVolumeText}">
+            <p><b>Lead volume is not guaranteed. Leads are not guaranteed to be delivered in all ZIP codes.</b></p>
+        </apex:outputPanel>
+    </font>
+</apex:component>

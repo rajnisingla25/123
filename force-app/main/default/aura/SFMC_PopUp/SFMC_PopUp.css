@@ -1,0 +1,8 @@
+.THIS .closeBtn{
+    background-color : black !important;
+    border: 1px solid !important;
+    border-color: black !important;
+    left: 10px !important;
+    
+    border-radius: 15px !important;
+}

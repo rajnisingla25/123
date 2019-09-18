@@ -1,0 +1,31 @@
+/* CSS file */
+
+/*------------------------------------------------------------------------------ Fonts */
+
+
+Diagram
+{
+	borderSkin: ClassReference("diagrammer.skins.GridSkin");
+}
+
+BaseNode
+{
+	linkingGlowColor: #FFFFFF;
+	labelFontFamily : 'Verdana';
+	labelFontColor: #404040;
+	labelFontSize: 12;
+	labelFontWeight: regular;
+}
+
+Link
+{
+	template-bottom-line-color: #B3B3B3;
+	tempalte-line-color: #404040;
+	bottom-line-color: #B3B3B3;
+	line-color: #000000;	
+	labelFontFamily : 'Verdana';
+	labelFontColor: #FFFFFF;
+	labelFontSize: 10;
+	labelFontWeight: normal;
+	lineThickness: 2;
+}

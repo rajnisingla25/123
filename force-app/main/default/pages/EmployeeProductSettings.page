@@ -1,0 +1,623 @@
+<apex:page standardStylesheets="false" showHeader="false" controller="EmployeeDashboardController" applyBodyTag="false" applyHtmlTag="false">
+
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta name="description" content="realtor.com® Essentials℠ dashboard" />
+        <link rel="icon" href="{!$Resource.EmployeeSiteFavicon}" />
+
+        <title>realtor.com® Essentials℠ dashboard</title>
+
+        <link rel="stylesheet" href="{!URLFOR($Resource.EmployeeDashboard, '/employee/font-awesome.min.css')}" />
+        <link rel="stylesheet" href="{!URLFOR($Resource.EmployeeDashboard, '/employee/googleApisFontCss.css')}" />
+
+        <link rel="stylesheet" media="screen" href="{!$Resource.EmployeeDashboardCss}" />
+
+        <style>
+            .load-spinner-lg:after {
+                background-image: url("{!$Resource.EmployeeDashboardLoading}")
+            }
+        </style>
+
+    </head>
+
+
+    <section class="sidebar-open" id="main-body" style="background-color: #f5f5f5 !important;">
+
+
+        <div id="app-container" StyleClass="app-container">
+            <c:EmployeeDashboardHeaderSidebar id="headerComp" />
+
+            <div id="main-container" class="main-container">
+                <div class="container-fluid">
+                    <div class="alertdiv"></div>
+                    <section class="title-section mar-bottom-lg">
+                        <div class="title-section-breadcrumb hidden-xs">Dashboard</div>
+                        <h1 class="title-section-header mar-right-md"> Product Settings</h1>
+
+                        <div class="btn-group bootstrap-select form-control select-dropdown">
+                            <button type="button" class="btn dropdown-toggle btn-default" data-toggle="dropdown" data-id="dropdown"><span class="filter-option pull-left"><span class="selected-acct-name"></span>- PARTY ID <span class="selected-acct-party-id"></span></span>&nbsp;<span class="bs-caret"><span class="caret"></span></span>
+                            </button>
+                            <div class="dropdown-menu open ">
+                                <ul class="dropdown-menu inner accounts-dropdown" role="menu">
+
+                                </ul>
+                            </div>
+                        </div>
+
+                    </section>
+
+                    <div class="container-fluid" id="main-content">
+                        <div class="error-div"></div>
+                        <div class=""><strong>Note for Beta products:</strong> To order Connect, order same quantity of Respond license.</div>
+                        <br />
+                        <div class="hidden msg" id="success-message-essentials" style="color: green; font-weight: 400"> You will receive a Welcome email.</div>
+                        <div role="tabpanel" class="tab-pane active bg-white" id="default-settings">
+                            <div class="tab-content-header row">
+                                <h3 class="mar-bottom-none pull-left">Default settings</h3>
+                                <button onclick="getProducts()" type="button" style="font-size:18px" class="btn btn-link pull-right pad-top-none pad-bottom-none" data-toggle="modal" data-target="#ownedProducts" data-backdrop="static" data-keyboard="false">Products Owned</button>
+                            </div>
+
+                            <div class="tab-content-body pad-top-md pad-bottom-md">
+                                <!-- Start of setting -->
+                                <div class="setting">
+                                    <div class="setting-toggle-wrapper">
+                                        <form>
+                                            <div class="row mar-bottom-md">
+                                                <div class="form-group col-sm-8 row">
+                                                    <div class="col-sm-3  md-font ">Essentials Status:</div>
+                                                    <div class="col-sm-2 selected-acct-essentials" style="font-size:18px"></div>
+                                                    <div class="col-sm-4">
+                                                        <button id="activate-essentials" type="button" class="btn btn-link md-font hidden" style="padding:0">Activate Essentials</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mar-bottom-md">
+
+                                                <div class="form-group col-sm-6 row">
+                                                    <label class="col-sm-2" for="selectedProduct">Product: </label>
+                                                    <div class="col-sm-8">
+                                                        <select id="selectedProduct" class="form-control ">
+                                                            <option value='COBROKE'>Connection for Co-Brokerage</option>
+                                                            <option value='Advantage'>Advantage</option>
+                                                            <option value='BETARESPOND'>Respond</option>
+                                                            <option value='BETACONNECT'>Connect</option>
+                                                            <option value='BETATRANSACT'>Transact</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-sm-6 row">
+                                                    <label class="col-sm-2" for="market">Market: </label>
+                                                    <div class="col-sm-4">
+                                                        <select id="market" class="form-control">
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group col-sm-6 row">
+                                                    <label class="col-sm-2" for="market">Quantity: </label>
+                                                    <div class="col-sm-4">
+                                                        <input type="text" class="form-control" id="quantity" />
+                                                        <span id="required-error" class="state-message hidden">This Field is required</span>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group col-sm-6 row hidden">
+                                                    <label class="col-sm-8" for="market">Current quantity:<span id="current-quantity" class="mar-left-md"></span> </label>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row mar-right-md">
+                                                <div class="form-group pull-right">
+                                                    <button type="button" class="btn btn-primary mar-left-md" id="addToList">Add to List</button>
+                                                    <button type="button" class="btn btn-default border-only-btn" data-toggle="modal" data-target="#purchaseList" data-backdrop="static" data-keyboard="false">View List</button>
+                                                </div>
+                                            </div>
+
+                                        </form>
+
+                                    </div>
+                                </div>
+
+                                <!-- End of setting -->
+                            </div>
+                            <!--End of Content Body-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <c:SetFooterCommunity id="footerComp" />
+
+        </div>
+        <div class="modal fade" id="modal-alert" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"><span class="title-body"></span><br /><span class="selected-acct-name"></span></h4>
+                    </div>
+                    <form>
+                        <div class="modal-body">
+                            <button type="button" class="btn btn-primary" id="send-to-fulfillment">Okay</button>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="ownedProducts" role="dialog">
+            <div class="modal-dialog modal-md">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Products Owned</h4>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="mar-bottom-md">
+                            <table>
+                                <tr>
+                                    <td><Strong> Account PartyId: </Strong></td>
+                                    <td><span class="selected-acct-party-id pad-left-md"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><Strong> Account Name: </Strong></td>
+                                    <td><span class="selected-acct-name pad-left-md"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><Strong> Essentials: </Strong></td>
+                                    <td><span class="selected-acct-essentials pad-left-md">Inactive</span></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <table class="ownedProdTable table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Market</th>
+                                    <th style="width:8%"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="purchaseList" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" id="list-close" class="close">&times;</button>
+                        <h4 class="modal-title">Selected Products List</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="fulfillment-error"></div>
+                        <div class="hidden msg" id="success-message" style="color: green; font-weight: 400"> Go to Broker/Agents page to view the Impersonation Link.</div>
+                        <table class="slectedProdTable table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Account Name</th>
+                                    <th>Party Id</th>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Market</th>
+                                    <th>Action</th>
+                                    <th style="width:5%"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" id="clear-list">Clear list</button>
+                        <button type="button" class="btn btn-primary mar-left-md" id="submit-to-fulfillment" disabled="true">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+    <apex:includeScript value="{!URLFOR($Resource.EmployeeDashboard, '/employee/jquery-2.2.4.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.EmployeeDashboard, '/employee/prosoft-ui.min.js')}" />
+
+    <apex:includeScript value="{!$Resource.EmployeeDashboardJS}" />
+    <script type="text/javascript">
+        $(function() {
+            getUserAcct();
+            attachHandlers()
+        });
+
+        function attachHandlers() {
+
+            var selectValues = {
+                "00001": "00001",
+                "00002": "00002",
+                "00003": "00003",
+                "00004": "00004",
+                "00005": "00005",
+                "00006": "00006",
+                "00007": "00007",
+                "00008": "00008",
+                "00009": "00009",
+                "00010": "00010",
+                "00011": "00011",
+                "00012": "00012",
+                "00013": "00013",
+                "00014": "00014",
+                "00015": "00015",
+                "00016": "00016",
+                "00017": "00017",
+                "00018": "00018",
+                "00019": "00019",
+                "00020": "00020",
+            };
+            $.each(selectValues, function(key, value) {
+                $('#market')
+                    .append($("<option></option>")
+                        .attr("value", value)
+                        .text(key));
+            });
+
+            $("#selectedProduct").change(function() {
+                updateInputValues();
+                hasCurrentQuantity();
+            });
+
+            $("#market").change(function() {
+                hasCurrentQuantity();
+            });
+
+
+            $("#addToList").click(function() {
+                var action = "add";
+                console.log(hasCurrentQuantity());
+                if (hasCurrentQuantity()) {
+                    action = "amend";
+                }
+                addToList(action, $("#quantity").val(), $("#market").find(":selected").val(),
+                    $("#selectedProduct").find(":selected").val(), $("#selectedProduct").find(":selected").text());
+            });
+
+            $("#clear-list").click(function() {
+                $('.slectedProdTable tbody tr').remove();
+                $("#submit-to-fulfillment").attr("disabled", true);
+            });
+
+            $("#activate-essentials").click(function() {
+                showSpinner();
+                removeError();
+
+                function Account() {
+                    this.id = null;
+                    this.EssentialsStatus__c = null;
+                }
+                var a = new Account();
+                a.Id = $(".selected-acct-name").data("id");
+                a.EssentialsStatus__c = 'Activate';
+                EmployeeDashboardController.editAccount(a,
+                    function(result, event) {
+                        hideSpinner();
+                        if (event.status) {
+                            $("#success-message-essentials").removeClass('hidden');
+                            displayAlert("success", "success", "Essentials activation request has been sent");
+                        } else {
+                            displayError(event.message);
+                        }
+                    });
+            });
+
+            $("#list-close").click(function() {
+                if ($('.slectedProdTable thead tr th:last').html() == "Status") {
+                    if (confirm("This will clear the list")) {
+                        $("#success-message").addClass("hidden");
+                        $('.slectedProdTable tbody tr').remove();
+                        $('.slectedProdTable thead tr th:last').remove();
+                        $("#submit-to-fulfillment").attr("disabled", true);
+                        $('#purchaseList').modal('toggle');
+                    }
+                } else {
+                    $('#purchaseList').modal('toggle');
+                }
+            });
+            // Fulfillment Request object
+            function fulfillmentReq(accountId, quantity, partyId, accountName, accountType, partNumber, action, market, corelationId) {
+                this.accountId = accountId;
+                this.quantity = quantity;
+                this.partyId = partyId;
+                this.accountName = accountName;
+                this.accountType = accountType;
+                this.partNumber = partNumber;
+                this.action = action;
+                this.market = market;
+                this.co_relation_id = corelationId;
+            }
+            
+            // Method to add license quantity
+            $("#submit-to-fulfillment").click(function() {
+                showSpinner();
+                $("#fulfillment-error").html("");
+                $("#success-message").addClass("hidden");
+                var arr = [];
+                $(".slectedProdTable tbody tr").each(function(i, el) {
+                    console.log($(this).find(".acct-name").html());
+                    var accountId = $(this).find(".acct-name").data("id");
+                    var quantity = $(this).find(".product-quantity").html();
+                    var partyId = $(this).find(".acct-partyid").html();
+                    var accountName = $(this).find(".acct-name").html();
+                    var accountType = $(this).find(".acct-name").data("type");
+                    var partNumber = $(this).find(".productcode").data("value");
+                    var action = $(this).find(".action").html();
+                    var market = $(this).find(".market-zip").html();
+                    var corelationId = accountName + "_corelationId" + i;
+                    $(this).addClass(corelationId);
+                    console.log(accountId + quantity + partyId + accountName + accountType + partNumber + action + market);
+
+                    arr.push(new fulfillmentReq(accountId, quantity, partyId, accountName, accountType, partNumber, action, market, corelationId));
+                });
+                if (arr.length > 0) {
+                    EmployeeDashboardController.sendToFulfillment1(arr,
+                        function(result, event) {
+                            hideSpinner();
+                            if ($('.slectedProdTable thead tr th:last').html() == "Status") {
+                                $('.slectedProdTable thead tr th:last').remove();
+                                $(".slectedProdTable tbody tr td:last").each(function(i, el) {
+                                    $(this).remove();
+                                });
+                            }
+                            if (event.status) {
+                                console.log(event + JSON.stringify(result));
+                                $(".slectedProdTable thead tr").append("<th>Status</th>");
+                                $.each(result, function(key, value) {
+                                    console.log(key.slice(-1));
+                                    isSuccess = false;
+                                    $(".slectedProdTable tbody tr").each(function(i, el) {
+                                        if (key.slice(-1) == i) {
+                                            if (value == 'Fulfilled') {
+                                                $(this).append("<td style='color:green'>Success</td>");
+                                                isSuccess = true;
+                                            } else {
+                                                $(this).append("<td style='color:red'>" + value + "</td>");
+                                            }
+                                        }
+                                    });
+                                    if (isSuccess) {
+                                        $("#success-message").removeClass("hidden");
+                                    }
+                                });
+                                getProducts();
+                            } else {
+                                $("#fulfillment-error").html("<span style='color: red'>Error: </span>" + event.message);
+                            }
+
+                        });
+                } else {
+                    alert("List is empty");
+                }
+            });
+
+            $('.slectedProdTable').on('click', '.delete-img', function() {
+                $(this).parents().eq(1).remove();
+            });
+
+            $('.ownedProdTable').on('click', '.delete-img', function() {
+                var confirmAlert = confirm("This will delete licenses for " + $(this).parents().eq(1).find("#own-partNum").html() + ". Add to the list?");
+                if (confirmAlert) {
+                    addToList("cancel", $(this).parents().eq(1).find("#own-quantity").html(), $(this).parents().eq(1).find("#own-market").html(), $(this).parents().eq(1).find("#own-partNum").data("partnumber"), $(this).parents().eq(1).find("#own-partNum").html());
+                }
+            });
+        }
+
+        function addToList(action, quantity, market, partNumber, productName) {
+            removeAlert();
+            $("#success-message-essentials").addClass('hidden');
+            removeValidationError("required", $("#quantity").parent());
+            console.log($(".slectedProdTable tbody tr").length);
+            if (partNumber != 'COBROKE') {
+                market = '';
+            }
+            if ($(".selected-acct-party-id").html() == null || $(".selected-acct-party-id").html() == '') {
+                alert("Party Id is blank");
+            } else if (quantity == '' || quantity == null) {
+                addError("required", $("#quantity").parent());
+            } else if ($(".slectedProdTable tbody tr").length > 4) {
+                alert("Max 5 items allowed");
+            } else {
+                console.log($(".selected-acct-party-id").html() + action);
+                var tr = "<tr>";
+                var td1 = "<td class = 'acct-name' data-type='" + $(".selected-acct-name").data("type") + "' data-id=" + $(".selected-acct-name").data("id") + ">" + $(".selected-acct-name").html() + "</td>";
+                var td2 = "<td class = 'acct-partyid'>" + $(".selected-acct-party-id").html() + "</td>";
+                var td3 = "<td class = 'productcode' data-value=" + partNumber + ">" + productName + "</td>";
+                var td4 = "<td class = 'product-quantity' >" + quantity + "</td>";
+                var td5 = "<td class = 'market-zip' >" + market + "</td>";
+                var td6 = "<td class = 'action'>" + action + "</td>";
+                var td7 = "<td><img class='delete-img' height = 25 src={!$Resource.deleteCross}></td>"
+                var tr2 = "</tr>";
+                $(".slectedProdTable tbody").append(tr + td1 + td2 + td3 + td4 + td5 + td6 + td7 + tr2);
+                $("#submit-to-fulfillment").attr("disabled", false);
+                displayAlert("success", "success", "Added " + productName + " to the list");
+            }
+        }
+
+        function getUserAcct() {
+            // Get all main accounts related to the user
+            EmployeeDashboardController.getAllParentAccounts(false,
+                function(result, event) {
+                    console.log(result);
+                    if (event.status) {
+                        for (var i = 0; i < result.length; i++) {
+                            var partyId = '';
+                            if (result[i]["Party_ID__c"]) {
+                                partyId = result[i]["Party_ID__c"];
+                            }
+                            $(".accounts-dropdown").append("<li><a data-type='" + result[i]["Type"] + "' data-value=" + result[i]["Id"] + "><span class='text'><span class='account-name'>" + result[i]["Name"] + "</span>- PARTY ID<span class='party-id'>" + partyId + "</span></span></a></li>");
+                        }
+                        console.log($(".accounts-dropdown li:first a").data("type"));
+                        reinit($(".accounts-dropdown li:first a"));
+                        getAllAgents();
+                    }
+
+                });
+        }
+
+        // Update or disable Input/select dropdown values based on selected product, account type
+        function updateInputValues() {
+            if ($("#selectedProduct").find(":selected").val() != 'COBROKE') {
+                $("#market").attr("disabled", "disabled");
+            } else {
+                $("#market").removeAttr("disabled");
+            }
+            if ($("#selectedProduct").find(":selected").val() == 'Advantage' || $(".selected-acct-name").data("type") != "Broker") {
+                $("#quantity").val("1");
+                $("#quantity").prop('disabled', true);
+            } else {
+                $("#quantity").removeAttr('disabled');
+            }
+        }
+        
+        // Method used when account is changed from dropdown
+        function reinit(thisObj) {
+            $(".selected-acct-name").html(thisObj.find(".account-name").html());
+            $(".selected-acct-party-id").html(thisObj.find(".party-id").html());
+            $(".selected-acct-name").data("id", thisObj.data("value"));
+            $(".selected-acct-name").data("type", thisObj.data("type"));
+            $(".accounts-dropdown li").each(function() {
+                $(this).removeClass("selected");
+            });
+            $("#success-message-essentials").addClass('hidden');
+            updateInputValues();
+            thisObj.parent().addClass("selected");
+            getProducts();
+
+        }
+
+        function getAllAgents() {
+            EmployeeDashboardController.getAllOffices(
+                function(result, event) {
+                    if (event.status) {
+                        var offArr = [];
+                        if (result.length > 0) {
+                            for (var i = 0; i < result.length; i++) {
+                                offArr.push(result[i]["Id"]);
+                            }
+                            EmployeeDashboardController.getAgentAccounts(offArr,
+                                function(result, event) {
+                                    console.log(result);
+                                    if (event.status) {
+                                        for (var i = 0; i < result.length; i++) {
+                                            var partyId = '';
+                                            if (result[i]["Party_ID__c"]) {
+                                                partyId = result[i]["Party_ID__c"];
+                                            }
+                                            $(".accounts-dropdown").append("<li><a data-value=" + result[i]["Id"] + " data-type='Realtor Agent'><span class='text'><span class='account-name'>" + result[i]["Name"] + "</span>- PARTY ID <span class='party-id'>" + partyId + "</span></span></a></li>");
+                                        }
+                                        $(".accounts-dropdown li a").click(function() {
+                                            removeError();
+                                            reinit($(this));
+
+                                        });
+                                    } else {
+                                        displayError(event.message);
+                                    }
+                                });
+                        }
+                    } else {
+                        displayError(event.message);
+                    }
+                });
+        }
+
+        // Get current quantity if account already purchased the product
+        function hasCurrentQuantity() {
+            var isPresent = false;
+            Object.keys(sessionStorage).forEach(function(key) {
+                if (key.includes("EmpDashboardProducts")) {
+                    var accountId = $(".selected-acct-name").data("id");
+                    var partNum = $("#selectedProduct").find(":selected").val();
+                    var market = $("#market").find(":selected").val();
+                    var licenseQuan = JSON.parse(sessionStorage.getItem(key));
+                    if (licenseQuan["Product_Part_Number__c"] == partNum && ($("#market").attr("disabled") != undefined || market == licenseQuan["Market__c"])) {
+                        $("#current-quantity").parents().eq(1).removeClass("hidden");
+                        $("#current-quantity").html(licenseQuan["Quantity__c"]);
+                        isPresent = true;
+                    }
+                }
+
+            });
+            if (!isPresent) {
+                $("#current-quantity").parents().eq(1).addClass("hidden");
+            }
+            return isPresent;
+        }
+
+        function getProducts() {
+            var accountId = $(".selected-acct-name").data("id");
+            $("#success-message-essentials").addClass('hidden');
+            // Get Essentials status
+            console.log(accountId);
+            var idList = [];
+            idList.push(accountId);
+            EmployeeDashboardController.getAcctsFromIds(idList,
+                function(result, event) {
+                    if (event.status) {
+                        var acc = result[0];
+                        if (acc.EssentialsStatus__c == 'Activated' || acc.Advertiserid__c != undefined) {
+                            $(".selected-acct-essentials").html("Activated");
+                            $("#activate-essentials").addClass("hidden");
+                        } else {
+                            $(".selected-acct-essentials").html("Inactive");
+                            $("#activate-essentials").removeClass("hidden");
+                        }
+                    }
+                });
+
+            EmployeeDashboardController.getProducts(idList,
+                function(result, event) {
+                    if (event.status) {
+                        $('.ownedProdTable tbody tr').remove();
+                        console.log("products" + result + sessionStorage.length);
+
+                        Object.keys(sessionStorage).forEach(function(key) {
+                            if (key.includes("EmpDashboardProducts")) {
+                                sessionStorage.removeItem(key);
+                            }
+                        });
+
+                        for (var i = 0; i < result.length; i++) {
+                            sessionStorage.setItem("EmpDashboardProducts" + i, JSON.stringify(result[i]));
+                            var productName = $("#selectedProduct option[value='" + result[i]["Product_Part_Number__c"] + "']").text();
+                            var market = result[i]["Market__c"];
+                            if (market == undefined || market == null) {
+                                market = '';
+                            }
+                            var tr = "<tr>";
+                            var td1 = "<td id='own-partNum' data-partnumber = " + result[i]["Product_Part_Number__c"] + ">" + productName + "</td>";
+                            var td2 = "<td id='own-quantity'>" + result[i]["Quantity__c"] + "</td>";
+                            var td3 = "<td id='own-market'>" + market + "</td>";
+                            var td4 = "<td><img class='delete-img' height = 20 src={!$Resource.deleteImg}></td></tr>";
+
+                            $('.ownedProdTable tbody').append(tr + td1 + td2 + td3 + td4);
+                        }
+                        hasCurrentQuantity();
+                    }
+                });
+        }
+    </script>
+
+</apex:page>

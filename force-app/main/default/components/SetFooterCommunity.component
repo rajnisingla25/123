@@ -1,0 +1,59 @@
+<apex:component access="global">
+
+        <div id="app-footer" class="app-footer full-width pos-absolute bg-default">
+        
+            <link rel="stylesheet" media="screen" href="{!$Resource.realsuiteCss}" />
+          
+            <div id="footer" class="global-nav-footer">
+                
+                <input type="hidden" name="channel_flag" id="channel_flag" value="false" />
+                <div class="footer-wrapper-links-main">
+                    <div class="container">
+                        <ul id="footer-links-primary" class="global-nav-list-horizontal">
+                            <li><a href="http://marketing.move.com/" data-omtag="footer:corp:about">About Us</a></li>
+                            <li><a href="http://careers.move.com" data-omtag="footer:corp:careers">Careers</a></li>
+                            <li><a href="#" id="global-nav-feedback" data-omtag="footer:corp:feedback">Feedback</a></li>
+                            <li><a href="http://news.move.com/" data-omtag="footer:corp:mediaRoom">Media Room</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="footer-wrapper-links-secondary">
+                    <div class="container">
+                        <ul id="footer-links-secondary" class="global-nav-list-horizontal">
+                            <li><a href="http://marketing.move.com/privacy-policy/#oba_anchor" data-omtag="footer:corp:ad-choices">Ad Choices</a></li>
+                            <li><a href="http://marketing.realtor.com/advertise/" data-omtag="footer:corp:advertise">Advertise with us</a></li>
+                            <li><a href="http://support.realtor.com/#iid=rdc_hdr_realtors_support" data-omtag="footer:corp:agentSupport">Agent support</a></li>
+                            <li>
+                                <a id="toggle-products" rel="popover" href="javascript:void(0)" data-placement="top" data-popover="#footer-popover-products"> Products </a>
+                                <div id="footer-popover-products" class="global-nav-hide footer-popover-content">
+                                    <ul class="global-nav-list-unstyled">
+                                        <li><a href="https://www.listhub.com/home.html" data-omtag="footer:products:listHub">ListHub</a></li>
+                                        <li><a href="http://www.tigerlead.com/" data-omtag="footer:products:tigerlead">TigerLead</a></li>
+                                        <li><a href="http://www.topproducer.com/" data-omtag="footer:products:topProducer">Top Producer</a></li>
+                                        <li><a href="http://www.homefair.com/" data-omtag="footer:partners:homeFair">Homefair</a></li>
+                                        <li><a href="http://www.move.com/" data-omtag="footer:partners:move">Move.com</a></li>
+                                        <li><a href="http://www.relocation.com/" data-omtag="footer:partners:relocation">Relocation</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <a href="http://marketing.move.com/privacy-policy/" data-omtag="footer:corp:privacy">Privacy</a> / <a href="//agent-broker-program.tphub-qa.moveaws.com/policies/terms" data-omtag="footer:corp:terms">Terms</a>
+                            </li>
+                            <li><a href="http://www.realtor.com/sitemap" data-omtag="footer:corp:sitemap">Sitemap</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="footer-wrapper-copyright">
+                    <div class="container">
+                        <p id="footer-copyright">
+                            &copy;1995-2017 <a href="http://www.realtor.org" data-omtag="footer:corp:nar">National Association of REALTORS<sup>&reg;</sup></a> and <a href="http://www.move.com/">Move, Inc.</a> All rights reserved.<br/>
+                            realtor.com<sup>&reg;</sup> is the official site of the National Association of REALTORS<sup>&reg;</sup> and is operated by Move, Inc., a subsidiary of News Corp.
+                        </p>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+ </apex:component>

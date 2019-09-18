@@ -1,0 +1,158 @@
+<apex:page showHeader="false" sidebar="false">
+    <apex:includeScript value="/support/console/40.0/integration.js"/>
+    <script type="text/javascript">
+    //CRM-1855 - Srinivas Vadla : added this javascript function to Set the button/link label to the subtab title.
+    function testGetFocusedSubtabId() {
+            sforce.console.getFocusedSubtabId(showTabId);
+        }
+        var showTabId = function showTabId(result) {
+                sforce.console.setTabTitle('View Hierarchy');
+        };
+         var pageLoad = window.onload;
+          window.onload = function() {
+            if (pageLoad) {
+                pageLoad();
+            }
+            testGetFocusedSubtabId();
+          }
+    </script>
+    <!-- AccountHierarchyViewer Flex App swf file -->
+    <!-- Notice the flashvars: bridgeName=AccountHierarchyViewer. This page uses FABridge for javascript to flash communications. -->
+    <apex:flash src="{!URLFOR($Resource.Account_Hierarchy_Flex, 'AccountHierarchyViewer.swf')}"
+        width="100%"
+        height="750"
+        flashvars="bridgeName=AccountHierarchyViewer"
+        id="AccountHierarchyViewer" />
+
+     <!-- Apex SOAP Connectin Libraries Added By Ravindra For Testing -->
+     <script src="/xdomain/xdomain.js" type="text/javascript"></script>
+    
+    <!-- Include FABridge javascript -->
+    <apex:includeScript value="{!URLFOR($Resource.Account_Hierarchy_Flex, 'FABridge.js')}"/>
+    
+    <!-- App javascript -->
+    <script>
+    
+    /**
+     * Holds reference to flex App
+     */
+    var flexApp = null;
+
+
+    /**
+     * This function gets called when DOM is ready
+     */
+    (function() {
+    
+        /**
+         * Handle AccountHierarchyViewer loaded event - This function gets called once AccountHierarchyViewer.swf is loaded
+         */
+        FABridge.addInitializationCallback("AccountHierarchyViewer", function() {      
+            
+            /**
+             * Get reference to flexApp using FABridge
+             */
+            flexApp = FABridge.AccountHierarchyViewer.root()
+
+            /**
+             * Set session id to sforce toolkit
+             */
+            sforce.connection.sessionId = '{!$Api.Session_ID}'; // For session out
+
+            /**
+             * Get account id from page parameters
+             */
+            var initialAccountId = '{!$CurrentPage.parameters.accountId}';
+            
+            /**
+             * Call webservice using sforce toolkit to Get account name by accountId
+             */
+             
+            var accountName = sforce.apex.execute("Account_Hierarchy_Utility", "getAccountName", {AccountId: initialAccountId});
+            
+            var accObj = {};
+            accObj["AccountType"] = accountName[0].AccountType;
+            accObj["Name"] = accountName[0].Name;
+            accObj["Agents"] = accountName[0].Agents;
+            accObj["Offices"] = accountName[0].Offices;
+            accObj["TotalAccountValue"] = accountName[0].TotalAccountValue;
+            accObj["TotalCLC"] = accountName[0].TotalCLC;
+            accObj["TotalHLC"] = accountName[0].TotalHLC;
+            accObj["AccountId"] = initialAccountId;
+            
+            /**
+             * Add initial account to flex app, passing initialAccountId and accountName
+             */
+            flexApp.addInitialAccount(initialAccountId, accObj);
+            
+            /**
+             * Add parent accounts
+             */
+            var lstParentID = [];
+            var lstChildID = [];
+                        
+            lstParentID.push(initialAccountId);
+            lstChildID.push(initialAccountId);
+                         
+            while(lstParentID.length > 0) {
+                 var pid = lstParentID.shift();
+                 var parents = sforce.apex.execute("Account_Hierarchy_Utility", "getParentRelationships", {AccountId: pid});
+                 //alert(parents);
+                /**
+                 * Add parent accounts
+                 */
+                for(var n = 0; n < parents.length; n++) {
+                
+                    if(parents[n].AccountId != null) {
+                        var paccid = parents[n].AccountId.substring(0, pid.length);
+                        var paccObj = {};
+                        paccObj["AccountType"] = parents[n].AccountType;
+                        paccObj["Name"] = parents[n].Name;
+                        paccObj["Agents"] = parents[n].Agents;
+                        paccObj["Offices"] = parents[n].Offices;
+                        paccObj["TotalAccountValue"] = parents[n].TotalAccountValue;
+                        paccObj["TotalCLC"] = parents[n].TotalCLC;
+                        paccObj["TotalHLC"] = parents[n].TotalHLC;
+                        paccObj["AccountId"] = paccid;
+                        lstParentID.push(paccid);
+                        flexApp.addParentAccount(pid, paccid, paccObj);
+                    }
+                }
+            }
+            
+            while(lstChildID.length > 0) {
+                 var cid = lstChildID.shift();
+                 var children = sforce.apex.execute("Account_Hierarchy_Utility", "getChildRelationships", {AccountId: cid});
+    
+                /**
+                 * Add child accounts
+                 */
+                for(var j = 0; j < children.length; j++) {
+                
+                    if(children[j].AccountId != null) {
+                        var caccid = children[j].AccountId.substring(0, cid.length);
+                        var caccObj = {};
+                        caccObj["AccountType"] = children[j].AccountType;
+                        caccObj["Name"] = children[j].Name;
+                        caccObj["Agents"] = children[j].Agents;
+                        caccObj["Offices"] = children[j].Offices;
+                        caccObj["TotalAccountValue"] = children[j].TotalAccountValue;
+                        caccObj["TotalCLC"] = children[j].TotalCLC;
+                        caccObj["TotalHLC"] = children[j].TotalHLC;
+                        caccObj["AccountId"] = caccid;
+                        lstChildID.push(caccid);
+                        flexApp.addChildAccount(cid, caccid, caccObj);
+                    }
+                }
+            }
+            
+            flexApp.dataLoadingOver();
+            
+        });
+    })();
+    </script>
+
+    <!-- include salesforce soap javascript libs -->
+    <script src="../../soap/ajax/33.0/connection.js" type="text/javascript"></script>
+    <script src="../../soap/ajax/33.0/apex.js" type="text/javascript"></script>
+</apex:page>

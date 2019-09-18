@@ -1,0 +1,13 @@
+<apex:page standardStylesheets="false" showHeader="false" controller="SelfServiceController" applyBodyTag="false" applyHtmlTag="false">
+  <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta name="description" content="Layout prototype for Prosoft" />
+        <meta name="author" content="Move Prosoft UX" />
+        <link rel="shortcut icon" href="{!$Resource.CustomerCommunityFavicon}" type="image/x-icon"/>
+    </head>
+    <script>
+    window.location.href = "{!$Label.CustomerCommunityDomain}/SelfServiceCreditCards?id={!sfdcAcctId}&iscommunityuser=true"
+    </script>
+</apex:page>

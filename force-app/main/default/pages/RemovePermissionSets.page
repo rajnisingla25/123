@@ -1,0 +1,311 @@
+<!--
+************************************************************************* 
+ *  Copyright (c) 2014 Appirio Inc.
+ *  All Rights Reserved.
+ * 
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Appirio Incorporated and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Appirio Incorporated
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Appirio Incorporated.
+*************************************************************************
+-->
+
+
+<apex:page controller="RemovePermissionSetsController" sidebar="false">
+   
+    <apex:includescript value="{!URLFOR( $Resource.PermissionSets, 'jquery-1.4.2.min.js' )}" />
+    <apex:includescript value="{!URLFOR( $Resource.PermissionSets, 'jquery-ui-1.8.4.custom.min.js' )}" />
+    <apex:includescript value="{!URLFOR( $Resource.PermissionSets, 'invites.js' )}" />
+    <apex:stylesheet value="{!URLFOR( $Resource.PermissionSets, 'invites.css' )}" />
+    <apex:sectionheader title="Remove Permission Sets" />
+    
+    <script type="text/javascript">
+        function setFocusOnLoad() {}
+        
+        jQuery(function() {
+            jQuery('#aboutbutton').button();
+        });
+       
+        /*
+            Perform search on Permission set if entered search text is more than 2 chars
+        */
+        function doSearch(searchTxt) {
+            if(!searchTxt || searchTxt.length < 2) 
+                return;
+            else 
+                searchPermSet(searchTxt);   
+        }
+        
+        function removePSAFromAllUsers(thisRecId) {
+            
+            if(confirm('Are you sure you want to remove this Permission Set from everyone?')) {
+                removePSAFromAll(thisRecId);
+            }
+        }
+    </script>
+    <apex:pageMessages id="message"/>
+    
+    <apex:form id="theform">
+    <apex:actionRegion >
+    <apex:actionFunction name="searchPermSet" action="{!searchRecords}" reRender="searchBlock,message,licenseBlock">
+        <apex:param name="searchTxt" value="" assignTo="{!obName}"/>
+    </apex:actionFunction>
+    <apex:actionFunction name="resetPSA" action="{!resetPSAList}" rerender="message,userBlock" oncomplete="checkAll();">
+        <apex:param name="successCount" value="" assignTo="{!successCount}"/>
+        <apex:param name="failedCount" value="" assignTo="{!failedCount}"/>
+    </apex:actionFunction> 
+    </apex:actionRegion>
+    
+    <apex:actionFunction name="removePSAFromAll" action="{!removePSAFromAll}" rerender="searchBlock,userBlock,message,licenseBlock,removePsaBlock" >
+      <apex:param name="recID" assignto="{!recID}" value="" />
+    </apex:actionFunction>
+   
+    <apex:actionfunction name="showUsers" action="{!showUsers}" rerender="searchBlock,userBlock,message,licenseBlock,removePsaBlock" oncomplete="checkAll();">
+      <apex:param name="recID" assignto="{!recID}" value="" />
+    </apex:actionfunction>
+    
+    <div style="float:left; width:49%; margin-right:10px;">
+        <apex:pageblock title="1. Select License Type" id="licenseBlock">
+            <apex:pageblocksection showheader="false" columns="1" >
+                <apex:pageblocksectionitem rendered="{!NOT(isLicenseSelected)}">
+                    <apex:outputlabel for="obtype" value="User License" />
+                    <apex:selectList id="obtype" value="{!obType}" size="1" multiselect="false" rendered="{!NOT(isLicenseSelected)}">
+                        <apex:selectOptions value="{!UserLicenses}"/>
+                        <apex:actionSupport event="onchange" action="{!resetSearch}" rerender="searchBlock,inviteBlock,licenseBlock"/>
+                    </apex:selectList>
+                </apex:pageblocksectionitem>
+                <apex:pageBlockSectionItem rendered="{!isLicenseSelected}">
+                    <apex:outputText value="{!obType}" styleclass="h3" style="font-size:16px;font-weight:bold;color:blue;"/>
+                    <apex:commandButton id="resetBtn" value="Change License Type" action="{!resetFull}" rerender="theform"/>
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+        </apex:pageblock>
+    
+      <!--      
+        <apex:panelGroup >
+            <apex:pageblock title="1. Select License Type" id="licenseBlock">
+                <apex:pageblocksection showheader="false" columns="2">
+                    <apex:pageblocksectionitem >
+                        <apex:outputlabel for="obtype" value="User License" />
+                        <apex:selectList id="obtype" value="{!obType}" size="1" multiselect="false" disabled="{!recordSize > 0}">
+                            <apex:selectOptions value="{!UserLicenses}" />
+                            <apex:actionSupport event="onchange" action="{!resetSearch}" rerender="searchBlock,licenseBlock,userBlock, removePsaBlock" oncomplete="checkAll();"/>
+                        </apex:selectList>
+                    </apex:pageblocksectionitem>
+                </apex:pageblocksection>
+            </apex:pageblock>
+        </apex:panelGroup>
+      -->
+        
+        
+    </div>
+    
+    <div style="float:left; width:49%">
+        <apex:pageblock title="4. Remove Assignments" id="removePsaBlock" >
+            <apex:pageBlockSection rendered="{!isLicenseSelected}" >
+                <apex:commandbutton value="Remove Permission Set Assignments" styleClass="btn" onclick="removePSA();" rerender="messages,userBlock,previewAssignmentsBlock,ErrorLog,ErrorBtn,section1"  />            
+            </apex:pageBlockSection>
+               <apex:pageBlockSection columns="1" rendered="{!isLicenseSelected}">
+                <b>Note:</b> All successful removals will be logged in the <a href="/setup/org/orgsetupaudit.jsp" target="_blank">Setup Audit Trail</a>
+          <!--      
+                <apex:outputPanel id="ErrorMsg" rendered="{!showError}">
+                    <apex:outputLabel > Since errors were found, you can optionally </apex:outputLabel>
+                    <apex:commandLink id="ErrorBtn" value=" view the error log" reRender="ErrorLog,ErrorBtn" action="{!displayError}"/>  
+                </apex:outputPanel>
+           -->
+            </apex:pageBlockSection>
+        </apex:pageblock>
+        
+      <!--
+      
+      <apex:panelGroup >
+            <apex:pageBlock title="4. Remove Permission Sets" id="removePsaBlock">
+                <apex:pageblockbuttons location="top">
+                         <input type="button" onclick="removePSA();" class="btn" value="Remove Permission Sets" style="display:{!IF(isLicenseSelected,'','none')}"/>
+                </apex:pageblockbuttons> 
+            </apex:pageBlock>
+        </apex:panelGroup>
+      
+      -->
+        
+        
+        
+    </div>
+   <!-- 
+    <apex:panelGrid columns="2" width="100%">
+        <apex:panelGroup >
+       --> 
+       
+      <div style="clear:both"></div>  
+       
+        <div style="float:left; width:49%; margin-right:10px;">
+            <apex:pageblock title="2. Find Permission Sets" id="searchBlock">
+                <apex:pageblockbuttons location="top">
+                    <apex:commandbutton value="Clear" action="{!resetSearch}" rerender="searchBlock,message,licenseBlock,removePsaBlock" rendered="{!obName != null}"  disabled="{!NOT(isLicenseSelected)}"/>
+                </apex:pageblockbuttons>
+                <apex:pageblocksection columns="2" >
+                    <apex:pageblocksectionitem >
+                        <apex:outputlabel for="searchterm" value="Search Term" />
+                        <apex:inputtext id="searchterm" value="{!obName}"  onkeyup="doSearch(this.value);" disabled="{!NOT(isLicenseSelected)}"/>
+                    </apex:pageblocksectionitem>
+               </apex:pageblocksection>
+                <apex:pageblocksection title="Search Results" columns="1" rendered="{!obName != null}">
+                    <apex:outputtext value="No results." rendered="{!results.size = 0}" />
+                    <apex:pageblocktable value="{!results}" var="r" rendered="{!results.size > 0}">
+                        <apex:column headervalue="Permission Set Name">
+                            <apex:outputlink value="/{!r.recID}" target="_new">{!JSINHTMLENCODE(r.recLabel)}</apex:outputlink>
+                        </apex:column>
+                        <apex:column headervalue="Permission Set API Name">
+                            <apex:outputText value="{!r.recLabel}"/>
+                        </apex:column>
+                        <apex:column headervalue="Remove From ALL Users">
+                        <!--    <button type="button" onclick="javascript:removePSAFromAll('{!JSINHTMLENCODE(r.recID)}');">Remove From Everyone</button> -->
+                            <button type="button" onclick="javascript:removePSAFromAllUsers('{!JSINHTMLENCODE(r.recID)}');">Remove From Everyone</button>
+                           
+                        </apex:column>
+                        <apex:column headervalue="Selectively Remove Users">
+                            <a href="javascript:showUsers('{!JSINHTMLENCODE(r.recID)}');" >Show Assigned Users</a>
+                        </apex:column>
+                    </apex:pageblocktable>
+                </apex:pageblocksection>
+            </apex:pageblock>
+    <!--    </apex:panelGroup> -->
+      </div>        
+      
+        <!-- <apex:panelGroup > -->
+        
+        <div style="float:left; width:49%;">
+            <apex:pageblock title="3. Select Users" id="userBlock">
+                    <apex:outputPanel layout="block" style="visibility:{!IF(isLicenseSelected,'display','hidden')}">
+                        <table>
+                            <tr>
+                                <td>Filter By:</td> 
+                                <td>
+                                    <apex:selectList value="{!filterBy}" size="1" style="width:100px">
+                                        <apex:selectOptions value="{!filterByOptions}"/>
+                                        <apex:actionSupport event="onchange" reRender="filterList"/>
+                                    </apex:selectList>
+                                </td>
+                                <td>
+                                    <apex:selectList value="{!filterId}" size="1" id="filterList" style="width:120px">
+                                        <apex:selectOptions value="{!filterOptions}"/>
+                                    </apex:selectList>
+                                </td>
+                                <td>
+                                    <apex:inputText value="{!usrSearchTxt}" onfocus="if(this.value == '{!defaultSearchTxt}'){this.value='';this.style.color='black';}" 
+                                    onblur="if(this.value==''){this.value='{!defaultSearchTxt}';this.style.color='silver';}" style="color:{!IF(usrSearchTxt == defaultSearchTxt, 'silver','black')}"/>
+                                </td>
+                                <td>
+                                    <apex:commandLink action="{!resetPSAList}">Filter</apex:commandLink>
+                                </td>
+                            </tr>
+                        </table>
+                    </apex:outputPanel>      
+                    <apex:pageBlockTable value="{!psaList}" var="psa" id="Table" rendered="{!isLicenseSelected}">
+                        <apex:column style="width:12px">
+                            <apex:facet name="header">
+                                <apex:inputCheckbox id="selAllchk" title="Select All" onclick="checkAll(this)" value="{!selAllChkBox}">
+                                </apex:inputCheckbox>
+                           </apex:facet>
+                           <apex:inputCheckbox id="theCheckbox" />
+                           <apex:inputHidden id="psaId" value="{!psa.id}"/>
+                        </apex:column>Select All 
+                        <apex:column headervalue="Name"> 
+                            <apex:outputlink value="/{!psa.assigneeId}" target="_new">{!psa.assignee.Name}</apex:outputlink>
+                        </apex:column>
+                        <apex:column headervalue="Email">
+                            <apex:outputText value="{!psa.assignee.Email}"></apex:outputText>
+                        </apex:column>               
+                   </apex:pageBlockTable>      
+                </apex:pageblock>
+            </div>
+    <!--    </apex:panelGroup>
+    </apex:panelGrid> -->
+       
+    </apex:form>
+    <script>
+        
+        function checkAll(thisObject) {
+            var inputElem = document.getElementsByTagName("input");
+            for (var i=0; i<inputElem.length; i++) {
+                if(inputElem[i].id.indexOf("theCheckbox")!=-1) {
+                    inputElem[i].checked = thisObject.checked;
+                }
+            }             
+        }
+        /*
+           Return Id array of selected permission set assignments
+        */
+        function getSelectedPSA() {
+            var IdArray = new Array();
+            var inputElem = document.getElementsByTagName("input");
+            for (var i=0; i<inputElem.length; i++) {
+                if(inputElem[i].id.indexOf("theCheckbox")!=-1) {
+                    if(inputElem[i].checked)
+                    IdArray.push(inputElem[i].nextSibling.value);
+                }
+            } 
+            return IdArray;
+        }
+       
+    </script>
+    <script type="text/javascript">
+        var __sfdcSessionId = '{!GETSESSIONID()}';
+        var __flagtoSet  = true;        
+    </script>
+    <script src="../../soap/ajax/23.0/connection.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        /*
+          Use Ajax Toolkit,as DML on permission set is not supported through Apex
+        */
+        
+        function removePSA() {
+            var psaWorkingList = [];
+            var successCount = 0;
+            var failedCount = 0;
+            var result;
+            var psaIds = getSelectedPSA(); 
+            if(psaIds == null || psaIds.length == 0) return;  
+            for(var i=0; i<psaIds.length; i++) {
+              psaWorkingList.push(psaIds[i]);
+              
+              if(i>0 && ((i%199) == 0)) {
+                  result = sforce.connection.deleteIds(psaWorkingList);
+                  for(var j=0; j<result.length; j++) {
+                  
+                      if (result[j].getBoolean("success")) {
+                          successCount++;
+                      }
+                      else {
+                          failedCount++;
+                      }
+                  }
+                  
+                  result = [];
+                  psaWorkingList = [];
+              }
+            }
+         //One last create statement, will handle the deletion of anything < 200 records
+         result = sforce.connection.deleteIds(psaWorkingList);
+         for (var i=0; i<result.length; i++) {
+             if (result[i].getBoolean("success")) {
+                 successCount++;
+             } 
+             else {
+                 failedCount++;
+                 
+             }
+         } 
+         /*
+            Rerender the relevant parts of the page and provide relevant messaging through 
+            standard Salesforce pageMessage styles about the outcome (how many successful removals, how many failed removals)
+         */
+         resetPSA(successCount,failedCount);                   
+      } 
+    </script>  
+</apex:page>

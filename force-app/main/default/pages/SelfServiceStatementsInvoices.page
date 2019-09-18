@@ -1,0 +1,81 @@
+<apex:page standardStylesheets="false" showHeader="false" controller="SelfServiceController" applyBodyTag="false" applyHtmlTag="false">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta name="description" content="Layout prototype for Prosoft" />
+        <meta name="author" content="Move Prosoft UX" />
+        <link rel="shortcut icon" href="{!$Resource.CustomerCommunityFavicon}" type="image/x-icon"/>
+        <link rel="stylesheet" href="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/css/prosoft-ui.css')}" />
+        <link rel="stylesheet" media="screen" href="{!$Resource.SelfServiceCss}" />
+    </head>
+    <body class="statements-body">
+        <div id="app-container" class="app-container">
+            <c:SelfServiceHeader id="app-header" />
+            <c:SelfServiceTopMenu id="app-menu" />
+            <div class="main-container">
+                <div class="container-fluid statements-container">
+                    <div id="my-statements-root">
+                        <section class="title-section">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-sm-9 nopadding">
+                                        <div class="row row-no-gutters title-section-breadcrumb nomargin">
+                                            <span class="text-gray hidden-xs">Statements &amp; Invoices</span>
+                                        </div>
+                                        <div class="row row-no-gutters title-section-header">
+                                            <a class="back-arrow display-inline-block hidden-sm hidden-lg hidden-md hidden-xl ui-link" href="{!$Label.CustomerCommunityDomain}/SelfServiceMobileMenu" rel="external"><i class="pi pi-android-arrow-back"></i></a>
+                                            <strong><span> Statements &amp; Invoices </span></strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-3 nopadding">
+                                        <div class="form-group">
+                                            <select class="form-control selectpicker" id="date-range-filter" onchange="changeListView()">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <div class="section-body">
+                            <div class="panel">
+                              <div class="panel-heading border-bottom-grey hidden-xs">
+                                <h3 class="panel-title">Your past statements</h3>
+                              </div>
+                              <div class="panel-body">
+                                <ul class="list-group statement-list">
+                                </ul>
+                                <div class="mobile-pad-top-md mobile-pad-bottom-md empty-invoice-div hidden"> 
+                                    <div class="mar-top-xl mar-bottom-xl pad-left-md pad-right-md pad-top-md pad-bottom-md text-center">
+                                        <img src="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/Transaction/transaction.svg')}" />
+                                        <h2 class="normal-weight">It looks like you don’t have any statements or invoices to display.</h2>
+                                         <div class=" text-muted">
+                                             Try selecting another date range from the filter above.
+                                         </div>
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <c:SelfServiceContactDetail id="app-contact-detail" />
+            <c:SelfServiceFooter id="app-footer" />
+        </div>
+    </body>
+     <script type="text/javascript">
+        $("#statements-icon").attr("src", "{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/Nav/Active/StatementsInvoices.svg')}"); 
+        $(".statements-body").on("pagecreate", function(event) {
+            SelfServiceController.getInvoiceItemMonths($("#sfdc-account-id").data('sfdc-id'), function(res, event) {
+                initStatementsPage('{!$Label.CustomerCommunityDomain}', event['result']);
+            });
+            populateDateRangeFilter();
+        });
+    </script>
+
+    <apex:includeScript value="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/js/jquery.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/js/bootstrap.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/js/jquery.mobile-1.4.5.min.js')}"/>
+    <apex:includeScript value="{!$Resource.SelfServiceJS}" />
+</apex:page>

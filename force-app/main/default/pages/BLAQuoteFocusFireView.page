@@ -1,0 +1,108 @@
+<apex:page showHeader="false" standardStylesheets="true" sidebar="false" controller="BLAQuoteFocusFireView_Controller" docType="html-5.0">
+    <apex:includescript value="//code.jquery.com/jquery-1.11.1.min.js" />
+    <apex:stylesheet value="{!URLFOR($Resource.jquerysteps, 'jquerysteps/css/normalize.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jquerysteps, 'jquerysteps/css/main.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.jquerysteps, 'jquerysteps/css/jquery.steps.css')}"/>
+    <apex:includeScript value="{!URLFOR($Resource.jquerysteps, 'jquerysteps/jquery.steps.js')}" />
+        
+        <style>
+            .wizard > .content > .body { width:100%; height:100%; padding:0;}
+            .wizard > .content {min-height: 80em; padding:0;}
+            .wizard > .actions {text-align:center!important;}
+        </style>
+        <script>
+            var currentIndx = 0;
+            $(document).ready(function(){
+                window.addEventListener("message", receiveMessage, false);        
+            });
+            
+            function receiveMessage(event) {
+                console.log('event.data.eventType -- ' + event.data.eventType);
+                switch(event.data.eventType) {
+                  case 'op.account.loaded':
+                    updateQuoteProduct('Account Loaded',event.data.opId, currentIndx);
+                    break;
+                  case 'op.account.saved':
+                    updateQuoteProduct('Account Saved',event.data.opId, currentIndx);
+                    break;
+                  case 'op.agreement.created':
+                    updateQuoteProduct('Agreement Created',event.data.accountOpId, currentIndx);    
+                    break;
+                  case 'op.agreement.sent':
+                    updateQuoteProduct('Agreement Sent',event.data.accountOpId, currentIndx);
+                    break;
+                  default:
+                    
+                }
+                
+                // var ffAccountURL = {!$Label.Salesforce_Domain_URL};
+                //$('.focusFireURLIframe').val('event from FF = '+event.data.eventType + ' and broker id = ' + event.data.opId);
+                // $('.focusFireURLIframe').val('https://focusfire.stage.opcity.com/broker/workflow_edit_broker/' + event.data.opId);
+                // $('.focusFireURLIframe').val({!$Label.Salesforce_Domain_URL});
+            } 
+        
+            $(function ()
+            {
+                $("#wizard").steps({
+                    headerTag: "h2",
+                    bodyTag: "section",
+                    transitionEffect: "slideLeft",
+                    onFinished: function (event, currentIndex)
+                    {
+                        finish();
+                        window.parent.scrollTo(0,0);
+                        //$("#wizard .actions a[href='#previous']").hide();
+                        //$("#wizard .actions a[href='#finish']").hide();
+                    },
+                    onStepChanged: function (event, currentIndex, priorIndex)
+                    {   
+                        console.log('currentIndex - ' + currentIndex);
+                        currentIndx =  currentIndex;
+                        var iframeSrc = $('#frame'+currentIndex).attr('src');
+                        if (iframeSrc=='') {
+                            iframeSrc = $('#frame'+currentIndex).attr('focusFireUrl');
+                            console.log(iframeSrc);
+                            $('#frame'+currentIndex).attr('src', iframeSrc);
+                        }
+                        
+                    }
+                });
+            });
+        </script>
+            <apex:slds />      
+            <div class="slds-scope">
+            <apex:form id="form">
+                <apex:pageMessages id="msgs"/>
+                 <apex:actionstatus id="status">
+                    <apex:facet name="start">
+                        <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height:1000%;opacity:0.65;width:100%;"> 
+                            <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                                <img class="waitingImage" src="/img/loading.gif" title="Loading..." />
+                                <span class="waitingDescription">Please Wait...</span>
+                            </div>
+                        </div>
+                    </apex:facet>
+                </apex:actionstatus>
+                <apex:actionFunction action="{!finish}" name="finish" reRender="msgs" status="status" />
+                <apex:actionFunction action="{!updateQuoteProduct}" name="updateQuoteProduct" reRender="msgs">
+                    <apex:param name="stage" value=""/>
+                    <apex:param name="opId" value=""/>
+                    <apex:param name="qpId" value="" />
+                </apex:actionFunction>
+             
+                <div id="wizard">
+                    <apex:repeat value="{!focusFireAccounts}" var="key">
+                        <h2>{!focusFireAccounts[key].officeAccount.Name}</h2>
+                        <section>
+                            <!--<apex:outputLabel value="Focus Fire URL" style="font-weight: bold;padding-right:1em;"/> -->
+                            <!--<apex:inputField styleClass="focusFireURLIframe" html-disabled="true" style="height:28px;width:500px" value="{!focusFireAccounts[key].quoteProd.Focus_Fire_Url__c}" label="Focus Fire Url"/> -->
+                            <!-- <a class="focusFireURLIframe" href="{!focusFireAccounts[key].quoteProd.Focus_Fire_Url__c}">{!focusFireAccounts[key].quoteProd.Focus_Fire_Url__c}</a> -->
+                            <!--<apex:iframe height="2000px" scrolling="true" src="{!focusFireAccounts[key].focusFireUrl}"/>-->
+                            <iframe scrolling="true" height="8000px" id="frame{!key}" src="{!IF(key==0,focusFireAccounts[key].focusFireUrl,'')}" focusFireUrl="{!focusFireAccounts[key].focusFireUrl}"></iframe>
+                        </section>
+                    </apex:repeat> 
+                </div>
+            </apex:form>
+         </div>
+         
+</apex:page>

@@ -1,0 +1,192 @@
+<apex:component >
+<style>
+        /*.billingInsight-rep-body *{color:#4a4a56;font-family: Arial,Helvetica,sans-serif;}*/
+        
+        .billingInsight-rep-body {
+            width: 98%;
+            margin: 20px auto 0;
+            opacity: 0.9;
+        }
+        
+        .billingInsight-rep-body .filter {
+            display: inline-block;
+            width: auto;
+            padding: 8px;
+        }
+        
+        .billingInsight-rep-body .datepicker-input {
+            padding: 2px;
+            position: relative;
+            z-index: 100000;
+        }
+        
+        .billingInsight-rep-body .section-content {
+            margin-top: 6px;
+        }
+        
+        .billingInsight-rep-body .bi-button {
+            padding: 0.4em .8em !important;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+        
+        .billingInsight-rep-body .l1-wrapper-sections {}
+        
+        .billingInsight-rep-body fieldset {
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            margin-bottom: 14px;
+            margin-top: 1px;
+            background-color: rgba(251, 248, 238, 0.2);
+            box-shadow: 2px 2px 2px 0px rgba(224,224,224,0.75);
+            -webkit-box-shadow: 2px 2px 2px 0px rgba(224,224,224,0.75);
+            -moz-box-shadow: 2px 2px 2px 0px rgba(224,224,224,0.75);
+        }
+        
+        .billingInsight-rep-body fieldset legend {
+            color: #004880;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        
+        .billingInsight-rep-body .bi-header {
+            color: #42a5f5 !important;
+            font-size: 1.3em;
+            margin-top: 10px;
+            padding-bottom: 20px;
+        }
+        
+        .billingInsight-rep-body .bi-header-title {
+            color: #757575 !important;
+        }
+        
+        .billingInsight-rep-body input[type="text"] {
+            border: 1px solid #adadad;
+            border-radius: 4px;
+            box-shadow: 0 0 2px 2px #e6e6e6 inset;
+            outline: medium none;
+            padding: 2px;
+            width: auto;
+        }
+        
+        .billingInsight-rep-body .ui-jqgrid .ui-jqgrid-titlebar {
+            padding: 0.4em 0.2em 0.4em 0.3em;
+            border-radius: 4px 4px 0 0 !important;
+        }
+        
+        .billingInsight-rep-body .billingInsightTableghead_0 {
+            background-color: #edf7f7;
+        }
+        
+        .billingInsight-rep-body .billingInsightTableghead_1 {
+            background-color: #e6f4ff;
+        }
+        
+        .billingInsight-rep-body .billingInsightTableghead_2 {
+            background-color: #f2f2f2;
+        }
+        
+        .billingInsight-rep-body .billingInsightTableghead_0 td {
+            color: #285858;
+        }
+        
+        .billingInsight-rep-body .billingInsightTableghead_1 td {
+            color: #004880;
+        }
+        
+        .billingInsight-rep-body .billingInsightTableghead_2 td{
+            color: #262626;
+        }
+        
+        .billingInsight-rep-body #billingInsightTable tr[id^="billingInsightTableghead_"] td {
+            font-size: 12px;
+        }
+        
+        .billingInsight-rep-body #billingInsightTable tr[id^="billingInsightTableghead_"] td[aria-describedby^="billingInsightTable_"] {
+            font-weight: bold;
+        }
+        .billingInsight-rep-body #billingInsightTable tr:not([id^="billingInsightTableghead_"]) td[aria-describedby^="billingInsightTable_"] {
+            background-color: rgba(251, 248, 238, 0.3);
+        }
+        .billingInsight-rep-body #billingInsightTable td[aria-describedby^="billingInsightTable_"] {
+            white-space: pre-wrap;
+        }
+        
+        .billingInsight-rep-body .ui-widget-content {
+            border: 1px solid #dddddd;
+        }
+        
+        .billingInsight-rep-body .filter input[type="text"] {
+            font-size: 12px;
+        }
+        
+        .billingInsight-rep-body .filter label {
+            font-size: 12px;
+        }
+        .billingInsight-rep-body a {
+            color: #0d47a1 !important;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .billingInsight-rep-body a:hover {
+            color: #0d47a1 !important;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+        
+        .billingInsight-rep-body .account-detail-attribute {
+            display: inline-block;
+            width: 48%;
+            text-align: left;
+            padding: 4px;
+        }
+        
+        .billingInsight-rep-body .item-label {
+            font-weight: bold;
+            padding-right: 2px;
+        }
+        
+        .billingInsight-rep-body .ui-jqgrid-bdiv {
+            max-height: 600px;
+            height: auto !important;
+        }
+        
+        .billingInsight-rep-body #billingInsightTable tr[id^="billingInsightTableghead_"] td:nth-child(3) {
+            display:none;
+        }
+        
+        .billingInsight-rep-body .error-warning-container{ 
+            margin-bottom: 12px;
+        }
+        
+        .billingInsight-rep-body .error-warning-container{ 
+            margin-bottom: 10px;
+        }
+        
+        .billingInsight-rep-body .error-warning-container div{ 
+            margin-bottom: 3px;
+            background-image: none;
+            padding: 4px;
+            font-weight: bold;
+        }
+        .billingInsight-rep-body .ui-state-error .ui-icon, .ui-state-error-text .ui-icon {
+            background-image: url({!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/jqueryTheme/jquery-theme-custom2/images/ui-icons_cc0000_256x240.png')});
+        }
+        
+        /*.billingInsight-rep-body .export-table{border-collapse: collapse;}
+        .billingInsight-rep-body .export-table td{ border:1px solid #888;border-collapse: collapse }
+        
+        .billingInsight-rep-body .level-1-header-tr{}
+        
+        .billingInsight-rep-body .level-1-header-tr td{text-align:center;font-weight: bold;}
+        .billingInsight-rep-body .level-2-header-tr td{font-weight: bold;text-align: center;}
+        .billingInsight-rep-body .level-3-header-tr td{font-weight: bold;padding-left: 20px;text-align: center;}
+        
+        .billingInsight-rep-body .level-1-header-tr td:nth-child(1){text-align: left !important;padding-left: 0px;}
+        .billingInsight-rep-body .level-2-header-tr td:nth-child(1){text-align: left !important;padding-left: 10px;}
+        .billingInsight-rep-body .level-3-header-tr td:nth-child(1){text-align: left !important;padding-left: 20px;}
+        
+        .billingInsight-rep-body .leaf-node-tr td{text-align:center;}
+        .billingInsight-rep-body .export-table-header-tr td{color:#004276;font-weight:bold;}*/
+    </style>
+</apex:component>

@@ -1,0 +1,432 @@
+<apex:page controller="IncludeAssetstoAccountController" showHeader="false" docType="html-5.0">
+    <apex:includeScript value="/support/console/40.0/integration.js"/>
+    <script type="text/javascript">
+        function testGetFocusedSubtabId() {
+            sforce.console.getFocusedSubtabId(showTabId);
+        }
+        var showTabId = function showTabId(result) {
+                sforce.console.setTabTitle('All Included Assets');
+        };
+         var pageLoad = window.onload;
+          window.onload = function() {
+                if (pageLoad) {
+                        pageLoad();
+                }
+                  testGetFocusedSubtabId();
+          }
+          
+        function checkAll(cb)
+        {
+            var inputElem = document.getElementsByTagName("input");
+            for(var i=0; i<inputElem.length; i++)
+            {
+                var input = inputElem[i];
+                if (input.type == "checkbox") {
+                    input.checked = cb.checked;
+                }
+            }
+            console.log('Checked:' + cb);
+            console.log('Checked:' + cb.checked);
+            //setCheckUncheckAll(cb.checked);
+        }
+
+        function checkUncheckCheckAll(cb)
+        {
+            var checkAll = true;
+            var inputElem = document.getElementsByTagName("input");
+            var checkAllElem;
+            for(var i=0; i<inputElem.length; i++)
+            {
+                var input = inputElem[i];
+                if (input.type == "checkbox" && !input.id.includes("checkAll")) {
+                    if (!input.checked) {
+                        checkAll = false;
+                    }
+                }
+                else if (input.type == "checkbox" && input.id.includes("checkAll")) {
+                    checkAllElem = input;
+                }
+
+            }
+            checkAllElem.checked = checkAll;
+        }
+
+    </script>
+
+  <apex:form >
+    <apex:pageBlock title="Viewing Parent Assets for Account - {!accName}" id="theBlock">
+        <apex:pageMessages />
+
+       <!--  <apex:outputLabel value="Enter Start/End Date to search Asset(s): "/>
+        <apex:inputText value="{!dateEnteredStr}" size="10" id="date" onfocus="DatePicker.pickDate(false, this , false);" />-->
+        <!--CRM-3280 Hidden field added below,to load required date picker Salesforce Js files to overcome Salesforce Limitation -->
+        <!--Added below functionality as part of CRM-3111 enhancement-->
+        <div style="display:none;">
+            <apex:inputField value="{!assetDate.Start_Date__c}"/>
+             <apex:outputLabel >Start Date</apex:outputLabel> 
+        </div>
+        <div>
+            <table width="50%" align="left">
+                <tr>
+                    <td>Start Date Between:</td>
+                    <td><apex:input type="date" value="{!StartDateBegin}" /></td>
+                    <td>and</td>
+                    <td><apex:input type="date" value="{!StartDateEnd}" /></td>                    
+                </tr>
+                <tr>
+                    <td>End Date Between:</td>
+                    <td><apex:input type="date" value="{!EndDateBegin}" /></td>
+                    <td>and</td>
+                    <td><apex:input type="date" value="{!EndDateEnd}" /></td>                    
+                </tr>
+                
+                <tr>
+                    <td>Asset Number:</td>
+                    <td colspan="3"><apex:input type="text" value="{!assetNumber}" /></td>
+                </tr>                
+                <tr>
+                    <td>Market:</td>
+                    <td colspan="3"><apex:input type="text" value="{!market}" /></td>
+                </tr>                  
+            </table>
+        </div>
+        
+        <apex:commandButton action="{!Search}" value="Show All" reRender="theBlock" status="status">
+            <apex:param name="sortField" value="Name" assignTo="{!sortField}"/>
+            <apex:param name="ascDsc" value="DESC" assignTo="{!ascDsc}"/>
+        </apex:commandButton>
+        
+        <apex:commandButton action="{!Search}" value="Search" reRender="theBlock" status="status">
+            <apex:param name="sortField" value="Name" assignTo="{!sortField}"/>
+            <apex:param name="ascDsc" value="DESC" assignTo="{!ascDsc}"/>
+        </apex:commandButton>
+        
+       <!-- <apex:actionFunction action="{!setCheckUncheckAll}" name="setCheckUncheckAll" >
+            <apex:param name="isCheckAll" assignTo="{!isCheckAll}" value="" />
+        </apex:actionFunction> -->
+
+        <apex:pageBlockTable var="asset" value="{!assetRecords}" id="objTable">
+            <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink value="Asset Name" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="Name" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                <a onClick="event.preventDefault();openAsset('{!asset.Id}');return false" href="#">{!asset.Name}</a> <!-- CRM-2530 - enable asset name as a custom link-->
+             <!--   <apex:outputField value="{!asset.Name}"/> -->
+            </apex:column>
+
+            <apex:column >
+                <apex:facet name="header">
+                    <apex:outputPanel layout="None" style="float: Left; border:5px;">
+                        <apex:outputLabel value="Include" for="checkedone" />
+                        <apex:inputCheckbox onclick="checkAll(this)" id="checkAll" value="{!allCheck}"/>
+                    </apex:outputPanel>
+                </apex:facet>
+                <apex:inputfield value="{!asset.Include_Asset__c}" onclick="checkUncheckCheckAll(this)"/>
+            </apex:column>
+            <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink value="Non-Renew" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="Haircut_Asset__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputField value="{!asset.Haircut_Asset__c}" />
+             </apex:column>
+             
+             <!---CRM-5916------------------------>
+             <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink value="NR Reason" action="{!Search}" rerender="theBlock" status="status">
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputField value="{!asset.Non_Renewable_Reason__c}" />
+             </apex:column>
+             <!---CRM-6050------------------------>
+            <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink value="EG" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="Prosoft_Evergreen_Renewal__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputField value="{!asset.Prosoft_Evergreen_Renewal__c}" />
+             </apex:column>
+             
+            <!--CRM-2874 Adding ARIIPrice_Info_Status__c  field as AutoRenew -->
+            <apex:column >
+                 <apex:facet name="header">
+                    <apex:commandLink value="Auto-Renew" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="ARIIPrice_Info_Status__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                 <!--<apex:outputField value="{!asset.ARIIPrice_Info_Status__c}" />-->
+                 <!--<apex:outputpanel id="inlinetablesec123" style="display:block;"><apex:inputCheckbox rendered="true" disabled="true" value="{!asset.Include_Asset__c}"/>-->
+                <apex:image url="/img/checkbox_unchecked.gif" rendered="{!asset.ARIIPrice_Info_Status__c=='No'}" />
+                <apex:image url="/img/checkbox_unchecked.gif" rendered="{!asset.ARIIPrice_Info_Status__c==null}" />
+                <apex:image url="/img/checkbox_checked.gif" rendered="{!asset.ARIIPrice_Info_Status__c=='Yes'}" /> 
+             <!--</apex:outputpanel>-->
+            </apex:column>
+            
+            <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink value="Start Date" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="Start_Date__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputField value="{!asset.Start_Date__c}" />
+            </apex:column>
+
+            <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink value="End Date" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="End_Date__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputField value="{!asset.End_Date__c}" />
+            </apex:column>
+
+            <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink value="Quantity" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="Quantity" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputField value="{!asset.Quantity}" />
+             </apex:column>
+            <!--CRM-3153--->
+            <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink value="Product Type" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="Product_Type__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputField value="{!asset.Product_Type__c}" />
+             </apex:column>
+             
+             <apex:column >
+                 <apex:facet name="header">
+                    <apex:commandLink value="Lead Type" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="Lead_Type__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                 <apex:outputField value="{!asset.Lead_Type__c}" />
+             </apex:column>
+             <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink value="CMRR ($)" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="Extended_Net_Price__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputField value="{!asset.Extended_Net_Price__c}" />
+             </apex:column>
+             <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink value="Renewal Status" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="Renewal_Status__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputField value="{!asset.Renewal_Status__c}" />
+             </apex:column>
+             <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink value="Follow up Status" action="{!Search}" rerender="theBlock" status="followupstatus">
+                        <apex:param name="sortField" value="Follow_Up_Status__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:inputField value="{!asset.Follow_Up_Status__c}" />
+             </apex:column>
+             <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink value="Reason" action="{!Search}" rerender="theBlock" status="reason">
+                        <apex:param name="sortField" value="Reason__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:inputField value="{!asset.Reason__c}" />
+             </apex:column>
+             <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink value="Reason Details" action="{!Search}" rerender="theBlock" status="reasondetails">
+                        <apex:param name="sortField" value="Reason_Details__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:inputField value="{!asset.Reason_Details__c}" />
+             </apex:column>
+             <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink value="Asset Performance%" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="Asset_Performance__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputField value="{!asset.Asset_Performance__c}" />
+             </apex:column>
+             <apex:column >
+                <apex:facet name="header">
+                    <apex:commandLink value="TCV($)" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="Total_Net__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputField value="{!asset.Total_Net__c}" />
+             </apex:column>
+             
+             
+             <apex:column >
+                 <apex:facet name="header">
+                    <apex:commandLink value="Status" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="Status" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                 <apex:outputField value="{!asset.Status}" />
+             </apex:column>
+            <!-- Added as per requirment CRM-3126  -->
+             <apex:column >
+                 <apex:facet name="header">
+                    <apex:commandLink value="Asset Number" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="Asset_Number__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                 <apex:outputField value="{!asset.Asset_Number__c}" />
+             </apex:column>
+             <!-- Added as per requirment CRM-3126  -->
+             <apex:column >
+                 <apex:facet name="header">
+                    <apex:commandLink value="Licenses" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="License_Tier__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                 <apex:outputField value="{!asset.License_Tier__c}" />
+             </apex:column>
+             <apex:column >
+                 <apex:facet name="header">
+                    <apex:commandLink value="Fulfillment Status" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="Fulfillment_Status__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                 <apex:outputField value="{!asset.Fulfillment_Status__c}" />
+             </apex:column>
+             <apex:column >
+                 <apex:facet name="header">
+                    <apex:commandLink value="Product Bundle" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="Commerce_Group__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                 <apex:outputField value="{!asset.Commerce_Group__c}" />
+             </apex:column>
+             <!-- Added as per requirment CRM-3126  -->
+             <apex:column >
+                 <apex:facet name="header">
+                    <apex:commandLink value="MLS Set" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="MLS_Set__r.Name" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                 <apex:outputField value="{!asset.MLS_Set__r.Name}" />
+             </apex:column>
+             <!-- Added as per requirment CRM-3126  -->
+             <apex:column >
+                 <apex:facet name="header">
+                    <apex:commandLink value="BOP Code" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="BOP_Code__c" assignTo="{!sortField}"/>
+                   </apex:commandLink>
+                </apex:facet>
+                 <apex:outputField value="{!asset.BOP_Code__c}" />
+             </apex:column>
+             <!--CRM-3153--->
+             <!--<apex:column >
+                 <apex:facet name="header">
+                    <apex:commandLink value="Asset Type" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="Asset_Type__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                 <apex:outputField value="{!asset.Asset_Type__c}" />
+             </apex:column>-->
+             <!--CRM-2874 Adding Asset Performance, Licenses and  fields -->
+            <!--CRM-2946 Added Condition to hide Asset Performance for Customer Care. Profiles specified in the custom label-->
+            <!-- <apex:column rendered="{!if(contains($Label.Profiles_to_hide_asset_performance,$Profile.Name),false,True)}">
+                 <apex:facet name="header">
+                    <apex:commandLink value="Asset Performance" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="Asset_Performance__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                 <apex:outputField value="{!asset.Asset_Performance__c}" />
+             </apex:column>
+             
+             <apex:column >
+                 <apex:facet name="header">
+                    <apex:commandLink value="Licenses" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="License_Tier__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                 <apex:outputField value="{!asset.License_Tier__c}" />
+             </apex:column>
+             
+
+             <apex:column >
+                 <apex:facet name="header">
+                    <apex:commandLink value="Product Bundle" action="{!Search}" rerender="theBlock" status="status">
+                        <apex:param name="sortField" value="Commerce_Group__c" assignTo="{!sortField}"/>
+                    </apex:commandLink>
+                </apex:facet>
+                <apex:outputField value="{!asset.Commerce_Group__c}" />
+             </apex:column> -->
+        </apex:pageBlockTable>
+
+        <apex:pageBlockButtons >
+            <apex:commandButton value="<<" action="{!First}" disabled="{!!hasPrevious}" reRender="theBlock" title="First" status="status"/>
+            <apex:commandButton value="<" action="{!Previous}" disabled="{!!hasPrevious}" reRender="theBlock" title="Previous" status="status"/>
+            <apex:commandButton value="Select All Active CBC" reRender="theBlock" action="{!checkActiveCBC}" status="status" disabled="{!recCount == 0}" title="Select All Active CBC"/>
+            <apex:commandButton rendered="{!IF(contains($Label.Account360Products, 'localexpert'), true, false)}" value="Select All Active Local Experts" reRender="theBlock" action="{!checkActiveLocalExperts}" status="status" disabled="{!recCount == 0}" title="Select All Active Local Expert"/>
+            <apex:commandButton value="Uncheck All" title="Uncheck All" disabled="{!recCount == 0}" reRender="theBlock" action="{!unCheckAllAssets}" status="status"/> <!--CRM-3909 -->
+            <apex:commandButton value="Save" action="{!save}" disabled="{!recCount == 0}" title="Save Assets" status="status"/>
+            <apex:commandButton value="Select All Suspended CBC" reRender="theBlock" action="{!checkSuspendedCBC}" status="status"  disabled="{!recCount == 0}" title="Select All Suspended CBC"/>
+            <apex:commandButton value=">" action="{!Next}" disabled="{!!hasNext}" reRender="theBlock" title="Next" status="status"/>
+            <apex:commandButton value=">>" action="{!Last}" disabled="{!!hasNext}" reRender="theBlock" title="Last" status="status"/>
+        </apex:pageBlockButtons>
+        <apex:actionstatus id="status">
+            <apex:facet name="start">
+                <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+                   height: 200%;opacity:0.65;width:100%;">
+                   <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                        <img class="waitingImage" src="/img/loading.gif" title="Loading..." />
+                        <span class="waitingDescription">Please Wait...</span>
+                   </div>
+                </div>
+            </apex:facet>
+        </apex:actionstatus>
+
+        </apex:pageBlock>
+        <apex:includeScript value="/support/console/40.0/integration.js"/>
+        <apex:includeScript value="/support/console/40.0/connection.js"/>
+        <script type="text/javascript">
+            var preRecordId;
+                function openAsset(assetid) {
+                    preRecordId = assetid;
+                    console.log('assetid'+'{!$CurrentPage.parameters.inConsole}');
+                    var inConsole='{!$CurrentPage.parameters.inConsole}';
+                   if(inConsole!='' && inConsole!=undefined && inConsole=='true'){
+                       window.parent.sforce.console.getEnclosingPrimaryTabId(openSubtab);
+                       //srcUp('{!baseurl}/'+assetid+'&isdtp=vw');
+                   }
+                   else{
+                       window.open('{!baseurl}/'+assetid, '_blank');
+                   }
+                }
+                var openSubtab = function openSubtab(result){
+                var primaryTabId = result.id;
+                console.log('preRecordId'+preRecordId);
+                sforce.console.openSubtab(primaryTabId , '/'+preRecordId, true);
+                }
+                function testGetFocusedSubtabId() {
+            sforce.console.getFocusedSubtabId(showTabId);
+        }
+        var showTabId = function showTabId(result) {
+                sforce.console.setTabTitle('All Included Assets');
+        };
+         var pageLoad = window.onload;
+          window.onload = function() {
+                if (pageLoad) {
+                        pageLoad();
+                }
+                  testGetFocusedSubtabId();
+          }
+     </script>
+    </apex:form>
+</apex:page>

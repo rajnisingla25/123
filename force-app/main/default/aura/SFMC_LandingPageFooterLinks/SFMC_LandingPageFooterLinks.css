@@ -1,0 +1,20 @@
+.THIS.linkClassDiv{
+    margin-top: 3rem;
+    position:absolute;
+}
+.THIS .linkClass{
+    position: relative;
+    font: 12px/15px Arial,Helvetica,sans-serif;
+}
+.THIS .linkClass a {
+    color: #9c9c9c !important;
+}
+.THIS.linksTitleClass{
+    font-size: 13px;
+    position: absolute;    
+    margin-top: 1rem;
+    font-weight: bold;
+    font-family: Arial,Helvetica,sans-serif;
+    color: #50595d;
+    width: 10rem;
+}

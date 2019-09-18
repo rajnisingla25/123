@@ -1,0 +1,6 @@
+<design:component>
+	<design:attribute name="phoneNumber" label="Phone" placeholder="Ex: 888.888.8888'"/>
+    <design:attribute name="coBrand" label="CoBrand Text" placeholder="Ex: Remax'"/>
+    <design:attribute name="coBrandImage" label="CoBrand Image" />
+    <design:attribute name="imageSize" label="Image Width" placeholder="Ex: 180'"/>
+</design:component>

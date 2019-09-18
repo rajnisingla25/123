@@ -1,0 +1,36 @@
+.THIS .linksTitleClass{
+    font-size: 13px;
+    position: absolute;
+    margin-left: 18.5rem;
+    margin-top: 1rem;
+    font-weight: bold;
+    font-family: Arial,Helvetica,sans-serif;
+    color: #50595d;
+    padding: 10px 0 10px;
+}
+.THIS .socialTitleClass{
+    font-size: 13px;
+    position: absolute;
+    margin-left: 5.5rem;
+    margin-top: 1rem;
+    font-weight: bold;
+    font-family: Arial,Helvetica,sans-serif;
+    color: #50595d;
+    padding: 10px 0 10px;
+}
+.THIS .socialContentClass{
+    width: 20rem;
+    height: 5rem;
+}
+.THIS .linksTitleClass2{
+    margin-top: 5rem;
+}
+@supports (-webkit-appearance:none) and (justify-content:inherit) and (not (-webkit-hyphens:auto)) and (not (-ms-accelerator:true))
+{
+    .THIS.widthClass{
+        width:98.9vw !important; 
+    }
+}
+.THIS.widthClass{
+        width:100vw;
+    }

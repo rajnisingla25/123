@@ -1,0 +1,169 @@
+<apex:page showHeader="false" docType="html-5.0" controller="collectionCaseDocuSignCtrl" >
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+       .submitButton{
+          
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 12px 30px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 17px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+       }
+    </style>
+    <apex:form >
+    <div class="container" style="width:50%;border:1px ridge;">
+        <br/>
+        <input type="radio" style="margin-right:2%" name="radioContracts" value="Cancelled Contracts" onchange="$('[id$=contractsHidden]').val(this.value);" required="true"/>Cancelled Contracts
+        <input type="radio" style="margin-left:10%;margin-right:2%" name="radioContracts" required="true" value="Past Due Contracts" onchange="$('[id$=contractsHidden]').val(this.value);"/>Past Due Contracts
+        <apex:inputHidden id="contractsHidden" value="{!contractsType}"/>
+       <br/><br/>
+            <div class="form-group">
+              <label for="usr">Primary Contact Name:</label>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                <input type="text" disabled="true" class="form-control"  value="{!JSENCODE(caseRec.Contact.Name)}"/>
+              </div>
+              
+            </div>
+            <div class="form-group">
+              <label for="usr">Bill to Address:</label>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-globe"></i></span>
+                <input type="text" disabled="true" class="form-control" placeholder="Additional Info" value="{!JSENCODE(billingAddress)}"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="usr">Primary Contact Email:</label>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+              <input type="text" disabled="true" class="form-control" placeholder="Additional Info" value="{!JSENCODE(caseRec.Contact.Email)}"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="usr">Product 1:</label>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
+                <apex:selectList styleClass="form-control" multiselect="false" size="1" value="{!product1}">
+                  <apex:selectOptions value="{!Products}"/>
+              </apex:selectList>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="usr">Product 2:</label>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
+                <apex:selectList styleClass="form-control" multiselect="false" size="1" value="{!products2}">
+                  <apex:selectOptions value="{!Products}"/>
+              </apex:selectList>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="usr">Product 3:</label>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-briefcase"></i></span>
+                <apex:selectList styleClass="form-control" multiselect="false" size="1" value="{!product3}">
+                  <apex:selectOptions value="{!Products}"/>
+              </apex:selectList>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="usr">Unpaid Amount:</label>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
+              <apex:input type="number" html-step=".01" styleClass="form-control" html-placeholder="Enter Amount" value="{!unpaidAmnt}" required="true"/>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="usr">Payment Method</label>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-credit-card"></i></span>
+              <apex:selectList styleClass="form-control" multiselect="false" size="1" value="{!paymentMthd}" required="true">
+                  <apex:selectOption itemValue="Credit Card" itemLabel="Credit Card"></apex:selectOption>
+                  <apex:selectOption itemValue="Check" itemLabel="Check"></apex:selectOption>
+                  <apex:selectOption itemValue="Wire-Transfer" itemLabel="Wire-Transfer"></apex:selectOption>
+              </apex:selectList>
+             </div>
+            </div>
+            <div class="form-group">
+              <label for="usr">Contract Type</label>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="gglyphicon glyphicon-file"></i></span>
+              <apex:selectList styleClass="form-control" multiselect="false" size="1" value="{!contrtype}">
+                  <apex:selectOption itemValue="one contract" itemLabel="one contract"></apex:selectOption>
+                  <apex:selectOption itemValue="multiple contracts" itemLabel="multiple contracts"></apex:selectOption>
+              </apex:selectList>
+             </div>
+            </div>
+            <div class="form-group">
+              <label for="usr">Amount &amp; Due Date:</label>
+              <apex:repeat value="{!wrapperList}" var="dues">
+                  <div class="input-group">
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-usd"></i></span>
+                    <apex:input type="number" html-step=".01" styleclass="form-control" html-placeholder="Enter Amount" value="{!dues.dueAmount}"/>
+                    <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                    <apex:input type="date"  styleclass="form-control" html-placeholder="Enter Amount" value="{!dues.dueDate}"/>
+                  </div>
+              </apex:repeat>
+              
+            </div>
+            
+            
+            <div class="form-group">
+              <label for="usr">Signature:</label>
+              <div class="input-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>
+              <input type="text" disabled="true" class="form-control" placeholder="Additional Info" value="{!JSENCODE($User.FirstName+' '+$User.LastName)}"/>
+              </div>
+            </div>
+            <br/>
+            <apex:commandButton action="{!sendDataForDocusign}" value="Submit" styleClass="submitButton" oncomplete="showMessage();"></apex:commandButton><br/>
+            
+            </div>
+            
+            
+             <!-- Modal -->
+                <div id="myModal" class="modal fade" role="dialog" style="">
+                  <div class="modal-dialog">
+                
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Notification</h4>
+                      </div>
+                      <div class="modal-body">
+                        <div class="alert alert-success ">
+                            <strong>Success!</strong> Docusign document has been sent successfully.
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.top.close();">Close</button>
+                      </div>
+                    </div>
+                
+                  </div>
+            </div>
+           
+            <script>
+                $(".submitButton").removeClass("btn").addClass('btn-primary');
+                function showMessage(){
+                   $("#myModal").toggleClass('in').show();
+                $("#fadeOutDiv").toggleClass('in');
+                }
+                function closeWindow() {
+                    window.open('','_parent','');
+                    window.close();
+                }
+            </script>
+    </apex:form>
+</apex:page>

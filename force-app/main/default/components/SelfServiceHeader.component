@@ -1,0 +1,196 @@
+<!-- LCM-294 -->
+<apex:component controller="SelfServiceController">
+    <!-- Start of branded border -->
+      <style>
+        .load-spinner-lg:after {
+            background-image: url("{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/Loading/loading.png')}")
+        }
+    </style>
+    <div class="app-brand-border"></div>
+    <!-- End of branded border -->
+    
+    <nav id="app-navbar" class="navbar app-navbar-lg navbar-default navbar-fixed-top app-navbar black-bg">
+        <div class="container-fluid">
+            <div class="navbar-header pull-left">
+                <a class="navbar-brand-lg hidden-sm hidden-xs" target="_blank" href="{!$Label.CustomerDashboard}/dashboard">
+                    <svg class="svg-rdc-logo" viewBox="0 0 445 82" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M31.802 41.716c-2.77 0-4.27-1.202-5.08-3.396-.806-2.077-.575-3.05-2.654-3.05-2.077 0-6.925 5.716-7.618 13.562-.115.925-.23 6.118-.23 9.005v7.08c0 3.116-.23 7.042.346 9.35.577 3.117 1.385 3.462 3.81 4.5.807.35 1.154.463 1.73.577v.232H.522v-.232c.462-.114.924-.228 1.73-.576 2.426-1.04 3.118-1.384 3.695-4.5.577-2.31.347-6.235.347-9.35V44.83c0-1.96.115-7.502-.116-9.232-.346-2.193-.923-2.886-1.963-3.694-1.153-.923-2.307-.923-3-1.04v-.23h14.428c.692 0 .692.23.692.692l-.115 13.16h.115c1.385-5.772 4.386-9.465 6-11.08 1.618-1.732 4.62-3.81 8.313-3.81 1.73 0 3.694.462 4.963 1.847.925.92 1.617 2.422 1.617 4.85 0 2.766-1.73 5.42-5.425 5.42" fill="#D52331"></path><path d="M248.39 41.716c-2.77 0-4.27-1.202-5.08-3.396-.807-2.077-.576-3.05-2.652-3.05-2.08 0-6.926 5.716-7.62 13.562-.115.925-.232 6.118-.232 9.005v7.08c0 3.116-.23 7.042.35 9.35.576 3.117 1.383 3.462 3.807 4.5.808.35 1.154.463 1.732.577v.232H217.11v-.232c.462-.114.925-.228 1.73-.576 2.425-1.04 3.118-1.384 3.695-4.5.577-2.31.345-6.235.345-9.35V44.83c0-1.96.118-7.502-.115-9.232-.345-2.193-.922-2.886-1.962-3.694-1.154-.923-2.307-.923-3-1.04v-.23h14.428c.693 0 .693.23.693.692l-.117 13.16h.117c1.384-5.772 4.385-9.465 6.002-11.08 1.616-1.732 4.617-3.81 8.31-3.81 1.73 0 3.694.462 4.964 1.847.922.92 1.613 2.422 1.613 4.85 0 2.766-1.73 5.42-5.423 5.42" fill="#FFFFFF"></path><path d="M63.083 33.955c-1.848-1.522-3.694-2.094-6.465-2.094-2.423 0-4.27.573-6 2.19-2.54 2.28-3.927 7.515-4.272 15.032h16.62c3.35 0 3.694-.097 3.694-4.282 0-5.805-1.73-9.324-3.577-10.845zm13.735 17.458H46.346c0 13.504 1.732 17.625 5.08 21.434 2.653 3 5.078 3.808 8.425 3.808 9.235 0 14.313-4.696 16.044-12.777l.462.116c-2.078 10.042-8.425 16.62-18.352 16.62-5.773 0-12.003-1.384-16.275-5.886-4.618-4.963-6.35-10.965-6.35-19.277 0-15.464 8.89-25.853 21.124-25.853 14.197 0 20.43 9.58 20.43 18.585 0 .807 0 1.962-.116 3.23zM96.398 56.797c-3.23 1.734-4.618 2.885-5.655 4.5-1.155 1.847-1.847 3.926-1.847 7.158 0 6.58 2.54 7.968 7.156 7.968.923 0 1.962-.116 2.885-.58 2.424-1.268 5.932-4.96 5.932-8.653l.114-16.163c-1.615 2.537-5.47 4.154-8.586 5.77zm17.127 23.816c-2.77 0-4.962-.114-6.348-.92-1.5-.81-2.54-3.12-2.308-7.388h-.118c-1.153 3.924-6.393 8.308-13.778 8.308-6.81 0-12.813-3.92-12.813-12.233 0-3.117.923-5.542 2.887-7.386 3.578-3.347 8.425-3.58 13.388-5.543 6.58-2.54 10.78-5.652 10.78-9.114 0-1.733.147-5.666.147-7.398 0-6.233-2.816-7.27-7.78-7.27-2.423 0-3.923.46-5.077 1.615s-1.647 2.2-1.647 5.664c0 3.578-1.962 5.08-5.194 5.08-2.54 0-4.617-1.387-4.617-4.388 0-1.962.692-3.346 1.846-4.733 2.54-3.23 9.58-5.195 14.544-5.195 8.54 0 18.05 3.118 18.05 11.314 0 3.806-.23 21.9-.23 28.827 0 1.528-.013 3.06.098 4.588.137 1.88.69 4.035 2.802 4.505.975.216 2.25.03 3.065-.576v.16c-1.155 1.037-4.004 2.083-7.697 2.083zM121.372 79.576v-.232c.578-.114 1.384-.345 1.96-.576 1.965-.81 2.888-1.5 3.464-4.5.463-2.195.463-6 .463-9.235v-50.21c0-1.962.115-7.502-.232-9.234-.347-2.193-.924-3-1.962-3.69-1.27-.927-2.194-.927-3-1.04V.627h14.542c.692 0 .692 0 .692.806 0 1.732-.114 4.155-.114 7.273v56.326c0 3.234-.116 6.926.345 9.234.693 3.117 1.5 3.692 3.926 4.616.692.233.923.347 1.5.46v.233h-21.584" fill="#D52331"></path><path d="M174.58 73.227c-1.73 3.808-6.81 7.386-11.773 7.386-4.5 0-7.5-.69-10.04-3-2.08-1.847-3.002-4.154-3.002-8.424 0-2.31.346-32.205.462-37.862-1.732-.114-5.08-.114-6.81-.345v-.23c7.156-1.618 11.657-5.308 16.504-20.893h.35v19.112h11.426v2.242H160.27L159.805 70c0 4.385 1.27 8.153 5.886 8.153 4.04 0 7.158-2.387 8.542-5.155l.347.23" fill="#FFFFFF"></path><path d="M201.703 35.208c-2.31-2.77-4.963-3.347-7.62-3.347-2.536 0-5.307.926-7.5 3.233-3.463 3.578-5.425 11.126-5.425 19.898 0 9.004 2.077 16.046 5.31 19.856 2.308 2.77 5.08 3.462 7.616 3.462 2.656 0 5.195-.575 7.62-3.346 3.115-3.81 5.308-10.968 5.308-19.97 0-8.89-2.076-15.976-5.31-19.784zm-7.62 45.405c-11.424 0-23.66-9.808-23.66-25.622 0-15.813 12.236-25.393 23.66-25.393 11.43 0 23.78 9.697 23.78 25.394 0 15.7-12.35 25.623-23.78 25.623zM335.707 35.208c-2.308-2.77-4.963-3.347-7.62-3.347-2.538 0-5.307.926-7.5 3.233-3.463 3.578-5.426 11.126-5.426 19.898 0 9.004 2.08 16.046 5.31 19.856 2.31 2.77 5.08 3.462 7.618 3.462 2.656 0 5.196-.575 7.62-3.346 3.117-3.81 5.31-10.968 5.31-19.97 0-8.89-2.08-15.976-5.31-19.784zm-7.62 45.405c-11.426 0-23.66-9.808-23.66-25.622 0-15.813 12.234-25.393 23.66-25.393 11.428 0 23.78 9.697 23.78 25.394 0 15.7-12.352 25.623-23.78 25.623zM254.22 81.307c-3.35 0-6.12-2.655-6.12-6.347 0-3.694 2.77-6.35 6.12-6.35 3.346 0 6.117 2.31 6.117 6.35 0 4.04-2.77 6.347-6.117 6.347M286.305 80.613c-6.348 0-12.004-2.42-15.696-6.116-4.732-4.846-6.58-11.66-6.58-19.966 0-15.7 12.004-24.933 22.392-24.933 7.154 0 12.465 2.656 14.542 5.195 1.617 1.963 2.427 3.694 2.427 5.308 0 3.58-2.656 4.965-4.734 4.965-3.923 0-5.31-2.425-5.77-6.118-.925-6.58-1.963-7.427-6.927-7.427-1.962 0-5.08.808-6.925 2.887-2.656 3-4.04 9.156-4.04 18.16 0 11.31 1.384 15.78 4.387 20.164 2.192 3.233 4.962 4.043 7.617 4.043 10.388 0 15.004-6.084 16.62-12.895l.46.116c-2.076 9.12-8.077 16.62-17.775 16.62" fill="#FFFFFF"></path><path d="M410.97 79.603v-.233c.578-.115.923-.23 1.733-.575 2.307-.924 3.117-1.5 3.693-4.618.577-2.31.46-6.003.46-9.234V44.857c0-5.31-.46-7.808-1.73-9.538-1.5-1.965-3.347-3.003-6.348-3.003-5.195 0-10.967 8.858-11.775 17.745-.117 1.73-.23 3.15-.23 5.34v9.54c0 3.232-.23 6.926.346 9.235.576 3.118 1.5 3.694 3.808 4.618.808.346 1.153.46 1.732.575v.233h-21.586v-.233c.576-.115.924-.23 1.732-.575 2.307-.924 3.115-1.5 3.694-4.618.578-2.31.46-6.003.46-9.234V44.857c0-5.31-.576-7.808-1.847-9.538-1.5-1.965-3.347-3.003-6.348-3.003-5.77 0-10.968 9.087-11.775 17.977-.232 2.77-.232 1.72-.232 5.183v9.466c0 3.23-.228 7.042.348 9.35.577 3.117 1.5 3.46 3.924 4.502l1.616.575v.233h-21.583v-.233c.46-.115.92-.23 1.73-.575 2.423-.924 3-1.385 3.693-4.503.576-2.307.462-6.118.462-9.35v-19.97c0-2.076 0-7.62-.23-9.35-.347-2.193-.81-2.77-1.964-3.696-1.154-.92-2.193-.92-3-1.035v-.23h14.54c.696 0 .696.114.696.69l-.232 11.313h.117c1.386-5.078 3.925-7.965 6.464-9.81 1.846-1.387 5.54-3.236 9.58-3.236 5.08 0 8.66 1.502 10.737 4.042 1.153 1.386 3 4.617 3 9.35h.115c1.5-5.425 4.27-8.427 6.694-10.158 2.538-1.847 6.465-3.235 9.466-3.235 6.35 0 9.236 1.964 10.967 4.16 1.5 1.73 2.767 4.846 2.767 10.735v20.43c0 3.232-.114 6.926.462 9.235.578 3.118 1.385 3.577 3.81 4.618l1.618.575v.233h-21.59M438.534 31.093c.434 0 .778-.1 1.025-.3.248-.2.373-.466.373-.8v-.04c0-.36-.125-.633-.374-.82-.248-.187-.592-.28-1.026-.28h-1.756v2.24h1.756zm-3.1-3.45h3.155c.918 0 1.634.252 2.145.764.387.36.578.852.578 1.475v.034c0 .574-.15 1.035-.457 1.393-.306.353-.7.596-1.184.734l1.903 2.67h-1.604l-1.717-2.445h-1.475v2.443h-1.343v-7.07zm2.708 9.507c.816 0 1.573-.155 2.278-.463.702-.306 1.31-.72 1.824-1.24.515-.518.918-1.128 1.215-1.833.292-.703.44-1.45.44-2.242v-.034c0-.79-.145-1.536-.434-2.232-.29-.697-.69-1.305-1.204-1.825-.514-.518-1.12-.928-1.817-1.23-.696-.303-1.452-.453-2.267-.453s-1.574.153-2.276.46c-.7.31-1.31.72-1.825 1.243-.516.52-.918 1.128-1.215 1.832-.294.7-.443 1.45-.443 2.24v.036c0 .792.145 1.537.434 2.23.29.7.69 1.307 1.207 1.826.514.52 1.117.932 1.815 1.232.697.3 1.452.454 2.267.454zm0 .83c-.927 0-1.79-.173-2.592-.52-.8-.348-1.498-.818-2.09-1.414-.59-.6-1.056-1.294-1.396-2.09-.34-.8-.512-1.644-.512-2.548v-.036c0-.9.17-1.748.512-2.545.34-.8.81-1.498 1.407-2.1.596-.6 1.3-1.08 2.106-1.432.81-.352 1.678-.528 2.602-.528.926 0 1.786.173 2.592.518.803.348 1.5.82 2.09 1.415.59.597 1.056 1.294 1.394 2.09.344.796.514 1.646.514 2.548v.034c0 .902-.17 1.75-.514 2.548-.338.795-.807 1.494-1.403 2.098-.596.602-1.298 1.08-2.106 1.432-.81.354-1.677.53-2.602.53z" fill="#FFFFFF"></path></g></svg>
+                    <br />
+                    <span class="professional-text display-block-xs display-block-sm line-height-rdc-logo">for Professionals</span>
+                </a>
+                <a class="navbar-brand-lg visible-sm visible-xs" target="_blank" href="{!$Label.CustomerDashboard}/dashboard">
+                    <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 188 182" style="enable-background:new 0 0 188 182;width: 44px;" xml:space="preserve"><style type="text/css">.st0{fill:#E90029;}.st1{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}</style><title>favicon_red</title><desc>Created with Sketch.</desc><g>
+	<g id="Page-1">
+		<g id="favicon_red" transform="translate(-16.000000, -19.000000)">
+			<path id="Combined-Shape" class="st0" d="M172.9,200.1l-125.8,0l0-87.7l-31.1,0L109.9,19l94.1,93.3l-31.1,0L172.9,200.1z
+				 M107.3,78.7c0-1.1,0-3.2-3.2-3.2H66v3.3l1.2,0.2l1,0.1c2.2,0.1,4.2,0.9,6,2.2c2.4,1.8,3.6,3.2,4.4,8.2
+				c0.4,3.3,0.4,12.6,0.3,18.6v4.1v34.7v5.5c0.1,8,0.2,18.9-0.9,23.4c-1.3,7.2-2.6,7.6-8.5,10.1c-1.3,0.6-2.7,1.1-4.2,1.4l-1.1,0.3
+				v3.2h57.7v-3.3l-1.2-0.2c-1.4-0.3-2.8-0.7-4.1-1.4c-6-2.5-7.4-3.1-8.8-10.2c-1.1-4.4-1-15.3-0.9-23.3V147v-5.6
+				c0-6.4,0.2-16.6,0.5-20.7C113,91.8,124,86.9,127,86.1c1.2,0.4,1.7,1.6,2.5,4.3c0.3,1.3,0.7,2.5,1.2,3.7
+				c2.9,7.8,7.8,11.9,14.3,11.9c10.5,0,15.2-7.5,15.2-15c0-5.7-1.5-10.2-4.5-13.1c-4.1-4.4-10.3-5.1-13.7-5.1
+				c-5.9,0.1-11.6,2-16.4,5.3c-8.1,4.1-14.6,10.9-18.4,19.2L107.3,78.7z"/>
+		</g>
+	</g><path class="st1" d="M91.3,59.7c0-1.1,0-3.2-3.2-3.2H50v3.3l1.2,0.2l1,0.1c2.2,0.1,4.2,0.9,6,2.2c2.4,1.8,3.6,3.2,4.4,8.2
+		c0.4,3.3,0.4,12.6,0.3,18.6v4.1v34.7v5.5c0.1,8,0.2,18.9-0.9,23.4c-1.3,7.2-2.6,7.6-8.5,10.1c-1.3,0.6-2.7,1.1-4.2,1.4l-1.1,0.3
+		v3.2h57.7v-3.3l-1.2-0.2c-1.4-0.3-2.8-0.7-4.1-1.4c-6-2.5-7.4-3.1-8.8-10.2c-1.1-4.4-1-15.3-0.9-23.3V128v-5.6
+		c0-6.4,0.2-16.6,0.5-20.7C97,72.8,108,67.9,111,67.1c1.2,0.4,1.7,1.6,2.5,4.3c0.3,1.3,0.7,2.5,1.2,3.7c2.9,7.8,7.8,11.9,14.3,11.9
+		c10.5,0,15.2-7.5,15.2-15c0-5.7-1.5-10.2-4.5-13.1c-4.1-4.4-10.3-5.1-13.7-5.1c-5.9,0.1-11.6,2-16.4,5.3
+		c-8.1,4.1-14.6,10.9-18.4,19.2L91.3,59.7z"/>
+</g></svg>
+                    <!--<svg class="svg-rdc-logo" style="width: 45px;height: 44px;" viewBox="0 0 188 182" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><title>favicon_red</title><desc>Created with Sketch.</desc><g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g id="favicon_red" transform="translate(-16.000000, -19.000000)" fill="#E90029" fill-rule="nonzero"><path d="M172.888787,200.053118 L47.1112127,200.038787 L47.0968824,112.321031 L16,112.335361 L109.935513,19 L204,112.349692 L172.874457,112.321031 L172.888787,200.053118 Z M107.278519,78.6736508 C107.278519,77.5553351 107.278519,75.4764151 104.036061,75.4764151 L65.9730433,75.4764151 L65.9730433,78.7740124 L67.2212463,78.9747358 L68.1968532,79.1037722 C70.3566648,79.2203345 72.4335166,79.9736778 74.1652721,81.2687165 C76.5612479,83.1039011 77.7664094,84.5089644 78.5698504,89.5127099 C79.0146124,92.8103073 78.9285294,102.086592 78.8711408,108.151304 L78.8711408,112.266132 L78.8711408,146.933916 L78.8711408,152.468145 C78.9715709,160.454065 79.1150425,171.379149 77.9672696,175.881086 C76.6329837,183.049776 75.3991279,183.522909 69.4880977,186.017614 C68.1490451,186.624302 66.7560684,187.104311 65.3274211,187.451352 L64.1939954,187.723762 L64.1939954,190.935335 L121.883928,190.935335 L121.883928,187.666412 L120.693114,187.437014 C119.270336,187.151692 117.887616,186.694309 116.575479,186.074963 C110.564019,183.537247 109.129303,182.935077 107.795017,175.852411 C106.675938,171.450836 106.805063,160.511415 106.905493,152.525494 L106.905493,146.991266 L106.905493,141.38535 C106.905493,134.947867 107.135047,124.75399 107.364602,120.653499 C113.03173,91.8210281 124.036003,86.9033068 126.991518,86.1004135 C128.239721,86.5448723 128.655788,87.6631879 129.444882,90.4016275 C129.783538,91.6542775 130.185779,92.8888895 130.650044,94.1006715 C133.519476,101.885869 138.497941,106.000697 144.911121,106.000697 C155.441937,106.000697 160.147806,98.4735723 160.147806,91.0037974 C160.147806,85.2688455 158.627007,80.8242577 155.657145,77.9137696 C151.53951,73.4978567 145.327189,72.8383372 141.984301,72.8383372 C136.09754,72.9714656 130.379849,74.8311905 125.542454,78.1861799 C117.435208,82.3311162 110.961036,89.0837049 107.163742,97.3552567 L107.278519,78.6736508 Z" id="Combined-Shape"></path></g></g></svg>-->
+                </a>
+                
+                <div class="products-billing pull-right"><strong>Products &amp; Billing</strong></div>
+                <div class="pull-right line hidden-sm hidden-xs"></div>
+            </div>
+            <!-- LCM-349 -->
+            <div class="navbar-header app-navbar pull-right">
+                <div class="dropdown user-profile-dropdown">
+                    <div style="display:none" id="sfdc-account-id" data-sfdc-id="{!sfdcAcctId}" data-advertiser-id="{!advertiserId}"></div>
+                    <!-- Start of MD / LG / XL avatar menu toggle -->
+                    <a href="#" class="display-inline-block dropdown-toggle hidden-sm hidden-xs" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <span class="display-inline-block valign-middle mar-right-xs text-right font-size-small text-inverted">
+                            Welcome
+                            <div class="display-block firstName"></div>
+                        </span>
+                        <span class="display-inline-block avatar-sm has-borders bg-white">
+                            <img class="media-object pos-absolute absolute-centering img-crop-height" src="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/Avatar/Default-avatar.png')}" alt="Avatar logo" />
+                        </span><div class="display-inline-block valign-top has-borders caret-container"><span class="pi pi-angle-down text-muted"></span></div>
+                    </a>
+                    <!-- End of MD / LG / XL avatar menu toggle -->
+                    
+                    <!-- Start of MD / LG / XL avatar menu -->
+                    <ul class="dropdown-menu dropdown-menu-right" id="avatar-menu-wrapper">
+                        <li class="switch-panel active on" id="avatar-menu-account">
+                            <!-- Start of avatar menu -->
+                            <div class="avatar-menu pad-top-sm">
+                                <ul class="media-list avatar-menu-current-role">
+                                    <li class="media">
+                                        <div class="media-left">
+                                            <div class="avatar-md has-borders bg-white">
+                                                <img class="media-object pos-absolute absolute-centering img-crop-height" src="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/Avatar/Default-avatar.png')}" alt="Avatar logo" />
+                                            </div>
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="media-heading mar-top-md"></h4>
+                                            <p class="role"></p>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div role="separator" class="divider"></div>
+                                <ul class="list-inline">
+                                    <li><a id="logout" class="false " href="{!$Label.CustomerDashboard}/logout" data-omtag="avatar-signout">Sign Out</a></li>
+                                </ul>
+                                <div role="separator" class="divider"></div>
+                                <ul class="vertical-links">
+                                    <li>
+                                        <a class="dashboard-link" href="{!$Label.CustomerDashboard}/dashboard" target="_blank" data-omtag="avatar:dashboard">Go to realtor.com® professional<br />dashboard <i class="pi-android-open"></i></a>
+                                        <a class="support-link" href="https://support.realtor.com/s/" target="_blank" data-omtag="avatar:help">FAQ<i class="pi-android-open"></i></a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <!-- End of avatar menu -->
+                        </li>
+                    </ul>
+                    <!-- End of MD / LG / XL avatar menu -->
+                    
+                    <!-- Start of SM / XS avatar menu toggle -->
+                    <a href="#" class="dropdown-toggle visible-sm visible-xs" data-toggle="modal" data-target="#modal-avatar-menu">
+                        <span class="display-inline-block valign-middle mar-right-xs text-right font-size-small text-inverted hidden-sm hidden-xs">
+                            Welcome
+                            <strong class="display-block ellipsis-1 firstName"></strong>
+                        </span>
+                        <span class="display-inline-block avatar-sm has-borders bg-white">
+                            <img class="media-object pos-absolute absolute-centering img-crop-height" src="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/Avatar/Default-avatar.png')}" alt="Avatar logo" />
+                        </span><div class="display-inline-block valign-top has-borders caret-container"><span class="pi pi-angle-down text-muted"></span></div>
+                    </a>
+                    <!-- End of SM / XS avatar menu toggle -->
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- LCM-337 -->
+    <!-- Start of SM / XS avatar menu  -->
+    <div class="modal modal-drawer modal-avatar-menu fade" id="modal-avatar-menu" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-full-screen" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close no-padding" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="pi pi-ios-close-empty pull-right"></span></button>
+          </div>
+    
+          <div class="modal-body" id="avatar-menu-wrapper-sm">
+            <div class="switch-panel active on" id="avatar-menu-account-sm">
+              <div class="avatar-menu pad-top-sm">
+                <ul class="media-list avatar-menu-current-role">
+                  <li class="media">
+                    <div class="media-left">
+                      <div class="avatar-md has-borders bg-white">
+                        <img class="media-object pos-absolute absolute-centering img-crop-height" src="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/Avatar/Default-avatar.png')}" alt="Avatar logo" />
+                      </div>
+                    </div>
+                    <div class="media-body">
+                      <h4 class="media-heading mar-top-md"></h4>
+                      <p class="role"></p>
+                    </div>
+                  </li>
+                </ul>
+                <div role="separator" class="divider"></div>
+                <ul class="list-inline"><!-- LCM-377 -->
+                  <li><a id="logout" class="false " href="{!$Site.Prefix}/secur/logout.jsp" data-omtag="avatar-signout">Sign Out</a></li>
+                </ul>
+                <div role="separator" class="divider"></div>
+                <ul class="vertical-links">
+                  <li>
+                    <a class="dashboard-link" href="{!$Label.CustomerDashboard}/dashboard" target="_blank" data-omtag="avatar:dashboard">Go to realtor.com® professional dashboard <i class="pi-android-open"></i></a>
+                    <!-- LCM-394 -->
+                    <a class="support-link" href="https://support.realtor.com/s/" target="_blank" data-omtag="avatar:help">FAQ<i class="pi-android-open"></i></a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+        function getUserInfo() {
+            SelfServiceController.getProfileDetails({!advertiserId}, function(result, event){
+                try {
+                    result = JSON.parse(result);
+                    if (result != null && result["results"] != null) {
+                        // add photo to avatar dropdown menu LCM-407
+                        if (result["results"]["photo"] == null || result["results"]["photo"]["href"] == null || result["results"]["photo"]["href"] == "") {
+                            $(".media-object").attr("src","{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/Avatar/Default-avatar.png')}");
+                        } else {
+                             $(".media-object").attr("src",result["results"]["photo"]["href"]);
+                        }
+                        if (result["results"]["role"] == "agent") {
+                            // add role to avatar dropdown menu
+                            $(".role").html("You’re signed in as an Agent.");
+                            // add first name to header LCM-395
+                            var fullName = result["results"]["fullname"] || '';
+                            $(".firstName").html(fullName.split(' ')[0]);
+                            // add full name to avatar dropdown menu
+                            $(".media-heading").html(fullName);
+                        } else {
+                            $(".role").html("You’re signed in as a Broker.");
+                            var brokerName = result["results"]["name"] || '';
+                            // $(".firstName").html(brokerName.split(' ')[0]); LCM-412 
+                            // add full name to avatar dropdown menu
+                            $(".media-heading").html(brokerName);
+                        }
+                    }
+                } catch(e) {
+                   $(".media-object").attr("src","{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/Avatar/Default-avatar.png')}"); 
+                }
+                
+           }, {
+               escape: false
+           });
+        }
+        if({!advertiserId} !== null){
+             getUserInfo();
+        } else {
+            window.open("{!$Label.CustomerCommunityDomain}/CustomerDashboardErrorPage", "_self");
+        }
+    </script>
+</apex:component>

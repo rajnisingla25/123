@@ -1,0 +1,21 @@
+<aura:component >
+    <aura:attribute name="activityAttributeWrappers" type="map" />
+    
+    <div class="slds-grid slds-wrap">
+        <aura:iteration items="{!v.activityAttributeWrappers}" var="activityAttributeWrapper">
+            <div class="slds-col slds-size--1-of-4 slds-p-top_x-small">
+                <div >
+                    <p class="slds-truncate">{!activityAttributeWrapper.columnLabel}</p>
+                    <aura:if isTrue="{!activityAttributeWrapper.isLink}">
+                        <p class="slds-truncate" title="{!activityAttributeWrapper.value}"><a href="{!activityAttributeWrapper.redirectURL}" target="_blank">{!activityAttributeWrapper.value}</a></p>
+                        <aura:set attribute="else">
+                            <p class="slds-truncate" title="{!activityAttributeWrapper.value}">{!activityAttributeWrapper.value}</p>
+                        </aura:set>
+                    </aura:if> 
+                    
+                </div>
+            </div>
+        </aura:iteration>
+    </div>
+            
+</aura:component>

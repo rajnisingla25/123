@@ -1,0 +1,49 @@
+<apex:page standardController="Case" extensions="FollowUpUpdateController" recordSetVar="cases" >
+    
+    <script>
+    if('{!selectedCases.size}' > 19){
+        alert('Please select less than 20 number of records');
+        window.history.back();
+    }
+    if('{!selectedCases.size}' < 1){
+        alert('Please select at least one record');
+        window.history.back();
+    }
+    
+    </script>
+    <apex:pageMessages />
+
+    
+    <apex:form id="form">
+       
+        <apex:pageBlock title="Update Followup Status" mode="edit">
+            
+            <apex:pageBlockButtons location="bottom">   
+                <apex:commandButton value="Save" action="{!updateCases}"/>
+                
+                <apex:commandButton value="Cancel" action="{!cancel}"/>
+            </apex:pageBlockButtons>
+            <apex:pageBlockSection title="Update Followup Status" columns="1">
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Follow Up Status" />
+                    <apex:inputField value="{!objCase.Followup_Status__c}" />
+                </apex:pageBlockSectionItem>
+
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Cancel Reason" />
+                    <apex:inputField value="{!objCase.Cancel_Reason__c}" />
+                </apex:pageBlockSectionItem>
+            </apex:pageBlockSection>
+            
+            <apex:pageBlockSection title="Comments" columns="1">
+                
+                <apex:pageBlockSectionItem >
+                    <apex:outputLabel value="Comments" />
+                    <apex:inputField value="{!objCase.Comments__c}" id="recordOwner" />
+                </apex:pageBlockSectionItem>  
+            </apex:pageBlockSection>
+            
+        </apex:pageBlock> 
+    </apex:form>
+</apex:page>

@@ -1,0 +1,69 @@
+<!--/********************************************************************************************
+*   @Author :       Srinidhi M 
+*   @Purpose:       To display list of QuickText 
+*   @Class          HotKeyList
+*   @TestClass      HotKeyList_Test
+*   @JIRA           
+*   @CreatedDate:   July 3rd, 2018
+*********************************************************************************************
+   JIRA No      Date       Modified By         Description                                Tag No
+*********************************************************************************************
+
+*/-->
+
+<apex:page controller="HotKeyList" showHeader="false" >
+    <head>
+            <meta charset="utf-8"/>
+            <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+            <apex:stylesheet value="{!URLFOR($Resource.Bootstrap, 'css/bootstrap.min.css')}" />
+            <apex:includeScript value="{!URLFOR($Resource.Bootstrap, '/js/bootstrap.bundle.min.js')}"/> 
+            <apex:includeScript value="{!$Resource.jquery_QuickText}"/>
+            <apex:includeScript value="{!$Resource.jquery_dataTable}"/>
+            <apex:includeScript value="{!$Resource.jquery_dataTables_bootstrap}"/>
+
+    </head>
+            <script>
+             $(document).ready(function() {
+             $('#example').DataTable();
+             } );
+             
+             $(document).ready(function(){
+             $('[data-toggle="popover"]').popover();   
+             });
+           </script>
+       
+           <style>
+          .col-md-6 {
+          -ms-flex: 0 0 50%;
+          flex: 0 0 0; 
+          max-width: 0; 
+           }
+         .dataTables_length{display:none}
+         .dataTables_filter{width:150px;font-size:80%}
+         .dataTables_info{font-size:80%;padding-left:3%}
+         .dataTables_paginate{font-size:80%;}
+          </style>
+    
+    
+    <body>
+        <table id="example" class="table table-striped table-bordered" style="line-height: .3;font-size:80%">
+            <thead>
+                <tr>
+                    <th style="width:17%">Key</th>
+                    <th style="width:25%">Category</th>
+                    <th>Title</th>
+                </tr>
+            </thead> 
+            <tbody>
+                <apex:repeat value="{!quickTextList}" var="q">  
+                    <tr>
+                    <td style="white-space: nowrap; width: 17%; overflow: hidden;text-overflow: ellipsis;"><apex:outputText value="{!LEFT(RIGHT(q.Name,(LEN(q.Name)-FIND("(",q.Name))),(LEN(q.Name)-FIND("(",q.Name))-1)}"/></td>
+                    <td style="white-space: nowrap; width: 25%; overflow: hidden;text-overflow: ellipsis;"><apex:outputText value="{!q.category}"/></td>
+                 <!--   <td><apex:outputText value="{!LEFT(q.Name, FIND("(",q.Name)-1)}" data-toggle="popover" data-trigger="hover" data-content="Some content"/></td> -->
+                        <td><a href="#" title="{!q.Message}" data-toggle="popover" data-trigger="hover">{!LEFT(q.Name, FIND("(",q.Name)-1)}</a></td>
+                    </tr> 
+                </apex:repeat>
+           </tbody>
+        </table>
+   </body>
+</apex:page>

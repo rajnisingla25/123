@@ -1,0 +1,77 @@
+<apex:page >
+ <apex:includeScript value="/support/console/44.0/integration.js"/>
+ <script type="text/javascript">
+   
+   function openLeadsToSold() {
+      window.open("https://c3tools.move.com/STaR/leads_to_sale/");
+   }
+   function openHPZIP(){
+      window.open("http://p08sql20278/waitlist.aspx");
+   }
+   function openHPFivePlus() {
+      window.open("http://p08sql20278/InventoryInfoTool.aspx");
+   }
+   function openBuysideTransactions() {
+      window.open("https://c3tools.move.com/star/buyside.transactions/");
+   }
+   function openLocal() {
+      window.open("https://www.realtor.com/local/");
+   }
+   function openRealEstateMarketingProducts() {
+      window.open("https://marketing.realtor.com/");
+   }
+   function openPercentageCalculator() {
+      window.open("https://percentagecalculator.net/");
+   }
+   function openInventorySearchTab(){
+      window.open("{!$Site.Domain}/apex/InventorySearch");
+   }
+   function openZipSearch() {
+      window.open("http://zipmap.net/");
+   }
+   function openBIC() {
+      window.open("https://www.nar.realtor/rofindrealtor.nsf/pages/FS_FOFFICE?OpenDocument");
+   }
+   function openPreauthForm() {
+      window.open("https://docs.google.com/forms/d/e/1FAIpQLSekoRDDxI_L7hMPNE303Vyc7kmK_HaKrpfSsPIvihMgaTUhaw/viewform?c=0&w=1");
+   }
+   function openRCT() {
+      window.open("https://hub.realtor.com/convert");
+   }
+   function openHUB() {
+      window.open("https://hub.realtor.com/");
+   }
+   function openForgotNRDS() {
+     window.open("https://login.connect.realtor/#!/forgotmember");
+   }
+   function openRealtor() {
+     window.open("https://realtor.com");
+   }
+   function openZillow() {
+     window.open("https://zillow.com");
+   }
+   
+ </script>
+ <!--Commenting out some links for ticket CRM-3183-->
+ <b>SFDC Console Links</b><br />
+ <br />
+     <a href="#" onClick="openLeadsToSold(); return false">Leads to Sold</a><br />
+     <a href="#" onClick="openHPZIP(); return false">HP ZIP</a><br />
+     <a href="#" onClick="openHPFivePlus(); return false">HP 5+</a><br />
+     <a href="#" onClick="openBuysideTransactions(); return false">Buy Side Transactions</a><br />
+     <a href="#" onClick="openLocal(); return false">Local</a><br />
+     <a href="#" onClick="openRealEstateMarketingProducts(); return false">Real Estate Marketing Products</a><br />
+     <a href="#" onClick="openPercentageCalculator(); return false">Percentage Calculator</a><br />
+     <a href="#" onClick="openInventorySearchTab(); return false">Inventory Search</a><br />
+     <a href="#" onClick="openZipSearch(); return false">Zip Search</a><br />
+     <a href="#" onClick="openBIC(); return false">Find the Broker in charge (BIC) of an office</a><br />
+     <a href="#" onClick="openPreauthForm(); return false">Pre-Auth Form</a><br />
+     <a href="#" onClick="openRCT(); return false">Realtor Conversion Techniques</a><br />
+     <a href="#" onClick="openHUB(); return false">Realtor.com Hub/Support</a><br />
+     <a href="#" onClick="openForgotNRDS(); return false">Realtor forgot their NRDS Number</a><br />
+     <a href="#" onClick="openRealtor(); return false">Realtor.com</a><br />
+     <a href="#" onClick="openZillow(); return false">Zillow</a><br />
+     <br />
+ <br />
+ 
+</apex:page>

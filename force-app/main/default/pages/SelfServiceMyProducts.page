@@ -1,0 +1,287 @@
+<apex:page standardStylesheets="false" controller="SelfServiceController" showHeader="false" applyBodyTag="false" applyHtmlTag="false">
+
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+        <meta name="description" content="Layout prototype for Prosoft" />
+        <meta name="author" content="Move Prosoft UX" />
+        <link rel="shortcut icon" href="{!$Resource.CustomerCommunityFavicon}" type="image/x-icon"/>
+        <link rel="stylesheet" href="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/css/prosoft-ui.css')}"/>
+        <link rel="stylesheet" media="screen" href="{!$Resource.SelfServiceCss}" />
+      
+    </head>
+
+    <body class="my-products-body" data-enhance="false">
+        <div id="app-container" class="app-container">
+            <c:SelfServiceHeader id="app-header" />
+            <c:SelfServiceTopMenu id="app-menu" />
+            <div class="main-container">
+                <div class="container-fluid products-container">
+                    <div id="my-products-root">
+                        <section class="title-section">
+                            <div class="title-section-breadcrumb hidden-xs">
+                                <span><span class="text-gray">My Products</span></span>
+                            </div> 
+                            <div class="title-section-header">
+                                <div>
+                                    <a rel="external"  href="{!$Label.CustomerCommunityDomain}/SelfServiceMobileMenu" class="back-arrow display-inline-block hidden-sm hidden-lg hidden-md hidden-xl"><i class="pi pi-android-arrow-back"></i></a>
+                                    <strong><span> My Products </span></strong>
+                                </div>
+                            </div>
+                        </section>
+                        <div class="section-body">
+                            <div id="error-div"></div>
+                            <div id="product-summary-div"> </div>
+                            <div id="product-details-div"></div>
+                            <div id="bms-product-details-div">
+                                <div id="bms-summary-div"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-spinner"></div>
+                </div>
+               <div style="display:none" id="separately-billed-template">
+                 <div class="mar-left-lg mar-right-lg">
+                   <div class="panel has-borders-dash">
+                      <div class="panel-body font-size-small text-muted">
+                         Some products are billed separately and therefore are not included here, such as OpCity and ListHub.
+                      </div>
+                   </div>
+                 </div>
+                </div>
+            </div>
+            <c:SelfServiceContactDetail id="app-contact-detail" />
+            <c:SelfServiceFooter id="app-footer" />
+        </div>
+        
+<!-- Product Summary Modal -->
+        <script id="summary-template" type="x-tmpl-mustache">
+            <div class="panel">
+                <div class="panel-heading border-bottom-grey">
+                <div class="row">
+                    <div class="col-sm-6 col-xs-12 product-size-container"><h3 class="panel-title">You have {{product-size}}</h3></div>
+                    <div class="col-sm-6 text-right hidden-xs hidden-sm download-pdf-link"><a href="{!$Label.CustomerCommunityDomain}/selfservicemyproductscsv?Id={{accountId}}" download ="{!productsFilename}.csv"  target="_blank">Download as CSV | <a href="{!$Label.CustomerCommunityDomain}/customerAccountSummary?Id={{accountId}}" download ="{!productsFilename}.pdf"  target="_blank">PDF</a></a></div>
+                    <div class="col-xs-12 hidden-lg hidden-xl hidden-md mar-top-md download-pdf-link"><a href="{!$Label.CustomerCommunityDomain}/selfservicemyproductscsv?Id={{accountId}}" download ="{!productsFilename}.csv"  target="_blank">Download as CSV | <a href="{!$Label.CustomerCommunityDomain}/customerAccountSummary?Id={{accountId}}" download ="{!productsFilename}.pdf"  target="_blank">PDF</a></a></div>
+                </div>
+                    
+                </div>
+                <div class="panel-body">
+                    <div class="product-summary">
+                        <div class="border-bottom-grey">
+                            {{#products}}
+                                <div id="product-summary-template" class="pad-bottom-sm">
+                                    <div class="pull-left display-inline mb-half-wd"><a rel="external" class="bk-word" href="#{{anchorProductName}}-section" ><strong id="product-name" class="text-accent">{{{name}}}</strong></a></div>
+                                    <div class="pull-right display-inline  mb-half-wd"><span>$ {{price}}/month</span></div>
+                                    <div class="clearfix"></div>
+                                    <div id="comarketing-div" class="mar-left-md pad-top-sm" style="display:{{comarDisplay}}">
+                                        <div class="pull-left display-inline">with<strong id="product-name" class="text-accent"> Lender Co-Marketing</strong></div>
+                                        <div class="pull-right display-inline"><span>(${{comarPrice}})/month</span></div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    {{#bmsProducts}}
+                                        <div class="mar-left-md pad-top-sm" >
+                                        <div class="pull-left display-inline mb-half-wd"><a class="bk-word" rel="external" href="#{{anchorProductName}}-section" ><strong id="product-name" class="text-accent">{{{bmsProductName}}}</strong></a></div>
+                                        <div class="pull-right display-inline mb-half-wd"><span>Bundle Pricing</span></div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    {{/bmsProducts}}
+                                </div>
+                            {{/products}}
+                        </div>
+                        <div class="mar-top-md">
+                            <div class="pull-left display-inline mb-half-wd">
+                                <h4 class="mar-top-none mar-bottom-none bk-word">Current monthly spend:</h4>
+                            </div>
+                            <div class="pull-right display-inline mb-half-wd">
+                                <h4 class="mar-top-none mar-bottom-none">$ {{totalCost}}/month</h4>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </script>
+        
+<!-- Product Detail Modal -->
+        <script id="product-detail-template" type="x-tmpl-mustache">
+            {{#allProducts}}
+                <div class="section-anchor">
+                   <a id="{{anchorProductName}}-section" class="anchor">&nbsp;</a>
+                </div>
+                <div class="panel" >
+                    <div class="panel-heading border-bottom-grey">
+                        <h3 class="panel-title mar-bottom-xs">{{{productName}}}</h3>
+                        <p>{{description}} <a target="_blank" href="{{productLink}}" style="display:{{isBMS}}">Learn more</a></p>
+                        
+                        <div class="row" style="display:{{isNonInventory}}">
+                           
+                            <div class="col-sm-6 col-xs-12">
+                                     <div class="mar-bottom-xs hidden-xl hidden-lg hidden-md hidden-sm">
+                                        <strong>{{nonInvBilling}}</strong>
+                                    </div>
+                                    <div class="font-size-small hidden-xs ">
+                                        {{nonInvProdDetails}} <span style="display:{{isBMS}}">  |  </span>{{nonInvExpiry}}
+                                    </div>
+                                    <div class="font-size-small hidden-xl  hidden-lg hidden-md hidden-sm">
+                                        <div>{{nonInvProdDetails}}</div>
+                                        <div>{{nonInvExpiry}}</div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 hidden-xs">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-xs-12 text-right">
+                                            {{nonInvBilling}}
+                                        </div>
+                                       
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row" style="display:{{isBMSInventory}}">
+                            <div class="col-sm-6 col-xs-12">
+                                     <div class="mar-bottom-xs hidden-xl hidden-lg hidden-md hidden-sm">
+                                        <strong>{{nonInvBilling}}</strong>
+                                    </div>
+                                    <div class="font-size-small hidden-xs ">
+                                        {{nonInvProdDetails}} <span>  |  </span><a data-product-code = "{{productCode}}" data-status="hidden" class="toggle-markets-btn">Show Markets</a>
+                                    </div>
+                                    <div class="font-size-small hidden-xl  hidden-lg hidden-md hidden-sm">
+                                        <div>{{nonInvProdDetails}}</div>
+                                        <a data-product-code = "{{productCode}}" data-status="hidden" class="toggle-markets-btn">Show Markets</a>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 hidden-xs">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-xs-12 text-right">
+                                           {{nonInvBilling}}
+                                        </div>
+                                       
+                                    </div>
+                                </div>
+                        </div>
+                         <div style="display:{{hasInventory}}" >
+                                <div class="form-group sorting-option-div">
+                                       <select class="form-control selectpicker market-sorting-filter" data-product-code="{{productCode}}" id="{{productCode}}-sorting">
+                                                <option selected value="priceHighToLow"> Price - High to low</option>
+                                                <option value="priceLowToHigh"> Price - Low to High</option>
+                                                <option value="endDateAscending"> Exp. Date - Ascending</option>
+                                                <option value="endDateDescending"> Exp. Date - Descending</option>
+                                       </select>
+                                </div>
+                            </div>
+                    </div>
+                   
+                     <div style="display:{{hasInventory}}" class="panel-body pad-top-none pad-bottom-none" id="{{productCode}}-product-details">
+                        
+                    </div>
+                     
+                </div>
+            {{/allProducts}}
+        </script>
+<!-- Inventory market detail modal -->
+        <script id="market-detail-template" type="x-tmpl-mustache">
+            <div class="product-details">
+                {{#markets}}
+                    <div class="border-bottom-grey pad-top-md">
+                        <div class="mar-bottom-md product-container ">
+                            <div class="row mar-bottom-md">
+                                <div class="col-sm-6 col-xs-12">
+                                    <div class="mar-bottom-xs">
+                                        <strong>{{zipcode}}</strong>
+                                    </div>
+                                     <div class="mar-bottom-xs hidden-xl hidden-lg hidden-md hidden-sm">
+                                        <strong>{{billing}}</strong>
+                                    </div>
+                                    <div class="font-size-small hidden-xs ">
+                                        {{marketDetail}}  <span class="{{zipcode}}-city-div"></span><span>  |  </span>{{expiryData}}
+                                    </div>
+                                    <div class="font-size-small hidden-xl  hidden-lg hidden-md hidden-sm">
+                                        <div>{{marketDetail}}<span class="{{zipcode}}-city-div"></span></div>
+                                        <div>{{expiryData}}</div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 hidden-xs product-center">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-xs-12 text-right">
+                                            {{billing}}
+                                        </div>
+                                       
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {{/markets}}
+            </div>
+            <div class="row" style="display:{{hasInventory}}">
+                <div class="col-sm-6 hidden-xs">
+                    <div class="pagination-count">
+                        <div class="infos">
+                            Showing <strong> <span class="start-count">{{startCount}}</span> - <span class="end-count">{{endCount}}</span></strong>                            of <strong>{{totalCount}}</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 text-right custom-pagination">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <li class="page-item {{prevActiveStatus}}">
+                                <a class="page-link market-pagination-link pad-top-none pad-bottom-none" data-start-count="{{startCount}}" data-end-count="{{endCount}}"
+                                    aria-label="Previous" data-product-code="{{productCode}}"
+                                    data-pagination="previous-link">
+                                    <span aria-hidden="true">&laquo;</span>
+                                    <span class="sr-only">Previous</span> Previous
+                                </a>
+                            </li>
+
+                            <li class="page-item {{nextActiveStatus}}">
+                                <a class="page-link market-pagination-link  pad-top-none pad-bottom-none" data-start-count="{{startCount}}" data-end-count="{{endCount}}"
+                                    aria-label="Next" data-product-code="{{productCode}}"
+                                    data-pagination="next-link">Next 
+                                                <span aria-hidden="true">&raquo;</span>
+                                                <span class="sr-only">Next</span>
+                                 </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
+        </script>
+        <!-- LCM-417-->
+        <script id="empty-product-template" type="x-tmpl-mustache">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="mobile-pad-top-md mobile-pad-bottom-md empty-product-div"> 
+                        <div class="mar-top-xl mar-bottom-xl pad-left-md pad-right-md pad-top-md pad-bottom-md text-center">
+                            <img src="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/Transaction/transaction.svg')}" />
+                            <h2 class="normal-weight">It looks like you don’t have any products that can be displayed right now.</h2>
+                             <div class=" text-muted">
+                                 Some products are billed separately and therefore are not included here, such as OpCity and ListHub.
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </script>
+    </body>
+
+    <apex:includeScript value="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/js/jquery.js')}"
+    />
+    <apex:includeScript value="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/js/bootstrap.js')}"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
+    <apex:includeScript value="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/js/jquery.mobile-1.4.5.min.js')}"
+    />
+     <!--<apex:includeScript value="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/js/SelfServiceJSMin.js')}"
+    />-->
+    <apex:includeScript value="{!$Resource.SelfServiceJS}" />
+    <script type="text/javascript">
+          $(".my-products-body").on("pagecreate", function(event) {
+            $("#products-icon").attr("src",
+                "{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/Nav/Active/MyProducts.svg')}"
+            );
+            localStorage.setItem('filterValue', 'Last 12 Months');
+            getAllProducts($("#sfdc-account-id").data('sfdc-id'));
+        });
+    </script>
+
+</apex:page>

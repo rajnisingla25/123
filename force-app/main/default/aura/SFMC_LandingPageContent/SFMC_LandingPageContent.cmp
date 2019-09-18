@@ -1,0 +1,359 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" >
+    
+    <aura:attribute name="prefixString" type="String" />
+    <aura:attribute name="urlParamMap" type="String" />
+    <aura:attribute name="popUpImage" type="String"/>
+    <!--Form Design attributes -->
+    <aura:attribute name="formTitle" type="String"/>
+    <aura:attribute name="formButtonText" type="String" />
+    <aura:attribute name="showBigWord" type="Boolean" default="false"/>
+    <aura:attribute name="firstWordInFormTitle" type="String"/>
+    <aura:attribute name="cellNumber" type="String"/>
+    <!--Form attributes -->
+    
+    <!--Video Design attributes -->
+    <aura:attribute name="videoURL" type="String" default="https://www.youtube.com/embed/rZCOwjwFLjQ"/>
+    <aura:attribute name="videoPluginHeight" type="String"/>
+    <aura:attribute name="videoPluginWidth" type="String"/>
+    <!--Video attributes -->
+    
+    <!--Image Design attributes -->
+    <aura:attribute name="contentImage" type="String"/>
+    <aura:attribute name="contentImageHeight" type="String"/>
+    <aura:attribute name="contentImageWidth" type="String" />
+    
+    <!--Content Design attributes-->
+    <aura:attribute name="showVideoComponent" type="Boolean" default="true" />
+    <aura:attribute name="showFormComponent" type="Boolean" default="true" />  
+    <aura:attribute name="replaceVideoWithImage" type="Boolean" default="true" />
+    <aura:attribute name="showPicklist" type="Boolean" default="false" />
+    <aura:attribute name="bannerImage" type="String" default="splash-banner.jpg"/>
+    <aura:attribute name="bannerText" type="String" />
+    <aura:attribute name="bannerTextFont" type="String" />
+    <aura:attribute name="bannerTextAlignment" type="String" />
+    <aura:attribute name="bannerTextBottom" type="String" />
+    <aura:attribute name="bannerTextBottomFont" type="String" />
+    <aura:attribute name="bannerTextBottomAlignment" type="String" />
+    <aura:attribute name="imageText" type="String" />
+    <aura:attribute name="imageQuoteWriter" type="String" />
+    <aura:attribute name="imageTextFontSize" type="String" />
+    <aura:attribute name="imageTextColor" type="String" />
+    <aura:attribute name="toggleContent" type="Boolean" default="false"/>
+    <aura:attribute name="popUpImageTest" type="String" />
+    <aura:attribute name="popUpImageWidth" type="String" />
+    <aura:attribute name="popUpImageHeight" type="String" />
+    <aura:attribute name="popUpImageLink" type="String" />
+    <aura:attribute name="popupProductType" type="String" />
+    <aura:attribute name="enablePopUp" type="Boolean" default="false"/>
+    <!--Content Design attributes-->
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    
+    
+    <div style="{!'background:' +' url(' + v.prefixString + v.bannerImage +')top no-repeat; background-size: cover; z-index: 0; width: 100%; margin-bottom: 0; display: table; position: relative;'}" >
+        <lightning:layout>
+                <lightning:layoutItem class="{!(v.bannerTextAlignment == 'left' ?
+                                                ' slds-float_left' :
+                                                v.bannerTextAlignment == 'right' ?
+                                                ' slds-float_right' : ' slds-align_absolute-center')}" padding="around-small">
+                    <h1 class="bannerTextStyles" style="{!'font-family:' + v.bannerTextFont + ';white-space: normal;max-width: 38rem;'}">
+                        {!v.bannerText} 
+                    </h1>
+                </lightning:layoutItem>
+            </lightning:layout>
+        <div class="artical">
+                <aura:if isTrue="{!v.toggleContent}" >
+                    <lightning:layout class="boardBackground slds-align_absolute-center" multiplerows="true">
+                        <div class="pure-g">
+                            <aura:if isTrue="{!and(v.showVideoComponent, !v.replaceVideoWithImage)}">
+                                <aura:if isTrue="{!and(v.showVideoComponent, $Browser.formFactor == 'PHONE')}">
+                                    <lightning:layoutItem size="12" padding="around-small" >
+                                        <c:SFMC_LandingPageVideoPlugin videoPluginHeight="{!v.videoPluginHeight}"
+                                                                        videoPluginWidth="{!v.videoPluginWidth}"
+                                                                        videoURL="{!v.videoURL}"
+                                                                        />
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageText}
+                                        </div>
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageQuoteWriter}
+                                        </div>
+                                    </lightning:layoutItem>
+                                </aura:if>
+                                <aura:if isTrue="{!and(v.showVideoComponent, or($Browser.formFactor == 'DESKTOP', $Browser.formFactor == 'TABLET'))}">
+                                    <lightning:layoutItem size="{!v.showFormComponent ? '6' : '12'}" padding="around-small" class="{!v.showFormComponent ? 'SmallScreen' : '' }">
+                                        <c:SFMC_LandingPageVideoPlugin videoPluginHeight="{!v.videoPluginHeight}"
+                                                                            videoPluginWidth="{!v.videoPluginWidth}"
+                                                                            videoURL="{!v.videoURL}"
+                                                                            />
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageText}
+                                        </div>
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageQuoteWriter}
+                                        </div>
+                                    </lightning:layoutItem>
+                                </aura:if>
+                            </aura:if>
+                            <aura:if isTrue="{!and(v.replaceVideoWithImage, v.showVideoComponent)}">
+                                    
+                                <aura:if isTrue="{!or($Browser.formFactor == 'DESKTOP', $Browser.formFactor == 'TABLET')}">
+                                    
+                                    <lightning:layoutItem size="{!v.showFormComponent ? '6' : '12'}" padding="around-small" class="{!v.showFormComponent ? 'SmallScreen' : '' }">
+                                        <c:SFMC_LandingPageContentImage imageName="{!v.contentImage}"
+                                                                            prefixString = "{!v.prefixString}"
+                                                                            contentImageWidth="{!v.contentImageWidth}"/>
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageText}
+                                        </div>
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageQuoteWriter}
+                                        </div>
+                                    </lightning:layoutItem>
+                                </aura:if>
+                                <aura:if isTrue="{!$Browser.formFactor == 'PHONE'}">
+                                    <lightning:layoutItem size="12" padding="around-small">
+                                        <c:SFMC_LandingPageContentImage imageName="{!v.contentImage}"
+                                                                            prefixString = "{!v.prefixString}"
+                                                                            contentImageWidth="{!v.contentImageWidth}"/>
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageText}
+                                        </div>
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageQuoteWriter}
+                                        </div>
+                                    </lightning:layoutItem>
+                                </aura:if>    
+                            </aura:if>
+                            <lightning:layoutItem class="{!and(!v.showVideoComponent, !v.replaceVideoWithImage) ? 'slds-hide' :'verticalDivider'}" size="0"></lightning:layoutItem>
+                            <aura:if isTrue="{!and(v.showFormComponent, or($Browser.formFactor == 'DESKTOP',$Browser.formFactor == 'TABLET'))}">
+                                    <lightning:layoutItem size="{!and(v.showFormComponent, v.showVideoComponent) ? '5' : '12'}" class="SmallScreen">
+                                        <c:SFMC_LandingPageForm formTitle="{!v.formTitle}"
+                                                                    buttonText="{!v.formButtonText}"
+                                                                    showBigWord="{!v.showBigWord}"
+                                                                    firstWordInFormTitle="{!v.firstWordInFormTitle}"
+                                                                    popUpImageTest="{!v.popUpImageTest}"
+                                                                    prefixString = "{!v.prefixString}"
+                                                                    popUpImageHeight = "{!v.popUpImageHeight}"
+                                                                    popUpImageWidth = "{!v.popUpImageWidth}"
+                                                                    popUpImageLink = "{!v.popUpImageLink}"
+                                                                    cellNumber = "{!v.cellNumber}"
+                                                                    showPicklist="{!v.showPicklist}"
+                                                                    popupProductType="{!v.popupProductType}"
+                                                                    popUpImage="{!v.popUpImage}"
+																	/>
+                                    </lightning:layoutItem>
+                            </aura:if>
+
+                            <aura:if isTrue="{!and(v.showFormComponent, $Browser.formFactor == 'PHONE')}">
+                                    <lightning:layoutItem size="12">
+                                        <c:SFMC_LandingPageForm formTitle="{!v.formTitle}"
+                                                                    buttonText="{!v.formButtonText}"
+                                                                    showBigWord="{!v.showBigWord}"
+                                                                    firstWordInFormTitle="{!v.firstWordInFormTitle}"
+                                                                    popUpImageTest="{!v.popUpImageTest}"
+                                                                    prefixString = "{!v.prefixString}"
+                                                                    popUpImageHeight = "{!v.popUpImageHeight}"
+                                                                    popUpImageWidth = "{!v.popUpImageWidth}"
+                                                                    popUpImageLink = "{!v.popUpImageLink}"
+                                                                    cellNumber = "{!v.cellNumber}"
+                                                                    showPicklist="{!v.showPicklist}"
+                                                                    popupProductType="{!v.popupProductType}"
+																	popUpImage="{!v.popUpImage}"
+																	/>
+                                    </lightning:layoutItem>
+                            </aura:if>
+                        </div>
+                    </lightning:layout>
+                </aura:if>
+                
+                <aura:if isTrue="{!!v.toggleContent}" >
+                    <lightning:layout class="boardBackground slds-align_absolute-center">
+                        <div class="pure-g">
+                                
+                            <aura:if isTrue="{!and(v.showFormComponent, or($Browser.formFactor == 'DESKTOP', $Browser.formFactor == 'TABLET'))}">
+                                <lightning:layoutItem size="{!and(v.showFormComponent, v.showVideoComponent) ? '6' : '12'}"
+                                                        padding="around-small"
+                                                        alignmentBump="left" class="SmallScreen">
+                                    <c:SFMC_LandingPageForm formTitle="{!v.formTitle}"
+                                                                    buttonText="{!v.formButtonText}"
+                                                                    showBigWord="{!v.showBigWord}"
+                                                                    firstWordInFormTitle="{!v.firstWordInFormTitle}"
+                                                                    popUpImageTest="{!v.popUpImageTest}"
+                                                                    prefixString = "{!v.prefixString}"
+                                                                    popUpImageHeight = "{!v.popUpImageHeight}"
+                                                                    popUpImageWidth = "{!v.popUpImageWidth}"
+                                                                    popUpImageLink = "{!v.popUpImageLink}"
+                                                                    cellNumber = "{!v.cellNumber}"
+                                                                    showPicklist="{!v.showPicklist}"
+                                                                    popupProductType="{!v.popupProductType}"
+																	popUpImage="{!v.popUpImage}"
+																	/>
+                                </lightning:layoutItem>
+                                <lightning:layoutItem aura:id="toggled" class="{!and(!v.showVideoComponent, !v.replaceVideoWithImage) ? 'slds-hide' :'verticalDivider'}" size="0"></lightning:layoutItem>
+
+                                <aura:if isTrue="{!and(v.showVideoComponent, !v.replaceVideoWithImage)}">
+                                    <lightning:layoutItem size="{!v.showFormComponent ? '5' : '12'}"
+                                                            padding="around-small"
+                                                            alignmentBump="right" class="SmallScreen">
+                                        <c:SFMC_LandingPageVideoPlugin videoPluginHeight="{!v.videoPluginHeight}"
+                                                                            videoPluginWidth="{!v.videoPluginWidth}"
+                                                                            videoURL="{!v.videoURL}"/>
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageText}
+                                        </div>
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageQuoteWriter}
+                                        </div>
+                                    </lightning:layoutItem>
+                                </aura:if>
+                                <aura:if isTrue="{!and(v.replaceVideoWithImage, v.showVideoComponent)}">
+                                    <lightning:layoutItem size="{!v.showFormComponent ? '5' : '12'}" padding="around-small" alignmentBump="right">
+                                        <c:SFMC_LandingPageContentImage imageName="{!v.contentImage}"
+                                                                            prefixString = "{!v.prefixString}"
+                                                                            contentImageWidth="{!v.contentImageWidth}"
+                                                                            />
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageText}
+                                        </div>
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageQuoteWriter}
+                                        </div>
+                                    </lightning:layoutItem>
+                                </aura:if>
+                            </aura:if>
+                            <aura:if isTrue="{!and(v.showFormComponent, $Browser.formFactor == 'PHONE')}">
+                                <lightning:layoutItem size="12" padding="around-small" alignmentBump="left">
+                                    <c:SFMC_LandingPageForm formTitle="{!v.formTitle}"
+                                                                    buttonText="{!v.formButtonText}"
+                                                                    showBigWord="{!v.showBigWord}"
+                                                                    firstWordInFormTitle="{!v.firstWordInFormTitle}"
+                                                                    popUpImageTest="{!v.popUpImageTest}"
+                                                                    prefixString = "{!v.prefixString}"
+                                                                    popUpImageHeight = "{!v.popUpImageHeight}"
+                                                                    popUpImageWidth = "{!v.popUpImageWidth}"
+                                                                    popUpImageLink = "{!v.popUpImageLink}"
+                                                                    cellNumber = "{!v.cellNumber}"
+                                                                    showPicklist="{!v.showPicklist}"
+                                                                    popupProductType="{!v.popupProductType}"
+																	popUpImage="{!v.popUpImage}"
+																	/>
+                                </lightning:layoutItem>
+
+                                <aura:if isTrue="{!and(v.showVideoComponent, !v.replaceVideoWithImage)}">
+                                    <lightning:layoutItem size="12"
+                                                            padding="around-small"
+                                                            alignmentBump="right">
+                                        <c:SFMC_LandingPageVideoPlugin videoPluginHeight="{!v.videoPluginHeight}"
+                                                                            videoPluginWidth="{!v.videoPluginWidth}"
+                                                                            videoURL="{!v.videoURL}"/>
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageText}
+                                        </div>
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageQuoteWriter}
+                                        </div>
+                                    </lightning:layoutItem>
+                                </aura:if>
+                                <aura:if isTrue="{!and(v.replaceVideoWithImage, v.showVideoComponent)}">
+                                    <lightning:layoutItem size="12" padding="around-small" alignmentBump="right">
+                                        <c:SFMC_LandingPageContentImage imageName="{!v.contentImage}"
+                                                                            prefixString = "{!v.prefixString}"
+                                                                            contentImageWidth="{!v.contentImageWidth}"
+                                                                            />
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageText}
+                                        </div>
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageQuoteWriter}
+                                        </div>
+                                    </lightning:layoutItem>
+                                </aura:if>
+                            </aura:if>
+                            
+
+                            
+                            <aura:if isTrue="{!and(!v.showFormComponent, or($Browser.formFactor == 'DESKTOP', $Browser.formFactor == 'TABLET'))}">
+                                
+                                <aura:if isTrue="{!and(v.showVideoComponent, !v.replaceVideoWithImage)}">
+                                    <lightning:layoutItem size="{!v.showFormComponent ? '5' : '12'}"
+                                                            padding="around-small"
+                                                            alignmentBump="right" class="{!v.showFormComponent ? 'SmallScreen' : ''}">
+                                        <c:SFMC_LandingPageVideoPlugin videoPluginHeight="{!v.videoPluginHeight}"
+                                                                            videoPluginWidth="{!v.videoPluginWidth}"
+                                                                            videoURL="{!v.videoURL}"/>
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageText}
+                                        </div>
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageQuoteWriter}
+                                        </div>
+                                    </lightning:layoutItem>
+                                </aura:if>
+                                <aura:if isTrue="{!and(v.replaceVideoWithImage, v.showVideoComponent)}">
+                                    <lightning:layoutItem size="{!v.showFormComponent ? '5' : '12'}" padding="around-small" alignmentBump="right">
+                                        <c:SFMC_LandingPageContentImage imageName="{!v.contentImage}"
+                                                                            prefixString = "{!v.prefixString}"
+                                                                            contentImageWidth="{!v.contentImageWidth}"
+                                                                            />
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageText}
+                                        </div>
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageQuoteWriter}
+                                        </div>
+                                    </lightning:layoutItem>
+                                </aura:if>
+                            </aura:if>
+                        
+                            <aura:if isTrue="{!and(!v.showFormComponent, $Browser.formFactor == 'PHONE')}">
+                                 
+                                <aura:if isTrue="{!and(v.showVideoComponent, !v.replaceVideoWithImage)}">
+                                    <lightning:layoutItem size="12"
+                                                            padding="around-small"
+                                                            alignmentBump="right">
+                                        <c:SFMC_LandingPageVideoPlugin videoPluginHeight="{!v.videoPluginHeight}"
+                                                                            videoPluginWidth="{!v.videoPluginWidth}"
+                                                                            videoURL="{!v.videoURL}"/>
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageText}
+                                        </div>
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageQuoteWriter}
+                                        </div>
+                                    </lightning:layoutItem>
+                                </aura:if>
+                                <aura:if isTrue="{!and(v.replaceVideoWithImage, v.showVideoComponent)}">
+                                    <lightning:layoutItem size="12" padding="around-small" alignmentBump="right">
+                                        <c:SFMC_LandingPageContentImage imageName="{!v.contentImage}"
+                                                                            prefixString = "{!v.prefixString}"
+                                                                            contentImageWidth="{!v.contentImageWidth}"
+                                                                            />
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageText}
+                                        </div>
+                                        <div class="imageTextStyle" style="{!'font-size:' + v.imageTextFontSize + ';color:' + v.imageTextColor + ';'}">
+                                            {!v.imageQuoteWriter}
+                                        </div>
+                                    </lightning:layoutItem>
+                                </aura:if> 
+                            </aura:if>
+
+                        </div>
+                    </lightning:layout>
+                </aura:if>
+        </div>
+            <lightning:layout>
+                <lightning:layoutItem class="{!(v.bannerTextBottomAlignment == 'left' ?
+                                                ' slds-float_left' :
+                                                v.bannerTextBottomAlignment == 'right' ?
+                                                ' slds-float_right' : ' slds-align_absolute-center')}" padding="around-small">
+                    <h1 class="bannerBottomTextStyles" style="{!'font-family:' + v.bannerTextBottomFont + ';white-space: normal;max-width: 70rem;'}">
+                        {!v.bannerTextBottom}
+                    </h1>
+                </lightning:layoutItem>
+            </lightning:layout>
+        
+    </div>
+</aura:component>

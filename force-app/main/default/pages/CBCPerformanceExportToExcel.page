@@ -1,0 +1,179 @@
+<apex:page standardController="Account" extensions="CBCPerformanceExportToExcelHandler" contentType="txt/xml#CBC_Performance_Report.xls" cache="true" readOnly="true"> 
+<!--  contentType="application/vnd.ms-excel#CBC_Performance_Report.xls" cache="true"> -->
+<apex:outputText value="{!xlsHeader}"/>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+    xmlns:o="urn:schemas-microsoft-com:office:office"
+    xmlns:x="urn:schemas-microsoft-com:office:excel"
+    xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+    xmlns:html="http://www.w3.org/TR/REC-html40">
+    
+    <Styles>
+       <Style ss:ID="s1">
+       <Alignment/>
+       <Borders/>
+       <Font ss:Bold="1"/>
+       <Interior/>
+        <NumberFormat/>
+        <Protection/>
+         </Style>
+     </Styles>
+     
+     
+      <Worksheet ss:Name="Customer Assets">
+      <Table x:FullColumns="1" x:FullRows="1">
+      <Column ss:Width="170"/>
+      <Row>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Account Name</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Child Asset</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Status</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Quantity</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Size</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Routing</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">BOP</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Market</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Start</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Expiration</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Last Unit Price</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Renewal Amount</Data></Cell>
+      <!--  <Cell ss:StyleID="s1"><Data ss:Type="String">Lead Count</Data></Cell>  -->      
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Avg Listing Price Web</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Avg Listing Price Mobile</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Avg Listing Price Total</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Web</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Mobile</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Paid</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Courtesy</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Total</Data></Cell>
+           <!--  <Cell ss:StyleID="s1"><Data ss:Type="String">Over Sold Full</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Over Sold Half</Data></Cell> -->
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Terms</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Performance</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Full Flex Available</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Half Flex Available</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Full Flex Each</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Half Flex Each</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Full Flex All</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Half Flex All</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Full Fast Available</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Half Fast Available</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Full Fast Each</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Half Fast Each</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Full Fast All</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Half Fast All</Data></Cell>
+     </Row>
+     
+      <apex:repeat value="{!relatedAssets}" var="acc">
+        <apex:repeat value="{!acc.dwrap}" var="asset">
+         <Row>
+            <Cell><Data ss:Type="String">{!acc.Name}</Data></Cell>
+            <Cell><Data ss:Type="String">{!asset.AssetId}</Data></Cell>
+            <Cell><Data ss:Type="String">{!asset.Status}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.Quantity}</Data></Cell>
+            <Cell><Data ss:Type="String">{!asset.ProductType}</Data></Cell>
+            <Cell><Data ss:Type="String">{!asset.LeadType}</Data></Cell>
+            <Cell><Data ss:Type="String">{!asset.BOPCode}</Data></Cell>
+            
+            
+            <Cell><Data ss:Type="String">{!asset.MarketZip}</Data></Cell>
+            <Cell><Data ss:Type="String"><apex:outputText value="{0,date,MM'/'dd'/'yyyy}" escape="false"  style="white-space:pre;">
+            <apex:param value="{!asset.StartDate}"/>
+            </apex:outputText>
+            </Data></Cell>
+            
+            <Cell><Data ss:Type="String"><apex:outputText value="{0,date,MM'/'dd'/'yyyy}" escape="false"  style="white-space:pre;">
+            <apex:param value="{!asset.End_Date}"/>
+            </apex:outputText></Data></Cell>
+            
+            
+            <Cell><Data ss:Type="Number">{!asset.ListPrice}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.RenewalPrice}</Data></Cell>
+           <!--  <Cell><Data ss:Type="String">{!asset.AssetLeadDetailCount}</Data></Cell>  -->
+            <Cell><Data ss:Type="Number">{!asset.AverageListingPriceWebLead}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.AverageListingPriceMobileLead}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.AverageListingPriceAllLead}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.WebLead}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.MobileLead}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.PaidLead}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.CourtesyLead}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.TotalLeads}</Data></Cell>
+          <!--    <Cell><Data ss:Type="Number">{!asset.OverSoldFull}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.OverSoldHalf}</Data></Cell>  -->
+            <Cell><Data ss:Type="Number">{!asset.ContractTerm}</Data></Cell>
+            <Cell><Data ss:Type="String">{!asset.Performance}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.FullFlexAvailable}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.HalfFlexAvailable}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.FullFlexUnitPrice}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.HalfFlexUnitPrice}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.FullFlexAll}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.HalfFlexAll}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.FullFastAvailable}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.HalfFastAvailable}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.FullFastUnitPrice}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.HalfFastUnitPrice}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.FullFastAll}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!asset.HalfFastAll}</Data></Cell>
+            
+            
+        </Row>
+         
+    </apex:repeat>
+     </apex:repeat> 
+     </Table>
+     </Worksheet>
+    
+    <Worksheet ss:Name="Asset Lead Details">
+          <Table x:FullColumns="1" x:FullRows="1">
+      <Column ss:Width="170"/>
+      <Row>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Account Name</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Created Date</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Source</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Child Asset</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Type</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">MasterProperty</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">First Name</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Last Name</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Phone</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Email</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Listing Address</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Listing City</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Listing State</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Listing Zip</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Status</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Price</Data></Cell>
+            <Cell ss:StyleID="s1"><Data ss:Type="String">Email</Data></Cell>
+   
+   </Row>
+     
+      <apex:repeat value="{!relatedAssets}" var="acc">
+        <apex:repeat value="{!acc.ldwrap}" var="lead">
+            <Row>
+            <Cell><Data ss:Type="String">{!acc.Name}</Data></Cell>
+            <Cell><Data ss:Type="String">{!lead.CreateDate}</Data></Cell>
+            <Cell><Data ss:Type="String">{!lead.Source}</Data></Cell>
+            <Cell><Data ss:Type="String">{!lead.AssetId}</Data></Cell>
+            <Cell><Data ss:Type="String">{!lead.LeadType}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!lead.MasterPropertyRecordId}</Data></Cell>
+            <Cell><Data ss:Type="String">{!lead.FirstName}</Data></Cell>
+            <Cell><Data ss:Type="String">{!lead.LastName}</Data></Cell>
+            <Cell><Data ss:Type="String">{!lead.Phone}</Data></Cell>
+            <Cell><Data ss:Type="String">{!lead.Email}</Data></Cell>
+            <Cell><Data ss:Type="String">{!lead.ListingAddress}</Data></Cell>
+            <Cell><Data ss:Type="String">{!lead.ListingCity}</Data></Cell>
+            <Cell><Data ss:Type="String">{!lead.ListingStateId}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!lead.ListingPostalCode}</Data></Cell>
+            <Cell><Data ss:Type="String">{!lead.ListingStatus}</Data></Cell>
+            <Cell><Data ss:Type="Number">{!lead.ListingPrice}</Data></Cell>
+            <Cell><Data ss:Type="String">{!lead.SourceEmailAddress}</Data></Cell>
+            
+        </Row>
+        
+    </apex:repeat>
+     </apex:repeat>
+ 
+     </Table>
+     </Worksheet>
+         
+         
+     </Workbook>
+</apex:page>

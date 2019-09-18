@@ -1,0 +1,68 @@
+<apex:page standardController="Account"  showHeader="false" sidebar="false">
+    <!--
+    <apex:page standardController="Account" Extensions="CallsAndSalesQuotaExtension" showHeader="false" sidebar="false">
+    <style>
+        .theGaugeChartsTable {
+        font-family: sans-serif;
+        margin: 0px;
+        }
+        .theGaugeChartsTable .theHeader {
+        background-color: #2a94d6;
+        color: #fff;
+        font-size: 13px;
+        font-weight: bold;
+        margin: 0px;
+        }
+        .theGaugeChartsTable .theBody {
+        border: 1px solid #1f8dd6;
+        }
+        .theGaugeChartsTable .theAccountHighlights {
+        margin: 0px;
+        padding: 0px;
+        }
+    </style>
+    <apex:variable value="{!Account}" var="a"/>
+    <table width="100%" height="10px" cellpadding="0px" cellspacing="2px" class="theGaugeChartsTable">
+        <tr>
+            <td width="30%" align="center" height="20px" class="theHeader">
+                My Goals
+            </td>
+        </tr>
+        <tr>
+            <td width="30%" height="90px" class="theBody">
+                <apex:outputPanel layout="block" rendered="{!showPageContent}">
+                    <apex:outputPanel id="salesRepCharts" layout="block" rendered="true">
+                        <table width="100%" height="100%">
+                            <tr>
+                                <td style="color:#848484;font-weight:bold;" align="center">Calls Completed (Daily)</td>
+                                <td style="color:#848484;font-weight:bold;" align="center">Quote Attained (Daily)</td>
+                                <td style="color:#848484;font-weight:bold;" align="center">Quote Attained (Monthly)</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight:bold;" align="center">
+                                    <apex:chart name="dailyCalls" height="150px" width="300px" animate="true" data="{!dailyCallsData}">
+                                        <apex:axis type="Gauge" gridFill="true" margin="-5" position="gauge" title="Calls To Quota" minimum="0" maximum="{!dailyCallsMaxValue}" />
+                                        <apex:gaugeSeries dataField="size" donut="50" needle="true" colorSet="#78c953,#2a94d6"/>
+                                    </apex:chart>
+                                </td>
+                                <td style="font-weight:bold;" align="center">
+                                    <apex:chart name="dailySales" height="100%" width="100%" animate="true" data="{!dailySalesData}">
+                                        <apex:axis type="Gauge" margin="-5" position="gauge" title="Daily Sales($)" minimum="0" maximum="{!dailySalesMaxValue}"/>
+                                        <apex:gaugeSeries dataField="size" donut="50" needle="true" colorSet="#78c953,#2a94d6"/>
+                                    </apex:chart>
+                                </td>
+                                <td style="font-weight:bold;" align="center">
+                                    <apex:chart name="monthlySales" height="100%" width="100%" animate="true" data="{!monthlySalesData}">
+                                        <apex:axis type="Gauge" margin="-5" position="gauge" title="Monthly Sales($)" minimum="0" maximum="{!monthlySalesMaxValue}"/>
+                                        <apex:gaugeSeries dataField="size" donut="50" needle="true" colorSet="#78c953,#2a94d6"/>
+                                    </apex:chart>
+                                </td>
+                            </tr>
+                        </table>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+            </td>
+        </tr>
+    </table>
+    -->
+</apex:page>

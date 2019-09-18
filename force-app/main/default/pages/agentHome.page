@@ -1,0 +1,297 @@
+<apex:page id="vwPage" controller="agentHomeController" showHeader="true" sidebar="true">
+<style> 
+.clickableHeader {
+        cursor: pointer;
+        width: 100%;
+    }
+    .thelink {
+            color: #015ba7 !important;
+        }
+    .paginatorWrap {
+        background: url("/img/alohaSkin/listFooter.png") repeat-x scroll 0 0 #F2F2F2;
+        border: 1px solid #EAEAEA;
+        background-color: #F3F3F3;
+        border-top: 1px solid #FFFFFF;
+        padding: 5px;
+    }
+
+    .noRecordsFound {
+        border: 1px solid #D4DADC;
+        padding: 4px;
+    }
+
+    .imageAsc {
+        background: url("/img/alohaSkin/sortArrows.png") no-repeat scroll left top transparent;
+        height: 8px;
+        margin: 0 5px;
+        vertical-align: -1px;
+        width: 7px;
+    }
+
+    .imageDesc {
+        background: url("/img/alohaSkin/sortArrows.png") no-repeat scroll 0px -12px transparent;
+        background-repeat: no-repeat;
+        height: 8px;
+        margin: 0 5px;
+        vertical-align: -1px;
+        width: 7px;
+    }
+
+    .pShowMore{
+        padding: 9px 0 2px 5px;
+        text-align: left;
+        display: block;
+    }
+    .noRowsHeader {
+        border: 1px solid rgb(221, 213, 213);
+        background-color: #f8f8f8;
+        background-image: none;
+        font-size: 0.9em;
+        font-weight: normal;
+        padding: 5px;
+    }
+</style>
+
+<script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script>
+  var theSelectedApexTabID = '';
+	function getSelectedTabName() {
+	    if (RichFaces) {
+	        var tabs = RichFaces.panelTabs['vwPage:vwBlock:vwPanel'];
+	        for (var i = 0; i < tabs.length; i++) {
+	            var tab = tabs[i];
+	            if (RichFaces.isTabActive(tab.id + '_lbl')) {
+	                theSelectedApexTabID = tab.name;
+	                return theSelectedApexTabID;
+	            }
+	        }
+	    }
+	    return null;
+	}
+	
+	function setSelectedTabOnController() {
+	      
+	    selectTabActionFunction(getSelectedTabName());
+	  
+	}
+
+  function refreshThePage() {
+    if(theSelectedApexTabID == 'vwQuotaTab') {
+      setTimeout(function() {
+        window.location.reload();
+      }, 100);
+    }
+  }
+
+    var j$ = jQuery.noConflict();
+    j$( document ).ready(function( $ ) {
+      
+      setListViewOptions();
+        
+    });
+    
+    function setListViewOptions(){
+   
+    	j$("select[Id$='vwPage\\:vwBlock\\:vwAccView\\:fcf']").find('option').each(function() {
+            if(j$(this).text().toLowerCase().indexOf("my account") == -1){
+                j$(this).remove();
+            }
+        });
+        
+        j$("select[Id$='vwPage\\:vwBlock\\:vwLeadView\\:fcf']").find('option').each(function() {
+            if(j$(this).text().toLowerCase().indexOf("my unread leads") == -1){
+                j$(this).remove();
+            }
+        });
+        
+        j$("select[Id$='vwPage\\:vwBlock\\:vwOrderView\\:fcf']").find('option').each(function() {
+            if(j$(this).text().toLowerCase().indexOf("my orders") == -1 && j$(this).text().toLowerCase().indexOf("my completed orders") == -1 ){
+                j$(this).remove();
+            }
+        });
+        j$("select[Id$='vwPage\\:vwBlock\\:vwAssetView\\:fcf']").find('option').each(function() {
+            if(j$(this).text().toLowerCase().indexOf("my assets") == -1){
+                j$(this).remove();
+            }
+        });
+         j$("select[Id$='vwPage\\:vwBlock\\:vwSalesView\\:fcf']").find('option').each(function() {
+            j$(this).text('My Reports');
+        });
+    }
+</script>
+<apex:pageBlock id="vwBlock">
+
+    <apex:tabPanel id="vwPanel" switchType="client" value="{!selectedTab}" onclick="setSelectedTabOnController();">
+        <apex:tab label="My Accounts" id="vwAccTab">
+                <apex:listViews type="Account" id="vwAccView" />
+        </apex:tab>
+        <apex:tab label="My Assets" id="vwAssetTab">
+           <apex:listViews type="Asset" id="vwAssetView"/>
+        </apex:tab>
+
+        <apex:tab label="My Leads" id="vwLeadTab">
+           <apex:listViews type="Lead" id="vwLeadView" />
+        </apex:tab>
+        <apex:tab label="My Orders" id="vwOrderTab">
+           <apex:listViews type="Order" id="vwOrderView" />
+        </apex:tab>
+<!--         <apex:tab label="My Tasks" id="vwTaskTab"> -->
+<!--            <apex:listViews type="Task" id="vwTaskView"/> -->
+<!--         </apex:tab> -->
+        <apex:tab label="My Tasks" id="vwTaskTab"> 
+          <apex:form >
+        <apex:pageBlock id="pageBlock"> 
+         <apex:actionstatus id="myStatus">
+            <apex:facet name="start">
+            <div class="waitingSearchDiv" style="background-color: #fbfbfb; height: 100%; opacity: 0.65; width: 100%;">
+              <div class="waitingHolder" style="top: 50px; width: 91px;">
+                <img class="waitingImage" src="/img/loading.gif" title="Please Wait..." />
+                <span class="waitingDescription">Loading...</span>
+              </div>
+            </div>
+        </apex:facet>
+
+        </apex:actionstatus> 
+            
+            <apex:outputPanel >
+             <b><apex:outputLabel value="View: " for="mgr"></apex:outputLabel></b>
+                 <apex:selectList id="mgr" size="1" title="Tasks">
+                     <apex:selectOptions value="{!taskViews}"></apex:selectOptions>
+                 </apex:selectList>
+             </apex:outputPanel>
+             <br/><br/><br/>
+             <apex:outputPanel rendered="{!OR(ISNULL(tasks),tasks.size == 0)}">
+                    <div class="noRowsHeader">No Tasks To Display</div>
+             </apex:outputPanel>
+               
+           <!-- <apex:pageBlockSection title="Task List (Total List Size: {!total_size})" collapsible="false"> -->
+           <apex:outputPanel id="tasksList" rendered="{!AND(NOT(ISNULL(tasks)),tasks.size > 0)}">
+            <apex:pageBlockTable value="{!tasks}" var="t" >
+                    
+                    <apex:column headerValue="Action" rendered="{!IF($Profile.Name =='System Administrator', true , false)}">
+                    	<span style="white-space: nowrap;">
+	                        <apex:outputLink value="/{!t.Id}/e?retURL=/apex/agentHome" styleClass="thelink" target="_top">Edit</apex:outputLink>&nbsp;|
+	                        <apex:commandLink action="{!deleteTask}" value="Del" styleClass="thelink">
+	                            <apex:param name="taskId_d" value="{!t.Id}" assignTo="{!taskIdToBeDeleted}" />
+	                        </apex:commandLink>
+                        </span>
+                    </apex:column>
+                    <apex:column headerValue="Subject">
+                        <apex:outputText escape="false" value="{!t.Subject}" />
+                    </apex:column>
+                    
+                    <apex:column headerValue="Name">
+                        <apex:outputField value="{!t.WhoId}" />
+                    </apex:column>
+                    
+                     <apex:column headerValue="Related TO">
+                        <apex:outputField value="{!t.WhatId}" />
+                    </apex:column>
+                    
+                     <apex:column headerValue="Due Date">
+                        <apex:outputText escape="false" value="{!t.ActivityDate}" />
+                    </apex:column>
+                    
+                    <apex:column headerValue="Status">
+                        <apex:outputText escape="false" value="{!t.Status}" />
+                    </apex:column>  
+                      
+                    <apex:column headerValue="Priority"> 
+                        <apex:outputText escape="false" value="{!t.Priority}" />
+                    </apex:column>
+                    
+                     <apex:column headerValue="Last Modified Date">
+                        <apex:outputField value="{!t.LastModifiedDate}" />
+                    </apex:column>
+                    
+                     <apex:column headerValue="Last Modified By">
+                        <apex:outputField value="{!t.LastModifiedById}" />
+                    </apex:column>
+                    
+                    
+               <!--  <apex:facet name="footer">Showing Page # {!pageNumber} of {!totalPages}</apex:facet>  -->
+            </apex:pageBlockTable>
+            <!--</apex:pageBlockSection> -->  
+            </apex:outputPanel>
+            
+             <apex:outputPanel layout="block" styleClass="paginatorWrap" >
+            <div class="paginator">
+
+                <span class="prevNextLinks">
+
+                    <span class="prevNext">
+                        <!-- Show first button if page set has previous page-->
+                        <apex:commandLink value="" action="{!First}" rendered="{!pageNumber != 1}" rerender="pageBlock" status="myStatus" title="First" >
+                            <img class="first" src="/s.gif" alt="" />
+                        </apex:commandLink>
+
+
+                        <apex:outputPanel rendered="{!disablePrevious}"> 
+                            <img class="firstoff" src="/s.gif" alt="" />
+                        </apex:outputPanel>
+                    </span>
+
+                    <!-- Previous Button -->
+                    <span class="prevNext">
+
+                        <apex:commandLink value="" action="{!Previous}" rendered="{!NOT(disablePrevious)}" status="myStatus" rerender="pageBlock">
+                            <img class="prev" src="/s.gif" alt="" />Previous
+                        </apex:commandLink>
+
+
+                        <apex:outputPanel rendered="{!disablePrevious}">
+                            <img class="prevoff" src="/s.gif" alt="" />Previous
+                        </apex:outputPanel>
+                    </span>
+
+
+                    <span class="prevNext">
+                        <!-- Show next button if page set has next -->
+                        <apex:commandLink value="" action="{!Next}" rendered="{!NOT(DisableNext)}" status="myStatus" rerender="pageBlock">
+                            Next<img class="next" alt="Next" title="Next" src="/s.gif" />
+                        </apex:commandLink>
+
+
+                        <apex:outputPanel rendered="{!DisableNext}">
+                            Next<img class="nextOff" alt="Next" title="Next" src="/s.gif" />
+                        </apex:outputPanel>
+                    </span>
+
+                    <!-- Last Button -->
+                    <span class="prevNext">
+                        <!-- Show last button if page set has next -->
+                        <apex:commandLink value="" action="{!End}" rendered="{!NOT(DisableNext)}" title="Last" status="myStatus" rerender="pageBlock" >
+                            <img class="last" src="/s.gif" alt="" />
+                        </apex:commandLink>
+
+                        <!-- Show disabled last button if page set has no next -->
+                        <apex:outputPanel rendered="{!DisableNext}">
+                            <img class="lastoff" src="/s.gif" alt="" />
+                        </apex:outputPanel>
+                    </span>
+                </span>
+               
+            </div>
+        </apex:outputPanel>  
+           
+            
+        </apex:pageBlock>
+         
+     <apex:actionFunction id="af" name="selectTabActionFunction" action="{!selectTab}" reRender="" oncomplete="refreshThePage();">
+            <apex:param name="selectedTab" assignTo="{!selectedTab}" value="{!selectedTab}"/>
+        </apex:actionFunction>
+    </apex:form>
+         </apex:tab> 
+        <apex:tab label="My Sales" id="vwSalesTab">
+           <apex:listViews type="Report" id="vwSalesView"/>
+        </apex:tab>
+
+        <apex:tab label="My Quotas" id="vwQuotaTab">
+           <apex:iframe src="CallsAndSalesQuota" scrolling="true"/>
+        </apex:tab>
+
+    </apex:tabPanel>
+     
+</apex:pageBlock>
+
+</apex:page>

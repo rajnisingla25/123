@@ -1,0 +1,26 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,forceCommunity:themeLayout" access="global" >
+    <aura:attribute name="phoneNumber" type="String" />
+    <aura:attribute name="coBrand" type="String" />
+    <aura:attribute name="coBrandImage" type="String" />
+    <aura:attribute name="imageSize" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <div class="cRDC_header_cobranded">        
+        <div id="brand-header" class="slds-grid slds-wrap slds-grid_vertical-align-center">
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_8-of-12 slds-p-vertical_medium">
+                <div class="logo slds-float_left">
+                    <img src="https://b2bweb.realtor.com/web_assets/rdc/logos/realtorlogo.png" alt="Realtor.com(R)" class="slds-p-around_medium" />
+                </div>
+                <div class="cobrand-logo">
+                    <img width="{!v.imageSize}" src="{!'https://b2bweb.realtor.com/'+ v.coBrandImage}" alt="{!v.coBrand}"/>                    
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-large-size_4-of-12">                
+                <div class="slds-p-vertical_medium callbox">                    
+                    <div class="slds-col"><img class="call-icon slds-float_left" src="https://success.realtor.com/cp/uploads/default/files/3579ecc7e19ae0c1b761a8d0f9f6b5de.png" /></div>
+                    <div id="call" class="slds-col"><h3>Call <a href="{!'tel:' + v.phoneNumber}" class="phoneColor">{!v.phoneNumber}</a></h3></div>
+                </div>
+            </div>
+        </div>
+    </div>    
+</aura:component>

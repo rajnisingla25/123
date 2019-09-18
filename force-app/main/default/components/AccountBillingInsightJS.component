@@ -1,0 +1,433 @@
+<apex:component >
+    <script type="text/javascript">
+        $(document).ready(function() {
+            setStartAndEndDate();
+            initializeAllComponent();
+            $('.bi-button').button();
+        });
+
+        function exportDatatoExcelTrigger() {
+
+            var ua = window.navigator.userAgent;
+            var msie = ua.indexOf("MSIE");
+			
+            if ( msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./) ) // If Internet Explorer, return version number
+            {
+               // window.open('data:application/vnd.ms-excel,' + encodeURIComponent($('#export-table-container').html()));
+                console.log( 'IE' );
+                txtArea1.document.open("txt/html","replace");
+                txtArea1.document.write( $('#export-table-container').html() );
+                txtArea1.document.close();
+                txtArea1.focus(); 
+                var sa=txtArea1.document.execCommand("SaveAs",true,"BillingInsightReport_" + accountPartyId + ".xls");
+                return (sa);
+            } else // If another browser, return 0
+            {
+                var uri = 'data:application/vnd.ms-excel,' + encodeURIComponent($('#export-table-container').html());
+                var downloadLink = document.createElement("a");
+                downloadLink.href = uri;
+                downloadLink.download = "BillingInsightReport_" + accountPartyId + ".xls";
+
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            }
+        }
+
+        function initializeAllComponent() {
+
+            initializeBillingInsightTable();
+            setReportSectionLengentTitle();
+        }
+
+
+        function initializeBillingInsightTable() {
+
+            $('#billingInsightTable').jqGrid("clearGridData");
+
+            $("#billingInsightTable").jqGrid({
+                sortable: {
+                    update: function(permutation) {
+                        $('#billingInsightTable').trigger('reloadGrid');
+                    }
+                },
+                data: billingInsightJson,
+                datatype: "local",
+                rowNum: 2000,
+                rowList: [],
+                pgbuttons: false,
+                pgtext: null,
+                pager: "#jqGridPager",
+                viewrecords: true,
+                height: "auto",
+                autowidth: true,
+                sortname: "chargeDate",
+                sortorder: "desc",
+
+                colNames: ['Invoice Type', 'Month And Year', 'Invoice Number', 'Invoice Item', 'Asset Number', 'Asset Name', 'Unit Price', 'Charge Amount', 'Tax', 'Charge Date', 'Invoice Separately?',
+                    'Service Period Start Date', 'Service Period End Date', 'Billing Period'
+                ],
+                colModel: [{
+                        name: 'invoiceType',
+                        index: 'invoiceType',
+                        align: "center",
+                        sorttype: "text"
+                    }, {
+                        name: 'monthAndYear',
+                        index: 'monthAndYear',
+                        align: "right",
+                        sorttype: 'date',
+                        formatter: "date",
+                        formatoptions: {
+                            srcformat: 'Y-m-d',
+                            newformat: 'M Y'
+                        }
+                    }, {
+                        name: 'invoiceDetail.name',
+                        index: 'invoiceDetail.name',
+                        align: "right",
+                        sorttype: "text",
+                        searchoptions: {
+                            sopt: ['eq', 'ne', 'bw', 'bn', 'cn', 'nc', 'ew', 'en', 'in', 'ni']
+                        },
+                        formatter: prepareHyperLinkForInvoice
+                    }, {
+                        name: 'invoiceItemDetail.name',
+                        index: 'invoiceItemDetail.name',
+                        align: "center",
+                        sorttype: "text",
+                        searchoptions: {
+                            sopt: ['eq', 'ne', 'bw', 'bn', 'cn', 'nc', 'ew', 'en', 'in', 'ni']
+                        },
+                        formatter: prepareHyperLinkForInvoiceItem
+                    }, {
+                        name: 'assetNumber',
+                        index: 'assetNumber',
+                        align: "center",
+                        sorttype: "text",
+                        searchoptions: {
+                            sopt: ['eq', 'ne', 'bw', 'bn', 'cn', 'nc', 'ew', 'en', 'in', 'ni']
+                        },
+                        formatter: prepareHyperLinkForAsset
+                    }, {
+                        name: 'assetDetail.name',
+                        index: 'assetDetail.name',
+                        sorttype: "center",
+                        align: "center",
+                        searchoptions: {
+                            sopt: ['eq', 'ne', 'bw', 'bn', 'cn', 'nc', 'ew', 'en', 'in', 'ni']
+                        },
+                        formatter: prepareHyperLinkForAsset
+                    }, {
+                        name: 'unitPrice',
+                        index: 'unitPrice',
+                        align: "center",
+                        sorttype: "float",
+                        formatter: "currency",
+                        summaryType: 'sum',
+                        formatoptions: {
+                            decimalSeparator: ".",
+                            thousandsSeparator: ",",
+                            decimalPlaces: 2,
+                            prefix: "$ "
+                        },
+                        searchoptions: {
+                            sopt: ['eq', 'ne', 'le', 'lt', 'gt', 'ge']
+                        }
+                    }, {
+                        name: 'chargeAmount',
+                        index: 'chargeAmount',
+                        align: "center",
+                        sorttype: "float",
+                        sortable: true,
+                        formatter: "currency",
+                        formatoptions: {
+                            decimalSeparator: ".",
+                            thousandsSeparator: ",",
+                            decimalPlaces: 2,
+                            prefix: "$ "
+                        },
+                        summaryType: 'sum',
+                        searchoptions: {
+                            sopt: ['eq', 'ne', 'le', 'lt', 'gt', 'ge']
+                        }
+                    }, {
+                        name: 'tax',
+                        index: 'tax',
+                        align: "center",
+                        sorttype: "float",
+                        formatter: "currency",
+                        summaryType: 'sum',
+                        formatoptions: {
+                            decimalSeparator: ".",
+                            thousandsSeparator: ",",
+                            decimalPlaces: 2,
+                            prefix: "$ "
+                        },
+                        searchoptions: {
+                            sopt: ['eq', 'ne', 'le', 'lt', 'gt', 'ge']
+                        }
+                    }, {
+                        name: 'chargeDate',
+                        index: 'chargeDate',
+                        align: "center",
+                        sorttype: "date",
+                        formatter: "date",
+                        searchoptions: {
+                            sopt: ['eq', 'ne', 'le', 'lt', 'gt', 'ge'],
+                            dataInit: function(elem) {
+                                initDatePickerForGridFilter(elem);
+                            }
+                        }
+
+                    }, {
+                        name: 'invoiceSeparately',
+                        index: 'invoiceSeparately',
+                        align: "center",
+                        sorttype: "text",
+                        searchoptions: {
+                            sopt: ['eq', 'ne', 'bw', 'bn', 'cn', 'nc', 'ew', 'en', 'in', 'ni']
+                        }
+                    }, {
+                        name: 'servicePeriodStartDate',
+                        index: 'servicePeriodStartDate',
+                        align: "center",
+                        sorttype: "date",
+                        formatter: "date",
+                        searchoptions: {
+                            sopt: ['eq', 'ne', 'le', 'lt', 'gt', 'ge'],
+                            dataInit: function(elem) {
+                                initDatePickerForGridFilter(elem);
+                            }
+                        }
+
+                    }, {
+                        name: 'servicePeriodEndDate',
+                        index: 'servicePeriodEndDate',
+                        align: "center",
+                        sorttype: "date",
+                        formatter: "date",
+                        searchoptions: {
+                            sopt: ['eq', 'ne', 'le', 'lt', 'gt', 'ge'],
+                            dataInit: function(elem) {
+                                initDatePickerForGridFilter(elem);
+                            }
+                        }
+
+                    }, {
+                        name: 'billingPeriod',
+                        index: 'billingPeriod',
+                        align: "center",
+                        sorttype: "text",
+                        formatter: "text",
+                        searchoptions: {
+                            sopt: ['eq', 'ne', 'bw', 'bn', 'cn', 'nc', 'ew', 'en', 'in', 'ni']
+                        }
+                    }
+
+                ],
+                grouping: true,
+                groupingView: {
+                    groupField: ['invoiceType', 'monthAndYear', 'invoiceDetail.name'],
+                    groupColumnShow: [false, false, true],
+                    groupText: ['<b>{0} ({1})</b>', //'<b>{0} ({1} items) | Total Charge Amount : {chargeAmount}</b>', 
+                        '<b>{0} ({1})</b>',
+                        '<b>{0} ({1})</b>'
+                    ],
+                    groupCollapse: false,
+                    groupOrder: ['desc', 'asc', 'desc'],
+                    showSummaryOnHide: [true, true, true],
+                    groupSummaryPos: ['header', 'header', 'header'],
+                    groupDataSorted: true,
+                    groupSummary: [true, true, true],
+                    plusicon: 'ui-icon-circle-triangle-e',
+                    minusicon: 'ui-icon-circle-triangle-s'
+                }
+
+            });
+            $("#billingInsightTable").jqGrid('filterToolbar', {
+                stringResult: true,
+                searchOnEnter: false,
+                searchOperators: true,
+                afterSearch: function() {
+
+                    $('#billingInsightTable').jqGrid('groupingToggle', 'billingInsightTableghead_0');
+                    $('#billingInsightTable').jqGrid('groupingToggle', 'billingInsightTableghead_1');
+                    $('#billingInsightTable').jqGrid('groupingToggle', 'billingInsightTableghead_2');
+
+                }
+
+            });
+
+            $("#billingInsightTable").jqGrid('navGrid', '#jqGridPager', {
+                edit: false,
+                add: false,
+                del: false,
+                search: false,
+                refresh: true,
+                refreshtext: "Reset Filter"
+            });
+
+            $("#billingInsightTable").jqGrid('navButtonAdd', '#jqGridPager', {
+                id: 'expandAllData',
+                caption: 'Expand All',
+                title: 'Expand All',
+                onClickButton: function(e) {
+                    $("#billingInsightTable .ui-icon-circle-triangle-e").each(function() {
+                        $(this).trigger("click");
+                    });
+                },
+                buttonicon: 'ui-icon-zoomin',
+            });
+
+            $("#billingInsightTable").jqGrid('navButtonAdd', '#jqGridPager', {
+                id: 'collapseAllData',
+                caption: 'Collapse All',
+                title: 'Collapse All',
+                onClickButton: function(e) {
+                    $("#billingInsightTable .ui-icon-circle-triangle-s").each(function() {
+                        $(this).trigger("click");
+                    });
+                },
+                buttonicon: 'ui-icon-zoomout',
+            });
+        }
+
+        /*function formatDisplay(currentValue, sourceValue, option, groupIndex, groupObject) {        
+             return currentValue;
+        }*/
+
+        function prepareHyperLinkForAsset(cellValue, options, rowdata, action) {
+            if (typeof rowdata.assetDetail.id !== "undefined" && rowdata.assetDetail.id != null) {
+                return "<a target='_blank' href='" + baseUrl + rowdata.assetDetail.id + "' >" + cellValue + "</a>";
+            } else {
+                return "<font color='red'>Asset Not  Found</font>"
+            }
+
+        }
+
+        function prepareHyperLinkForInvoice(cellValue, options, rowdata, action) {
+            if (typeof rowdata.invoiceDetail.id !== "undefined" && rowdata.invoiceDetail.id != null && rowdata.invoiceDetail.id != '') {
+                return "<a target='_blank' href='" + baseUrl + rowdata.invoiceDetail.id + "' >" + cellValue + "</a>";
+            } else {
+                return "<font color='red'>NA</font>"
+            }
+        }
+
+        function prepareHyperLinkForInvoiceItem(cellValue, options, rowdata, action) {
+            if (typeof rowdata.invoiceItemDetail.id !== "undefined" && rowdata.invoiceItemDetail.id != null && rowdata.invoiceItemDetail.id != '') {
+                return "<a target='_blank' href='" + baseUrl + rowdata.invoiceItemDetail.id + "' >" + cellValue + "</a>";
+            } else {
+                return "<font color='red'>NA</font>"
+            }
+        }
+
+
+        //This function converts date provided by salesforce to Ui format
+        //it converts to mm/dd/yyyy format
+        function formatToUIDate(sfDate) {
+            if (typeof sfDate !== "undefined") {
+                return (sfDate.getMonth() + 1) + '/' + (sfDate.getDate() + 1) + '/' + sfDate.getFullYear();
+            } else {
+                return null;
+            }
+        }
+
+        //This function is used to convert date from UI to Salesforce data format
+        //This method converts date from mm/dd/yyyy format to yyyy-mm-dd format
+        function formatToSalesforceDate(uiDate) {
+            if (typeof uiDate !== "undefined" && uiDate.length > 0) {
+                var uiDateSplitted = uiDate.split("/");
+                return uiDateSplitted[2] + '-' + uiDateSplitted[0] + '-' + uiDateSplitted[1];
+            } else {
+                return null;
+            }
+        }
+
+        function setStartAndEndDate() {
+
+            selectedStartDate = formatToUIDate(new Date(selectedStartDate));
+            selectedEndDate = formatToUIDate(new Date(selectedEndDate));
+            initilizeDatePickerForDataFilter();
+        }
+
+        function initilizeDatePickerForDataFilter() {
+            $("#sDate").val(selectedStartDate);
+            $("#eDate").val(selectedEndDate);
+            $("#sDate").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                autoSize: false,
+                numberOfMonths: 1,
+                defaultDate: selectedStartDate,
+                onClose: function(selectedDate) {
+
+                }
+            });
+            $("#eDate").datepicker({
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                autoSize: false,
+                numberOfMonths: 1,
+                defaultDate: selectedEndDate,
+                onClose: function(selectedDate) {
+
+                }
+            });
+            setReportSectionLengentTitle();
+        }
+
+        function initDatePickerForGridFilter(elem) {
+            $(elem).datepicker({
+                dateFormat: 'mm/dd/yy',
+                changeYear: true,
+                changeMonth: true,
+                showButtonPanel: true,
+                autoSize: true,
+                onSelect: function() {
+                    var sgrid = $("#billingInsightTable")[0];
+                    sgrid.triggerToolbar();
+                }
+            });
+        }
+
+        function setReportSectionLengentTitle() {
+            var months = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December", ""
+            ];
+
+            var startDateMonthAndYear = $("#sDate").datepicker('getDate').getDate() + ' ' + months[$("#sDate").datepicker('getDate').getMonth()] + "'" + $("#sDate").datepicker('getDate').getFullYear().toString().substr(2, 2);
+            var endDateMonthAndYear = $("#eDate").datepicker('getDate').getDate() + ' ' + months[$("#eDate").datepicker('getDate').getMonth()] + "'" + $("#eDate").datepicker('getDate').getFullYear().toString().substr(2, 2);
+            $('.billingInsight-rep-body .report-legent-title').html("Report from " + startDateMonthAndYear + " to " + endDateMonthAndYear);
+        }
+
+        function populateBillingInsightTableJS(isRefresh) {
+            var sdate = $('#sDate').val();
+            var edate = $('#eDate').val();
+
+            if (typeof sdate !== "undefined" && sdate.length > 0 && typeof edate !== "undefined" && edate.length > 0) {
+                populateBillingInsightTableAF(formatToSalesforceDate(sdate), formatToSalesforceDate(edate));
+            } else {
+                alert('Select the start date and end date');
+                return null;
+            }
+
+
+        }
+
+        //This function disables the page by showing a modal and loading icon
+        function disablePageByModal() {
+            $('#overlayblock').show();
+        }
+
+        //This function enables the page by hiding a modal and loading icon
+        function enablePageByModal() {
+            $('#overlayblock').hide();
+        }
+    </script>
+	<iframe id="txtArea1" style="display:none"></iframe>
+    <div id="overlayblock" style="display:none;height:100%;width:100%;z-index:10000000;vertical-align:middle;text-align:center;position:fixed;top:0;background-color:#FFFFFF;opacity:0.6;">
+    </div>
+</apex:component>

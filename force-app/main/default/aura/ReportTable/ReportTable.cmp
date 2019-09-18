@@ -1,0 +1,48 @@
+<aura:component controller="System_Monitoring_Controller">
+	<aura:attribute name="reports" type="Object[]" />
+    <aura:attribute name="category" type="string"/>
+    <aura:attribute name="toList" type="string"/>
+    <aura:attribute name="background" type="Boolean"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <div class="slds-align_absolute-center">
+       <!-- <lightning:button variant="brand" label="Fetch Count - Foreground"  title="Fetch Count" onclick="{! c.fetchForeground }" /> -->
+       <lightning:button variant="brand" label="Fetch Count"  title="Fetch Count" onclick="{! c.fetchBackground }" /> 
+       <lightning:button aura:id="sendEmail" variant="brand" label="Email All Reports"  title="{!'Send Email to ' + v.toList}" onclick="{! c.sendEmail }"/> 
+  	</div>
+   
+    <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+		<thead>
+			<tr class="slds-line-height_reset">
+			<th scope="col">
+				<div class="slds-truncate" title="Report Name">Report Name</div>
+			</th>
+			<th scope="col">
+				<div class="slds-truncate" title="Count">Count</div>
+			</th>
+            <th scope="col">
+				<div class="slds-truncate" title="lastRan">Last Fetched On</div>
+			</th>
+            <th scope="col">
+				<div class="slds-truncate" title="Report">SFDC Report</div>
+			</th>
+            <th scope="col">
+				<div class="slds-truncate" title="Comment">Comments</div>
+			</th>
+            <th scope="col">
+				<div class="slds-truncate" title="Comment">Send Notification</div>
+			</th>
+            <th scope="col">
+				<div class="slds-truncate" title="Respective Team Members">Team Members</div>
+			</th>
+			</tr>
+		</thead>
+		<tbody>
+			<aura:iteration items="{!v.reports}" var="rep">
+                <c:Report report="{!rep}" background="{!v.background}"/>
+           </aura:iteration>
+		</tbody>
+	</table>
+    <lightning:spinner aura:id="spinner" variant="brand" size="large"/>
+</aura:component>

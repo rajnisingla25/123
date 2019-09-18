@@ -1,0 +1,91 @@
+<apex:page controller="AccountsViewallCTRL">
+ <style>
+    .clickableHeader {
+        cursor: pointer;
+        width: 100%;
+    }
+    .paginatorWrap {
+        background: url("/img/alohaSkin/listFooter.png") repeat-x scroll 0 0 #F2F2F2;
+        border: 1px solid #EAEAEA;
+        background-color: #F3F3F3;
+        border-top: 1px solid #FFFFFF;
+        padding: 5px;
+    }
+
+    .noRecordsFound {
+        border: 1px solid #D4DADC;
+        padding: 4px;
+    }
+
+    .imageAsc {
+        background: url("/img/alohaSkin/sortArrows.png") no-repeat scroll left top transparent;
+        height: 8px;
+        margin: 0 5px;
+        vertical-align: -1px;
+        width: 7px;
+    }
+
+    .imageDesc {
+        background: url("/img/alohaSkin/sortArrows.png") no-repeat scroll 0px -12px transparent;
+        background-repeat: no-repeat;
+        height: 8px;
+        margin: 0 5px;
+        vertical-align: -1px;
+        width: 7px;
+    }
+
+    .pShowMore{
+        padding: 9px 0 2px 5px;
+        text-align: left;
+        display: block;
+    }
+    .noRowsHeader {
+        border: 1px solid rgb(221, 213, 213);
+        background-color: #f8f8f8;
+        background-image: none;
+        font-size: 0.9em;
+        font-weight: normal;
+        padding: 5px;
+    }
+    </style>
+    
+<apex:form >
+<apex:pageblock >     
+        <apex:pageblockbuttons >
+            <apex:commandButton value="Export to Excel" action="{!ExportToExcel}"/>
+            <apex:commandButton value="Cancel" action="{!cancel}"/>
+         </apex:pageblockbuttons>
+   <apex:outputPanel >
+       <apex:pageblocktable value="{!accRelationList}" var="a">
+          <apex:column headerValue="Action" styleClass="actionColumn">
+       
+                <apex:outputLink rendered="{!AND($ObjectType.Account_Relationship__c.accessible, $ObjectType.Account_Relationship__c.updateable)}" value="/{!a.Id}/e?retURL={!accId}" styleClass="actionLink edit{!a.Id}">Edit</apex:outputLink>
+                <apex:outputText rendered="{!AND($ObjectType.Account_Relationship__c.accessible, $ObjectType.Account_Relationship__c.updateable)}" > |&nbsp; </apex:outputText>
+                <apex:commandLink rendered="{!AND($ObjectType.Account_Relationship__c.accessible, $ObjectType.Account_Relationship__c.deletable)}" value="Del" onclick="if(!confirm('Are you sure?')) return false;" action="{!deleteRecord}" rerender="pageBlock" styleClass="actionLink" status="myStatus">
+                    <apex:param name="deleteRecordId" assignTo="{!deleteRecordId}" value="{!a.id}"/>
+                </apex:commandLink>
+                
+            </apex:column>                   
+            <apex:column value="{!a.Child_Account__c}"/>  
+            <apex:column value="{!a.Child_Account__r.Party_ID__c}"/>                  
+            <apex:column value="{!a.Child_Account__r.Type}"/> 
+            <apex:column value="{!a.Child_Account__r.Green__c}"/> 
+            <apex:column value="{!a.Child_Account__r.Red_Score__c}"/> 
+            <apex:column value="{!a.Child_Account__r.Yellow_Score__c}"/> 
+            <apex:column value="{!a.Child_Account__r.MLS_Set_Id__c}"/>                   
+            <apex:column value="{!a.Child_Account__r.Phone}"/>                   
+            <apex:column value="{!a.Child_Account__r.Email_Address__c}"/>                   
+            <apex:column value="{!a.Relationship_Type__c}"/>                   
+            <apex:column value="{!a.Child_Account__r.BillingStreet}"/>                   
+            <apex:column value="{!a.Child_Account__r.BillingCity}"/>                   
+            <apex:column value="{!a.Child_Account__r.BillingState}"/>                   
+            <apex:column value="{!a.Child_Account__r.BillingPostalCode}"/>                   
+            <apex:column value="{!a.Child_Account__r.BillingCountry}"/>                                           
+            <apex:column value="{!a.Active__c}"/>                                                                                                                                           
+       </apex:pageblocktable>
+   </apex:outputPanel>
+
+</apex:pageblock>
+</apex:form>
+
+</apex:page>

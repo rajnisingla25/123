@@ -1,0 +1,15 @@
+<apex:page sidebar="false" showHeader="false">
+    <apex:includeLightning />
+
+    <div id="monitoring"/>
+
+    <script type="text/javascript">
+      $Lightning.use("c:BulkApproval", function() {
+                 $Lightning.createComponent("c:System_Monitoring" , {},
+                "monitoring",
+                function(cmp) {
+                    // do some stuff
+                });
+        });
+    </script>
+</apex:page>

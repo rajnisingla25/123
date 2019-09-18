@@ -1,0 +1,139 @@
+<apex:page sidebar="false" showHeader="false" controller="ComarketingDetailsCtrl" lightningStylesheets="true">
+ 
+  <apex:form id="form">
+    <apex:messages style="color:red;"/>
+    <apex:pageblock >
+    <apex:pageBlockButtons location="bottom">
+        <apex:commandButton value="Activate" action="{!activate}" disabled="{!hideActivate}" />
+        <apex:commandButton value="Back" action="{!goBack}"/>
+      <!--  <apex:commandButton value="View/Change Associated Payments" action="{!gotoAssociatePayment}" disabled="{!!showAssociatePayment}" reRender="form"/> -->
+    </apex:pageBlockButtons>
+    <apex:pageBlockSection Title="About Lender Co-marketing" columns="1">
+    <apex:pageBlockSectionItem >
+    <li>
+    Enter Lender Co-marketer party ID, Lender co-marketer Spend, then select 'Activate' to add a credit card. 
+    </li>
+    </apex:pageBlockSectionItem>
+   <apex:pageBlockSectionItem >
+    <li>
+    Once Active, RDC will automatically adjust co-marketing spend proportionately if an assets price changes.
+    </li>
+    </apex:pageBlockSectionItem>
+    <apex:pageBlockSectionItem >
+    <li>
+    Setting a max will fix lender's spend per month even if an asset's price increases or new assets are added. This is optional. 
+    </li>
+    </apex:pageBlockSectionItem>
+    </apex:pageBlockSection>
+    <apex:pageBlockSection Title="Lender Comarketing Relationship Summary" columns="2">
+       
+        <apex:pageBlockSectionItem >
+             <apex:outputLabel value="{!partyIdLabel}"/> 
+              <apex:inputText value="{!partyId}" disabled="{!hidePartyId}">
+              <apex:actionSupport event="onchange" action="{!onChangePartyID}" rerender="form"/>
+               </apex:inputText>
+
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+             <apex:outputLabel value="Lender Spend Total ($/mo)"/> 
+               <apex:inputText value="{!comarketerSpend}" disabled="{!IF($CurrentPage.parameters.status != null && $CurrentPage.parameters.status == 'Pending Activation' && $CurrentPage.parameters.zuoraStatus != null && $CurrentPage.parameters.zuoraStatus == 'true',true,false)}"><!-- LCM-226-->
+               <apex:actionSupport event="onchange" action="{!onChangeLenderSpend}" rerender="form"/>
+               </apex:inputText>
+
+        </apex:pageBlockSectionItem>
+          <apex:pageBlockSectionItem >
+             <apex:outputLabel value="{!$CurrentPage.parameters.accountType} Name"/> 
+                       <apex:outputText value="{!$CurrentPage.parameters.name}"/>
+                       
+                       
+                
+
+        </apex:pageBlockSectionItem>
+        
+          <apex:pageBlockSectionItem id="agentSpend">
+             <apex:outputLabel value="Agent/Broker Spend Total ($/mo)"/> 
+             <apex:outputText value="{0, number, ###,###,###,###.00}">
+            <apex:param value="{!agentSpend}" />
+           </apex:outputText>
+                       
+                       
+                
+
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem >
+             <apex:outputLabel value="# of Selected Assets"/> 
+                       <apex:outputText value="{!totalAssets}"/>
+                       
+                
+
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem id="percent">
+           <apex:outputLabel value="Lender Initial Contribution %"/> 
+           <apex:outputText value="{0, number, ###,###,###,###.00}">
+            <apex:param value="{!comarketingSpendPercent}" />
+           </apex:outputText>
+
+        </apex:pageBlockSectionItem>
+        
+         <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Selected Assets Total ($/mo)"/> 
+           <apex:outputText value="{0, number, ###,###,###,###.00}">
+            <apex:param value="{!assetPrice}" />
+           </apex:outputText>
+
+                   
+
+        </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem >
+           <apex:outputLabel value="Lender Current Contribution %"/> 
+           <apex:outputText value="{0, number, ###,###,###,###.00}">
+            <apex:param value="{!comarketingCurrentPercent}" />
+           </apex:outputText>
+
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+         </apex:pageBlockSectionItem>
+        
+        <apex:pageBlockSectionItem >
+             <apex:outputLabel value="Lender Spend Max (Optional)"/> 
+                       <apex:inputText value="{!relationshipCAP}" disabled="{!IF($CurrentPage.parameters.status != null && $CurrentPage.parameters.status == 'Pending Activation' && $CurrentPage.parameters.zuoraStatus != null && $CurrentPage.parameters.zuoraStatus == 'true',true,false)}">
+                       <apex:actionSupport event="onchange" action="{!onChangeLenderSpendMax}" rerender="form"/>
+                       </apex:inputText>
+                       
+                
+
+        </apex:pageBlockSectionItem>
+        
+    </apex:pageBlockSection>
+    
+    <apex:pageblockSection title="Comarketing Assets" id="details">
+        <apex:pageBlockTable var="r" value="{!records}">
+            <apex:column value="{!r.market}" headerValue="Market"/>
+            <apex:column value="{!r.assetName}" headerValue="Asset ID"/>
+            <apex:column value="{!r.purchasePrice}" headerValue="Purchase Price"/>
+            <apex:column headerValue="Co-marketer Spend">
+                <apex:outputText value="{0, number, ###,###,###,###.00}">
+                <apex:param value="{!r.comarketerSpend}" />
+               </apex:outputText>
+            </apex:column>
+            <apex:column headerValue="Agent Spend">
+                <apex:outputText value="{0, number, ###,###,###,###.00}">
+                <apex:param value="{!r.agentSpend}" />
+               </apex:outputText>
+            </apex:column>
+            
+            <apex:column headerValue="Contribution %">
+                <apex:outputText value="{0, number, ###,###,###,###.00}">
+                <apex:param value="{!r.comarketerPercent}" />
+               </apex:outputText>
+            </apex:column>
+            <apex:column value="{!r.status}" headerValue="Status"/>
+        </apex:pageBlockTable>
+    
+    
+    </apex:pageBlockSection>
+    </apex:pageBlock>
+    </apex:form>
+</apex:page>

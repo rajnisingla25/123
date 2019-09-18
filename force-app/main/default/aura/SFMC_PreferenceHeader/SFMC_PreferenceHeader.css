@@ -1,0 +1,28 @@
+.THIS{
+    
+}
+.THIS.topproducer {
+    background-color: #007cbb; 
+    background-repeat: no-repeat;
+}
+.THIS .article{
+    max-width: 75%;
+    Margin: 0 auto;   
+}
+.THIS.topproducer img{
+   max-width: 220px;
+}
+.THIS.rdc{
+    background-color: #eeeeee;
+    background-repeat: no-repeat;
+}
+.THIS.rdc img{
+   max-width: 220px;
+}
+.THIS.event{
+    background-color: #ffffff;
+    background-repeat: no-repeat;
+}
+.THIS.event img{
+   max-width: 220px;
+}

@@ -1,0 +1,303 @@
+<apex:page standardStylesheets="false" showHeader="false" controller="EmployeeDashboardController" applyBodyTag="false" applyHtmlTag="false">
+
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta name="description" content="realtor.com® Essentials℠ dashboard" />
+        <link rel="icon" href="{!$Resource.EmployeeSiteFavicon}" />
+
+        <title>realtor.com® Essentials℠ dashboard</title>
+
+        <link rel="stylesheet" href="{!URLFOR($Resource.EmployeeDashboard, '/employee/font-awesome.min.css')}" />
+        <link rel="stylesheet" href="{!URLFOR($Resource.EmployeeDashboard, '/employee/googleApisFontCss.css')}" />
+
+        <link rel="stylesheet" media="screen" href="{!$Resource.EmployeeDashboardCss}" />
+       
+    </head>
+
+	<style>
+         .load-spinner-lg:after {
+         background-image: url("{!$Resource.EmployeeDashboardLoading}")
+         }
+         .edit-img {
+         // display: none;
+         }
+         .hover { background-color:yellow; }
+      </style>
+    <section class="sidebar-open" id="main-body" style="background-color: #f5f5f5 !important;">
+
+        <div id="app-container" class="app-container">
+            <c:EmployeeDashboardHeaderSidebar id="headerComp" />
+            
+            <div id="main-container" class="main-container">
+                
+                <div class="container-fluid">
+                    <section id="toc-reminder" class="notification-section notification-info bg-info-light mar-bottom-sm" style="display: block;">
+                        <div class="error-div" id="main-error"></div>
+                        <div class="notification"><span class="pi pi-exclamation-triangle mar-right-sm"></span><strong>Important notice</strong><span class="display-block-sm mar-left-xl mar-bottom-lg">Your Account will be active for <span id="daysActive"></span>. <a style="cursor: pointer;" data-toggle="modal" data-target="#extend-days-modal">Update</a> number of active days.</span>
+                            <!-- CRM-3230: Added delete button -->
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirm">Delete Account</button>
+                            </div>
+                             <!--End: CRM-3230 -->
+                            <div class="clearfix"></div>
+                        </div>
+                    </section>
+                    <section class="widget-section">
+                        <div class="row gutter-none-xs">
+                            <div class="col-lg-8 col-md-12 col-sm-12">
+                                <div class="panel panel-widget">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Number of Accounts</h3>
+                                    </div>
+                                    <div class="text-center pos-absolute vertical-centering full-width pad-left-md pad-right-md">
+                                        <p class="no-margin">
+                                            <div>Brokers: <span id="numOfBrokers"></span>
+                                            </div>
+                                            <div>Offices: <span id="numOfOffices"></span>
+                                            </div>
+                                            <div>Agents: <span id="numOfAgents"></span>
+                                            </div>
+                                        </p>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-12 col-sm-12">
+                                <div class="panel panel-widget" id="products-panel">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Products Owned</h3>
+                                    </div>
+                                    <div class="text-center pos-absolute vertical-centering full-width pad-left-md pad-right-md">
+                                        <p class="no-margin">
+                                        </p>
+                                        <div><a href="{!$Site.Prefix}/EmployeeProductSettings">View or add licenses via Self-Service</a>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+
+
+            <c:SetFooterCommunity id="footerComp" />
+            <!-- Modal -->
+            <div class="modal fade" id="extend-days-modal" role="dialog">
+                <div class="modal-dialog">
+
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Enter number of days</h4>
+                        </div>
+                        <form>
+                            <div class="modal-body">
+                                <input type="text" name="numOfDays" id="numOfDays" value="" />
+                                <input style="display: none;" type="text" class="form-control" id="acctId" value="" />
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" id="extendDaysSubmit" class="btn btn-primary">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+
+         <!-- Modal -->
+  <div class="modal fade" id="deleteConfirm" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Confirm Delete</h4>
+        </div>
+        <div class="modal-body">
+          <p>This will delete all of your accounts and any other dependencies. Are you sure you want to proceed?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" id="deleteAccounts" >Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+    </section>
+    <apex:includeScript value="{!URLFOR($Resource.EmployeeDashboard, '/employee/jquery-2.2.4.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.EmployeeDashboard, '/employee/prosoft-ui.min.js')}" />
+
+    <apex:includeScript value="{!$Resource.EmployeeDashboardJS}" />
+
+    <script type="text/javascript">
+        $(function() {
+            getFranchiseAcct();
+            getProducts();
+            getNumOfAccts();
+            attachHandlers();
+        });
+
+        function attachHandlers(){
+            $("#deleteAccounts").click(function(){
+                deleteAccounts();
+            });
+
+            $("#extendDaysSubmit").click(function(){
+                extendDays();
+            })
+        }
+
+        function getFranchiseAcct() {
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.EmployeeDashboardController.getfranchiseAcct}',
+                function(result, event) {
+                    console.log(result);
+                    var dateDiff = Math.ceil((result.Binder_account_active_till_date__c - (new Date())) / (1000 * 3600 * 24));
+                    $('#daysActive').html(dateDiff);
+                    if(dateDiff != 1){
+                        $('#daysActive').append("<span> days</span>");
+                    } else {
+                        $('#daysActive').append("<span> day</span>");
+                    }
+                    $('#acctId').val(result.Id);
+                    $('#numOfDays').val(dateDiff);
+                });
+        }
+
+        function getProducts() {
+
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.EmployeeDashboardController.getAllParentAccounts}',
+                false,
+                function(result, event) {
+                    if (event.status) {
+                        var idList = [];
+                        console.log(result);
+                        for (var i = 0; i < result.length; i++) {
+                            idList.push(result[i].Id);
+                        }
+
+                        Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.EmployeeDashboardController.getProducts}',
+                            idList,
+                            function(res, event) {
+                                if (event.status) {
+                                    console.log(res);
+                                    if (res.length == 0) {
+                                        $("#products-panel").find("p").append("<div>No Products owned</div>");
+                                    }
+                                    var productSet = new Set();
+                                    for (var i = 0; i < res.length; i++) {
+                                        productSet.add(res[i]["Product_Part_Number__c"]);
+                                    }
+                                    for (let item of productSet) {
+                                        $("#products-panel").find("p").append("<div>" + item + "</div>");
+                                    }
+
+                                }
+                            });
+                    }
+                });
+        }
+
+        function getNumOfAccts() {
+
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.EmployeeDashboardController.getAllParentAccounts}',
+                true,
+                function(result, event) {
+                    if (event.status) {
+                        $("#numOfBrokers").html(result.length);
+                    }
+                });
+
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.EmployeeDashboardController.getAllOffices}',
+                function(result, event) {
+                    if (event.status) {
+                        var numOff = result.length;
+                        var offList = [];
+                        for (var i = 0; i < result.length; i++) {
+                            offList.push(result[i]["Id"]);
+                        }
+                        console.log(offList);
+                        Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.EmployeeDashboardController.getAgentAccounts}',
+                            offList,
+                            function(result1, event1) {
+                                var numAgents = result1.length;
+
+                                Visualforce.remoting.Manager.invokeAction(
+                                    '{!$RemoteAction.EmployeeDashboardController.hasMainAgent}',
+                                    function(result2, event2) {
+                                        if (result2 == true) {
+                                            numAgents++;
+                                            numOff++;
+                                        }
+                                        $("#numOfAgents").html(numAgents);
+                                        $("#numOfOffices").html(numOff);
+                                    });
+                            });
+                    }
+                });
+        }
+
+        function extendDays() {
+            removeError();
+            showSpinner();
+
+            function Account() {
+                this.id = null;
+            }
+            var acct = new Account();
+            acct.id = $('#acctId').val();
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.EmployeeDashboardController.extendDays}',
+                acct, $('#numOfDays').val(),
+                function(result, event) {
+             
+                    $('#extend-days-modal').modal('toggle');
+                    hideSpinner();
+                    console.log(result);
+                    if (event.status) {
+                        //Reload the account details
+                        displayAlert("success", "success", "Your account active date has been updated");
+                        getFranchiseAcct();
+                    } else {
+                        displayError(event.message);
+                        $('#numOfDays').val($('#daysActive').html());
+                    }
+
+                });
+                
+        }
+
+        //CRM-3230: VF remote action call to controller to delete all accounts
+        function deleteAccounts(){
+            removeError();
+            showSpinner();
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.EmployeeDashboardController.deleteAll}',
+                $('#acctId').val(),
+                'franchise',
+                function(result, event) {
+                  $("#deleteConfirm").modal('toggle');
+                  hideSpinner();
+                  console.log(result);
+                  if (event.status) {
+                        window.open("{!$Site.Prefix}/EmployeeCreateAccounts","_self");
+                    } else {
+                        displayError(event.message);
+                    }
+                });
+        }
+    </script>
+</apex:page>

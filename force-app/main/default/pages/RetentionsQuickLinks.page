@@ -1,0 +1,85 @@
+<apex:page >
+ <apex:includeScript value="/support/console/44.0/integration.js"/>
+ <script type="text/javascript">
+   }
+   function openInventorySearchTab(){
+      window.open("{!$Site.Domain}/apex/InventorySearch");
+   }
+   function openCustomerListings() {
+      window.open("https://c3tools.move.com/STaR/InventoryListingsMatch/?");
+   }
+   function openMyServiceRequest(){
+      window.open('{!$Site.Domain}/{!$Label.My_Service_Request}')" href="#">My Service Requests;
+   }
+   function openLeadstosoldtool(){
+      window.open("https://c3tools.move.com/STaR/leads_to_sale/");
+   }
+    function openPIDLookup() {
+      window.open("http://p08sql20278/InventoryInfoTool.aspx");
+   }
+   function openPreauthForm() {
+      window.open("https://docs.google.com/forms/d/e/1FAIpQLSekoRDDxI_L7hMPNE303Vyc7kmK_HaKrpfSsPIvihMgaTUhaw/viewform?c=0&w=1");
+   }
+   function openRTYCU() {
+      window.open("https://docs.google.com/document/d/1ZaLemMvEFDCnDxubKnxIKQ7MdZwtZ-1DwIyXt93haJg/");
+   }
+   function openImportantLinks() {
+     window.open("https://docs.google.com/document/d/1LM4eFTlA7J1LP104pLazK0bQm9zU6weptlOR-hCBuRQ/");
+   }
+   function openServiceRequest() {
+      window.open("https://docs.google.com/document/d/1a6xnKyANgsin2OgBbZVS2HV1poUP7xIMbri4FwiTUDA/");
+    }
+   function openMovingAssets() {
+      window.open("https://docs.google.com/document/d/1zN61AKrfXDIewbC1iVKAOlZVcslI3hpbkN1l_L2-gy4");
+   }
+   function openCP() {
+      window.open("https://docs.google.com/document/d/1MS68TnYtMDEFghwKVPq-TQstxSAyB18W6EcuBNf8Rbk");
+   }
+   function openLocal() {
+      window.open("https://www.realtor.com/local/");
+   }
+   function openRealEstateMarketingProducts() {
+      window.open("https://marketing.realtor.com/");
+   }
+   function openPercentageCalculator() {
+      window.open("https://percentagecalculator.net/");
+   }
+   function openInventorySearchTab(){
+      window.open("{!$Site.Domain}/console#%2Fapex%2FInventorySearch");
+   }
+   function openZipSearch() {
+      window.open("http://zipmap.net/");
+   }
+   function openRealtor() {
+     window.open("https://realtor.com");
+   }
+   function openZillow() {
+     window.open("https://zillow.com");
+   }
+   
+ </script>
+ <!--Commenting out some links for ticket CRM-3183-->
+ <b>SFDC Console Links</b><br />
+ <br />
+     <a href="#" onClick="openInventorySearchTab(); return false">Inventory Search</a><br />
+     <a href="#" onClick="openCustomerListings(); return false">Customer Listings</a><br />
+     <a href="#" onClick="openMySerivceRequest(); return false">My Serivce Requests</a><br />
+     <a href="#" onClick="openLeadstosoldtool(); return false">Leads to sold tool</a><br />
+     <a href="#" onClick="openPIDLookup(); return false">PID Lookup</a><br />
+     <a href="#" onClick="openPreauthForm(); return false">Pre-Auth Form</a><br />
+     <a href="#" onClick="openRTYCU(); return false">Retention Tools You can use</a><br />
+     <a href="#" onClick="openImportantLinks(); return false">Important Links</a><br />
+     <a href="#" onClick="openServiceRequest(); return false">Service Requests</a><br />
+     <a href="#" onClick="openMovingAssets(); return false">Moving Assets</a><br />
+     <a href="#" onClick="openCP(); return false">Calling Priority cases first thing every day </a><br />
+     <a href="#" onClick="openRealEstateMarketingProducts(); return false">Real Estate Marketing Products</a><br />
+     <a href="#" onClick="openPercentageCalculator(); return false">Percentage Calculator</a><br />
+     <a href="#" onClick="openInventorySearchTab(); return false">Inventory Search</a><br />
+     <a href="#" onClick="openZipSearch(); return false">Zip Search</a><br />
+     <a href="#" onClick="openBIC(); return false">Find the Broker in charge (BIC) of an office</a><br />
+     <a href="#" onClick="openRealtor(); return false">Realtor.com</a><br />
+     <a href="#" onClick="openZillow(); return false">Zillow</a><br />
+     <br />
+ <br />
+ 
+</apex:page>

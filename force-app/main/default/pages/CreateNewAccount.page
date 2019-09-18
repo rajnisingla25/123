@@ -1,0 +1,260 @@
+<apex:page showChat="false" sidebar="false" tabStyle="Account" standardController="Account" extensions="CreateNewAccountExtension">
+  <script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.min.js"></script>   
+  <style>
+    .showProcessing {
+      position: relative !important;
+      top: 4px !important;
+      left: 5px !important;
+    }
+    .showCDHAccountsProcessing {
+      position: relative !important;
+      top: 5px !important;
+      left: 5px !important;
+    
+  </style>  
+  
+  <apex:sectionHeader title="Account Edit" subtitle="New Account"/>
+  <apex:form id="theCDHAccountSearchForm">
+    <apex:pageMessages />
+    <apex:outputPanel layout="block" style="display:none;" styleClass="matchingCDHAccounts">
+      <apex:pageBlock title="Matching CDH Accounts" id="matchingCDHAccountsSection">
+        <apex:pageBlockButtons location="top">
+          <apex:outputPanel >
+            <apex:outputPanel >
+              <apex:commandButton value="Update Existing Account" action="{!updateExistingAccount}" rerender="theCDHAccountSearchForm" status="theCDHAccountsSectionProcessing" onComplete="showMatchingCDHAccountsSection(false, 1);"/>
+            </apex:outputPanel>
+            <apex:outputPanel >
+              <apex:commandButton value="Create New Account" action="{!createNewAccount}" rerender="theCDHAccountSearchForm" status="theCDHAccountsSectionProcessing" onComplete="showMatchingCDHAccountsSection(false, 1);"/>
+            </apex:outputPanel>
+          </apex:outputPanel>
+          <apex:outputPanel >
+            <apex:actionStatus startStyleClass="showCDHAccountsProcessing" id="theCDHAccountsSectionProcessing">
+              <apex:facet name="start">
+                <img src="/img/loading.gif"/>
+              </apex:facet>
+            </apex:actionStatus>
+          </apex:outputPanel>
+        </apex:pageBlockButtons>
+        <apex:pageBlockTable value="{!theSelectedAccounts}" var="theSelectedAccount">
+          <apex:column >
+            <apex:inputCheckbox value="{!theSelectedAccount.isSelected}"/>
+          </apex:column>
+          <apex:column value="{!theSelectedAccount.theAccount.Name}"/>
+          <apex:column value="{!theSelectedAccount.theAccount.Type}"/>
+          <apex:column value="{!theSelectedAccount.theAccount.BillingStreet}"/>
+          <apex:column value="{!theSelectedAccount.theAccount.BillingCity}"/>
+          <apex:column value="{!theSelectedAccount.theAccount.BillingState}"/>
+          <apex:column value="{!theSelectedAccount.theAccount.BillingPostalCode}"/>
+          <apex:column value="{!theSelectedAccount.theAccount.Phone}"/>
+          <apex:column value="{!theSelectedAccount.theAccount.Email_Address__c}"/>
+          <apex:column value="{!theSelectedAccount.theAccount.Party_ID__c}"/>
+          <apex:column value="{!theSelectedAccount.theAccount.CP_request__c}"/>
+        </apex:pageBlockTable>
+      </apex:pageBlock>
+    </apex:outputPanel>
+    <apex:pageBlock >
+      <apex:pageBlockButtons >
+        <apex:outputPanel layout="block">
+          <apex:outputPanel >
+            <apex:commandButton value="Save" action="{!createAccount}" rerender="theCDHAccountSearchForm, matchingCDHAccountsSection" status="theCDHProcessing" onComplete="showMatchingCDHAccountsSection({!hasError}, 0);"/>
+          </apex:outputPanel>
+          <apex:outputPanel >
+            <apex:commandButton value="Cancel" action="{!cancelProcess}" immediate="true"/>
+          </apex:outputPanel>
+          <apex:outputPanel >
+            <apex:actionStatus startStyleClass="showProcessing" id="theCDHProcessing">
+              <apex:facet name="start">
+                <img src="/img/loading.gif"/>
+              </apex:facet>
+            </apex:actionStatus>
+          </apex:outputPanel>
+        </apex:outputPanel>
+      </apex:pageBlockButtons>
+      <!-- The following fields are used to match accounts on CDH system. -->
+      <!--
+      <apex:pageBlockSection columns="2" collapsible="false">
+        <apex:inputField value="{!Account.Name}"/>
+        <apex:inputField value="{!Account.Type}"/>
+        <apex:inputField value="{!Account.BillingStreet}"/>
+        <apex:inputField value="{!Account.BillingCity}"/>
+        <apex:inputField value="{!Account.BillingState}"/>
+        <apex:inputField value="{!Account.BillingPostalCode}"/>
+        <apex:inputField value="{!Account.Phone}"/>
+        <apex:inputField value="{!Account.Email_Address__c}"/>
+      </apex:pageBlockSection>
+      -->
+      
+      <apex:pageBlockSection title="Account Information" id="AccountInformation" columns="2" showHeader="true">        
+        <apex:inputField value="{!Account.Type}" label="Account Type" required="True"/>       
+        <apex:pageBlockSectionItem >
+        <apex:outputLabel value="{!$ObjectType.Account.fields.Name.label}" for="Name"/>
+        <apex:actionRegion >
+        <apex:inputField value="{!Account.Name}" id="Name" label="Account Name"> 
+        <apex:actionSupport event="onchange" action="{!updatename}" reRender="DisName"/>        
+        </apex:inputField>    
+        </apex:actionRegion>
+        </apex:pageBlockSectionItem>                    
+        <apex:outputField value="{!Account.Account_Sub_Type__c}" rendered="{!NOT(OR(isMovingAccount,isMortgageAccount))}"/> <!-- CRM-3277 Moving.com-->
+        <apex:inputField value="{!Account.Display_Name__c}" required="true" id="DisName"/>
+        <apex:inputField value="{!Account.Franchise_Type__c}" rendered="{!NOT(OR(isMovingAccount,isMortgageAccount))}"/> <!-- CRM-3277 Moving.com-->
+        <apex:inputField value="{!Account.AnnualRevenue}" rendered="{!NOT(OR(isMovingAccount,isMortgageAccount))}"/>  <!-- CRM-3277 Moving.com-->
+        <apex:inputField value="{!Account.AccountSource}" rendered="{!NOT(OR(isMovingAccount,isMortgageAccount))}"/>  <!-- CRM-3277 Moving.com-->
+        <apex:inputField value="{!Account.Rating__c}" rendered="{!NOT(OR(isMovingAccount,isMortgageAccount))}"/> <!-- CRM-3277 Moving.com-->   
+        <apex:outputField value="{!Account.Account_Status__c}" rendered="{!NOT(OR(isMovingAccount,isMortgageAccount))}"/> <!-- CRM-3277 Moving.com-->    
+        <apex:inputField value="{!Account.NMLS_Id__c}" rendered="{!!isMovingAccount}" required="{!isMortgageAccount}"/> <!-- MRB LCM -->   
+     <!--   <apex:inputField value="{!Account.Organization_CAP_Amount__c}" rendered="{!!isMovingAccount}"/> <!-- MRB LCM -->      
+  
+     </apex:pageBlockSection>
+      
+      <!--<apex:pageBlockSection title="Account Information" id="AccountInformation" rendered="{!$ObjectType.Account.FieldSets.Account_Information.size > 0}">          
+        <apex:repeat id="accountInfoIterateLoop" value="{!$ObjectType.Account.FieldSets.Account_Information}" var="field">
+            <apex:pageBlockSectionItem helpText="{!$ObjectType.Account.Fields[field].InlinehelpText}">
+              <apex:outputLabel value="{!field.label}"/>
+              <apex:inputField value="{!Account[field]}" required="{!OR(field.required, field.dbrequired)}"/>                                         
+            </apex:pageBlockSectionItem>
+        </apex:repeat>         
+      </apex:pageBlockSection>-->   
+      <apex:pageBlockSection title="Address Information" showHeader="true" id="AddressInformation" rendered="{!$ObjectType.Account.FieldSets.Address_Information.size > 0}"> 
+          <apex:facet name="header">
+            <apex:outputpanel >
+               <apex:outputText value="Address Information"/>
+                  <apex:commandLink style="Float:right;" value="Copy Billing Address To Shipping Address" action="{!copy_billingto_shipping}" reRender="AddressInformation"/>
+             </apex:outputpanel>
+           </apex:facet>                                                
+        <apex:repeat id="accountInfoIterateLoop" value="{!$ObjectType.Account.FieldSets.Address_Information}" var="field">
+            <apex:pageBlockSectionItem helpText="{!$ObjectType.Account.Fields[field].InlinehelpText}">
+              <apex:outputLabel value="{!field.label}"/>
+              <apex:inputField value="{!Account[field]}" required="{!OR(field.required, field.dbrequired)}"/>
+            </apex:pageBlockSectionItem>            
+        </apex:repeat>                
+      </apex:pageBlockSection>
+      <apex:pageBlockSection title="Account Communication" rendered="{!$ObjectType.Account.FieldSets.Account_Communication.size > 0 && !isMovingAccount }"> <!-- CRM-3277 Moving.com -->
+        <apex:repeat id="accountCommIterateLoop" value="{!$ObjectType.Account.FieldSets.Account_Communication}" var="field">
+          <apex:pageBlockSectionItem helpText="{!$ObjectType.Account.Fields[field].InlinehelpText}">
+            <apex:outputLabel value="{!field.label}"/>
+            <apex:inputField value="{!Account[field]}" required="{!OR(field.required, field.dbrequired)}"/>
+          </apex:pageBlockSectionItem>
+        </apex:repeat>
+      </apex:pageBlockSection>
+            <apex:pageBlockSection title="Account Communication - Phone" rendered="{!$ObjectType.Account.FieldSets.Account_Communication_Phone.size > 0 && !isMovingAccount}"> <!-- CRM-3277 Moving.com -->
+        <apex:repeat id="accountCommIterateLoop" value="{!$ObjectType.Account.FieldSets.Account_Communication_Phone}" var="field">
+          <apex:pageBlockSectionItem helpText="{!$ObjectType.Account.Fields[field].InlinehelpText}">
+            <apex:outputLabel value="{!field.label}"/>
+            <apex:inputField value="{!Account[field]}" required="{!OR(field.required, field.dbrequired)}"/>
+          </apex:pageBlockSectionItem>
+        </apex:repeat>
+      </apex:pageBlockSection>
+            <apex:pageBlockSection title="Account Communication - Email" rendered="{!$ObjectType.Account.FieldSets.Account_Communication_Email.size > 0 && NOT(OR(isMovingAccount,isMortgageAccount))}"> <!-- CRM-3277 Moving.com -->
+        <apex:repeat id="accountCommIterateLoop" value="{!$ObjectType.Account.FieldSets.Account_Communication_Email}" var="field">
+          <apex:pageBlockSectionItem helpText="{!$ObjectType.Account.Fields[field].InlinehelpText}">
+            <apex:outputLabel value="{!field.label}"/>
+            <apex:inputField value="{!Account[field]}" required="{!OR(field.required, field.dbrequired)}"/>
+          </apex:pageBlockSectionItem>
+        </apex:repeat>
+      </apex:pageBlockSection>
+      <apex:pageBlockSection title="Exclusion Notes" rendered="{!$ObjectType.Account.FieldSets.Exclusion_Flags.size > 0}">
+        <apex:repeat id="accountExclusionFlagsIterateLoop" value="{!$ObjectType.Account.FieldSets.Exclusion_Flags}" var="field">
+          <apex:pageBlockSectionItem helpText="{!$ObjectType.Account.Fields[field].InlinehelpText}">
+            <apex:outputLabel value="{!field.label}"/>
+            <apex:inputField value="{!Account[field]}" required="{!OR(field.required, field.dbrequired)}"/>
+          </apex:pageBlockSectionItem>
+        </apex:repeat>
+      </apex:pageBlockSection>
+      <apex:pageBlockSection title="Office Information" rendered="{!$ObjectType.Account.FieldSets.Office_Information.size > 0}">
+        <apex:repeat id="officeInfoIterateLoop" value="{!$ObjectType.Account.FieldSets.Office_Information}" var="field">
+          <apex:pageBlockSectionItem helpText="{!$ObjectType.Account.Fields[field].InlinehelpText}">
+            <apex:outputLabel value="{!field.label}"/>
+            <apex:inputField value="{!Account[field]}" required="{!OR(field.required, field.dbrequired)}"/>
+          </apex:pageBlockSectionItem>
+        </apex:repeat>
+      </apex:pageBlockSection>
+      <apex:pageBlockSection title="Book of Business" rendered="{!$ObjectType.Account.FieldSets.Book_of_Business.size > 0}">
+        <apex:repeat id="businessBookIterateLoop" value="{!$ObjectType.Account.FieldSets.Book_of_Business}" var="field">
+          <apex:pageBlockSectionItem helpText="{!$ObjectType.Account.Fields[field].InlinehelpText}">
+            <apex:outputLabel value="{!field.label}"/>
+            <apex:inputField value="{!Account[field]}" required="{!OR(field.required, field.dbrequired)}"/>
+          </apex:pageBlockSectionItem>
+        </apex:repeat>
+      </apex:pageBlockSection>
+      <apex:pageBlockSection title="Sales Lock" rendered="{!$ObjectType.Account.FieldSets.Sales_Lock.size > 0}">
+        <apex:repeat id="salesLockIterateLoop" value="{!$ObjectType.Account.FieldSets.Sales_Lock}" var="field">
+          <apex:pageBlockSectionItem helpText="{!$ObjectType.Account.Fields[field].InlinehelpText}">
+            <apex:outputLabel value="{!field.label}"/>
+            <apex:inputField value="{!Account[field]}" required="{!OR(field.required, field.dbrequired)}"/>
+          </apex:pageBlockSectionItem>
+        </apex:repeat>
+      </apex:pageBlockSection>
+      <apex:pageBlockSection title="Renewal Information" rendered="{!$ObjectType.Account.FieldSets.Renewal_Information.size > 0}">
+        <apex:repeat id="renewalInfoIterateLoop" value="{!$ObjectType.Account.FieldSets.Renewal_Information}" var="field">
+          <apex:pageBlockSectionItem helpText="{!$ObjectType.Account.Fields[field].InlinehelpText}">
+            <apex:outputLabel value="{!field.label}"/>
+            <apex:inputField value="{!Account[field]}" required="{!OR(field.required, field.dbrequired)}"/>
+          </apex:pageBlockSectionItem>
+        </apex:repeat>
+      </apex:pageBlockSection>
+     
+      <apex:pageBlockSection title="Account Status" rendered="{!$ObjectType.Account.FieldSets.Account_Status.size > 0 && NOT(OR(isMovingAccount,isMortgageAccount))}"> <!-- CRM-3277 Moving.com -->
+        <apex:repeat id="accountStatusInfoIterateLoop" value="{!$ObjectType.Account.FieldSets.Account_Status}" var="field">
+          <apex:pageBlockSectionItem helpText="{!$ObjectType.Account.Fields[field].InlinehelpText}">
+            <apex:outputLabel value="{!field.label}"/>
+            <apex:inputField value="{!Account[field]}" required="{!OR(field.required, field.dbrequired)}"/>
+          </apex:pageBlockSectionItem>
+        </apex:repeat>
+      </apex:pageBlockSection>
+      
+      <apex:pageBlockSection title="Account Flags" rendered="{!$ObjectType.Account.FieldSets.Account_Flags.size > 0}">
+        <apex:repeat id="accountFlagsIterateLoop" value="{!$ObjectType.Account.FieldSets.Account_Flags}" var="field">
+          <apex:pageBlockSectionItem helpText="{!$ObjectType.Account.Fields[field].InlinehelpText}">
+            <apex:outputLabel value="{!field.label}"/>
+            <apex:inputField value="{!Account[field]}" required="{!OR(field.required, field.dbrequired)}"/>
+          </apex:pageBlockSectionItem>
+        </apex:repeat>
+      </apex:pageBlockSection>
+      <apex:pageBlockSection title="Listing Information" rendered="{!$ObjectType.Account.FieldSets.Listing_Information.size > 0}">
+        <apex:repeat id="listingInfoIterateLoop" value="{!$ObjectType.Account.FieldSets.Listing_Information}" var="field">
+          <apex:pageBlockSectionItem helpText="{!$ObjectType.Account.Fields[field].InlinehelpText}">
+            <apex:outputLabel value="{!field.label}"/>
+            <apex:inputField value="{!Account[field]}" required="{!OR(field.required, field.dbrequired)}"/>
+          </apex:pageBlockSectionItem>
+        </apex:repeat>
+      </apex:pageBlockSection>
+      <apex:pageBlockSection title="Product Information" rendered="{!$ObjectType.Account.FieldSets.Product_Information.size > 0}">
+        <apex:repeat id="productInfoIterateLoop" value="{!$ObjectType.Account.FieldSets.Product_Information}" var="field">
+          <apex:pageBlockSectionItem helpText="{!$ObjectType.Account.Fields[field].InlinehelpText}">
+            <apex:outputLabel value="{!field.label}"/>
+            <apex:inputField value="{!Account[field]}" required="{!OR(field.required, field.dbrequired)}"/>
+          </apex:pageBlockSectionItem>
+        </apex:repeat>
+      </apex:pageBlockSection>
+      <apex:pageBlockSection title="Additional Information" rendered="{!$ObjectType.Account.FieldSets.Additional_Information.size > 0}">
+        <apex:repeat id="productInfoIterateLoop" value="{!$ObjectType.Account.FieldSets.Additional_Information}" var="field">
+          <apex:pageBlockSectionItem helpText="{!$ObjectType.Account.Fields[field].InlinehelpText}">
+            <apex:outputLabel value="{!field.label}"/>
+            <apex:inputField value="{!Account[field]}" required="{!OR(field.required, field.dbrequired)}"/>
+          </apex:pageBlockSectionItem>
+        </apex:repeat>
+      </apex:pageBlockSection>
+      <apex:pageBlockSection title="Other Information" rendered="{!$ObjectType.Account.FieldSets.Other_Information.size > 0}">
+        <apex:repeat id="productInfoIterateLoop" value="{!$ObjectType.Account.FieldSets.Other_Information}" var="field">
+          <apex:pageBlockSectionItem helpText="{!$ObjectType.Account.Fields[field].InlinehelpText}">
+            <apex:outputLabel value="{!field.label}"/>
+            <apex:inputField value="{!Account[field]}" required="{!OR(field.required, field.dbrequired)}"/>
+          </apex:pageBlockSectionItem>
+        </apex:repeat>
+      </apex:pageBlockSection>
+    </apex:pageBlock>
+  </apex:form>
+  <script type="text/javascript">
+    function showMatchingCDHAccountsSection(hasError, flag) {
+      console.log('hasError: ' + hasError);
+      if(hasError == false) {
+        $('div.matchingCDHAccounts').show();
+        if(flag == 0) {
+          $('html, body').animate({
+            scrollTop: 0
+          }, 1000);
+        }
+      }
+    }
+  </script>
+</apex:page>

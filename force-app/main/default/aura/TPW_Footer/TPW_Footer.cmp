@@ -1,0 +1,107 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,forceCommunity:themeLayout" access="global" >
+    
+    <div class="cTP_footer_main">
+    	<div id="footerwrap">
+        	<div class="footlight-wrap bottom-pad-0">
+	            <article>
+    	            <div class="footerContent container">
+        	            <div id="footer" class="row">
+
+                            
+                            
+                           
+
+   <div class="col-md-4 col-sm-6 footer-custom-top">
+       <div class="footer-cent footer_branding">
+           			<img class="svg logo" src="https://psweb.realtor.com/logos/Top-Producer-b.jpg" alt="Top Producer"/><p></p>
+                            <p><a href="tel:1.833.387.1911">1.833.387.1911</a><br/><a href="mailto:learnmore@topproducer.com">learnmore@topproducer.com</a></p>
+                            </div>
+                            <div class="footer-style3 footer-social">
+                            <ul class="list-inline footer-social">
+                            
+                               
+                            <li><a class="sm-icon" href="https://www.facebook.com/TopProducerSoftware/" target="_blank">
+                                  <img src="https://psweb.realtor.com/SFMC-lp-images/fb.jpg"/></a></li>
+                            <li><a class="sm-icon" href="https://twitter.com/top_producer" target="_blank">
+                                  <img src="https://psweb.realtor.com/SFMC-lp-images/tw.jpg"/></a></li>  
+ 							<li><a class="sm-icon" href="https://www.linkedin.com/company/11634" target="_blank">
+                                  <img src="https://psweb.realtor.com/SFMC-lp-images/li.jpg"/></a></li>  
+  							<li><a class="sm-icon" href="https://www.youtube.com/user/TPCampus" target="_blank">
+                                  <img src="https://psweb.realtor.com/SFMC-lp-images/yt.jpg"/></a></li>  
+                            <li><a class="sm-icon" href="https://www.instagram.com/top_producer_software/" target="_blank">
+                                  <img src="https://psweb.realtor.com/SFMC-lp-images/2019/ins.jpg"/></a></li>                                  
+                            </ul>
+                            </div>
+                            </div>
+                            <div class="col-md-2 col-sm-3 footer-custom">
+                            <div class="footer-cent">
+                            <h5>PRODUCT</h5>
+                            <div class="textwidget">
+                            <ul class="no-style link-col">
+                          <li class="m-b-5 no-padding"><a href="https://topproducer.com/real-estate-crm/" target="_blank">Real Estate CRM</a></li>
+                            <li class="m-b-5 no-padding"><a href="https://topproducer.com/market-snapshot/" target="_blank">Market Snapshot</a></li>
+                            <li class="m-b-5 no-padding"><a href="https://topproducer.com/websites-idx/" target="_blank">Websites &amp; IDX</a></li>
+                            <li class="m-b-5 no-padding"><a href="https://topproducer.com/fivestreet-lead-response/" target="_blank">FiveStreet Lead Response</a></li>
+                            </ul>
+                            </div>
+                            </div>
+                            </div>
+                            <div class="col-md-2 col-sm-3 footer-custom">
+                            <div class="footer-cent">
+                            <h5>SOLUTIONS</h5>
+                            <div class="textwidget">
+                            <ul class="no-style link-col">
+                        	<li class="m-b-5 no-padding"><a href="https://topproducer.com/team-broker-solutions/" target="_blank">Team &amp; Broker</a></li>
+                         	<li class="m-b-5 no-padding"><a href="https://topproducer.com/agent-solutions/" target="_blank">Agent Solutions</a></li>
+                          	<li class="m-b-5 no-padding"><a href="https://topproducer.com/pricing/" target="_blank">Pricing</a></li>
+                           	<li class="m-b-5 no-padding"><a href="https://www.topproducer.com/onlinestore">Online Store</a></li>
+                                </ul>
+                            </div>
+                            </div>
+                            </div>
+                            <div class="col-md-2 col-sm-3 footer-custom">
+                            <div class="footer-cent">
+                            <h5>COMPANY</h5>
+                            <div class="textwidget">
+                            <ul class="no-style link-col">
+                            <li class="m-b-5 no-padding"><a href="https://topproducer.com/about-top-producer/" target="_blank">About Us</a></li>
+                            <li class="m-b-5 no-padding"><a href="https://topproducer.wpengine.com/contact-us/" target="_blank">Contact Us</a></li>
+                            <li class="m-b-5 no-padding"><a href="https://www.realtor.com/careers" target="_blank">Careers</a></li>
+                            <li class="m-b-5 no-padding"><a class="link" href="https://www.realtor.com/privacy-policy/" target="_blank">Privacy Policy</a></li>
+                            <li class="m-b-5 no-padding"><a class="link" href="https://www.realtor.com/terms-of-service" target="_blank">Terms of Use</a></li>
+                            </ul>
+                            </div>
+                            </div>
+                            </div>
+                            <div class="col-md-2 col-sm-3 footer-custom">
+                            <div class="footer-cent">
+                            <h5>CUSTOMERS</h5>
+                            <div class="textwidget custom-html-widget">
+                            <ul class="no-style link-col">
+                            <li class="m-b-5 no-padding"><a href="http://www.topproducer.com/campus" target="_blank">Support</a></li>
+                            <li class="m-b-5 no-padding"><a href="http://hub.topproducer.com/?_ga=2.41502946.1985435766.1555537788-719375737.1554478233" target="_blank">News &amp; Tips</a></li>
+                            <li class="m-b-5 no-padding"><a href="https://marketing.topproducer.com/referral/?_ga=2.240279619.1985435766.1555537788-719375737.1554478233" target="_blank">Refer a Friend</a></li>
+                            <li class="m-b-5 no-padding"><a href="https://topproducer8i.com" target="_blank">Login</a></li>
+                            </ul>
+                            </div>
+                            </div>
+                            </div>
+
+                                 
+                                
+                	        </div> 
+                    	</div> 
+               		
+                </article>
+   			</div> 
+             <div class="footlight-wrap">
+			<article>
+                <div class="footerContent container">
+                    <p class="footerlinks copyright">                   
+                      @2019 Top Producer® System Company ULC. All rights reserved. </p>
+                </div>
+            </article>
+        </div>
+		</div> 
+  </div>
+</aura:component>

@@ -1,0 +1,17 @@
+<design:component>
+    <design:attribute name="imagePath" datasource = "realtorLogo.jpg, topproducerLogo.png"
+                      label="Background Image Name" />
+    <!--<design:attribute name="brandImageAlignment" label="Brand Image Alignment" datasource = "left,right"/>-->
+    
+    <design:attribute name="brandImageWidth" label="Brand Image Size" placeholder="Ex: 200"/>
+    <design:attribute name="bgColour" label="Background colour" placeholder="Ex: 'yellow' or '#FFFF00'"/>
+    
+    <design:attribute name="headerText" label="Helpline Number" placeholder="Ex: 1800200200"/>
+    <!--<design:attribute name="headerTextAlignment" datasource = "left,right"
+                      label="Helpline Number Alignment" />-->
+    <design:attribute name="headerTextColor"
+                      label="Helpline Number Font Colour" placeholder="Ex: 'yellow' or '#FFFF00'"/>
+    <design:attribute name="headerTextFontSize" placeholder="Ex:2"
+                      label="Helpline Number Font Size" />
+    
+</design:component>

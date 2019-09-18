@@ -1,0 +1,94 @@
+.THIS #brand-header {
+    height:100px;
+}
+
+.THIS article {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+
+.THIS header .logo {
+}
+.THIS  .logo img {
+    max-width: 210px; }
+
+.THIS  .cobrand-logo img {
+    max-width: 178px; 
+    padding-left:20px;
+}
+
+.THIS .call-icon {
+    padding-right:8px;
+    padding-left:120px;
+   }
+
+.THIS #call:hover {
+    color: black; }
+
+.THIS #call h3 {
+    font-size: 26px;
+    font-weight: bold;
+    color: #000000;
+}
+
+.THIS .phoneColor {
+    color: black; }
+
+@media (max-width: 960px) {
+    .cRDC_header_main #call h3 {
+        font-size: 22px;
+        text-align:center;
+    }	
+    .THIS #header_main {
+        background-color: white;
+        height:120px;
+        text-align:center;
+    }
+    .THIS .call-icon {
+        padding-right:8px;
+        padding-left:0px;
+        width:20px;
+    }    
+    .THIS .logo {
+        text-align:center;
+        width:130px;}
+    .THIS  .logo img {
+        max-width: 160px; }
+    
+    .THIS .call-icon {
+        padding-right:0px;
+        padding-left:0px;}
+    .THIS .callbox	{
+        width:242px;
+        margin-left:68px;
+        padding-top:16px;
+    }
+}
+@media (max-width: 480px) {
+    .cRDC_header_main #call h3 {
+        font-size: 22px;
+        text-align:center;
+    }	
+    .THIS #brand-header {
+        background-color: white;
+        height:140px;
+        text-align:center;
+    }  
+    .THIS .logo {
+        text-align:center;
+        width:100%;}
+	.THIS .logo img {
+    	max-width: 210px; }
+    .THIS .call-icon {
+        padding-right:0px;
+        padding-left:0px;}
+    .THIS .callbox	{
+        width:242px;
+        margin-left:38px;
+        padding-top:0px;
+    }
+    .THIS #call	{
+        padding-top:3px;
+    }    
+}

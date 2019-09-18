@@ -1,0 +1,7 @@
+<apex:page controller="AutoRenewalExecution">
+  <apex:form >
+  Input Asset Id :<apex:inputText value="{!asstId}"/>
+  <apex:commandButton value="Create Auto Renewal opportunity" action="{!CreateRenewalOpportunity}"/>
+  <apex:commandButton value="Execute Auto Renewal" action="{!ExecuteAutoRenewalExecution}"/>
+  </apex:form>
+</apex:page>

@@ -1,0 +1,8 @@
+<apex:component access="global" controller="ProductInformationController">
+    <apex:attribute name="orderId" assignTo="{!ordId}" description="This is the relatedTo Id in the order or quote" type="String" />
+    <apex:outputPanel rendered="{!IF(hasMonthToMonth = true, true, false)}">
+       <p>Notwithstanding anything set forth in the applicable terms and conditions (which are located at the above link), the initial term of your order and subscription is set forth above in this order confirmation, and all products set forth above will automatically renew on a month-to-month basis thereafter. Such automatic renewal shall occur and continue unless anduntil you elect to not renew your order and subscription by timely calling Customer Care at (800)878-4166 and communicating such decision. You will receive a notice by email or otherwise no less than thirty (30) days prior to any price change taking effect for any of the products set forth above. </p>
+
+    </apex:outputPanel>
+
+</apex:component>

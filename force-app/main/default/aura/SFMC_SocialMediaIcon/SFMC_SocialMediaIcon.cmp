@@ -1,0 +1,31 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" >
+    <aura:attribute name="showFacebook" type="boolean" />
+    <aura:attribute name="showYoutube" type="boolean" />
+    <aura:attribute name="showTwitter" type="boolean" />
+    <aura:attribute name="showGooglePlus" type="boolean" />
+    <div class="{!$Browser.formFactor == 'DESKTOP' ? 'mediaStyles' : '' }" style="{!$Browser.formFactor == 'DESKTOP' ? '' : 'background-color: #222;width: 84vw;height: 5rem;left:0'}">
+        <ul class="slds-list_horizontal">
+            <li class="{!v.showFacebook ? 'slds-m-left_xx-small' : 'slds-hide'}">
+                <a href="https://www.facebook.com/TopProducerSystems" alt="Follow Top Producer on Facebook" >
+                    <img src="//www.topproducer.com/jfiles/tp/sm/facebook.png" class="socialLinkClass"/>
+                </a>
+            </li>
+            <li class="{!v.showYoutube ? 'slds-m-left_xx-small' : 'slds-hide'}">
+                <a href="http://www.youtube.com/user/TPCampus" alt="Tune in on YouTube" target="_blank" >
+                    <img src="//www.topproducer.com/jfiles/tp/sm/youtube.png"  class="socialLinkClass"/>
+                </a>
+            </li>
+            <li class="{!v.showTwitter ? 'slds-m-left_xx-small' : 'slds-hide'}">
+                <a href="https://twitter.com/top_producer" alt="Follow Top Producer on Twitter " >
+                    <img src="//www.topproducer.com/jfiles/tp/sm/twitter.png"  class="socialLinkClass"/>
+                </a>
+            </li>
+            <li class="{!v.showGooglePlus ? 'slds-m-left_xx-small' : 'slds-hide'}">
+                <a href="https://plus.google.com/101915553729426894177/posts" target="_blank" >
+                    <img src="//www.topproducer.com/jfiles/tp/sm/googleplus.png"  class="socialLinkClass"/>
+                </a>
+            </li>
+        </ul>
+        
+    </div>
+</aura:component>

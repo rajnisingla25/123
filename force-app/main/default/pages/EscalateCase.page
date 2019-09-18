@@ -1,0 +1,31 @@
+<apex:page standardController="Case" extensions="EscalatedCaseController" action="{!prepareEscalatedChildCase}" showHeader="false" sideBar="false">
+<apex:includeScript value="/xdomain/xdomain.js" />
+<apex:includeScript value="/soap/ajax/30.0/connection.js" />
+<apex:includeScript value="/support/console/22.0/integration.js"/>
+<script type="text/javascript">
+ function testCloseTab() {
+            //First find the ID of the current tab to close it
+            if(sforce.console.isInConsole()) {
+                sforce.console.getEnclosingTabId(closeSubtab);return false;
+            }else {
+                return true;
+            }
+            
+        }
+        
+        var closeSubtab = function closeSubtab(result) {
+            //Now that we have the tab ID, we can close it
+            var tabId = result.id;
+            sforce.console.closeTab(tabId);
+};
+</script>
+<apex:form >
+<apex:pageBlock >
+<apex:pageMessages /> 
+<apex:pageBlockButtons >
+<apex:commandButton value="Back" onclick="testCloseTab();" action="{!redirectBack}"/>
+</apex:pageBlockButtons>
+</apex:pageBlock>
+</apex:form>
+
+</apex:page>

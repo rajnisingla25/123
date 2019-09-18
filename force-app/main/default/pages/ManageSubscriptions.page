@@ -1,0 +1,158 @@
+<apex:page showHeader="false" standardStylesheets="true" sidebar="false" docType="html-5.0" controller="Z_SuspendandResumeSubscriptions">    
+    <!-- <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en"> -->   
+    <apex:slds />      
+    <div class="slds-scope">
+        <body>        
+            <apex:pageMessages />
+            
+            <apex:form id="theForm">               
+                <apex:actionFunction name="refreshPageSize" action="{!refreshPageSize}" status="fetchStatus" reRender="pbId"/>
+                <apex:actionFunction name="getthevalues" action="{!getthevalues}"  status="fetchStatus" reRender="pbId"/>
+                <!--<apex:actionFunction name="selectall" action="{!SelectAll}" status="fetchStatus" reRender="pbId"/> -->
+                
+                <apex:outputPanel style="text-align:center;background-color: #F0FDFC;padding: 30px;" layout="block" id="outpan" rendered="{!!haserror}"> 
+                     <apex:outputlink style="margin-right:50px" value="/{!Zuoracustomeraccount.Zuora__Account__c}">{!Zuoracustomeraccount.Name}</apex:outputlink>
+                    <span>Effective date: </span><apex:input type="date" value="{!EffectiveDate}"/>
+                    <apex:commandButton style="margin-right:10px;margin-left:10px" value="Suspend" action="{!Suspend}"/>
+                    <apex:commandButton style="margin-right:50px" value="Resume" action="{!Resume}"/>
+                   <span>Auto Apply Credit Balances: </span><apex:inputCheckbox style="margin-right:10px" value="{!Autoapplycreditbalance}"/>
+                    <apex:commandButton style="margin-right:50px" value="Update Zuora" action="{!updateZuoraAccount}"/>
+                   <!-- <apex:commandButton action="{!save}" style="margin-right:10px;" value="Save"/>-->
+                    <apex:commandButton value="Return to Case" status="action" action="{!ReturntoCase}"/>  
+                   <!--<apex:commandButton value="Zuora Customer Account" style="margin-left:100px"  status="action" action="{!ZuoraCustomeraccount}"/>  -->
+                     <apex:commandbutton style="margin-left:50px"  onclick="window.open('{!Zuoraurl}');" value="Zuora Customer Account" />
+                </apex:outputPanel>
+                <!--<div style = "text-align:center;background-color: #F0FDFC;">      </div>  -->             
+                <!-- <div class="slds-scrollable_x" style="height: 300rem; width: 300rem;">-->
+                <apex:outputPanel style="text-align:center;" layout="block" id="pbId" rendered="{!!haserror}">        
+                    
+                    <table class = "slds-table slds-table--bordered slds-table--cell-buffer slds-table--striped ">
+                        <thead id="pbIdhead">
+                            <tr class="slds-text-title--caps">
+                                
+                                <th scope="col">                                    
+                                    <!--<apex:inputCheckbox id="selectAll" value="{!Selectall}" onchange="selectall();"/>-->
+                                    <apex:inputCheckbox id="selectAll" value="{!Selectall}" onchange="toggleSelectAll(this);"/>
+                                </th>
+                                <th scope="col">
+                                    <apex:selectList Id="stt" value="{!statusvalue}" multiselect="false" size="1" onchange="getthevalues();">
+                                        <apex:selectOptions value="{!status}"  Id="sttl" />               
+                                    </apex:selectList>
+                                </th>
+                                
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Asset">Asset                               
+                                    </div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Subscription Name"> Subscription Name                               
+                                    </div>
+                                </th>
+                                
+                                <th scope="col">
+                                    <apex:commandLink action="{!getthevalues}" value="Term Start date " reRender="pbId">
+                                        <apex:param name="orderByColumn" value="Zuora__TermStartDate__c" assignTo="{!orderByColumn}" />
+                                    </apex:commandLink>
+                                </th>
+                                <th scope="col">
+                                    <apex:commandLink action="{!getthevalues}" value="Term end date" reRender="pbId">
+                                        <apex:param name="orderByColumn" value="Zuora__TermEndDate__c" assignTo="{!orderByColumn}" />
+                                    </apex:commandLink>
+                                </th>
+                                <th scope="col">
+                                    <apex:commandLink action="{!getthevalues}" value="Asset end date" reRender="pbId">
+                                        <apex:param name="orderByColumn" value="Asset__r.End_Date__c" assignTo="{!orderByColumn}" />
+                                    </apex:commandLink>
+                                </th>
+                                 <th scope="col">
+                                    <div class="slds-truncate" title="Zuora Comment"> Zuora Status                              
+                                    </div>
+                                </th>
+                                <th scope="col">
+                                    <div class="slds-truncate" title="Zuora Comment"> Zuora Comment                              
+                                    </div>
+                                </th>
+                            </tr>                       
+                        </thead>
+                        <tbody>
+                            <apex:repeat value="{!wrapperRecordList}" var="c" id="rpttable">
+                                <tr>                                
+                                    <td>
+                                        <apex:inputCheckbox styleClass="contactCb"  value="{!c.isSelected}"/>
+                                    </td>
+                                    <td>
+                                        <apex:outputField value="{!c.Subscription.Zuora__Status__c}"> 
+                                            <apex:inlineEditSupport event="ondblClick" />
+                                        </apex:outputField>
+                                    </td>
+                                    <td>
+                                        <apex:outputField value="{!c.Subscription.Asset__c}"/> 
+                                    </td>
+                                    <td>
+                                        <apex:outputField value="{!c.Subscription.Name}"/> 
+                                    </td>
+                                    
+                                    <td>
+                                        <apex:outputField value="{!c.Subscription.Zuora__TermStartDate__c}"/> 
+                                    </td>
+                                    
+                                    <td>                                                                  
+                                        <apex:outputField value="{!c.Subscription.Zuora__TermEndDate__c }"/>
+                                    </td>
+                                    <td>                                                                  
+                                        <apex:outputField value="{!c.Subscription.Asset__r.End_Date__c }"/>
+                                    </td>
+                                    <td>
+                                        <apex:outputField value="{!c.Subscription.Status__c}">  
+                                            <apex:inlineEditSupport event="ondblClick" />
+                                        </apex:outputField> 
+                                        
+                                    </td>
+                                    <td>
+                                        <apex:outputField value="{!c.Subscription.Zuora_Comment__c}">  
+                                            <apex:inlineEditSupport event="ondblClick" />
+                                        </apex:outputField>  
+                                    </td>                                  
+                                </tr>
+                            </apex:repeat>
+                        </tbody>
+                    </table>
+                    
+                    <apex:selectList value="{!size}" multiselect="false" size="1" onchange="refreshPageSize();" >
+                        <apex:selectOptions value="{!paginationSizeOptions}"/>
+                    </apex:selectList>
+                    <apex:commandButton value="First" reRender="pbId" action="{!first}" disabled="{!NOT(hasPrevious)}" status="paginationStatus"/>
+                    <apex:commandButton value="Previous" rerender="pbId" action="{!previous}" disabled="{!NOT(hasPrevious)}" status="paginationStatus"/>&nbsp;Page {!pageNumber} of {!totalPages}&nbsp;
+                    <apex:commandButton value="Next" rerender="pbId" action="{!next}" disabled="{!NOT(hasNext)}" status="paginationStatus"/>
+                    <apex:commandButton value="Last" rerender="pbId" action="{!last}" disabled="{!NOT(hasNext)}" status="paginationStatus"/>
+                    <apex:actionStatus id="paginationStatus">
+                        <apex:facet name="start">
+                        </apex:facet>
+                    </apex:actionStatus>
+                </apex:outputPanel>  
+                <!-- </div>-->
+            </apex:form>
+        </body>
+    </div>
+    
+    <!--</html>-->
+    <apex:includeScript value="{!$Resource.JQuery}"/> 
+    <apex:includeScript value="{!$Resource.zqu__jquery_1_9_1}" /> 
+    <script type="text/javascript"> 
+    function newRecord() {
+        var url= '/apex/NewLeadRecord';             
+        window.open(url,'New Lead Record','width=1000,height=400, left=200,scrollbars=no,toolbar=no,menubar=no,resizable=no,status=no,location=no');   
+    }
+    function toggleSelectAll(checkbox){       
+        var $j = jQuery.noConflict();           
+        
+        if(checkbox.checked){                
+            $j( ".contactCb" ).prop('checked', true);                
+        }
+        else{               
+            $j( ".contactCb" ).prop('checked', false);                
+        }           
+    }
+    
+    </script>
+</apex:page>

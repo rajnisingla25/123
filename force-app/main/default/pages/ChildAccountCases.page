@@ -1,0 +1,41 @@
+<apex:page standardController="Account" extensions="ChildAccountCasesController" tabStyle="Account">
+
+  <style>
+    .noRowsHeader {
+        border: 1px solid rgb(221, 213, 213);
+        background-color: #f8f8f8;
+        background-image: none;
+        font-size: 0.9em;
+        font-weight: normal;
+        padding: 5px;
+    }
+  </style>
+
+  <apex:form >
+
+
+      <apex:outputPanel rendered="{!AND(NOT(noChildAccounts),len(filterCriteria) > 0)}" >
+        <c:Related_List p_objectName="Case"
+          p_fieldsCSV="AccountId,CaseNumber,Subject,Status,SubStatus__c,Priority,Last_Worked__c,Last_Worked_By__c,CreatedDate"
+          p_pageSize="5"
+          p_parentFieldId=""
+          p_parentFieldName=""
+          p_orderByFieldName="CaseNumber"
+          p_sortDirection="desc"
+          p_hideActionLinks="true"
+          p_filter="{!filterCriteria}"
+          p_title=""
+          p_showAsStandardRelatedList="false"
+          p_hideButtons="true"/>
+     </apex:outputPanel>
+
+    <apex:pageBlock rendered="{!IF(len(filterCriteria)==0,true,false)}" >
+        <div class="noRowsHeader">No Child Account's Cases Found !!</div>
+     </apex:pageBlock>
+
+     <apex:pageBlock rendered="{!noChildAccounts}" >
+        <div class="noRowsHeader">Current Account Has No Active Child Accounts !!</div>
+     </apex:pageBlock>
+
+    </apex:form>
+</apex:page>

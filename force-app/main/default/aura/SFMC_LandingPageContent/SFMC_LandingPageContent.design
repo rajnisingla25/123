@@ -1,0 +1,67 @@
+<design:component>
+    
+    <!--Content Attributes.-->
+    <design:attribute name="showVideoComponent" label="Show Video Component." />
+    <design:attribute name="showFormComponent"  label="Show Form Component."/>
+    <design:attribute name="replaceVideoWithImage"  label="Replace Video with image."/>
+    <design:attribute name="showPicklist"  label="Show picklist field in Form." default="false"/>
+    <design:attribute name="toggleContent" label="Toggle content components." />    
+    <design:attribute name="bannerImage"
+                      datasource = "splash-banner.jpg, splash-banner-2.jpg"
+                      label="Banner Image." />
+    <design:attribute name="bannerText"
+                      label="Banner Text." placeholder="Ex: 'For Home Buyers'"/> 
+    <design:attribute name="bannerTextFont"
+                      datasource = "cursive,fantasy,monospace,Arial,sans-serif,Helvetica,Lato"
+                      label="Banner Text Font." />
+    <design:attribute name="bannerTextAlignment"
+                      datasource = "left,right,center"
+                      label="Banner Alignment." />
+    <design:attribute name="bannerTextBottom"
+                      label="Bottom Banner Text." placeholder="Ex: 'Top Producer® CRM'"/> 
+    <design:attribute name="bannerTextBottomFont"
+                      datasource = "cursive,fantasy,monospace,Arial,sans-serif,Helvetica,Lato"
+                      label="Bottom Banner Text Font." />
+    <design:attribute name="bannerTextBottomAlignment"
+                      datasource = "left,right,center"
+                      label="Bottom Banner Alignment." />
+    <design:attribute name="imageText"
+                      label="Image Text."
+                      Placeholder="Enter any text to interact with your leads."/>
+    <design:attribute name="imageQuoteWriter"
+                      label="Image Quote Writer."
+                      Placeholder="Enter any text to interact with your leads."/>
+    <design:attribute name="imageTextColor"
+                      label="Image Text colour." placeholder="Ex: 'yellow' or '#FFFF00'" />
+    <design:attribute name="imageTextFontSize"
+                      datasource = "xx-small, x-small, small, medium, large, x-large, xx-large"
+                      label="Image Text font size." />
+    <design:attribute name="contentImageWidth"
+                      label="Content Image Size"
+                      placeholder="Resize Image size. Ex: 500"/>
+    
+    <design:attribute name="contentImage"
+                      label="Content Image."
+                      datasource = "contentImage1.jpg, contentImage2.jpg,contentImage3.jpg, xmas.jpg"/>
+    <!--Content Attributes.-->
+
+    
+
+    <!--Form Attributes.-->
+    <design:attribute name="formButtonText" label="Button Label." placeholder="Ex: 'REGISTER'"/>
+    <design:attribute name="formTitle" label="Form Title." placeholder="Ex: 'Register me'"/>
+    <design:attribute name="showBigWord" label="Show the big form title word."/>
+    <design:attribute name="firstWordInFormTitle" label="Big form title word." placeholder="Ex: 'YES!'"/>
+    <design:attribute name="cellNumber" label="Form Bottom Cell Number" placeholder="Ex: '1.833.387.1911'"/>
+
+    <!--Form Attributes.-->
+
+    <!--PopUp attributes-->
+    <design:attribute name="popUpImageTest" label="Pop-Up Image From Resources" datasource="popup1.png,popup2.jpg"/>
+    <design:attribute name="popUpImage" label="Pop-Up Image From External URL"/>
+    <design:attribute name="popUpImageLink" label="Pop-Up URL" placeholder="Ex. 'http://www.google.com'"/>
+    <design:attribute name="popUpImageWidth" label="Pop-Up Image Width" placeholder="Ex: '50'"/>
+    <design:attribute name="popupProductType" label="Pop-Up Product" datasource="ADVANTAGE,COBROKE,DOMAINNAME,FIVESTREET,LISTHUBPRO,LOCALEXPERT,OPCITYCORE,RSCONNECT,RSRESPOND,TOPCRM,TOPIDX,TOPMRKSNP,TOPWEB" default="ADVANTAGE"/>
+    <!--PopUp attributes-->
+
+</design:component>

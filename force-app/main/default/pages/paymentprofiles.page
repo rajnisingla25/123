@@ -1,0 +1,27 @@
+<apex:page standardController="Zuora__ZInvoice__c" extensions="InvoicePaymentProfilesController" sidebar="false">
+
+<apex:form >
+    <apex:pageblock id="PaymentProfiles">
+    <center><apex:commandButton title="One-off Payment" value="One-off Payment" action="{!BillingAccountManager}" onclick="this.form.target='_blank'" /></center>
+        <apex:pageblockTable value="{!payments}" var="a">
+        <apex:column headerValue="Action">
+                    <apex:outputLink value="{!$Page.Z_PaymentProfileManager}?id={!a.Account__c}" target="_blank">Edit</apex:outputLink>&nbsp;
+        </apex:column>
+           <apex:column headerValue="Name">
+          <apex:outputLink target="_blank" value="/{!a.Id}"><apex:outputText value="{!a.Name}" /></apex:outputLink>
+          </apex:column>    
+           <apex:column headerValue="Account">
+          <apex:outputLink target="_blank" value="/{!a.Account__c}">{!a.Account__r.name}</apex:outputLink>
+          </apex:column>        
+            <!--<apex:column value="{!a.Account__c}"/>-->            
+            <apex:column value="{!a.ExpirationDate__c}"/>
+            <apex:column value="{!a.CardholderName__c}"/>
+            <apex:column value="{!a.MaskNumber__c}"/>  
+            <apex:column value="{!a.CreditCardType__c}"/>
+            <apex:column value="{!a.Payment_Method_Type__c}"/>            
+            <apex:column value="{!a.SplitPercentage__c}"/>
+        </apex:pageblockTable>
+    </apex:pageblock>
+</apex:form>
+
+</apex:page>

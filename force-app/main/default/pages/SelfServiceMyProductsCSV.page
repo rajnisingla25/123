@@ -1,0 +1,8 @@
+<apex:page controller="SelfServiceProductsCSVController" cache="true" contentType="text/csv#{!csvFileName}.csv" language="en-US" readOnly="true">{!csvColumnNames}{!bmsHeader}
+<apex:repeat value="{!bmsAssetsWrapperList}" var="a">
+    {!a.product_name},{!a.Market},{!a.Quantity},{!a.Lead_Type},{!a.Product_Type},{!a.Contract_Term},{!a.Net_Price},{!a.Start_Date},{!a.End_Date},{!a.OrderNumber},{!a.AssetNumber},
+ </apex:repeat>{!bmsColumns}
+<apex:repeat value="{!assetsWrapperList}" var="a">
+    {!a.product_name},{!a.Market},{!a.Quantity},{!a.Lead_Type},{!a.Product_Type},{!a.Contract_Term},{!a.Net_Price},{!a.Start_Date},{!a.End_Date},{!a.OrderNumber},{!a.AssetNumber},
+ </apex:repeat>
+</apex:page>

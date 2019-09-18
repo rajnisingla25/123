@@ -1,0 +1,4 @@
+<apex:page standardController="Case" showHeader="false" extensions="Send_Custom_Email">
+    <apex:include pageName="Send_Customer_Info" />
+
+</apex:page>

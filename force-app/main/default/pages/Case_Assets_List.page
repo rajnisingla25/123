@@ -1,0 +1,37 @@
+<!--/********************************************************************************************
+*   @Author :       Srinidhi M 
+*   @Purpose:       To display Assets that are tied to a Case's Accounts
+*   @Class          Case_Assets_List
+*   @TestClass      Case_Assets_List_Test
+*   @JIRA           SEP-103
+*   @CreatedDate:   June 04th, 2018
+*********************************************************************************************
+   JIRA No      Date       Modified By         Description                                Tag No
+*********************************************************************************************
+
+*/-->
+<apex:page controller="Case_Assets_List">
+      <apex:form >
+        <apex:pageBlock >
+            <apex:pageBlockTable value="{!assets}" var="asset">
+
+                <apex:repeat value="{!$ObjectType.Asset.FieldSets.CaseAsset_Fields}" var="f">
+                  <apex:column >
+                       <apex:facet name="header">{!f.label}</apex:facet>
+                       <apex:outputLink value="/{!asset.Id}" target="_blank" rendered="{!f=='Name'}">{!asset.Name}</apex:outputLink> 
+                       <apex:outputField value="{!asset[f]}" rendered="{!f!='Name'}"/> 
+                  </apex:column></apex:repeat>
+            </apex:pageBlockTable><br/>
+           
+            <apex:commandButton value="First" rendered="{!setAsset.hasPrevious}"  action="{!setAsset.first}"/>
+            <apex:commandButton rendered="{!setAsset.hasPrevious}" value="Previous" action="{!setAsset.previous}"/>
+            <apex:outputText rendered="{!(setAsset.pageNumber * setAsset.pageSize) < setAsset.ResultSize}" value="{!setAsset.pageNumber * setAsset.pageSize} Of {!setAsset.ResultSize}"></apex:outputText>
+            <apex:outputText rendered="{!(setAsset.pageNumber * setAsset.pageSize) >= setAsset.ResultSize}" value="{!setAsset.ResultSize} of {!setAsset.ResultSize}"></apex:outputText>
+           
+            <apex:commandButton rendered="{!setAsset.hasNext}" value="Next" action="{!setAsset.next}"/>
+           
+            <apex:commandButton rendered="{!setAsset.hasNext}" value="Last" action="{!setAsset.last}"/>
+        </apex:pageBlock>
+    </apex:form>
+
+</apex:page>

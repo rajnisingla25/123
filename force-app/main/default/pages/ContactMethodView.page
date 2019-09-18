@@ -1,0 +1,303 @@
+<apex:page extensions="ContactMethodViewCTRL" id="cmViewPage" standardController="Contact" sidebar="false" showHeader="false" lightningStylesheets="true" > 
+    <head>
+        <apex:includeScript value="{!$Resource.JQuery}" />
+        <apex:includeScript value="{!URLFOR($Resource.jExpand, '/jExpand/jExpand.js')}" />
+        <apex:includeScript value="/support/console/45.0/integration.js"/>
+        
+        <script>
+            function refreshParent()
+            {
+                alert(isErrorFound);
+                if('{!isErrorFound}' == 'false')
+                    window.top.location = '/{!conID}';
+            }
+            function callMyFunc(){
+               document.getElementById('focusMe').click();
+               actionFuncToUpdate();    
+             }
+        </script>
+    </head>
+    <apex:pageMessages id="msgs"/>
+    <apex:form id="cmForm">
+    <apex:pageBlock id="readonly" rendered="{!if(Not(contains($Label.ContactMethod_ReadOnly_View,$Profile.Name)),False,True)}">     
+        <c:ContactMethodCreationComponent contactId="{!conID}" reRender="cmViewPage:cmForm:readonly:optInTable"/>
+        <apex:outputPanel layout="block" id="optInTable">
+            <apex:commandButton value="{!buttonName}" action="{!showHideTable}" reRender="myTable,optInTable" />            
+            <apex:pageBlockTable value="{!LstPhoneContactMethod}" var="con" >
+                
+               <apex:column value="{!con.Type__c}" width="10%"/>
+               <apex:column value="{!con.Type_Purpose__c}" width="20%"/>
+               <apex:column value="{!con.Primary_To_Contact__c}" width="15%"/>
+               <apex:column value="{!con.Phone__c}" width="20%"/>
+               <apex:column value="{!con.Phone_Extension__c}" width="20%"/>
+               <apex:column value="{!con.Active__c}" width="15%"/>
+               
+               <apex:column value="{!con.SMS_RDC_Promo_Pref__c}" width="15%" rendered="{!viewTable}"/>
+               
+           </apex:pageBlockTable>
+            <br/>
+            <apex:pageBlockTable value="{!LstEmailContactMethod}" var="con" id="myTable">
+               <apex:column value="{!con.Type__c}" width="10%"/>
+               <apex:column value="{!con.Type_Purpose__c}" width="20%"/>
+               <apex:column value="{!con.Primary_To_Contact__c}" width="15%"/>
+               <apex:column value="{!con.Email__c}" width="40%"/>
+               <apex:column value="{!con.Active__c}" width="15%"/>
+                
+                <apex:column value="{!con.RDC_Event_OptIn__c}" width="10%" rendered="{!viewTable}"/>
+                <apex:column value="{!con.RDC_Info_OptIn__c}" width="10%" rendered="{!viewTable}"/>
+                <apex:column value="{!con.RDC_Promo_OptIn__c}" width="10%" rendered="{!viewTable}"/>
+                <apex:column value="{!con.TP_Event_OptIn__c}" width="10%" rendered="{!viewTable}"/>
+                <apex:column value="{!con.TP_Info_OptIn__c}" width="10%" rendered="{!viewTable}"/>
+                <apex:column value="{!con.TP_Promo_OptIn__c}" width="10%" rendered="{!viewTable}"/>
+                
+           </apex:pageBlockTable>           
+           <br/>
+           <apex:pageBlockTable value="{!LstWebContactMethod}" var="con" >
+               <apex:column value="{!con.Type__c}" width="10%"/>
+               <apex:column value="{!con.Type_Purpose__c}" width="20%"/>
+               <apex:column width="55%">
+                   <apex:facet name="header">URL</apex:facet>
+                   <apex:outputField value="{!con.Value__c}"/>
+               </apex:column>
+               <apex:column value="{!con.Active__c}" width="15%"/>
+           </apex:pageBlockTable>
+        </apex:outputPanel>
+    </apex:pageBlock>
+    <apex:pageBlock id="Primaryaccess" rendered="{!if(Not(contains($Label.ContactMethod_PrimaryAccess_View,$Profile.Name)),False,True)}">     
+        <center>
+            <div id="hiddendiv" class="ding" style="width:0px;display:none;" />
+            <apex:commandButton value="Save" action="{!saveRecords}" id="saveButton" style="display:none" onclick="document.getElementById('hiddendiv').click();" reRender="scriptPanel,msgs" oncomplete="refreshFullAccess();"/>
+            <apex:commandButton value="Cancel" action="{!cancelAll}" id="cancelButton" style="display:none" />
+        </center>
+        <apex:outputText rendered="{!errorMessage != ''}" style="color:red;font-weight:bold;" value="{!errorMessage}"></apex:outputText>        
+        <apex:outputPanel id="scriptPanel">
+                <script>
+                    function refreshFullAccess() {
+                        if('{!isErrorFound}' == 'false'){
+                            //window.top.location = '/{!conID}';
+                            urlPhone = '/{!conID}';
+                            if (!sforce.console.isInConsole()) {
+                                window.parent.location.href = urlPhone;
+                            } else {
+                                sforce.console.getFocusedPrimaryTabId(showTabId);
+                            }
+                        }
+                    }
+                    var showTabId = function showTabId(result) {
+                        //alert('Tab ID: ' + result.id+' *** conID '+conID);
+                        urlPhone = '/{!conID}';
+                        sforce.console.openPrimaryTab(result.id, urlPhone, true);
+                    }; 
+                </script>
+            </apex:outputPanel>
+        <apex:outputPanel layout="block" id="optInTable">
+            <apex:commandButton value="{!buttonName}" action="{!showHideTable}" reRender="myTable,optInTable" />        
+            <c:ContactMethodCreationComponent contactId="{!conID}" reRender="cmViewPage:cmForm:Primaryaccess:optInTable"/>
+           <apex:pageBlockTable value="{!LstPhoneContactMethod}" var="con" >
+               <apex:column value="{!con.Type__c}" width="10%"/>
+               <apex:column value="{!con.Type_Purpose__c}" width="20%"/>
+               <apex:column width="15%" style="background-color:#DBEAEF">
+                    <apex:facet name="header">Primary To Contact</apex:facet>
+                   <apex:outputField value="{!con.Primary_To_Contact__c}">
+                        <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newcm"/>
+                   </apex:outputField>
+                </apex:column>
+                <apex:column value="{!con.Phone__c}" width="20%"/>
+               <apex:column value="{!con.Phone_Extension__c}" width="20%"/>               
+                <apex:column width="15%" style="background-color:#DBEAEF">
+                    <apex:facet name="header">Active</apex:facet>
+                   <apex:outputField value="{!con.Active__c}">
+                        <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newcm"/>
+                   </apex:outputField>
+                </apex:column>
+               
+               <apex:column value="{!con.SMS_RDC_Promo_Pref__c}" width="15%" rendered="{!viewTable}"/>
+               
+           </apex:pageBlockTable>
+           <br/>
+            <apex:pageBlockTable value="{!LstEmailContactMethod}" var="con" id="myTable">
+               <apex:column value="{!con.Type__c}" width="10%"/>
+               <apex:column value="{!con.Type_Purpose__c}" width="20%"/>
+               <apex:column width="15%" style="background-color:#DBEAEF">
+                    <apex:facet name="header">Primary To Contact</apex:facet>
+                   <apex:outputField value="{!con.Primary_To_Contact__c}">
+                        <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newcm"/>
+                   </apex:outputField>
+                </apex:column>
+                <apex:column value="{!con.Email__c}" width="40%"/>
+                <apex:column width="15%" style="background-color:#DBEAEF">
+                    <apex:facet name="header">Active</apex:facet>
+                   <apex:outputField value="{!con.Active__c}">
+                        <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newcm"/>
+                   </apex:outputField>
+                </apex:column>                
+                <apex:column value="{!con.RDC_Event_OptIn__c}" width="10%" rendered="{!viewTable}"/>
+                <apex:column value="{!con.RDC_Info_OptIn__c}" width="10%" rendered="{!viewTable}"/>
+                <apex:column value="{!con.RDC_Promo_OptIn__c}" width="10%" rendered="{!viewTable}"/>
+                <apex:column value="{!con.TP_Event_OptIn__c}" width="10%" rendered="{!viewTable}"/>
+                <apex:column value="{!con.TP_Info_OptIn__c}" width="10%" rendered="{!viewTable}"/>
+                <apex:column value="{!con.TP_Promo_OptIn__c}" width="10%" rendered="{!viewTable}"/>                
+           </apex:pageBlockTable>                
+           <br/>           
+           <apex:pageBlockTable value="{!LstWebContactMethod}" var="con" rendered="{!LstWebContactMethod.size>0}">
+               <apex:column value="{!con.Type__c}" width="10%"/>
+               <apex:column value="{!con.Type_Purpose__c}" width="20%"/>
+               <apex:column width="55%">
+                   <apex:facet name="header">URL</apex:facet>
+                   <apex:outputField value="{!con.Value__c}"/>
+                </apex:column>
+                <apex:column width="15%" style="background-color:#DBEAEF">
+                    <apex:facet name="header">Active</apex:facet>
+                   <apex:outputField value="{!con.Active__c}">
+                        <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newcm"/>
+                   </apex:outputField>
+                </apex:column>
+           </apex:pageBlockTable>
+        </apex:outputPanel>
+    </apex:pageBlock>
+       
+    <apex:pageBlock id="fullaccess" rendered="{!if(Not(contains($Label.ContactMethod_FullAccess_View,$Profile.Name)),False,True)}">     
+       <!-- <apex:actionFunction action="{!saveRecords}" name="actionFuncToUpdate" oncomplete="refreshParent();"/>
+        <input type="text" id="focusMe" style="display:none" />-->
+        <center>
+            <div id="hiddendiv" class="ding" style="width:0px;display:none;" />
+            <apex:commandButton value="Save" onclick="document.getElementById('hiddendiv').click();" action="{!saveRecords}" id="saveButton" style="display:none" reRender="scriptPanel,msgs" oncomplete="refreshFullAccess();"/>
+            <!--<apex:commandButton value="Save" onClick="callMyFunc();return false;" id="saveButton" style="display:none" reRender="fullaccess,optInTable,msgs"/>-->
+            <apex:commandButton value="Cancel" action="{!cancelAll}" id="cancelButton" style="display:none" reRender="msgs" oncomplete="refreshFullAccess();"/>           
+        </center>
+        <apex:outputText rendered="{!errorMessage != ''}" style="color:red;font-weight:bold;" value="{!errorMessage}"></apex:outputText>
+        <apex:messages />
+        <apex:outputPanel id="scriptPanel">
+            <script>
+            function refreshFullAccess() {
+                        if('{!isErrorFound}' == 'false'){
+                            //window.top.location = '/{!conID}';
+                            urlPhone = '/{!conID}';
+                            if (!sforce.console.isInConsole()) {
+                                window.parent.location.href = urlPhone;
+                            } else {
+                                sforce.console.getFocusedPrimaryTabId(showTabId);
+                            }
+                        }
+                    }
+                    var showTabId = function showTabId(result) {
+                        //alert('Tab ID: ' + result.id);
+                        urlPhone = '/{!conID}';
+                        sforce.console.openPrimaryTab(result.id, urlPhone, true);
+                    }; 
+            </script>
+        </apex:outputPanel>
+        <apex:outputPanel layout="block" id="optInTable">
+            <apex:commandButton value="{!buttonName}" action="{!showHideTable}" reRender="myTable,optInTable" />
+            <c:ContactMethodCreationComponent contactId="{!conID}"/> <!--reRender="cmViewPage:cmForm:fullaccess:optInTable" refresh=""/>-->
+            <apex:pageBlockTable value="{!LstPhoneContactMethod}" var="con" rendered="{!LstPhoneContactMethod.size > 0}">
+               <apex:column width="10%" style="background-color:#DBEAEF">
+                   <apex:facet name="header">Type</apex:facet>
+                   <apex:outputField value="{!con.Type__c}">
+                        <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newcm"/>
+                   </apex:outputField>
+                </apex:column>
+               <apex:column width="20%" style="background-color:#DBEAEF">
+                   <apex:facet name="header">Category</apex:facet>
+                   <apex:outputField value="{!con.Type_Purpose__c}">
+                        <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newcm"/>
+                   </apex:outputField>
+                </apex:column>
+                <apex:column width="15%" style="background-color:#DBEAEF">
+                    <apex:facet name="header">Primary To Contact</apex:facet>
+                   <apex:outputField value="{!con.Primary_To_Contact__c}">
+                        <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newcm"/>
+                   </apex:outputField>
+                </apex:column>
+                <apex:column width="20%" style="background-color:#DBEAEF">
+                    <apex:facet name="header">Phone</apex:facet>
+                   <apex:outputField value="{!con.Phone__c}">
+                        <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newcm"/>
+                   </apex:outputField>
+                </apex:column>
+               <apex:column width="20%" style="background-color:#DBEAEF">
+                    <apex:facet name="header">Phone Extension</apex:facet>
+                   <apex:outputField value="{!con.Phone_Extension__c}">
+                        <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newcm"/>
+                   </apex:outputField>
+                </apex:column>
+                <apex:column width="15%" style="background-color:#DBEAEF">
+                    <apex:facet name="header">Active</apex:facet>
+                   <apex:outputField value="{!con.Active__c}">
+                        <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newcm"/>
+                   </apex:outputField>
+                </apex:column>
+               
+               <apex:column value="{!con.SMS_RDC_Promo_Pref__c}" width="15%" rendered="{!viewTable}"/>
+               
+           </apex:pageBlockTable>
+           <br/>
+            <apex:pageBlockTable value="{!LstEmailContactMethod}" var="con" id="myTable" rendered="{!LstEmailContactMethod.size > 0}">
+               <apex:column width="10%" style="background-color:#DBEAEF">
+                   <apex:facet name="header">Type</apex:facet>
+                   <apex:outputField value="{!con.Type__c}">
+                        <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newcm"/>
+                   </apex:outputField>
+                </apex:column>
+               <apex:column width="20%" style="background-color:#DBEAEF">
+                   <apex:facet name="header">Category</apex:facet>
+                   <apex:outputField value="{!con.Type_Purpose__c}">
+                        <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newcm"/>
+                   </apex:outputField>
+                </apex:column>
+                <apex:column width="15%" style="background-color:#DBEAEF">
+                    <apex:facet name="header">Primary To Contact</apex:facet>
+                   <apex:outputField value="{!con.Primary_To_Contact__c}">
+                        <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newcm"/>
+                   </apex:outputField>
+                </apex:column>
+                <apex:column width="40%" style="background-color:#DBEAEF">
+                    <apex:facet name="header">Email</apex:facet>
+                   <apex:outputField value="{!con.Email__c}">
+                        <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newcm"/>
+                   </apex:outputField>
+                </apex:column>
+                <apex:column width="15%" style="background-color:#DBEAEF">
+                    <apex:facet name="header">Active</apex:facet>
+                   <apex:outputField value="{!con.Active__c}">
+                        <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newcm"/>
+                   </apex:outputField>
+                </apex:column>                
+                <apex:column value="{!con.RDC_Event_OptIn__c}" width="1%" rendered="{!viewTable}"/>
+                <apex:column value="{!con.RDC_Info_OptIn__c}" width="1%" rendered="{!viewTable}"/>
+                <apex:column value="{!con.RDC_Promo_OptIn__c}" width="1%" rendered="{!viewTable}"/>
+                <apex:column value="{!con.TP_Event_OptIn__c}" width="1%" rendered="{!viewTable}"/>
+                <apex:column value="{!con.TP_Info_OptIn__c}" width="1%" rendered="{!viewTable}"/>
+                <apex:column value="{!con.TP_Promo_OptIn__c}" width="1%" rendered="{!viewTable}"/>                
+           </apex:pageBlockTable>                
+           <br/>           
+           <apex:pageBlockTable value="{!LstWebContactMethod}" var="con" rendered="{!LstWebContactMethod.size>0}">
+               <apex:column width="10%" style="background-color:#DBEAEF">
+                   <apex:facet name="header">Type</apex:facet>
+                   <apex:outputField value="{!con.Type__c}">
+                        <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newcm"/>
+                   </apex:outputField>
+                </apex:column>
+               <apex:column width="20%" style="background-color:#DBEAEF">
+                   <apex:facet name="header">Category</apex:facet>
+                   <apex:outputField value="{!con.Type_Purpose__c}">
+                        <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newcm"/>
+                   </apex:outputField>
+                </apex:column>
+                <apex:column width="55%" style="background-color:#DBEAEF">
+                    <apex:facet name="header">URL</apex:facet>
+                   <apex:outputField value="{!con.Value__c}">
+                        <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newcm"/>
+                   </apex:outputField>
+                </apex:column>
+                <apex:column width="15%" style="background-color:#DBEAEF">
+                    <apex:facet name="header">Active</apex:facet>
+                   <apex:outputField value="{!con.Active__c}">
+                        <apex:inlineEditSupport event="ondblClick" showOnEdit="saveButton,cancelButton" hideOnEdit="newcm"/>
+                   </apex:outputField>
+                </apex:column>
+           </apex:pageBlockTable>
+        </apex:outputPanel>
+    </apex:pageBlock>
+       </apex:form>
+</apex:page>

@@ -1,0 +1,152 @@
+/* Footer */
+/* footer styles - new 03072014 */
+
+.THIS .footlight-wrap {
+    background-color: #004b8d;
+    padding: 30px 0 30px;
+		}
+
+.THIS .footer-cent {
+     color: #ffffff;
+     }
+
+.THIS #footer .footer-cent a {
+      color: #ffffff;
+     }
+
+.THIS .footer-cent h5 {
+    color: #ffffff;
+    margin: 0 0 27px;
+    padding-top: 25px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight:700;
+}
+
+.THIS .footer-cent ul li {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 6px;
+}
+
+.THIS .footer-cent ul li a:before {
+    content: none;
+    cursor: pointer;
+    color: #ffffff;
+}
+
+.THIS .footer-cent ul li a:hover {
+    color: gray;
+    text-decoration: underline;
+    color: #ffffff;
+    
+}
+
+.THIS #footer .footer-cent a {
+    color: #ffffff;
+}
+
+.THIS .footer-style3 .footer-social a {
+    font-size: 16px;
+    width: 30px;
+    height: 30px;
+    background: #6fc04a;
+    line-height: 30px;
+
+}
+    
+.THIS .footer-style3 .footer-social {
+    float: left;
+} 
+    
+.THIS .footer-bottom .copyright {
+    float: left;
+    text-transform: none;
+    color: #fff;
+    font-size: 10px;
+}
+
+.THIS .side-widget p {
+    margin: 0 0 20px;
+}
+    
+.THIS   #footer a {
+   -webkit-transition: all .4s ease;
+    transition: all .4s ease;
+}
+.THIS .sm-group img {
+    height: 35px;
+}
+
+
+.THIS .sm-icon img {
+    height: 30px;
+    width: 30px;
+	}
+
+
+.THIS #footer img {
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle;
+	border: 0;
+}
+
+.THIS .footer-social .list-inline>li {
+    padding-right: 0px;
+    padding-left: 0px;
+}
+.THIS .footer_branding{
+    padding-bottom: 20px;
+    padding-top: 15px;
+}
+.THIS #footer .logo {
+    float: none;
+    vertical-align: top;
+    display: inline-block;
+    padding-bottom: 10px;
+}
+
+
+.THIS .copyright {
+	color: #ffffff;
+    font-size: 10px;
+    line-height: 12px;
+}
+		
+
+    
+    
+@media only screen and (max-width:767px) {
+.THIS .footer-mobile
+    {
+      display:block;  
+     }
+
+.THIS .copyright {
+	    text-align: center;
+}
+
+    .THIS .footer-custom {
+        width: 50%;
+        float: left;
+    }
+   .THIS .footer-style3 .footer-social {
+        float: none;
+    }
+   .THIS  .footer-custom-top {
+        text-align: center;
+     }    
+     
+   .THIS  .footer-cent {
+         display:none;
+     }
+      
+   .THIS #footer a:hover {
+    color: #337ab7;
+	}
+
+	.THIS  .footer-cent {
+     display: block !important;
+    }    
+}

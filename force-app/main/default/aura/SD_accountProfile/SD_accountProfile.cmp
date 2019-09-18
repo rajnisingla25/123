@@ -1,0 +1,73 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" 
+                access="global" controller="ServiceDashboardController"> 
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="lstAcc" type="Account"/>
+    <aura:attribute name="lstAccRel" type="Account_Relationship__c"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>  
+    <div class="slds-box slds-m-bottom_large">
+        <div class="slds-page-header slds-card ">
+            <div class="slds-media">
+                <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-standard-account" title="Description of icon when needed">
+                        <lightning:icon iconName="action:new_account" size="x-small" alternativeText="Indicates Account"/>
+                    </span>
+                </div>
+                <div class="slds-media__body">                    
+                    <h1 class="slds-page-header__title slds-truncate slds-align-middle" title="Account Profile">Account Profile</h1>
+                </div>
+            </div>
+            <br/>
+            <div class="slds-card__body">
+                <table class="slds-table slds-table_bordered">
+                    <thead class="font-size-heading-medium">
+                        <tr>
+                            <th style="font-weight: bold;font-size: 15px;">Name</th>
+                            <th style="font-weight: bold;font-size: 15px;">Phone</th>
+                            <th style="font-weight: bold;font-size: 15px;">Email</th>
+                            <th style="font-weight: bold;font-size: 15px;">Billing Status</th>
+                            <th style="font-weight: bold;font-size: 15px;">Account Owner, Extension</th>
+                        </tr>
+                    </thead>
+                    <tbody class="font-size-text-medium">
+                        <!--  <aura:iteration items="{!v.lstAcc}" var="acc">-->
+                        <tr>
+                            <td style="font-size: 15px; white-space:normal; ">{!v.lstAcc.Name}</td>
+                            <td style="font-size: 15px;"><a href="{!'tel:'+v.lstAcc.Phone}">{!v.lstAcc.Phone}</a></td>
+                            <td style="font-size: 15px; white-space:normal; ">{!v.lstAcc.Email_Address__c}</td>
+                            <td style="font-size: 15px; white-space:normal; "><ui:outputRichText class="slds-text-longform" value="{!v.lstAcc.Billing_Status__c}"/></td>
+                            <td style="font-size: 15px; white-space:normal; ">{!v.lstAcc.Owner.Name}, {!v.lstAcc.Owner.Extension}</td>
+                        </tr>
+                        <!-- </aura:iteration>-->
+                    </tbody>
+                    <tr><th></th></tr>
+                    <thead class="font-size-heading-medium font-weight-bold">
+                        <tr>
+                            <th style="font-weight: bold;font-size: 15px;">Office/Broker Name</th>
+                            <th style="font-weight: bold;font-size: 15px;">MLS Set ID</th>
+                            <th style="font-weight: bold;font-size: 15px;">SSO Email</th>
+                            <th style="font-weight: bold;font-size: 15px;">Advertiser ID</th>
+                            <th style="font-weight: bold;font-size: 15px;">Account Type</th>
+                        </tr>
+                    </thead >
+                    <tbody class="font-size-text-medium">
+                        <tr>
+                            <td style="font-size: 15px; white-space:normal; "> <a id="{!v.lstAccRel.Parent_Account__c}" onclick="{!c.linkRedirect}" >{!v.lstAccRel.Parent_Account__r.Name}</a></td>
+                            <td style="font-size: 15px;">{!v.lstAcc.MLS_Set_Id__c}</td>
+                            <td style="font-size: 15px; white-space:normal; ">{!v.lstAcc.SSO_Email__c}</td>
+                            <td style="font-size: 15px;">{!v.lstAcc.Advertiserid__c}</td>
+                            <td style="font-size: 15px; padding:0"><aura:if isTrue="{!v.lstAcc.Rating__c == null}" ><div style="padding:.5rem"> {!v.lstAcc.Type} </div></aura:if> <aura:if isTrue="{!v.lstAcc.Rating__c != null}" > <div style="background-color: orange; padding:.5rem; display:inline-block">{!v.lstAcc.Type}, {!v.lstAcc.Rating__c}</div></aura:if> </td>
+                        </tr>
+                    </tbody>
+                    
+                </table>
+               
+                <div style="margin-top:15px; padding:.5rem">
+                	<p>
+                    	<div style="font-weight: bold;font-size: 15px;">Impersonation link: </div>
+                        <span style="font-size: 15px;"><a href="{!v.lstAcc.ImpersonationLink__c}" target="__blank" >{!v.lstAcc.ImpersonationLink__c}</a></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</aura:component>

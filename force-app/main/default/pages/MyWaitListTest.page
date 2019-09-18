@@ -1,0 +1,40 @@
+<apex:page controller="MyWaitListTest" sidebar="false">
+    <apex:sectionHeader title="WaitList"/>
+    <apex:form >
+    <apex:pageBlock title="Search">
+        <apex:selectList size="1">
+            <apex:selectOptions value="{! searchOpt1}" />
+        </apex:selectList>    
+        <apex:inputText value="{!searchstring}" id="theSearchstring" maxlength="50" size="20"/> &nbsp;
+        <apex:selectList size="1">
+            <apex:selectOptions value="{! searchOpt2}" />
+        </apex:selectList>
+        <apex:commandButton value="Go" id="submitButton" style="width:30" reRender="theSearchResults" />
+    </apex:pageBlock>  
+    <apex:pageBlock >
+        <apex:pageBlockTable value="{!Indexes}" var="i">
+            <apex:column headerValue="Note/Staus" value="{!Field1[i]}" />
+            <apex:column headerValue="SID" value="{!Field2[i]}" />
+            <apex:column headerValue="Name" value="{!Field3[i]}" />
+            <apex:column headerValue="Phone" value="{!Field4[i]}" />
+            <apex:column headerValue="Asigned" value="{!Field5[i]}" />
+            <apex:column headerValue="Entered By" value="{!Field6[i]}" />
+            <apex:column headerValue="BOB" value="{!Field7[i]}" />
+            <apex:column headerValue="WaitListStatus" value="{!Field8[i]}" />
+            <apex:column headerValue="WaitListStatus Change" value="{!Field9[i]}" />
+            <apex:column headerValue="Last Call Status" value="{!Field10[i]}" />
+            <apex:column headerValue="Last Worked Date" value="{!Field11[i]}" />
+            <apex:column headerValue="Market" value="{!Field12[i]}" />
+            <apex:column headerValue="Slot Size" value="{!Field13[i]}" />
+            <apex:column headerValue="State" value="{!Field14[i]}" />
+            <apex:column headerValue="City" value="{!Field15[i]}" />
+            <apex:column headerValue="County" value="{!Field16[i]}" />
+            <apex:column headerValue="Requested Pre Auth" value="{!Field17[i]}" />
+            <apex:column headerValue="Verified Pre Auth" value="{!Field18[i]}" />
+            <apex:column headerValue="Pre Auth Until" value="{!Field19[i]}" />
+            <apex:column headerValue="Fast" value="{!Field20[i]}" />
+            <apex:column headerValue="Flex" value="{!Field15[i]}" />
+        </apex:pageBlockTable>
+    </apex:pageBlock>
+    </apex:form>
+</apex:page>

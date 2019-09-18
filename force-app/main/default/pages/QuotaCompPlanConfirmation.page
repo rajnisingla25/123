@@ -1,0 +1,131 @@
+<apex:page standardController="Quota__c" recordSetVar="quotas" extensions="Commissions_QuotaCompPlanController">
+    <apex:form id="theForm">
+        <apex:actionFunction name="aSelectItem" action="{!doSelectQuotaRecord}" rerender="pgblck">
+            <apex:param name="quotaRecord" value="" assignTo="{!quotaRecordId}"/>
+        </apex:actionFunction>
+        
+        <!-- handle deselected item -->
+        <apex:actionFunction name="aDeselectItem" action="{!doDeselectQuotaRecord}" rerender="pgblck">
+            <apex:param name="quotaRecord" value="" assignTo="{!quotaRecordId}"/>
+        </apex:actionFunction> 
+        
+        <apex:actionFunction name="isSelectAllItem" action="{!isSelectedAll}"  rerender="pgblck">
+            <apex:param name="isSelectedALL" value="" assignTo="{!selectedAllQuotas}"/>
+        </apex:actionFunction>
+        
+        <apex:pageBlock id="pgblck" rendered="{!hasAccessToSend}">
+            <apex:sectionHeader title="Quota" subtitle="Quota DocuSign Confirmation" />
+            <apex:pageMessages ></apex:pageMessages>
+            <apex:pageBlockTable value="{!wrapperRecordList}" var="q" id="pbtQuotaComp">
+                <apex:column headerValue="Select" >
+                    <apex:facet name="header">
+                        <apex:inputCheckbox onclick="selectallCheckboxes(this)" value="{!selectedAllQuotas}"/>
+                    </apex:facet>
+                    <apex:inputCheckbox value="{!q.isSelected}" id="inputId" onclick="doCheckboxChange(this,'{!q.quotaRecord.Id}')" styleClass="cbStyleClass"/>
+                </apex:column>
+                <apex:column headerValue="Quota For">
+                    <apex:outputField value="{!q.quotaRecord.User__c}"/>
+                </apex:column>
+                <apex:column headerValue="Quota Number">
+                    <apex:outputField value="{!q.quotaRecord.Name}"/>
+                </apex:column>
+                <apex:column headerValue="User Team">
+                    <apex:outputField value="{!q.quotaRecord.User_Team__c}"/>
+                </apex:column>
+                <apex:column headerValue="Period">
+                    <apex:outputField value="{!q.quotaRecord.Period_Name__c}"/>
+                </apex:column>
+                <apex:column headerValue="Quota New">
+                    <apex:outputField value="{!q.quotaRecord.Target_Amount__c}"/>
+                </apex:column>
+                <apex:column headerValue="Quota Renew">
+                    <apex:outputField value="{!q.quotaRecord.Target_Amount_Renewal__c}"/>
+                </apex:column>
+                <apex:column headerValue="Collection Agent Target Amount">
+                    <apex:outputField value="{!q.quotaRecord.Collection_Target_Amount__c}"/>
+                </apex:column>
+                <apex:column headerValue="Docusign Sent Time">
+                    <apex:outputLabel value="{!q.quotaRecord.DocuSign_Status__r[0].dsfs__Sent_Date_Time__c}" rendered="{!IF(q.quotaRecord.DocuSign_Status__r.size == 1,true,false)}" />
+                </apex:column>
+                <apex:column headerValue="Docusign Envelope Status">
+                    <apex:outputField value="{!q.quotaRecord.DocuSign_Status__r[0].dsfs__Envelope_Status__c}" rendered="{!IF(q.quotaRecord.DocuSign_Status__r.size == 1,true,false)}"/>
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:outputPanel >
+                <br/>
+                <!-- count of selected quotas -->
+                <apex:outputLabel value="{!selectedCount} Quotas Selected" />
+            </apex:outputPanel>
+            
+            <apex:outputPanel style="text-align:center;" layout="block">
+                <apex:commandButton value="First" reRender="theForm,pbtQuotaComp" oncomplete="loadSorting();"  accesskey="" action="{!first}" disabled="{!NOT(hasPrevious)}" status="paginationStatus"/>
+                <apex:commandButton value="Previous" rerender="theForm,pbtQuotaComp" oncomplete="loadSorting();" action="{!previous}" disabled="{!NOT(hasPrevious)}" status="paginationStatus"/>&nbsp;Page {!pageNumber} of {!totalPages}&nbsp;
+                <apex:commandButton value="Next" rerender="theForm,pbtQuotaComp" oncomplete="loadSorting();" action="{!next}" disabled="{!NOT(hasNext)}" status="paginationStatus"/>
+                <apex:commandButton value="Last" rerender="theForm,pbtQuotaComp" oncomplete="loadSorting();" action="{!last}" disabled="{!NOT(hasNext)}" status="paginationStatus"/>
+                &nbsp;&nbsp;
+                <apex:actionStatus id="paginationStatus">  
+                    <apex:facet name="start">
+                        Please wait...
+                    </apex:facet>
+                </apex:actionStatus>
+            </apex:outputPanel>
+            <apex:outputText >
+                {!(stdController.pageNumber * size)+1-size}-{!IF((stdController.pageNumber * size)>noOfRecords, noOfRecords,(stdController.pageNumber * size))} of {!noOfRecords}
+            </apex:outputText><br/><br/>
+            <apex:outputPanel >
+                <apex:commandButton value="Confirm" action="{!confirmCompensationPlan}" onclick="confirmCompensation();return true;" />&nbsp;&nbsp;&nbsp;&nbsp;
+                <apex:commandButton value="Select More / Go back to previous page" action="{!goBackandSelectMore}"/>
+            </apex:outputPanel>
+            
+        </apex:pageBlock>
+        <apex:pageBlock id="pgNotAccess" rendered="{!!hasAccessToSend}" >
+            <apex:sectionHeader title="Quota" subtitle="Quota DocuSign Confirmation" />
+            <apex:outputPanel >
+                <br/>
+                <h1>
+                    You do not have access to perform this action. Please contact your system administrator for any queries.
+                </h1><br/>
+            </apex:outputPanel><br/><br/>
+        </apex:pageBlock>
+    </apex:form>
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"/>
+    <apex:includeScript value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"/>
+    <apex:includeScript value="https://code.jquery.com/jquery-1.11.3.min.js"/>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/ui-lightness/jquery-ui.css" type="text/css" media="all" />
+    
+    <apex:includeScript value="{!$Resource.tablesorter}"/>
+    
+    <script type="text/javascript">
+    function confirmCompensation(){
+        alert("The Compensation Plans will be sent to the selected Quotas in few minutes.");
+    }
+    
+    $j = jQuery.noConflict();    
+    $j(document).ready(function () {
+        $j("[id$=pbtQuotaComp]").tablesorter();
+    });  
+    
+    function loadSorting(){
+        debugger;
+        $j("[id$=pbtQuotaComp]").tablesorter();
+    }
+    
+    
+    //function to handle checkbox selection
+    function doCheckboxChange(cb,itemId)
+    {
+        if(cb.checked==true){
+            aSelectItem(itemId);
+        }
+        else{
+            aDeselectItem(itemId);
+        }        
+    }    
+    function selectallCheckboxes(obj){        
+        $(".cbStyleClass").each(function(index, item){
+            item.checked = obj.checked;
+        });
+        isSelectAllItem(obj.checked);
+    }  
+    </script>
+</apex:page>

@@ -1,0 +1,19 @@
+<apex:page controller="AccountsViewallCTRL" contentType="application/vnd.ms-excel#{!accName}.xls" cache="true">
+<apex:pageBlock >
+
+        <apex:pageblocktable value="{!accRelationList}" var="a">
+            <apex:column value="{!a.Child_Account__c}"/>                   
+            <apex:column value="{!a.Child_Account__r.Type}"/>   
+            <apex:column value="{!a.Child_Account__r.MLS_Set_Id__c}"/>                 
+            <apex:column value="{!a.Child_Account__r.Phone}"/>                   
+            <apex:column value="{!a.Child_Account__r.Email_Address__c}"/>                   
+            <apex:column value="{!a.Relationship_Type__c}"/>                   
+            <apex:column value="{!a.Child_Account__r.BillingStreet}"/>                   
+            <apex:column value="{!a.Child_Account__r.BillingCity}"/>                   
+            <apex:column value="{!a.Child_Account__r.BillingState}"/>                   
+            <apex:column value="{!a.Child_Account__r.BillingPostalCode}"/>                   
+            <apex:column value="{!a.Child_Account__r.BillingCountry}"/>  
+            <apex:column value="{!a.Is_Active__c}"/>                                                                                                                                                                            
+       </apex:pageblocktable>
+</apex:pageBlock>       
+</apex:page>

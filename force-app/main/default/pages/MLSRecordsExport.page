@@ -1,0 +1,4 @@
+<apex:page controller="realtorRosterSearchController" cache="true" contentType="text/csv#mlsRecords.csv" language="en-US" readOnly="true">"Office Name","Agent Name","MLS Set ID","MLS State","MLS Name","Primary MLS Set","MLS Account Name","MLS Phone Number","Account Type","Account Sub Type","Account Advertiser Id","HLC","CLC","MLS Set Party Id"
+<apex:repeat value="{!mlsList}" var="mls">
+"{!mls.Office_Name__c}","{!mls.Agent_Name__c}","{!mls.Name}","{!mls.MLS_State__c}","{!mls.MLS_Area_Source_Reference__c}","{!mls.Primary_MLS_Set__c}","{!mls.MLS_Account_Name__c}","{!mls.MLS_Phone__c}","{!mls.MLS_Set_Type__c}","{!mls.Account_Sub_Type__c}","{!mls.Account_Advertiser_id__c}","{!mls.HLC__c}","{!mls.CLC__c}","{!mls.MLS_Set_Party_ID__c}" </apex:repeat>
+</apex:page>

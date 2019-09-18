@@ -1,0 +1,769 @@
+$(document).ready(function(){
+var appendVal=$('#example').html();
+Date.prototype.toDateInputValue = (function() {
+    var local = new Date(this);
+    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+    return local.toJSON().slice(0,10);
+});
+    $( ".datePicker" ).datepicker();
+   $('.datePicker').val(new Date().toDateInputValue());
+	$("#btnExport").click(function (e) {
+	
+    window.open('data:text/csv,' + appendVal);
+    e.preventDefault();
+	});
+	/* Remove the row */
+	var deleteRow='null';
+	$('.remove').bind('click',function(){
+		 deleteRow=pTable.row( $('.dataTables_scrollBody .remove').eq($(this).index('.DTFC_RightBodyWrapper .remove')).parents('tr') )
+		$('.deleteConfirm').show();
+		
+	});
+	$('.closeDelete').bind('click',function(){
+		$('.deleteConfirm').hide();
+	});
+	$('.deleteVal-button').bind('click',function(){
+		if(deleteRow.child.isShown())
+		preRow='null';
+		deleteRow.remove().draw(false);
+		$('.deleteConfirm').hide();
+	});
+	$('a.remove').click(function(e)
+	{
+		e.preventDefault();
+	});
+	/*    $('#example').on( 'click', 'a.remove', function (e) {
+        editor
+            .title( 'Delete row' )
+            .message( 'Are you sure you wish to delete this row?' )
+            .buttons( { "label": "Delete", "fn": function () { editor.submit() } } )
+            .remove( $(this).closest('tr') );
+    } );*/
+
+ // Helper function to get 'now' as an ISO date string
+function CopyFieldsValuesfromDataTable(o , singlerec)
+{
+
+//alert('singlerec is ' + singlerec ); 
+
+try
+{
+
+
+            if (singlerec === true)
+            {
+                    mToken =o.data.token;
+                    //mToken  ='EBD87D51-04F9-4081-9876-AD20A1637E6F';
+                    
+                    mMarket =o.data.market;
+                    mAccountId =o.data.party_id; 
+                    mMarketType =o.data.geotype;
+                    mDegree = o.data.degree;
+                    mType = o.data.type;
+                    
+                    mStatus =o.data.status;
+                    
+                    try
+                    {
+                    
+                    console.log('mStatus before encoding'+ mStatus);
+                    //mStatus = encodeURIComponent(mStatus);
+                    console.log('mStatus after encoding'+ mStatus);
+                    
+                    }
+                    catch (e)
+                    {
+                    mStatus = o.data.status;
+                    
+                    }
+                    
+                    mQtyInterested = o.data.qtyinterested;
+                    mSlotSize = o.data.slotsize;
+                    mLeadRoutingType = o.data.leadroutingtype;
+                    mUpdatedby='xyz';
+                    mMarketSpend ='1000';
+                    mnotes = o.data.notes;
+                    mqtyinterested = o.data.qtyinterested ;
+            }
+                        else // batch records for Tools which is a different object
+                        {
+                        
+                                    //alert (o.token);
+                                    
+                                    mToken =o.token;
+                                    //mToken  ='EBD87D51-04F9-4081-9876-AD20A1637E6F';
+                                    
+                                    mMarket =o.market;
+                                    mAccountId =o.party_id;
+                                    mMarketType =o.geotype;
+                                    mDegree = o.degree;
+                                    
+                                    mStatus =o.status ;
+                                    mQtyInterested = o.qtyinterested;
+                                    mSlotSize = o.slotsize;
+                                    mLeadRoutingType = o.leadroutingtype;
+                                    mUpdatedby='xyz';
+                                    mMarketSpend ='1000';
+                                    mnotes = o.notes;
+                                    mqtyinterested = o.qtyinterested ;
+                                    mType = o.type;
+                                    
+                        
+                        }
+
+        if (moperation!=='Delete')
+        {
+                 moperation ='Update';
+        }
+
+    console.log(mStatus + mLeadRoutingType + mSlotSize);
+
+            //alert(mToken +'Arun ' + mLeadRoutingType + mDegree) ;
+
+} // End of Try Block 
+catch (e)
+{
+
+            console.log('Exception Occurred in CopyFieldValuesfromDataTable' + e.message);
+
+}
+
+
+return true;
+}
+
+
+    editor = new $.fn.dataTable.Editor( {
+      
+       
+        table: "#TblAccountWLList",
+     
+        fields: [
+        
+            
+             {
+             
+                label: "Created Date:",
+                name: "createddate" 
+               
+            },
+       
+       
+             {
+             
+                label: "Type:",
+                name: "type" ,
+                 type:  "select",
+                options: [
+                    { label: "Hot", value: "Hot" } ,
+                    { label: "Warm", value: "Warm" }
+                ]
+               
+                
+                
+            }
+            ,
+            
+        
+       
+          {
+             
+                label: "product:",
+                name: "product" 
+               
+            },
+        
+          {
+             
+                label: "geo:",
+                name: "geo" 
+               
+            },
+            
+              {
+             
+                label: "Inventory Available Flex:",
+                name: "invtotalavailableflex" 
+               
+            }
+        
+          ,
+          
+           {
+             
+                label: "Inventory Available Fast:",
+                name: "invtotalavailablefast" 
+               
+            }
+        
+        ,
+        
+         
+          
+            
+             {
+                label: "Lead Routing:",
+                name: "leadroutingtype"
+            }
+              ,
+             {
+                label: "Slot Size:",
+                name: "slotsize"
+            }
+            ,
+            
+               
+             {
+                label: "Qty Interested:",
+                name: "qtyinterested"
+            }
+         
+            ,
+                {
+             
+                label: "Status:",
+                name: "status" 
+                
+            }
+            ,
+            
+             
+            {
+                label: "Notes:",
+                name: "notes"
+            }
+            
+            ,
+         
+          {
+                label: "PreSales  Available Flex:",
+                name: "presalestotalavailableflex"
+            }
+         
+         ,
+            
+           {
+                label: "PreSales  Available Fast:",
+                name: "presalestotalavailablefast"
+            }
+         
+         ,     
+            
+             {
+                label: "PreSales  Available Date:",
+                name: "presalesavailabledate"
+            }
+         
+            ,
+        
+          {
+             
+                label: "marketspend:",
+                name: "marketspend" 
+               
+            },
+            
+                {
+             
+                label: "utilspend:",
+                name: "utilspend" 
+               
+            },
+            
+                {
+             
+                label: "remnantspend:",
+                name: "remnantspend" 
+               
+            },
+            
+               
+          {
+             
+                label: "Assigned AE:",
+                name: "assignedae" 
+               
+            },
+            
+               {
+             
+                label: "Created by:",
+                name: "createdby" 
+               
+            },
+        
+        
+        
+            
+             {
+             
+                label: "geotype:",
+                name: "geotype" 
+               
+            },
+        
+             
+             {
+                label: "rank:",
+                name: "rank"
+            },
+              
+           {
+             
+                label: "token:",
+                name: "token" 
+               
+            },
+            {
+             
+                label: "Party Id:",
+                name: "party_id" 
+               
+            } 
+           
+           
+        ] 
+        
+        ,
+        
+         ajax: function ( method, url, data, successCallback, errorCallback ) {
+         
+         //alert('Arun reached CopyFields');
+         
+         console.log('Arun - Entered Function Success Callback');
+         
+           if (  mDataChanged ===true)
+           
+           {
+         
+         if ( moperation !== 'Delete')
+         
+         {
+           CopyFieldsValuesfromDataTable(data , true );
+          }
+           
+           console.log(mSlotSize + mStatus + moperation + mToken + 'mArray' + mArray);
+         mDegree='Warm 1';
+         
+        if (mArray === false ) 
+         {
+         
+         console.log(' Arun MArray is False ');
+         
+         
+         
+         
+         console.log(' Arun Calling SOA Function here ');
+     
+      if ((mType === 'Hot') && moperation ==='Delete')
+         {
+           alert('Waitlist of type "Hot" cannot be deleted ');
+       
+            
+            return successCallback({"id" :"1"}  );
+         }
+          
+     
+         
+         
+           callSOA(mToken , mDegree , mSlotSize , mAccountId , mLeadRoutingType
+            //,mStatus,
+            ,mType,
+           
+           mnotes ,mqtyinterested ,moperation  );
+           console.log(' Arun Called SOA Function here ');
+           
+           
+          } 
+         else
+         {
+           
+           console.log('Else mArray is True' + mArray);
+               for (var j =0 ;j <  mArrayofWaitlist.length ; j++) {
+     
+                                    
+        //                          alert('Call SOA' + obj.token);
+                                    
+                                    console.log('Array' +  mArrayofWaitlist[j].token ); 
+                                    
+                                    CopyFieldsValuesfromDataTable(mArrayofWaitlist[j], false ); // pass batch records 
+                                    
+                              if ((mType === 'Hot') && moperation ==='Delete')
+                             {
+                                    alert('Waitlist of type "Hot" cannot be deleted ');
+                                    return  successCallback( {"id": 1} );
+                            }
+                            
+                            
+                                    console.log(mArrayofWaitlist[j]);           
+                               callSOA(mToken , 'Warm 1' , mSlotSize , mAccountId , mLeadRoutingType
+                                          //,mStatus,
+                                             ,mType,
+                                         
+                                         mnotes ,mqtyinterested ,moperation );              
+                                                
+                                                
+                                                 }  
+           
+           
+                   mArray = false ;
+                  mArrayinWaitlist = null; //setting to null
+    
+          } 
+          
+          // The main parameters to send for update is Slotsize , leadroutingtype  ,status , notes , degree , qtyinterested 
+          
+          
+          console.log('Called SOA function ' +mToken + mStatus + mDegree);
+           //  alert('Arun reached CopyFields and later reached after SOA call');
+           }
+           
+         return  successCallback( {"id": 1} );
+         
+         }
+        
+    } );
+   pTable= $('#example').DataTable({
+        "sScrollX": "100%",
+        "sScrollXInner": "320%",
+        "bScrollCollapse": true,
+
+	     "jQueryUI":   false ,
+		 
+	 dom: 'T<"clear">lfrtip',
+	 
+	 
+          tableTools: {
+           sRowSelect:   'os',
+            sRowSelector: 'td:first-child',
+			 sSwfPath: "{!URLFOR($Resource.TableTools,'TableTools-2.2.4/swf/copy_csv_xls_pdf.swf')}",
+             aButtons: [
+                 { sExtends: "editor_create", editor: editor },
+                {
+                    sExtends: "collection",
+                    sButtonText: "Export",
+                    sButtonClass: "save-collection",
+                    "aButtons": [
+									{
+										"sExtends": "copy",
+										"mColumns": [1, 2, 3, 4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26]
+									},
+									{
+										"sExtends": "csv",
+										"mColumns": [1, 2, 3, 4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26]
+									},
+									{
+										"sExtends": "xls",
+										"mColumns": [1, 2, 3, 4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26]
+									},
+									{
+										"sExtends": "pdf",
+										"mColumns": [1, 2, 3, 4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26]
+									},
+									
+									
+									
+								]
+                },
+                {
+					"sExtends": "print",
+					"mColumns": [1, 2, 3, 4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26]
+				},
+				  {
+					"sExtends": "select_all",
+				},
+				{
+				  	"sExtends": "select_none",
+				}
+				
+            ]
+        }
+
+    });
+
+function format ( d ) {
+    return '<div class="slider" ><table cellpadding="5" cellspacing="0" border="0" >'+
+        '<tr>'+
+            '<td>Full name:</td>'+
+            '<td>Brillio</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td>Extension number:</td>'+
+            '<td>800</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td>Extra info:</td>'+
+            '<td>And any further details here (images etc)...</td>'+
+        '</tr>'+
+    '</table></div>';
+}
+var preRow='null';
+var preTr='null'
+ /*$('#example tbody').on('click', 'td.details-control', function () {
+        var trs = $(this).parents('tr');
+        var tr = $('.dataTables_scrollBody .details-control').eq($(this).index('.DTFC_LeftBodyWrapper .details-control')).parents('tr');
+        var row = pTable.row( tr );
+		var dummyRow=pTable.row(trs);
+
+      //  if ( row.child.isShown() ) {
+		 if(preRow!='null')
+		 {
+
+			if ( row.child.isShown() ) 
+			var block=true;
+
+			 $('div.slider', preRow.child()).slideUp(200,function () {
+					preRow.child.hide();
+					preTr.removeClass('shown');
+					// fc.fnUpdate();
+					 $('.DTFC_LeftBodyLiner .no-padding .details-control').remove();
+					 $('.DTFC_RightBodyLiner .no-padding .remove').remove();
+					
+				
+			if(block)
+			return;
+
+			
+    //    }
+      //  else {
+
+			row.child( format(), 'no-padding' ).show();
+			$('div.slider', row.child()).slideDown(100,function () {
+				 tr.addClass('shown');
+			//	 fc.fnUpdate();
+				 $('.DTFC_LeftBodyLiner .no-padding .details-control').remove();
+				 $('.DTFC_RightBodyLiner .no-padding .remove').remove();
+				// fc.fnUpdate();
+				 preRow=row;
+				 preTr=tr;
+			});
+			});
+		 }
+		 else
+		 {
+		
+			row.child( format(), 'no-padding' ).show();
+			$('div.slider', row.child()).slideDown(100,function () {
+				 tr.addClass('shown');
+				// fc.fnRedrawLayout();
+				 $('.DTFC_LeftBodyLiner .no-padding .details-control').remove();
+				 $('.DTFC_RightBodyLiner .no-padding .remove').remove();
+				 preRow=row;
+				 preTr=tr;
+			}); 
+			 
+		 }
+      //  }
+
+    } );*/
+/*	fc=new $.fn.dataTable.FixedColumns( pTable, {
+
+           leftColumns: 1,
+            rightColumns: 1 
+ 
+} ); */
+var tableTools = new $.fn.dataTable.TableTools(pTable, {
+
+			sRowSelect:   'os',
+            sRowSelector: 'td:first-child',
+               "buttons": ["copy",
+                                  "csv",
+                                  "xls",
+                                  "pdf",{ "type": "print", "buttonText": "Print me!" },
+                                  { "type": "select_all", "buttonText": "All" },
+								  { "type": "select_none", "buttonText": "None" }
+								  ],
+                                  "sSwfPath": "//cdn.datatables.net/tabletools/2.2.2/swf/copy_csv_xls_pdf.swf" });
+$(tableTools.fnContainer()).prependTo('#mytable_wrapper');
+    // Add event listener for opening and closing details
+    /*$('#example tbody').on('click', 'td.details-control', function () {
+        var tr = $(this).closest('tr');
+        var row = pTable.row( tr );
+ 
+        if ( row.child.isShown() ) {
+            // This row is already open - close it
+            $('div.slider', row.child()).slideUp( function () {
+                row.child.hide();
+                tr.removeClass('shown');
+
+            } );
+        }
+        else {
+            // Open this row
+            row.child( format(row.data()), 'no-padding' ).show();
+            tr.addClass('shown');
+ 
+            $('div.slider', row.child()).slideDown(function(){
+
+			
+			});
+        }
+    } );*/
+
+
+ 
+    $('#example tbody').on( 'click', 'tr', function () {
+        if ( $(this).hasClass('selected') ) {
+            $(this).removeClass('selected');
+			$('.new-button').addClass('disabledEdit')
+        }
+        else {
+            pTable.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+			$('.new-button').removeClass('disabledEdit')
+        }
+
+	//	fc.fnUpdate();
+
+    });
+ 
+    $('#button').click( function () {
+        table.row('.selected').remove().draw( false );
+    } );
+/*var tableTools = new $.fn.dataTable.TableTools(pTable, {
+               "buttons": ["copy",
+                                  "csv",
+                                  "xls",
+                                  "pdf",{ "type": "print", "buttonText": "Print me!" }, 
+								  { "type": "select_all", "buttonText": "All" },
+								  { "type": "select_none", "buttonText": "None" }
+								  ],
+                                  "sSwfPath": "//cdn.datatables.net/tabletools/2.2.2/swf/copy_csv_xls_pdf.swf" });*/
+          // $(tableTools.fnContainer()).prependTo('#mytable_wrapper');
+//Alignment Offset
+		   $('#ToolTables_example_1').prepend('<img src="/resource/1441893625000/export_image">');
+		   $('#ToolTables_example_1').addClass('button-color button align-btn');
+		   $('#ToolTables_example_6').prepend('<img src="/resource/1441893653000/print_image">');
+		   $('#ToolTables_example_6').addClass('button-color button align-btn');
+		   $('#ToolTables_example_2').prepend('<img class="exportImg" src="/resource/1441893653000/inventory_copyImg">');
+		   $('#ToolTables_example_3').prepend('<img class="exportImg" src="/resource/1441893653000/Inventory_CSVImg">');
+		   $('#ToolTables_example_4').prepend('<img class="exportImg" src="/resource/1441893653000/Inventory_ExcelImg">');
+		   $('#ToolTables_example_5').prepend('<img class="exportImg" src="/resource/1441893653000/Inventory_PDFImg">');
+		 //  $('#ToolTables_example_7').prepend('<img class="exportImg" src="/resource/1441893653000/inventory_copyImg">');
+	      // $('#ToolTables_example_8').prepend('<img class="exportImg" src="/resource/1441893653000/inventory_copyImg">');
+	          $('#ToolTables_example_7').addClass('button-color button align-btn');
+	        $('#ToolTables_example_8').addClass('button-color button align-btn');
+	
+		   
+$('.pannel-heading').bind('click',function(){
+	if($('.pannel-heading .minus').length==0)
+	{
+		$('.pannel-heading span').addClass('minus');
+		$('.pannel-heading span').removeClass('plus');
+		$('.pannel-body	').slideDown();
+	
+	}
+	else{
+		$('.pannel-heading span').removeClass('minus');
+		$('.pannel-heading span').addClass('plus');	
+		$('.pannel-body	').slideUp();
+	}
+	
+
+});
+$('body').bind('click',function(e){
+	var container=$( "#tableHeadVal table")
+	var container1=$('#example')
+	var container2=$('.new-button')
+	var container3=$('#newPagePop')
+    if (!container.is(e.target)&& container.has(e.target).length === 0) 
+    {
+		$( "#tableHeadVal" ).hide(500);
+	}
+	if ((!container1.is(e.target)&& container1.has(e.target).length === 0)&&(!container2.is(e.target)&& container2.has(e.target).length === 0)&&(!container3.is(e.target)&& container3.has(e.target).length === 0)) 
+	{
+		
+	         $('#example tbody tr').removeClass('selected');
+			 $('.new-button').addClass('disabledEdit')
+			// fc.fnUpdate();
+	}
+});
+$('#close').bind('click',function(){
+
+	$('#newPagePop').hide();
+});
+$('.new-button').bind('click',function(){
+
+	if($(this).hasClass('disabledEdit'))
+	{
+	return;
+	}
+
+	var dataAraay=pTable.row('.selected').data();
+console.log(dataAraay);
+	$('.validation').each(function(count){
+	$(this).val(dataAraay[count+1])
+	});
+	$('#newPagePop').show();
+/*	$('.validation').css('border','solid 1px grey')
+$('.validation').each(function(){
+	if(($(this).attr('type')=="number")||($(this).attr('type')=="text"))
+	{
+		$(this).val("")
+	}
+});
+ $('.datePicker').val(new Date().toDateInputValue());*/
+ 
+ 
+ 
+});
+$('.show-hide').bind('click',function(e){
+$( "#tableHeadVal" ).toggle(500);
+e.stopPropagation();
+});
+$('.check-hide').bind('click',function(){
+	/*if($(this).is(':checked')){
+		alert($(this).index('.check-hide'))
+	}*/
+	var column = pTable.column($(this).index('.check-hide'));
+	column.visible( ! column.visible() );
+});
+
+/*Validation value*/
+$('.create-button').bind('click',function(){
+
+/*var newRowVal=[];
+var nullVal=0;
+	$('.validation').each(function(){
+		newRowVal.push($(this).val());
+		if($(this).val()=="")
+		{
+			if($(this).parent().has( ".no-valid" ).length==1)
+			return true;
+			$(this).css('border','solid 1px red');	
+			nullVal++;
+		}
+		else	
+		$(this).css('border','solid 1px green');
+	});
+	if(nullVal==0)
+	{
+		$('.validationAlert').stop().fadeOut();
+		console.log(newRowVal);
+		pTable.row.add(newRowVal).draw( false );
+		$('#newPagePop').hide();
+		$('.rowCreateAlert').stop().fadeIn(1000,function(){
+			$('.rowCreateAlert').fadeOut(1000);
+		});
+	}
+	else{
+		
+		$('.validationAlert').stop().fadeIn('1000');
+	}*/
+	var Updatedarray=[]
+	Ptable=$('#example').dataTable();
+	$('.validation').each(function(countVal){
+		Updatedarray.push();
+		Ptable.fnUpdate($(this).val(),pTable.row('.selected').index(),countVal+1,false);
+		console.log(pTable.row('.selected').index(),$(this).val(),false);
+	});
+
+	$('#newPagePop').hide();
+});
+
+$('.unlock-button').bind('click',function(){
+	pTable.row('.selected').remove().draw( false );
+});
+
+
+});

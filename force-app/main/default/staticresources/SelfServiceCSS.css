@@ -1,0 +1,1002 @@
+.black-bg {
+	background-color: black;
+}
+
+.text-gray-darker {
+    color: #333 !important;
+}
+
+.app-top-menu {
+	background-color: #fff;
+	margin-top: 72px;
+}
+
+.ui-loader h1 {
+    display: none;
+}
+
+.professional-text {
+	color: #fff;
+}
+
+.top-menu-section{
+	padding-top: 20px;
+	padding-bottom: 20px;
+	width: 780px;
+}
+
+.top-menu-section a span {
+	font-weight: 400;
+    height: auto;
+    color: #212121;
+    padding: 16px 8px;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+#error-div {
+    color: red;
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+a {
+	cursor:pointer;
+	color: #364BC4 !important;
+}
+
+.text-white {
+	color:white;
+}
+
+.nomargin {
+    margin: 0 !important;
+}
+
+.nopadding {
+   padding: 0 !important;
+}
+
+.normal-weight {
+    font-weight: 300;
+}
+
+@media (min-width: 992PX) {
+   .main-container {
+    	width: 1024px;
+    	display: block;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 0;
+        min-height: 0px;
+        padding-bottom: 0px;
+    }
+}
+
+@media (max-width: 992PX) {
+   .main-container {
+    	width: 100%;
+    	margin-top: 0;
+        padding-bottom: 0px;
+        min-height: 0px;
+    }
+}
+
+@media (max-width: 767PX) {
+   .main-container {
+    	width: 100%;
+    	margin-top: 78px;
+    	min-height: 0px;
+    }
+}
+
+.title-section {
+	background-color: inherit;
+}
+
+.border-bottom-grey {
+	border-bottom: 1px solid #E5E5E5;
+}
+
+/* START: My product page CSS */
+.product-summary {
+	padding: 8px;
+}
+
+.product-center {
+	line-height: 46px;
+}
+
+#product-details-div .panel-title, #product-summary-div .panel-title {
+	font-size: 18px;
+}
+
+.pagination-count {
+	display: inline-block;
+    padding-left: 0;
+    margin: 25px 0;
+}
+
+ .custom-pagination ul li a {
+       padding-top: 0;
+       padding-bottom: 0;
+ }
+ 
+ .pagination>.disabled>span, .pagination>.disabled>span:hover, .pagination>.disabled>span:focus, .pagination>.disabled>a, .pagination>.disabled>a:hover, .pagination>.disabled>a:focus{
+     color: #999 !important;
+ }
+ 
+ #bms-product-details-div #bms-summary-div .panel {
+     margin-bottom: 0px;
+ }
+ 
+ #bms-summary-div{
+     margin-bottom: 25px;
+ }
+ 
+ .slots-help-text {
+     padding-left: 16px;
+     padding-right: 16px;
+     font-size: 14px;
+     font-weight: 400;
+     padding-top: 8px;
+     padding-bottom: 8px;
+ }
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+}
+.d-flex {
+    display: -ms-flexbox!important;
+    display: flex!important;
+}
+
+.mar-md-vh{
+     margin-top:25vh;
+    margin-bottom: 25vh;
+}
+.justify-content-center {
+    -ms-flex-pack: center!important;
+    justify-content: center!important;
+}
+
+.empty-product-div {
+    max-width: 600px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.section-anchor {
+    position: relative;
+}
+
+.section-anchor .anchor {
+  position: absolute;
+  left: 0px;
+  top: -78px;
+}
+.sorting-option-div {
+    max-width: 250px;
+}
+
+ @media (max-width: 768px) {
+    .custom-pagination {
+        text-align: center;
+    }
+        
+    .products-container .title-section-header {
+        margin-top: 10 px;
+    }
+    
+    .mb-half-wd {
+        max-width: 50%;
+    }
+    .bk-word {
+        word-break: break-word;
+    }
+    .sorting-option-div {
+        max-width: 400px;
+    }
+}
+
+.my-products-body .tooltip-inner{
+    color: #191919;
+    background-color: white;
+    border-radius: 2px;
+}
+
+.my-products-body .tooltip.in {
+    opacity: 1;
+}
+    
+    
+/* End: My product page CSS */
+
+sup {
+	font-size: 50%;
+}
+
+/* LCM-292 Statements & Invoices Begin */
+.filter-option {
+	padding-bottom: 0px;
+}
+.selectpicker {
+    display: none;
+}
+.statements-details-container {
+    min-height: calc(100vh - 244px);
+    padding-bottom: 0;
+}
+#annotation-layer { 
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    opacity: 0.2;
+    line-height: 1.0;
+}
+
+#annotation-layer > section {
+    color: transparent;
+    position: absolute;
+    white-space: pre;
+    cursor: text;
+    transform-origin: 0% 0%;
+}
+
+#annotation-layer > .linkAnnotation > a {
+    position: absolute;
+    font-size: 1em;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+#canvas-div {
+  position: relative;
+}
+/* LCM-292 Statements & Invoices End */
+
+/* LCM-294 LCM-349 Header component Begin */
+#avatar-menu-wrapper {
+    height: 315.31px;	
+    width: 300px;	
+    background-color: #FFFFFF;	
+    box-shadow: 0 1px 1px 0 rgba(0,0,0,0.16), 0 1px 3px 0 rgba(0,0,0,0.24);
+}
+.line {
+    height: 39px;
+	width: 1px;
+	border: 1px solid #979797;
+	opacity: 0.5;
+	background-color: #D8D8D8;
+	margin-top: 13px;
+}
+.products-billing {
+	margin-left: 24px;
+    margin-top: 20px;
+	opacity: 0.9;
+	color: #FAF5F5;
+	font-size: 20px;
+	line-height: 32px;
+}
+@media (max-width: 767px) {
+   .products-billing {
+       margin-left: 0px;
+   } 
+}
+.caret-container {
+  height: 40px;
+  line-height: 38px;
+  font-weight: bold;
+  width: 22px;
+  text-align: center;
+}
+.has-borders.caret-container {
+  border: 1px solid #99999c;
+  border-left: none;
+}
+.caret-container .pi-angle-down {
+    margin-top: 13px;
+}
+.modal-backdrop.in {
+    opacity: 0;
+}
+.container-fluid {
+    padding-bottom: 10px;
+}
+
+.my-products-body .products-container{
+    min-height: calc(100vh - 244px);
+    padding-bottom: 0;
+}
+.dashboard-link {
+    height: 74px;
+    color: #666 !important;
+}
+.support-link {
+    height: 48px;
+    color: #666 !important;
+}
+#logout {
+    color: #666 !important;
+}
+.firstName {
+    font-weight: bold;
+}
+.list-inline li {
+    width: 100%;
+}
+/* LCM-294 LCM-349 Header component End */
+
+/* LCM-414 Contact Detail Panel Start*/
+@media (min-width: 992px) {
+    .contact-container {
+        width: 1024px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
+
+@media (max-width: 992PX) {
+   .contact-container {
+    	width: 100%;
+    	margin-top: 0;
+    	margin-left: auto;
+        margin-right: auto;
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+}
+
+@media (max-width: 767PX) {
+   .contact-container {
+    	width: 100%;
+    }
+}
+
+@media (min-width: 767px) and (max-width: 992px) {
+    .contact-container {
+    	width: 100%;
+    	padding-left: 20px;
+        padding-right: 20px;
+    }
+}
+/* LCM-414 Contact Detail Panel End */
+
+/* LCM-294 Footer component Begin */
+#footer-links-primary {
+    margin-left: 11.41%;
+}
+.footer-wrapper-copyright {
+    padding-top: 0.1%;
+    padding-right: 0.7%;
+    padding-bottom: 0.1%;
+}
+.dashboard-link-footer {
+    text-transform: capitalize !important;
+    color: #fff !important;
+}
+#footer-copyright a {
+    color: #c4c4c4 !important;
+}
+/* LCM-294 Footer component End */
+
+/* LCM-293 Credit Card Begin */
+.credit-cards-container {
+    min-height: calc(100vh - 244px);
+    padding-bottom: 0;
+}
+@media (max-width: 767px) {
+    .title-header-xs{
+        display: inline-block !important;
+    }
+}
+.details-title {	
+    height: 26px;	
+    width: 976px;	
+    opacity: 0.9;	
+    color: #000000;	
+    font-family: Roboto;	
+    font-size: 18px;	
+    line-height: 26px;
+}
+.detail-fields {
+    font-weight: 500;
+}
+.card-img {
+    height: 28px;
+    width: 46.73px;
+    border-radius: 4px;
+}
+.default-payment {
+    font-weight: bold;
+}
+.pi-check {
+    margin-left: 13px;
+    color: #50D358;
+    height: 14px;
+    width: 14px;
+    color: #50D358;
+    font-family: FontAwesome;
+    font-size: 14px;
+    line-height: 14px;
+}
+.enlarge-primary {
+    height: 40px;
+    width: 91px;
+}
+.rectangle {
+    /*height: 70px;*/
+    border: 1px solid #D8D8D8;
+    border-radius: 4px;
+    margin-bottom: 16px;
+}
+.card-img {
+    border-radius: 4px;
+}
+.credit-card-type-number {  
+    height: 24px;   
+    width: 60%;   
+    opacity: 0.8;   
+    color: #000000;   
+    font-size: 16px;    
+    font-weight: bold;   
+    line-height: 24px;
+    margin-left: 89px;
+    margin-top: 12px;
+    margin-right: 253px;
+}
+.credit-card-expiry {
+    height: 22px;
+    width: 60%; /* LCM-396 */
+    color: #000000;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 22px;
+    margin-left: 89px;
+    margin-top: 0px;
+}
+.credit-card-detail {
+    height: 24px;
+    width: 49px;
+    color: #364BC4;
+    font-size: 16px;
+    line-height: 24px;
+    text-align: right;
+    margin-top: 12px;
+    margin-right: 16px;
+}
+.lead-performance {
+    height: 40px;
+    width: 206px;
+    opacity: 0.9;
+    color: #000000;
+    font-size: 25px;
+    line-height: 40px;
+}
+.info {     
+    margin-top: 0px;
+    padding-top: 28px;
+    margin-left: 0px;
+    color: #000000;
+}
+#add-card {
+    height: 100%;
+}
+.text-red {
+    color: #D92228;
+}
+.border-blue {
+    border: 1px solid #5769CC;
+}
+/* Styles from prosoft-ui-min.css*/
+.credit-card .panel-body {
+    padding: 0
+}
+
+.credit-card .content {
+    -webkit-column-count: 2;
+    -moz-column-count: 2;
+    column-count: 2;
+    -webkit-column-gap: 40px;
+    -moz-column-gap: 40px;
+    column-gap: 40px;
+    -webkit-column-rule: 1px solid #ccc;
+    -moz-column-rule: 1px solid #ccc;
+    column-rule: 1px solid #ccc;
+    -webkit-column-fill: auto;
+    column-fill: auto
+}
+
+.credit-card .form-element {
+    display: block;
+    position: relative
+}
+
+.credit-card .form-element>input {
+    display: block;
+    width: calc(100% - 20px);
+    height: 36px;
+    font-size: 14px;
+    line-height: 1.6;
+    background-image: none;
+    transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s
+}
+
+.credit-card .text-input {
+    width: 100%;
+}
+.credit-card input:focus,
+.credit-card select:focus {
+    outline: 0;
+    box-shadow: inset 0 -1px 0 #999
+}
+
+.credit-card input {
+    background-color: transparent;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -webkit-box-shadow: inset 0 -1px 0 #e5e5e5;
+    box-shadow: inset 0 -1px 0 #e5e5e5;
+    font-weight: 300;
+    color: #000
+}
+
+.credit-card .form-group>label {
+    display: inline-block;
+    max-width: 100%;
+    margin-top: 4px;
+    font-weight: 400
+}
+
+.credit-card #form-element-creditCardType {
+    padding: 16px
+}
+
+.credit-card #form-label-creditCardType {
+    font-size: 20px;
+    margin-bottom: 20px
+}
+
+.credit-card select {
+    background-color: transparent;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    overflow: hidden;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -webkit-box-shadow: inset 0 -1px 0 #e5e5e5;
+    box-shadow: inset 0 -1px 0 #e5e5e5;
+    height: 36px;
+    padding: 0 4px;
+    font-size: 14px
+}
+
+@media (max-width: 767PX) {
+    .credit-card #form-element-creditCardType {
+        background-color: #FFFFFF !important;
+        padding-left: 0px !important;
+    }
+    .credit-card-number {
+        font-weight: 500 !important;
+    }
+}
+
+@media (min-width: 768PX) {
+    .billing-address-h3 {
+        margin-top: -168px !important;
+    }
+}
+/*LCM-429*/
+.credit-cards-body #simplemodal-container{
+    background-color: initial;
+}
+
+.credit-cards-body #simplemodal-container #basic-model-content #loading{
+   display: none;
+}
+.credit-cards-body #simplemodal-container #basic-model-content div{
+   display: none;
+}
+
+.credit-cards-body #simplemodal-container #basic-model-content{
+    margin: 16px auto;
+    width: 40px;
+    height: 40px;
+    -webkit-animation: spin 1.3s infinite linear;
+    -o-animation: spin 1.3s infinite linear;
+    animation: spin 1.3s infinite linear;
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+.credit-cards-body #simplemodal-container #basic-model-content:after{
+    content: "";
+    display: block;
+    width: 40px;
+    height: 40px;
+    background-size: 40px 40px;
+}
+
+.credit-cards-body #simplemodal-container .simplemodal-wrap{
+    overflow:visible !important;
+}
+.credit-card #form-element-creditCardExpirationMonth {
+    display: inline-flex;
+}
+.credit-card #form-element-creditCardCountry:after,
+.credit-card #form-element-creditCardExpirationMonth:after,
+.credit-card #form-element-creditCardExpirationMonth:before {
+    content: "\0276F";
+    color: #999;
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    transform: rotate(90deg);
+    top: 40%;
+    bottom: 50%;
+    /*margin-left: -8px;*/
+    margin-left: 85px;
+    pointer-events: none
+    padding: 0 60px;
+}
+
+.credit-card #form-element-creditCardExpirationMonth:before {
+    /*left: 105px*/
+    left: 138px;
+    
+}
+
+.credit-card #form-element-creditCardExpirationMonth>.select-input {
+    direction: rtl;
+    text-align: right;
+    padding-right: 20px;
+    padding: 0px 40px;
+}
+
+.credit-card input.hint {
+    color: #999
+}
+
+.credit-card .form-element input {
+    padding: 0 4px
+}
+
+.credit-card .form-element-date {
+    width: 94px;
+    height: 25px;
+    text-align: right
+}
+
+.credit-card label {
+    display: block;
+    vertical-align: middle;
+    width: 100%;
+    padding-left: 6px
+}
+
+.credit-card #form-group-creditCardExpirationMonth {
+    display: inline-block;
+    width: 100%;
+    vertical-align: top
+}
+
+.credit-card #form-group-cardSecurityCode {
+    display: inline-block;
+    vertical-align: top;
+    padding-left: 40px
+}
+
+.credit-card #form-element-cardSecurityCode {
+    min-width: 0;
+    width: auto
+}
+
+.credit-card .form {
+    padding: 20px 16px;
+    margin: 0 auto
+}
+
+.credit-card .invalid {
+    border: 1px solid #ED1C24
+}
+
+.credit-card .form img {
+    vertical-align: middle
+}
+
+.credit-card .form-group {
+    margin-bottom: 16px;
+    display: block;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+    break-inside: avoid
+}
+
+.credit-card .form-element {
+    display: block;
+    border-left: 0;
+    border-left-color: rgba(255, 255, 255, 0);
+    min-width: 270px
+}
+
+.credit-card .form-element.required {
+    border-left: 0;
+    vertical-align: middle;
+    height: 36px;
+    padding: 0 4px
+}
+
+.credit-card .form-element input {
+    padding: 0 4px
+}
+
+.credit-card .form-element-date {
+    width: 94px;
+    height: 25px;
+    text-align: right
+}
+
+.credit-card .form-group .error {
+    margin: 4px 0 5px 140px
+}
+
+.credit-card .popup {
+    background-color: transparent
+}
+
+.credit-card .popup .form {
+    margin-top: 1px;
+    padding: 0;
+    width: 100%;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px
+}
+
+.credit-card .popup .form h2 {
+    padding: 10px 17px;
+    margin: 0 auto;
+    margin-top: 1px;
+    background-color: #EDEDED;
+    border-bottom: 1px solid #d5d5d5
+}
+
+.credit-card .whitespace {
+    padding: 15px 17px;
+    border-bottom: 0px
+}
+
+.credit-card .popup .form h3 {
+    margin-top: 0;
+    border-bottom: 0px
+}
+
+.credit-card .popup .form .content {
+    margin: 0 auto
+}
+
+.credit-card .popup .form #btn-submit {
+    margin-right: 200px
+}
+
+.credit-card a {
+    text-decoration: none
+}
+
+.credit-card a.modalCloseImg {
+    background: url(Images/hpm/icon-close.gif) no-repeat;
+    width: 7px;
+    height: 7px;
+    display: inline;
+    z-index: 3200;
+    position: absolute;
+    top: 13px;
+    right: 13px;
+    cursor: pointer
+}
+
+.credit-card .required-desc {
+    display: none
+}
+
+.credit-card .spacer {
+    padding: 2px
+}
+
+.credit-card #btn-submit {
+    float: right;
+    margin-right: 150px
+}
+
+.credit-card .error {
+    font-size: 12px;
+    color: #D46959;
+    margin: -8px 0 5px 0
+}
+
+.credit-card .error-field {
+    font-size: 12px;
+    color: #D46959;
+    padding: 4px 0 5px 5px;
+    margin-top: 0px;
+    margin-left: 0px;
+    width: calc(100% - 20px)
+}
+
+.credit-card .date-separator {
+    font-size: 20px;
+    padding: auto 10px
+}
+
+.credit-card .bottom {
+    margin-top: 15px;
+    overflow: hidden
+}
+
+.credit-card .form .desc {
+    margin-bottom: 15px;
+    margin-top: 5px
+}
+
+.credit-card .popup .form .desc {
+    margin-left: 25px;
+    margin-right: 37px
+}
+
+.credit-card .popup .form #btn-submit {
+    margin-right: 27px
+}
+
+.credit-card .tooltip-text {
+    font-size: 12px
+}
+
+.credit-card a.tooltip {
+    display: none
+}
+
+.credit-card .image-cvv {
+    cursor: pointer;
+    top: -3px
+}
+
+.credit-card .image-cvv-position {
+    position: relative
+}
+
+.credit-card .image-cvv-position>input {
+    height: 36px
+}
+
+.credit-card .image-cvv-des {
+    position: absolute;
+    top: 28px;
+    left: 120px;
+    z-index: 20;
+    border: 1px solid #e8e8e8
+}
+
+.credit-card .btn-submit {
+    color: rgba(255, 255, 255, 0.8);
+    background-color: #09c;
+    border-color: #09c;
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    background-image: none;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    padding: 8px 16px;
+    font-size: 14px;
+    line-height: 1.4;
+    border-radius: 2px;
+    user-select: none
+}
+
+.credit-card .btn-submit.disabled {
+    background-color: #666;
+    border-color: #666;
+    color: rgba(255, 255, 255, 0.8);
+    opacity: .2;
+    cursor: default;
+    box-shadow: none;
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    touch-action: manipulation;
+    background-image: none;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    padding: 8px 16px;
+    font-size: 14px;
+    line-height: 1.4;
+    border-radius: 2px;
+    user-select: none
+}
+
+@media (max-width: 960px) {
+    .credit-card #form-group-cardSecurityCode {
+        padding-left: 0px;
+        display: block
+    }
+}
+
+@media (max-width: 768px) {
+    .credit-card .content {
+        -webkit-column-count: 1;
+        -moz-column-count: 1;
+        column-count: 1;
+        -webkit-column-gap: 20px;
+        -moz-column-gap: 20px;
+        column-gap: 20px;
+        -webkit-column-rule: 0px solid #ccc;
+        -moz-column-rule: 0px solid #ccc;
+        column-rule: 0px solid #ccc
+    }
+}
+.back-arrow {
+    width: 52px;
+    border: 1px solid rgba(0,0,0,0.1);	
+    border-radius: 3px;	
+    background-color: #FFFFFF;
+    color: #191919 !important;
+}
+.pi-android-arrow-back {
+    margin: 4px;
+    margin-left: 12px;   
+}
+.back-link {
+    color: #364BC4 !important;
+}
+
+@media (max-width: 992PX) {
+	#zuora_payment iframe {
+		width: 100% !important;
+		height: 1200px !important;
+		position: static !important;
+		overflow: scroll;
+	}
+	div#zuora_payment {
+		width: 100% !important;
+	}
+}
+
+@media (min-width: 992PX) {
+	#zuora_payment iframe {
+		width: 928px !important;
+		position: static;
+		overflow: scroll;
+	}
+	#zuora_payment {
+		width: 928px !important;
+		margin: auto;
+	}
+}
+/* LCM-293 Credit Card End */

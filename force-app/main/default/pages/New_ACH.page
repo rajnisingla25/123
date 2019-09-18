@@ -1,0 +1,57 @@
+<apex:page title="Add a New Payment Method" showHeader="true" sidebar="false" tabStyle="Account" controller="AddNewACH">
+    <!-- Begin Default Content REMOVE THIS -->
+    <!-- <apex:pageBlock > -->
+    <style>
+        .headerRow .invoiceHeaderStyle {
+            background-color: #DEF8FF !important;
+            color: #000000 !important
+        }
+        table .roundedEdges {
+            border-bottom-left-radius: 20px !important;
+            border-bottom-right-radius: 20px !important
+        }
+    </style>
+    <script>
+        function callbacksuccess(pmid, displayMessage) {
+            performSuccessActions(pmid, displayMessage);
+            //window.location = "{!$Page.Manage_Billing_Account}?pmid=" + pmid + '&id=' + '{!$CurrentPage.parameters.accId}' + '&zId=' + '{!$CurrentPage.parameters.zId}' + '&billId=' + '{!$CurrentPage.parameters.id}' + '&displayMessage=' + displayMessage;
+        }
+
+        function deselect() {
+            checkboxes = document.getElementsByTagName('input');
+            for (var i = 0, n = checkboxes.length; i < n; i++) {
+                if (checkboxes[i].id.indexOf('invoice') > -1)
+                    checkboxes[i].checked = false;
+            }
+        }
+    </script>
+    <apex:sectionHeader title="Billing Account" subtitle="Create Payment Method" />
+    <div align="center">
+        <apex:form id="buttons">
+            <zqu:StatusModal />
+		    <apex:actionStatus startText="" stopText="" id="action" onstart="javascript:displayStatusModal()" onstop="javascript:closeStatusModal()" />
+		    <apex:actionFunction name="performSuccessActions" action="{!successActions}" rerender="buttons">
+                <apex:param name="pmid" value="pmid" assignTo="{!pmId}" />
+                <apex:param name="displayMessage" value="dispayMessage" assignTo="{!displayMessage}" />
+            </apex:actionFunction>
+            <table>
+            	<tr>
+            		<td colspan="3">
+            		<center>
+            			Payment Method Type: 
+	            		<apex:selectRadio value="{!hostedPageChange}">
+							<apex:selectOptions value="{!newTypeOptions}"/>
+							<apex:actionSupport event="onchange" action="{!changeType}" status="action"/>
+						</apex:selectRadio>
+					</center>
+            		</td>
+            	</tr>
+            </table>
+        </apex:form>
+        <!-- Prepping to add ACH HPM Support -->
+        <apex:outputPanel id="HPM">
+        	<zqu:HostedPage injectedController="{!thisController}" includeButtonBar="true" hostedPageSettingName="NewACH" id="CCHPM"/>
+        </apex:outputPanel>
+    </div>
+    <!-- End Default Content REMOVE THIS -->
+</apex:page>

@@ -1,0 +1,331 @@
+<apex:page action="{!doRedirect}" id="AdvancedScreenPopClientAppMode" controller="MoveSalesScrpopRulephase2" 
+
+title="Search Results" sidebar="true" showHeader="true">
+    
+    <script> var previousOnload = window.onload; window.onload = function() { if (previousOnload) { previousOnload(); 
+
+} init(); } </script>
+    
+    <apex:outputPanel layout="block" style="font-weight:bold;font-size:20px;" >
+        Search Results
+    </apex:outputPanel>
+ 
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <apex:includeScript value="/support/console/25.0/integration.js"/>
+        <script type="text/javascript">
+    </script>
+    
+      <script language="javascript">
+        function init()
+        {
+                sforce.console.setTabTitle('Search Results');
+        }
+
+     </script>
+
+    
+    <apex:form id="frm">
+        
+
+        <apex:pageMessages />
+        
+        
+        <apex:pageBlock title="Campaigns()" rendered="{!NOT(ISNULL(CampaignResults))}">
+            <apex:actionStatus id="statusSave">
+                <apex:facet name="start">
+                    <span style="font-weight:bold; color: red;">
+                        Saving...<img src="/img/loading.gif" />
+                    </span>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:pageBlockTable value="{!CampaignResults}" var="record" id="thepageBlock" >
+                
+                <apex:column headerValue="Action" width="30">
+                    <apex:outputLink style="color:blue" value="/{!record.ID}/e">Edit</apex:outputLink>
+                </apex:column>
+                
+                <apex:column headerValue="Name" width="200">
+                    <apex:outputLink value="/{!record.ID}">{!record.Name}</apex:outputLink>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Type" width="200"> 
+                    <apex:outputLink value="/{!record.ID}">{!record.Type}</apex:outputLink>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Status" width="50"> 
+                    <apex:outputLink value="/{!record.ID}">{!record.Status}</apex:outputLink>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Start Date" width="200"> 
+                    <apex:outputLink value="/{!record.ID}">{!record.StartDate}</apex:outputLink>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="End Date" width="200"> 
+                    <apex:outputLink value="/{!record.ID}">{!record.EndDate}</apex:outputLink>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Owner Alias" width="200"> 
+                    <apex:outputLink value="/{!record.OwnerID}">{!record.Owner.Alias}</apex:outputLink>    
+                </apex:column>
+                
+            </apex:pageBlockTable>
+            <apex:pageBlockButtons >
+                
+            </apex:pageBlockButtons>
+        </apex:pageBlock>   
+        
+        <apex:pageBlock title="Accounts ()" rendered="{!NOT(ISNULL(AccountResults))}">
+            <apex:actionStatus id="statusSave">
+                <apex:facet name="start">
+                    <span style="font-weight:bold; color: red;">
+                        Saving...<img src="/img/loading.gif" />
+                    </span>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:pageBlockTable value="{!AccountResults}" var="record" id="thepageBlock" >
+                
+                <apex:column headerValue="Action" width="30">
+                    <apex:outputLink style="color:blue" value="/{!record.ID}/e">Edit</apex:outputLink>
+                </apex:column>
+                
+                
+                
+                <apex:column headerValue="Account Name" width="150" >
+                    <apex:outputLink value="/{!record.ID}">{!record.Name}</apex:outputLink>
+                </apex:column>
+                
+                <apex:column headerValue="Account Type" width="150" >
+                    <apex:outputLink value="/{!record.ID}">{!record.Type}</apex:outputLink>
+                </apex:column>
+                
+                <apex:column headerValue="Phone" width="200"> 
+                    <support:clickToDial number="{!record.Phone}"
+                                         params="{'DN='{!record.Phone}"/>
+                </apex:column>
+                
+                <apex:column headerValue="Account Email Address" width="150" >
+                    <apex:outputLink value="/{!record.ID}">{!record.Email_Address__c }</apex:outputLink>
+                </apex:column>
+
+                <apex:column headerValue="Billing Street" width="150" >
+                    <apex:outputLink value="/{!record.ID}">{!record.BillingStreet}</apex:outputLink>
+                </apex:column>
+                
+                <apex:column headerValue="Billing City" width="150" >
+                    <apex:outputLink value="/{!record.ID}">{!record.BillingCity}</apex:outputLink>
+                </apex:column>
+                
+                <apex:column headerValue="Billing State" width="150" >
+                    <apex:outputLink value="/{!record.ID}">{!record.BillingState}</apex:outputLink>
+                </apex:column>
+                
+                <apex:column headerValue="Billing Country" width="150" >
+                    <apex:outputLink value="/{!record.ID}">{!record.BillingCountry}</apex:outputLink>
+                </apex:column>
+                
+                
+                <apex:column headerValue="Account Owner " width="200">
+                    <apex:outputLink value="/{!record.OwnerID}">{!record.Owner.Name}</apex:outputLink>    
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:pageBlockButtons >
+                
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        
+        <apex:pageBlock title="Contacts ()" rendered="{!NOT(ISNULL(ContactResults))}">
+            <apex:actionStatus id="statusSave">
+                <apex:facet name="start">
+                    <span style="font-weight:bold; color: red;">
+                        Saving...<img src="/img/loading.gif" />
+                    </span>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:pageBlockTable value="{!ContactResults}" var="record" id="thepageBlock" >
+                
+                <apex:column headerValue="Action" width="30">
+                    <apex:outputLink style="color:blue" value="/{!record.ID}/e">Edit</apex:outputLink>
+                </apex:column>
+                
+                <apex:column headerValue="Name" width="100">
+                    <apex:outputLink value="/{!record.ID}">{!record.Name}</apex:outputLink>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Account Name" width="100">
+                    <apex:outputLink value="/{!record.AccountId}">{!record.Account.Name}</apex:outputLink>    
+                </apex:column>
+                
+                <apex:column headerValue="Account Site" width="100">
+                    <apex:outputLink value="/{!record.AccountId}">{!record.Account.Site}</apex:outputLink>    
+                </apex:column>
+                
+                
+                <apex:column headerValue="Phone" width="50"> 
+                    <support:clickToDial number="{!record.Phone}"
+                                         params="{'DN='{!record.Phone}"/>
+                </apex:column>
+                
+                <apex:column headerValue="Email" width="150">
+                    <apex:outputField value="{!record.Email}"></apex:outputField>
+                    
+                </apex:column>
+                
+                
+                
+                <apex:column headerValue="Contact Owner Alias" width="200">
+                    <apex:outputLink value="/{!record.OwnerID}">{!record.Owner.Alias}</apex:outputLink>    
+                </apex:column>
+                
+                
+            </apex:pageBlockTable>
+            <apex:pageBlockButtons >
+                
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        
+        
+        <apex:pageBlock title="Leads ()"  rendered="{!NOT(ISNULL(LeadResults))}">
+            <apex:actionStatus id="statusSave">
+                <apex:facet name="start">
+                    <span style="font-weight:bold; color: red;">
+                        Saving...<img src="/img/loading.gif" />
+                    </span>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:pageBlockTable value="{!LeadResults}" var="record" id="thepageBlock" >
+                
+                <apex:column headerValue="Action" width="30">
+                    <apex:outputLink style="color:blue" value="/{!record.ID}/e">Edit</apex:outputLink>
+                </apex:column>
+                
+                <apex:column headerValue="Name" width="200">
+                    <apex:outputLink value="/{!record.ID}">{!record.Name}</apex:outputLink>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Title" width="200">
+                    <apex:outputLink value="/{!record.ID}">{!record.Title}</apex:outputLink>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Company" width="200">
+                    <apex:outputLink value="/{!record.ID}">{!record.Company}</apex:outputLink>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Email" width="50">
+                    <apex:outputLink value="/{!record.ID}">{!record.Email}</apex:outputLink>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Lead Status" width="200">
+                    <apex:outputLink value="/{!record.ID}">{!record.Status}</apex:outputLink>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Owner Alias" width="200">
+                    <apex:outputLink value="/{!record.OwnerID}">{!record.Owner.Alias}</apex:outputLink>    
+                </apex:column>
+                
+            </apex:pageBlockTable>
+            <apex:pageBlockButtons >
+                
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+        
+        <apex:pageBlock title="Cases ()" rendered="{!NOT(ISNULL(CaseResults))}">
+            <apex:actionStatus id="statusSave">
+                <apex:facet name="start">
+                    <span style="font-weight:bold; color: red;">
+                        Saving...<img src="/img/loading.gif" />
+                    </span>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:pageBlockTable value="{!CaseResults}" var="record" id="thepageBlock" >
+                
+                <apex:column headerValue="Action" width="30">
+                    <apex:outputLink style="color:blue" value="/{!record.ID}/e">Edit</apex:outputLink>
+                </apex:column>
+                
+                <apex:column headerValue="CaseNumber" width="200">
+                    <apex:outputLink value="/{!record.ID}">{!record.CaseNumber}</apex:outputLink>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Subject" width="100">
+                    <apex:outputLink value="/{!record.ID}">{!record.Subject}</apex:outputLink>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Date/Time Opened" width="200">
+                    <apex:outputLink value="/{!record.ID}">{!record.CreatedDate}</apex:outputLink>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Case Owner Alias" width="200">
+                    <apex:outputLink value="/{!record.OwnerID}">{!record.Owner.Alias}</apex:outputLink>    
+                </apex:column>
+                
+            </apex:pageBlockTable>
+            <apex:pageBlockButtons >
+                
+            </apex:pageBlockButtons>
+        </apex:pageBlock>                
+        
+        <apex:pageBlock title="Opportunities ()" rendered="{!NOT(ISNULL(OpportunityResults))}">
+            <apex:actionStatus id="statusSave">
+                <apex:facet name="start">
+                    <span style="font-weight:bold; color: red;">
+                        Saving...<img src="/img/loading.gif" />
+                    </span>
+                </apex:facet>
+            </apex:actionStatus>
+            <apex:pageBlockTable value="{!OpportunityResults}" var="record" id="thepageBlock" >
+                
+                <apex:column headerValue="Action" width="30">
+                    <apex:outputLink style="color:blue" value="/{!record.ID}/e">Edit</apex:outputLink>
+                </apex:column>
+                
+                <apex:column headerValue="Name" width="200">
+                    <apex:outputLink value="/{!record.ID}">{!record.Name}</apex:outputLink>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Account Name" width="100">
+                    <apex:outputLink value="/{!record.AccountId}">{!record.Account.Name}</apex:outputLink>    
+                </apex:column>
+                
+                <apex:column headerValue="Account Site" width="100">
+                    <apex:outputLink value="/{!record.AccountId}">{!record.Account.Site}</apex:outputLink>    
+                </apex:column>
+                
+                <apex:column headerValue="Stage" width="200">
+                    <apex:outputLink value="/{!record.ID}">{!record.StageName}</apex:outputLink>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Close Date" width="200">
+                    <apex:outputLink value="/{!record.ID}">{!record.CloseDate}</apex:outputLink>
+                    
+                </apex:column>
+                
+                <apex:column headerValue="Opportunity Owner Alias" width="200">
+                    <apex:outputLink value="/{!record.OwnerID}">{!record.Owner.Alias}</apex:outputLink>    
+                </apex:column>
+            </apex:pageBlockTable>
+            <apex:pageBlockButtons >
+                
+            </apex:pageBlockButtons>
+        </apex:pageBlock>      
+        
+  
+        
+    </apex:form>
+    
+</apex:page>

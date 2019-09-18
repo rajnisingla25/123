@@ -1,0 +1,7 @@
+<design:component>
+    <design:attribute name="formheadline" label="Form Headline" />
+    <design:attribute name="download" label="Downloadable File"/>
+    <design:attribute name="downloadPath" label="Downloadable File URL"/>
+    <design:attribute name="downloadpdf" label="Downloadable File"/>
+    <design:attribute name="downloadpdfPath" label="Downloadable File URL"/>
+</design:component>

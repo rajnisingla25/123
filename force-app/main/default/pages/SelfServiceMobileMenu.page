@@ -1,0 +1,113 @@
+<!-- LCM-293 -->
+<apex:page standardStylesheets="false" showHeader="false" controller="SelfServiceController" applyBodyTag="false" applyHtmlTag="false">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta name="description" content="Layout prototype for Prosoft" />
+        <meta name="author" content="Move Prosoft UX" />
+        <link rel="shortcut icon" href="{!$Resource.CustomerCommunityFavicon}" type="image/x-icon"/>
+        <link rel="stylesheet" href="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/css/prosoft-ui.css')}" />
+        <link rel="stylesheet" media="screen" href="{!$Resource.SelfServiceCss}" />
+    </head>
+    <style>
+       .mobile-menu .main-container{
+            min-height: calc(100vh - 244px);
+            margin-top: 78px;
+            padding: 0;
+            width:100%;
+        }
+        
+        .mobile-menu-container {
+            padding:0; 
+        }
+        .mobile-menu-container li {
+            list-style: none;
+            background-color:white;
+            padding: 16px;
+        }
+        .mobile-menu-container ul {
+            padding: 0;
+        }
+        .mobile-menu-container a div {
+            color: #191919;
+        }
+         .mobile-menu-container ul a{
+             height: 69px;
+         }
+        .mobile-menu-container img {
+            height: 40px;
+        }
+    </style>
+    <body class="mobile-menu">
+        <div id="app-container" class="app-container">
+            <c:SelfServiceHeader id="app-header" />
+            <div class="main-container">
+                <div class="container-fluid mobile-menu-container">
+                  <ul>
+                      <li class="border-bottom-grey">
+                         <a href="{!$Label.CustomerCommunityDomain}/SelfServiceMyProducts" rel="external" class="row" style="display:flex;align-items:center">
+        				    <div class="col-xs-2">
+        					    <img id="products-icon" src="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/Nav/Inactive/MyProducts.svg')}" />
+        					</div>
+        					<div class="col-xs-8 ">
+        					    <div >My Products</div>
+        					    <div class="normal-weight  font-size-small">View your products and manage payment options</div>
+        					</div>
+        						<div class="col-xs-2">
+        					    <div id="uf-carousel-arrow-right" class="uf-carousel-arrow"><span class="pi pi-angle-right"></span></div>
+        					</div>
+        				 </a>
+                      </li>
+                      <li class="border-bottom-grey"> 	
+                       	<a href="{!$Label.CustomerCommunityDomain}/SelfServiceStatementsInvoices" rel="external"  class="row" style="display:flex;align-items:center">
+                       	    <div  class="col-xs-2">
+        		    	        <img id="statements-icon" src="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/Nav/Inactive/StatementsInvoices.svg')}"/>
+        					</div>
+        		    	    <div class="col-xs-8">
+        					    <div >Statements &amp; Invoices</div>
+        					    <div class="normal-weight  font-size-small">View and save past statements</div>
+        					</div>
+        					<div class="col-xs-2">
+        					    <div id="uf-carousel-arrow-right" class="uf-carousel-arrow"><span class="pi pi-angle-right"></span></div>
+        					</div>
+        		    	</a>
+        		      </li>
+        		       <li class="border-bottom-grey"> 	
+                        <a class= 'credit-card-top-menu row' href="" rel="external" style="display:flex;align-items:center">
+                             <div  class="col-xs-2">
+        		    	        <img id="credit-card-icon" src="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/Nav/Inactive/CreditCards.svg')}"  />
+        					</div>
+        		    	    <div class="col-xs-8">
+        					    <div >Credit Cards</div>
+        					    <div class="normal-weight  font-size-small">Edit or add credit cards</div>
+        					</div>
+        						<div class="col-xs-2">
+        					    <div id="uf-carousel-arrow-right" class="uf-carousel-arrow"><span class="pi pi-angle-right"></span></div>
+        					</div>
+        		        </a>
+        		      </li>
+                  </ul>
+                </div>
+            </div>
+            <c:SelfServiceFooter id="app-footer" />
+        </div>
+    </body>
+
+    <apex:includeScript value="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/js/jquery.js')}"
+    />
+    <apex:includeScript value="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/js/bootstrap.js')}"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
+    <apex:includeScript value="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/js/jquery.mobile-1.4.5.min.js')}"
+    />
+     <!--<apex:includeScript value="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/js/SelfServiceJSMin.js')}"
+    />-->
+    <apex:includeScript value="{!$Resource.SelfServiceJS}" />
+  <script type="text/javascript">
+    $(document).ready(function() {
+        localStorage.setItem('filterValue', 'Last 12 Months');
+        $(".credit-card-top-menu").attr("href", "{!$Label.CustomerCommunityDomain}/SelfServiceCreditCards?id=" + $("#sfdc-account-id").data('sfdc-id') + "&iscommunityuser=true");
+    });
+</script>
+</apex:page>

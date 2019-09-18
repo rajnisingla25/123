@@ -1,0 +1,147 @@
+<apex:page controller="BulkApproveQuotesController" sidebar="false">
+    <apex:includeScript value="/support/console/22.0/integration.js"/>
+    <apex:includeScript value="/support/console/44.0/integration.js" />
+    <script src="/support/console/28.0/integration.js" type="text/javascript"></script>
+    <style>
+        .header {
+            background-color: #bbbbff;
+            font-weight: bold;
+        }
+        .quoteRow {
+            background-color: #ccccee;
+            font-weight: bold;
+        }
+        .quoteRowName {
+            cursor:pointer;
+        }
+        .quoteRow:hover {
+          background-color: #ddddee;
+        }
+        .dataRow {
+            background-color: #eeeeff;
+        }
+        .dataRow:hover {
+          background-color: #ddddee;
+        }
+       .tableClass td,th {
+           border:solid 1px  #ddddee; 
+       }
+       .tableClass th {
+           text-align:center;!important;
+       }
+     </style>
+    
+    <apex:outputPanel id="panel">
+        <script>
+            var retUrl= "{!retUrl}";
+            function openpage() {
+                if (retUrl != '' && retUrl != null) {
+                   if(sforce.console.isInConsole()){
+                        sforce.console.openPrimaryTab(undefined , retUrl, true, 'Approve Quotes', null);
+                    }
+                    else{
+                        window.open("{!retUrl}", '_blank');
+                    }
+               }
+            }
+            function expandCollapseRow(row, display) {
+                var innerRows = document.getElementsByClassName('dataRow');
+                if (row != null) {
+                    for (var i=0; i<innerRows.length; i++) {
+                        if (innerRows[i].id.includes('dataRow'+row.id)) {
+                            if (innerRows[i].style.display == 'none') {
+                                innerRows[i].style.display = ''; 
+                            }
+                            else {
+                                innerRows[i].style.display = 'none'; 
+                            }
+                        }
+                    }
+                }
+                else if (display != null){
+                    for (var i=0; i<innerRows.length; i++) {
+                        innerRows[i].style.display = display; 
+                    }
+                }
+            }
+            
+            function checkAll(cb) {
+                var inputElem = document.getElementsByTagName("input");
+                for(var i=0; i<inputElem.length; i++) {
+                    var input = inputElem[i];
+                    if (input.type == "checkbox") {
+                        input.checked = cb.checked;
+                    }
+                }
+            }
+
+            function checkUncheckCheckAll(cb) {
+                var checkAll = true;
+                var inputElem = document.getElementsByTagName("input");
+                var checkAllElem;
+                for(var i=0; i<inputElem.length; i++) {
+                    var input = inputElem[i];
+                    if (input.type == "checkbox" && !input.id.includes("checkAll")) {
+                        if (!input.checked) {
+                            checkAll = false;
+                        }
+                    }
+                    else if (input.type == "checkbox" && input.id.includes("checkAll")) {
+                        checkAllElem = input;
+                    }
+    
+                }
+                checkAllElem.checked = checkAll;
+            }
+        </script>
+    </apex:outputPanel>
+    <apex:form >
+        <apex:pageBlock title="Pending Approval Quotes With {!$User.FirstName} {!$User.LastName}" id="block">
+            <apex:actionstatus id="status">
+                <apex:facet name="start">
+                    <img src="/img/loading.gif" title="Loading..." />
+                </apex:facet>
+            </apex:actionstatus>
+            <apex:pageMessages id="msg"/>
+            <table cellspacing="0" cellpadding="10" class="tableClass">
+                <thead class="header">
+                <th><apex:inputCheckbox onclick="checkAll(this)" id="checkAll" value="{!selectAll}"/></th>
+                <apex:repeat value="{!$ObjectType.BigMachines__Quote_Product__c.FieldSets.Bulk_Approve_Quote}" var="field">
+                <th>
+                <apex:outputText value="{!IF(BEGINS(field,'Asset__r'), 'Asset:', '')+field.Label}"/>
+                </th>
+                </apex:repeat>
+                </thead>
+                <apex:repeat value="{!quotes}" var="quote">
+                    <tr class="quoteRow"> 
+                    <td> <apex:inputCheckBox value="{!quote.selected}" onclick="checkUncheckCheckAll(this)"/> </td>
+                    <td colspan="4" class="quoteRowName" id="{!quote.quote.Id}" onclick="expandCollapseRow(this, null)"> <apex:outputLink value="{!quote.cpqEditUrl}" target="_blank" title="Edit" onclick="event.stopPropagation()"> <img height="15" src='{!$Resource.editImg}'/> </apex:outputLink> Quote Number: <apex:outputLink value="/{!quote.quote.Id}" target="_blank" title="View" onclick="event.stopPropagation()">{!quote.quote.Name}</apex:outputLink> ({!quote.quote.BigMachines__BigMachines_Quote_Products__r.size}{!IF(quote.quote.BigMachines__BigMachines_Quote_Products__r.size>1, ' records', ' record')})</td>
+                    <td colspan="{!columnCount}" class="quoteRowName" id="{!quote.quote.Id}" onclick="expandCollapseRow(this, null)"> 
+                        <apex:inputfield html-placeholder="Enter approval comments here" value="{!quote.quote.Bulk_Approval_Comments__c}" onclick="event.stopPropagation()"/>
+                    </td>
+                    </tr>
+                    <apex:repeat value="{!quote.quote.BigMachines__BigMachines_Quote_Products__r}" var="quoteProd">
+                        <tr class="dataRow" id="dataRow{!quote.quote.Id}{!quoteProd.Id}">
+                        <td></td>
+                        <apex:repeat value="{!$ObjectType.BigMachines__Quote_Product__c.FieldSets.Bulk_Approve_Quote}" var="field">
+                        <td>
+                            <apex:outputLink value="/{!quoteProd.Id}" target="_blank" rendered="{!field=='Name'}" title="View">{!quoteProd.Name}</apex:outputLink>
+                            <apex:outputfield value="{!quoteProd[field]}" rendered="{!field!='Name'}"/>
+                        </td>
+                        </apex:repeat>
+                        </tr>
+                    </apex:repeat>
+                </apex:repeat>
+                <tr class="header"> 
+                    <td colSpan="{!columnCount}"> Grand Total - Quotes: {!quotes.size}  Quote Products: {!quoteProdCount}</td>
+                </tr>
+            </table>
+          <apex:pageBlockButtons >
+             <apex:commandButton value="Refresh" action="{!getPendingApprovalQuotes}" status="status" reRender="msg,block"/>
+             <apex:commandButton value="Expand All" onclick="expandCollapseRow(null, '')" reRender="msg"/>
+             <apex:commandButton action="{!updateDummyQuote}" value="Submit" reRender="msg,panel" oncomplete="openpage();" status="status"/>
+             <apex:commandButton value="Collapse All" onclick="expandCollapseRow(null, 'none')" reRender="msg"/>
+         </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

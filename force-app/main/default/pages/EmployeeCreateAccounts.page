@@ -1,0 +1,265 @@
+<apex:page standardStylesheets="false" showHeader="false" controller="EmployeeDashboardController" applyBodyTag="false" applyHtmlTag="false">
+
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta name="description" content="Employee Sign Up" />
+        <link rel="icon" href="{!$Resource.EmployeeSiteFavicon}" />
+        <title>realtor.com® Essentials℠ dashboard</title>
+        <link rel="stylesheet" href="{!URLFOR($Resource.EmployeeDashboard, '/employee/font-awesome.min.css')}" />
+        <link rel="stylesheet" href="{!URLFOR($Resource.EmployeeDashboard, '/employee/googleApisFontCss.css')}" />
+        <link rel="stylesheet" media="screen" href="{!$Resource.EmployeeDashboardCss}" />
+
+        <style>
+            .load-spinner-lg:after {
+                background-image: url("{!$Resource.EmployeeDashboardLoading}")
+            }
+        </style>
+    </head>
+
+    <section>
+        <div id="app-container" class="app-container">
+            <div id="app-navbar-top" class="hidden-xs app-navbar-top">
+                <ul>
+                    <li><label>Go to realtor.com®</label></li>
+                    <li><a href="http://realtor.com" id="homepage" data-omtag="header-menu:top-strip:to-realtor" target="_blank">Homepage</a></li>
+                    <li class="right">
+                        <a href="http://marketing.realtor.com" id="upgrade" data-omtag="header-menu:top-strip:to-upgrade" target="_blank">Upgrade</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="app-brand-border"></div>
+            <nav class="app-navbar navbar navbar-default navbar-fixed-top app-navbar no-border">
+                <div class="container-fluid pull-right">
+                    <div class="dropdown user-profile-dropdown">
+                        <a href="#" class="display-inline-block dropdown-toggle hover-bg-gray-softer hover-caret-down hidden-sm hidden-xs" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">
+                  <span class="display-inline-block valign-middle text-right text-gray-darker font-size-small mar-right-xs">
+                  Welcome
+                  <strong class="display-block">{!$User.FirstName}</strong>
+                  </span>
+                  </a>
+                        <ul class="dropdown-menu dropdown-menu-right" id="avatar-menu-wrapper">
+                            <li class="switch-panel active on" id="avatar-menu-account">
+                                <!-- Start of avatar menu -->
+                                <div class="avatar-menu pad-top-sm">
+                                    <ul class="media-list avatar-menu-current-role">
+                                        <li class="media">
+                                            <div class="media-body">
+                                                <h4 class="media-heading mar-top-md">{!$User.FirstName} {!$User.LastName}</h4>
+                                            </div>
+                                            <div class="media-right valign-middle">
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <div role="separator" class="divider"></div>
+                                    <ul class="list-inline">
+                                        <li>
+                                            <a id="my-account-button" href="">Your account</a>
+                                        </li>
+                                        <li class="pull-right">
+                                            <apex:outputLink value="{!$Site.Prefix}/secur/logout.jsp" styleClass="nav0-link">Logout</apex:outputLink>
+                                        </li>
+                                    </ul>
+                                    <div role="separator" class="divider"></div>
+                                    <ul class="vertical-links">
+                                        <li class="navigation-provider-link">
+                                            <a href="http://marketing.realtor.com" id="upgrade" target="_blank">Upgrade <i class="pi-android-open"></i></a>
+                                        </li>
+                                        <li class="navigation-provider-link">
+                                            <a href="http://support.realtor.com" id="support" target="_blank">Support <i class="pi-android-open"></i></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <!-- End of avatar menu -->
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <aside class="app-sidebar app-sidebar-fixed-height">
+                <nav class="navbar navbar-default navbar-fixed-top sidebar-navbar no-border">
+                    <div class="container-fluid">
+                        <div class="navbar-header pull-left"><a class="navbar-brand"><img src="https://d260ckbc6brolt.cloudfront.net/prosoft-ui/20161007-a70f17b/img/realtor-logo-v3.svg" width="134"/></a></div>
+                    </div>
+                </nav>
+            </aside>
+            <div id="main-container" class="main-container mar-left-none bg-white">
+                <div class="container-fluid">
+                    <div id="error" class="error-div"></div>
+                    <div class="row">
+                        <div class="col-sm-10 col-sm-push-1 col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">
+                            <div class="" id="">
+                                <div>
+
+                                    <h1 class="text-center mar-top-lg">Select Type of account you want to create</h1>
+                                    <form>
+                                        <div class="radio">
+                                            <label><input type="radio" name="acctTypeRadio" value="Broker" checked="true" />Broker</label>
+                                        </div>
+                                        <div class="radio">
+                                            <label><input id="agentRadio"  type="radio" name="acctTypeRadio" value="Agent" />Agent</label>
+                                        </div>
+                                        <div class="form-group brokerVisibleDiv">
+                                            <label>Enter number of offices</label>
+                                            <input type="text" class="form-control" id="numOfOffices" />
+                                            <span id="required-error" class="state-message hidden">This Field is blank or invalid</span>
+                                            <span id="limit-error" data-limit="5" class="state-message hidden">Value has to be in between 1 and 5</span>
+                                        </div>
+                                         <div class="form-group brokerVisibleDiv">
+                                            <label>Enter number of agents</label>
+                                            <input type="text" class="form-control" id="numOfAgents" />
+                                            <span id="required-error" class="state-message hidden">This Field is blank or invalid</span>
+                                            <span id="limit-error" data-limit="10" class="state-message hidden">Value has to be in between 1 and 10 </span>
+                                            <span id="low-limit-error" class="state-message hidden">Value has to be greater than or equal to number of offices</span>
+                                        </div>
+                                        <div id="activeDaysDiv" class="form-group alwaysRequiredDiv">
+                                            <label>Enter number of days the account should be active</label>
+                                            <input type="text" class="form-control" id="acctActiveDays" />
+                                            <span id="required-error" class="state-message hidden">This Field is blank or invalid</span>
+                                            <span id="limit-error" class="state-message hidden">Value has to be greater than 0</span>
+                                        </div>
+                                        <div class="form-group mar-top-xl">
+                                            <button type="submit" id="submit" class="btn btn-primary" onclick="createAccouts()">Submit</button>
+                                            <div style="color: red; display: none" id="error-div">Account already exists. Click <a href="{!$Site.Prefix}/EmployeeMyAccount">here</a> to view your account</div>
+                                        </div>
+                                    </form>
+                                   
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer Component -->
+        <c:SetFooterCommunity id="footerComp" />
+    </section>
+    <apex:includeScript value="{!URLFOR($Resource.EmployeeDashboard, '/employee/jquery-2.2.4.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.EmployeeDashboard, '/employee/prosoft-ui.min.js')}" />
+    <apex:includeScript value="{!$Resource.EmployeeDashboardJS}" />
+    <script type="text/javascript">
+        $(document).ready(function() {
+              verifyIfAcctAlreadyExists();
+            $("input[name$='acctTypeRadio']").click(function() {
+                var acctType = $(this).val();
+                if (acctType == 'Broker') {
+                    $('.brokerVisibleDiv').removeClass('hidden');
+                    $('#emailOfUserDiv').addClass('hidden');
+                } else if (acctType == 'Agent') {
+                    $('.brokerVisibleDiv').addClass('hidden');
+                    $('#emailOfUserDiv').addClass('hidden');
+                } else if (acctType = 'Clone') {
+                    $('.brokerVisibleDiv').addClass('hidden');
+                    $('#emailOfUserDiv').removeClass('hidden');
+                }
+            });
+
+        });
+
+        function verifyIfAcctAlreadyExists() {
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.EmployeeDashboardController.getfranchiseAcct}',
+                function(result, event) {
+                    console.log(result);
+                    if (event.status){
+                        if (result != null) {
+                        $("#agentRadio").attr("disabled", "true");
+                        $("#activeDaysDiv").hide();
+                        $("#activeDaysDiv").removeClass("alwaysRequiredDiv");
+                        } 
+                         $("#my-account-button").click(function(){
+                            if (result != null) {
+                            window.open("{!$Site.Prefix}/EmployeeMyAccount", "_self");
+                        } else {
+                            alert("You don't have an account");
+                        }
+                        });
+                    } else {
+                        displayError(event.message);
+                    }
+                    
+                });
+        }
+
+
+        function createAccouts() {
+            event.preventDefault();
+            removeError();
+            showSpinner();
+            $(".brokerVisibleDiv").each(function() {
+                removeValidationError('required', this);
+                removeValidationError('limit', this);
+                removeValidationError('low-limit', this);
+            });
+            $(".alwaysRequiredDiv").each(function() {
+                removeValidationError('required', this);
+            });
+
+            var acctType = $("input[name='acctTypeRadio']:checked").val();
+            var emailOfUser = $('#emailOfUser').val();
+            var activeDays = parseInt($("#acctActiveDays").val());
+            var numAgents = parseInt($("#numOfAgents").val());
+            var numOffices = parseInt($("#numOfOffices").val());
+            var hasError = false;
+
+            // Validation
+            $(".alwaysRequiredDiv").each(function() {
+                var value = $(".form-control", this).val();
+                if (value == '' || isNaN(value)) {
+                    addError('required', this);
+                    hasError = true;
+                } else if(value == 0){
+                     addError('limit', this);
+                     hasError = true;
+                }
+
+            });
+            
+            // For Broker account type, number of offices and agents is mandatory
+            if (acctType == 'Broker') {
+                
+                $(".brokerVisibleDiv").each(function() {
+                    var value = $(".form-control", this).val();
+                    if (value == '' || isNaN(value)) {
+                        console.log(value);
+                        addError('required', this);
+                        hasError = true;
+                    } else if (value > $("#limit-error", this).data("limit") || value == 0) {
+                        addError('limit', this);
+                        hasError = true;
+                    } else if(numOffices > numAgents){
+                        addError('low-limit', this);
+                        hasError = true;
+                }
+                });
+                
+            }
+
+            if (!hasError) {
+
+                if (numAgents == '') {
+                    numAgents = 0;
+                }
+                if (numOffices == '') {
+                    numOffices = 1;
+                }
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.EmployeeDashboardController.createAccounts}',
+                    acctType, numAgents, numOffices, activeDays,
+                    function(result, event) {
+                        hideSpinner();
+                        console.log(event);
+                        if (event.status && result == 'success') {
+                            window.open("{!$Site.Prefix}/EmployeeDashboardHome", "_self");
+                        } else {
+                            displayError(event.message);
+                        }
+                    });
+            } else {
+                 hideSpinner();
+            }
+
+        }
+    </script>
+</apex:page>

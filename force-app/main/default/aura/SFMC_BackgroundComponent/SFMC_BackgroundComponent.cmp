@@ -1,0 +1,53 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,forceCommunity:layout" access="global" >
+    <aura:attribute name="backgroundColour" type="string" />
+    <!--<aura:attribute name="isRightBackground" type="Boolean" />
+    <aura:attribute name="isLeftBackground" type="Boolean" />
+    <aura:attribute name="width" type="string" />
+    <aura:attribute name="height" type="string" />
+    <aura:attribute name="leftWidth" type="string" />
+    <aura:attribute name="topHeight" type="string" />
+	<aura:attribute name="isSocial" type="Boolean" />
+    <aura:attribute name="linksSectionHeader" type="string" />
+    <aura:attribute name="linksSectionHeader2" type="string" />
+    <aura:attribute name="socialSectionHeader" type="string" />-->
+    <aura:attribute name="socialContent" type="Aura.Component[]" />
+    <aura:attribute name="linksContent" type="Aura.Component[]" />
+    
+    
+    <!--<div style="{!'background-color: ' + v.backgroundColour + ';width : ' + v.width + 'rem;height: ' + v.height +'rem;margin-left: -' + v.leftWidth + 'rem;margin-top: ' + v.topHeight + 'rem;'}">-->
+    <div class="widthClass" style="{!'background-color: ' + v.backgroundColour + ';height: ' + ($Browser.formFactor == 'DESKTOP' ? '15rem;' : '18rem;')}">
+    <!--<lightning:layout>
+            <aura:if isTrue="{!v.isSocial}">
+                <lightning:layoutItem class="socialTitleClass">
+                    <ul>
+                        <li>{!v.socialSectionHeader}</li>
+                        <li>
+                            <lightning:layout>
+                                <lightning:layoutItem class="socialContentClass">
+                                    {!v.socialContent}
+                                </lightning:layoutItem>
+                            </lightning:layout>
+                        </li>
+                    </ul>
+                </lightning:layoutItem>
+                <aura:set attribute="else">
+                    <lightning:layoutItem class="linksTitleClass">
+                        <ul>
+                            <li>
+                                {!v.linksSectionHeader}
+
+                            <li>{!v.linksSectionHeader}</li>
+                            <li>{!v.linksContent}</li>
+
+                            </li>
+                            <li class="linksTitleClass2">
+                                {!v.linksSectionHeader2}
+                            </li>
+                        </ul>
+                    </lightning:layoutItem>
+                </aura:set>
+            </aura:if>
+        </lightning:layout>-->
+        </div>
+    <!--</div>-->
+</aura:component>

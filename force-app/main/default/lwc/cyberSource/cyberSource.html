@@ -1,0 +1,22 @@
+<template>  
+    <lightning-card> 
+            <form id="payment_confirmation" action="" name = "cyber"  class="payment_confirmation" method="post" style="display:none">                    
+                    <div id = "tyy" lwc:dom="manual"></div>                  
+                 <input type="submit" id="submit" value= "submit" class="submit" />                                                                
+            </form>  
+             <template if:true={errorMessage}>
+                {errorMessage}  
+            </template>
+
+            <div class="demo-only demo--inverse slds-is-relative" style="height:6rem" if:false={errorMessage}>
+                <div class="slds-spinner_container">
+                  <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_brand">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                  </div>
+                </div>
+              </div>
+
+    </lightning-card>   
+</template>

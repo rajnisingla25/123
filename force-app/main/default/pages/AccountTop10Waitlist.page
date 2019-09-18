@@ -1,0 +1,177 @@
+<apex:page sidebar="false" showHeader="false"    
+standardController="Account" extensions="DataController" html-width="100%" 
+
+
+>
+
+<apex:pageBlock title="Account Waitlist" html-width="100%" >
+
+
+
+
+<apex:includescript value="//code.jquery.com/jquery-1.11.1.min.js" / >
+<apex:includescript value="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js" />
+<apex:stylesheet value="//cdn.datatables.net/1.10.4/css/jquery.dataTables.css" />
+
+
+  <apex:includeScript value="{!URLFOR($Resource.ColResize , '/colResize-master/dataTables.colResize.js' )}"/> 
+<!-- <apex:stylesheet value="{!URLFOR($Resource.DataTables , '/DataTables-1.10.7/media/css/jquery.dataTables.css')}"/> 
+<apex:includescript value="//code.jquery.com/ui/1.11.2/themes/smoothness/jquery-ui.css"/>
+<apex:includescript value="//cdn.datatables.net/plug-ins/1.10.7/integration/jqueryui/dataTables.jqueryui.css"/> -->
+
+
+
+
+
+
+<!--  
+<apex:includeScript value="{!URLFOR($Resource.DataTables , '/DataTables-1.10.7/media/js/jquery.js' )}"/>  
+<apex:includeScript value="{!URLFOR($Resource.DataTables , '/DataTables-1.10.7/media/js/jquery.dataTables.js' )}"/>  
+<apex:includeScript value="{!URLFOR($Resource.DataTables , '/DataTables-1.10.7/media/js/jquery.dataTables.min.js' )}"/> 
+<apex:includeScript value="{!URLFOR($Resource.ColResize , '/colResize-master/dataTables.colResize.js' )}"/> 
+
+-->
+ 
+
+
+
+ <head>
+                   </head>
+    <body>
+  
+ 
+ <table id="myList" class="display" width="100%" cellspacing="0">
+    <thead>
+    <tr>
+    
+  
+    <th>Created Date </th> 
+     <th>Type</th>
+     <th>Product </th>
+     <th>Market</th>
+     <th>Flex Available</th>
+     <th>Fast Available</th>
+     <th>Lead Routing</th>
+     <th>Slot Size </th>
+     <th>Qty Interested</th>
+     <th>Status</th>   
+     <th>Notes</th>
+         
+    </tr>  
+     
+        
+        </thead>
+        
+        <tbody>
+                <apex:repeat value="{!accountwaitlist}" var="wl1">
+                    <tr>
+    
+    
+                        <td>{!wl1.createddate} </td>
+                        <td>{!wl1.waitlist_type} </td>
+                        
+                        <td>{!wl1.product} </td>        
+                        <td>{!wl1.geo} </td>
+                        <td>{!wl1.invtotalavailableflex} </td>
+                        <td>{!wl1.invtotalavailablefast} </td>
+                        <td>{!wl1.leadroutingtype } </td>
+                        <td>{!wl1.slotsize } </td>
+                        <td>{!wl1.qtyinterested } </td> 
+                        <td>{!wl1.status} </td>
+                        <td>{!wl1.notes} </td>
+                        
+                        
+                        </tr>
+                </apex:repeat> 
+            </tbody> 
+        
+
+       
+    
+   
+
+    
+    </table>
+ 
+    
+<apex:form >
+
+    <apex:actionFunction action="{!SetPageSize}" name="callDC" rerender="showstate">
+        <apex:param name="firstParam" assignTo="{!SetMyLimit}" value="Take=10" />
+       
+        
+      
+    
+    </apex:actionFunction>
+    </apex:form>
+    
+    
+    
+        
+    
+      
+             <script type="text/javascript">
+        
+        window.onload = callDC;
+        
+    
+        j$ = jQuery.noConflict();
+            j$(document).ready( function () {
+                var myTable = j$('[id$="myList"]').DataTable({
+                 stateSave: true ,
+                    "colResize": {
+                     "rtl": false,
+                     'iDisplayStart': 10 ,
+                      "tableWidthFixed": false
+                                  } ,
+                        "dom": '<"top">t<"bottom"><"clear">'   ,
+                        "paging":   false,
+                        "ordering": true,
+                        "info":     false ,
+                        "JqueryUI" : false,
+                
+                        
+                           "createdRow": function( row, data, dataIndex ) {
+          
+                                   
+          
+          
+                                 //   console.log('print Red color ' + data[status] );
+                                              if ( data[4] ==='Hot' ) {
+                                             
+                                             //   $("myTable 'td', row).eq(4).css({'color':'red'});
+                                                
+                                                
+                                                
+                                                // $("#myTable tr:eq(4) td:eq(1)").html() 
+                                                
+                                              }
+                                            } 
+                        
+                                  
+                
+                    
+                });
+            }); 
+    
+    
+        
+        
+    
+        
+        
+        
+            
+    </script>
+    
+
+
+        
+             
+    </body>
+</apex:pageBlock> 
+
+
+
+  
+ </apex:page>

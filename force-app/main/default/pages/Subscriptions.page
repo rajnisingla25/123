@@ -1,0 +1,24 @@
+<apex:page standardController="Zuora__ZInvoice__c" extensions="InvoiceSubscriptionsController" sidebar="false">
+    <apex:pageMessages ></apex:pageMessages>
+    <apex:form >
+        <apex:pageblock id="InvoiceItems" rendered ="{!if(invoiceItem.size>0,true,false)}" >
+            <apex:pageblockTable value="{!invoiceItem}" var="a" > 
+                <apex:column headerValue="Name">           
+                    <apex:outputLink target="_blank" value="/{!a.Subscription__r}"><apex:outputText value="{!a.Subscription__r.Name}" /></apex:outputLink>
+                </apex:column>  
+                <apex:column headerValue="Account">           
+                    <apex:outputLink target="_blank" value="/{!a.Subscription__r.Zuora__Account__r}"><apex:outputText value="{!a.Subscription__r.Zuora__Account__r.Name}" /></apex:outputLink>
+                </apex:column>
+                <apex:column headerValue="Asset">           
+                    <apex:outputLink target="_blank" value="/{!a.Asset__c}"><apex:outputText value="{!a.Asset__r.Name}" /></apex:outputLink>
+                </apex:column>
+                                                                                                                        
+                <apex:column value="{!a.Subscription__r.Zuora__SubscriptionStartDate__c}"/>
+                <apex:column value="{!a.Subscription__r.Zuora__SubscriptionEndDate__c}"/>  
+                <apex:column value="{!a.Subscription__r.Zuora__NextRenewalDate__c}"/>
+                
+            </apex:pageblockTable>
+        </apex:pageblock>
+    </apex:form>
+    
+</apex:page>

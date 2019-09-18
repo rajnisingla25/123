@@ -1,0 +1,15 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" 
+                			controller="serviceDashboardtblController" access="global" >
+	<aura:attribute name="toggleGer" type="boolean" default="true" />
+    <aura:attribute name="objInfo" type="case" default="{sobjectType : 'case'}" />
+    <aura:registerEvent name="serviceDashboardEvent" type="c:serviceDashboardEvent"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+        <lightning:card title="Service Whiteboard" iconName="standard:case">
+            <div class="slds-align_absolute-center ">
+                <ui:inputSelect label="Choose type of Issues" aura:id="accIndustry" class="slds-select" change="{!c.onPicklistChange}"/>
+     		</div>
+        </lightning:card>
+    <div class="exampleHolder"> 
+    </div>
+</aura:component>

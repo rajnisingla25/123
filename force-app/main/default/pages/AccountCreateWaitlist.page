@@ -1,0 +1,386 @@
+<apex:page standardController="Account" extensions="AccountCreateWaitlist" showHeader="false" docType="html-5.0">
+    <apex:includeScript value="{!URLFOR($Resource.multiselect2side, 'multiselect2side/js/jquery.js')}"/> 
+    <apex:includeScript value="{!URLFOR($Resource.multiselect2side, 'multiselect2side/js/jquery.multiselect2side.js')}"/>    
+    <link type="text/css" rel="stylesheet" href="{!URLFOR($Resource.multiselect2side, 'multiselect2side/css/jquery.multiselect2side.css')}"/>  
+    <script>
+    
+    var minTurboImpression = 10000;
+    function refresh(){
+        location.reload(true);
+    }
+    </script>
+    <apex:form >
+        <apex:slds />
+        <apex:pageMessages id="message"></apex:pageMessages>
+        <apex:actionFunction reRender="blcktable,message,jspanel1" name="SubmitAF" action="{!submit}" status="status">
+                            <apex:param name="saveorsubmit" assignTo="{!saveorsubmit}" value="true" />
+            
+        </apex:actionFunction>
+            
+        
+        <apex:actionFunction reRender="blcktable,message,jspanel1" name="SubmitAFSave" action="{!submit}" status="status">
+                <apex:param name="saveorsubmit" assignTo="{!saveorsubmit}" value="false" />
+
+        </apex:actionFunction>
+        
+        
+        
+        <apex:pageblock id="pbSection" title="Create Waitlist"> 
+        
+            <apex:actionstatus id="status">
+                <apex:facet name="start">
+                    <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 2000%;opacity:0.65;width:100%;"> 
+                        <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                            <img class="waitingImage" src="/img/loading.gif" title="Loading..." />
+                            <span class="waitingDescription">Please Wait...</span>
+                        </div>
+                    </div>
+                </apex:facet>
+            </apex:actionstatus>
+            
+            <apex:pageblockSection columns="2">
+                
+                <apex:pageblockSectionItem >
+                    <apex:outputLabel value="Customer Name" for="account__name"/>
+                    <apex:outputText value="{!account.Name}" id="account__name"/>                      
+                </apex:pageblockSectionItem>                                        
+
+                <apex:pageblockSectionItem >              
+                    <apex:outputLabel value="Customer ID" for="Party__id"/>
+                    <apex:outputText value="{!account.Party_ID__c}" id="Party__id"/>                      
+                </apex:pageblockSectionItem>
+                
+                
+                <apex:pageblockSectionItem >
+                    <apex:outputLabel value="Current Monthly Pre-Auth Spend" for="cmMaxSpend"/>
+                    <apex:input type="number" value="{!currentMonthlyMaxSpend}" id="cmMaxSpend"/>                      
+                </apex:pageblockSectionItem>                                        
+
+                <apex:pageblockSectionItem >              
+                    <apex:outputLabel value="Total MAX Monthly Pre-Auth Spend" for="totalMaxSpend"/>
+                    <apex:input type="number" value="{!totlaMaxPreAuthSpend}" id="totalMaxSpend"/>                      
+                </apex:pageblockSectionItem>
+                
+                
+                
+                
+                
+                
+                <apex:pageblockSectionItem >
+                    <apex:outputLabel value="Product" />
+                    <apex:selectList rendered="{!ProductOptions.size>0}"  value="{!ProductselectedVal}" size="1" styleClass="productSelect"> 
+                        <apex:selectOptions value="{!ProductOptions}" />                 
+                        <apex:actionSupport reRender="pbSection,market_content,pbItem,message" status="status" event="onchange" action="{!initProductChange}"/> <!-- CRM-5389 - Added message in reRender -->
+                    </apex:selectList>
+                </apex:pageblockSectionItem>   
+                
+                <apex:pageblockSectionItem >
+                    <apex:outputLabel value="Waitlist Product Type"/>  
+                    <apex:selectList rendered="{!MarketTypetOptions.size>0}"  value="{!MarketTypeselectedVal}" size="1"> 
+                        <apex:selectOptions value="{!MarketTypetOptions}" /> 
+                        <apex:actionSupport reRender="pbSection,market_content,pbsection2" status="status" event="onchange" action="{!FetchRoutingslottype}"/>                
+                    </apex:selectList>                             
+                </apex:pageblockSectionItem>
+                
+                <apex:pageblockSectionItem >
+                    <apex:outputLabel value="Lead Routing" />
+                    <apex:selectRadio rendered="{!LeadRoutingOptions.size>0}" value="{!LeadRoutingselectedVal}" > 
+                        <apex:selectOptions value="{!LeadRoutingOptions}" /> 
+                    </apex:selectRadio>                         
+                </apex:pageblockSectionItem>  
+                
+                
+                <apex:pageblockSectionItem >
+            <!--  <apex:outputLabel ></apex:outputLabel> CRM-2520 Uncommented below two tags--> 
+                    
+                    <apex:outputLabel value="Product Size" />
+                    <apex:selectRadio rendered="{!SlotSizeOptions.size>0}" value="{!SlotSizeselectedVal}" > 
+                        <apex:selectOptions value="{!SlotSizeOptions}" /> 
+                    </apex:selectRadio>
+                    
+                                             
+                </apex:pageblockSectionItem>
+                
+                <apex:pageblockSectionItem id="pbItem">
+                    <apex:outputLabel value="Waitlist Type"/>  
+                    <apex:selectList rendered="{!TypeOptions.size>0}" value="{!StatusselectedVal}" size="1"> 
+                        <apex:selectOptions value="{!TypeOptions}"/> 
+                        <apex:actionSupport reRender="pbSection,market_content" status="status" event="onchange" action="{!changeStatus}"/>                                                
+                    </apex:selectList>                   
+                </apex:pageblockSectionItem>
+                
+                <!--<apex:pageblockSectionItem >
+                <apex:outputLabel value="Degree" />
+                <apex:selectList value="{!DegreeselectedVal}" size="1" rendered="{!if(StatusselectedVal = 'Warm',true,false)}" > 
+                <apex:selectOptions value="{!DegreeOptions}" /> 
+                </apex:selectList>                         
+                </apex:pageblockSectionItem>-->                                                                                                                                                              
+                
+                <apex:pageblockSectionItem >
+                    <apex:outputLabel value="{!prdctmeasure}"/>
+                    <!--<apex:input type="number" style="width: 70px "  value="{!Quantity}"/>-->
+                    <apex:inputtext style="width: 70px "  value="{!CC4digits}" maxlength="4" />
+                </apex:pageblockSectionItem>
+                
+                <!-- added by Divyalatha tirumalasetty on 12.08.15 - additional field on the VF page -->
+                <!--<apex:pageblockSectionItem >
+                <apex:outputLabel value="Term" />
+                <apex:input type="number" style="width: 70px "  value="{!Term}"/>
+                </apex:pageblockSectionItem>-->
+                                
+                                <!-- <apex:pageblockSectionItem >
+                <apex:outputLabel value="Max Spend" />
+                <apex:input type="number" style="width: 70px"  value="{!MaxSpend}"/>
+                </apex:pageblockSectionItem> -->
+                
+                <apex:pageblockSectionItem >
+                    <apex:outputLabel value="State" id="Statesection"/>  
+                    <apex:selectList value="{!stateSelected}" size="1"> 
+                        <apex:selectOptions value="{!StateOptions}" /> 
+                        <apex:actionSupport reRender="market_content,pbsection2" status="status" event="onchange" action="{!queryDependecies}"/>  
+                    </apex:selectList>                                              
+                </apex:pageblockSectionItem>
+                
+                <apex:pageblockSectionItem />
+            </apex:pageblockSection>
+            
+            <apex:pageblockSection id="pbsection2" columns="2">                                                                           
+                <apex:pageblockSectionItem rendered="{!countyFlag}">
+                    <b title="You can select only upto 100 Markets">County (?)</b>
+                    <!--<apex:outputLabel value="County"/>-->    
+                    <apex:selectList id="countySelectList" multiselect="true" value="{!CountySelected}" size="5"> 
+                        <apex:selectOptions value="{!countyOptionsset1}" />                
+                        <apex:selectOptions value="{!countyOptionsset2}" />                
+                        <apex:selectOptions value="{!countyOptionsset3}" />            
+                        <apex:actionSupport reRender="PostcodeSelectList,citySelectList" status="status" event="onchange" action="{!FetchCityPostalcode}"  rendered="{!if(MarketTypeselectedVal!='County',true,false)}"/>  
+                    </apex:selectList>                                  
+                </apex:pageblockSectionItem>
+                
+                <apex:pageblockSectionItem rendered="{!cityFlag}">
+                    <b title="You can select only upto 100 Markets">City (?)</b>
+                    <!--<apex:outputLabel value="City"/>-->  
+                    <apex:selectList id="citySelectList" multiselect="true" value="{!CitySelected}" size="5"> 
+                        <apex:selectOptions value="{!cityOptionsset1}" />                
+                        <apex:selectOptions value="{!cityOptionsset2}" />                
+                        <apex:selectOptions value="{!cityOptionsset3}" />       
+                        <apex:selectOptions value="{!cityOptionsSet4}" />       
+                        <!--<apex:actionSupport reRender="PostcodeSelectList" status="status" event="onchange" action="{!FetchPostalcode}" rendered="{!if(MarketTypeselectedVal!='City',true,false)}"/>-->  
+                        <apex:actionSupport reRender="PostcodeSelectList" status="status" event="onchange" action="{!querypostalcodesforcities}" rendered="{!if(MarketTypeselectedVal!='City',true,false)}"/>  
+                    </apex:selectList>                                                                                                                       
+                </apex:pageblockSectionItem>
+                
+                <apex:pageblockSectionItem rendered="{!postcodflag}" helpText="You can select only upto 1000 Markets">
+                    <b title="You can select only upto 100 Markets">Postal Code (?)</b>
+                    <!--<apex:outputLabel value="Postal Code"/>  -->
+                    <apex:selectList id="PostcodeSelectList" multiselect="true" value="{!postcodSelected}" size="5"> 
+                        <apex:selectOptions value="{!PostcodeOptionsSet1}" />                
+                        <apex:selectOptions value="{!PostcodeOptionsSet2}" />                
+                        <apex:selectOptions value="{!PostcodeOptionsSet3}" />                                                
+                        <apex:selectOptions value="{!PostcodeOptionsSet4}" /> 
+                        
+                    </apex:selectList>                                                                                                                       
+                </apex:pageblockSectionItem>
+                
+                <apex:pageblockSectionItem >
+                    <apex:outputLabel value="Market" />
+                    <apex:inputtextarea disabled="false" id="market_content" cols="45" rows="5" value="{!marketTextArea}" html-placeholder="All markets must be separated with comma"/>
+                </apex:pageblockSectionItem>
+            </apex:pageblockSection>
+            
+            <div align="center" draggable="false" >
+                <apex:commandButton value="AddToList" status="status" action="{!GenerateTable}" reRender="market_content,jspanel1,message"/>
+                &nbsp;&nbsp;
+                <!--<apex:commandButton value="Refresh" onclick="refresh()"/>-->
+                <apex:commandButton value="Refresh" action="{!RefreshPage}" status="status" rerender="pbSection"/>
+            </div>
+            
+            <apex:pageblock title="Selected product information" id="jspanel1" >
+                <apex:pageblockTable rendered="{!pbTable}" var="omarket" value="{!marketList}" id="blcktable">
+                    
+                    <apex:column headerValue="Product" styleClass="selected-product-name">
+                        <apex:outputText value="{!omarket.Product}"/> 
+                    </apex:column>
+                    
+                    <apex:column headerValue="Waitlist Product Type" width="70PX">
+                        <apex:outputText value="{!omarket.MarketType}"/> 
+                    </apex:column>
+                    
+                    <apex:column headerValue="Market" >
+                        <apex:outputText >{!omarket.marketText}</apex:outputText>
+                    </apex:column>
+                    
+                    <apex:column headerValue="State" >
+                        <apex:outputText >{!omarket.State}</apex:outputText>
+                    </apex:column>
+                    
+                    <apex:column headerValue="Waitlist Type" rendered="{!if(omarket.Message !='Success',true,false)}">
+                        <apex:selectList value="{!omarket.Status}" size="1" > 
+                            <apex:selectOptions value="{!omarket.Statusoptions}"/>
+                            <apex:actionSupport rerender="jspanel1" status="status" event="onchange"/>                                                
+                        </apex:selectList> 
+                    </apex:column>
+                    
+                    <apex:column headerValue="Waitlist Type" rendered="{!if(omarket.Message ='Success',true,false)}">
+                        <apex:outputText value="{!omarket.Status}"/>    
+                    </apex:column>
+                   
+                    <apex:column headerValue="LeadRouting"  rendered="{!if(omarket.Message !='Success',true,false)}">
+                        <apex:selectRadio value="{!omarket.LeadRouting }"> 
+                            <apex:selectOptions value="{!omarket.Leadoptions}" /> 
+                        </apex:selectRadio>
+                    </apex:column>
+                    <!-- DAP-224: Show term for local expert-->
+                     <apex:column headerValue="Term" rendered="{!AND(if(omarket.Message !='Success',true,false), OR(ProductselectedVal=='Connection for Co-Brokerage', ProductselectedVal=='Local Expert', ProductselectedVal=='Local Expert City'))}" >
+                        <apex:selectList value="{!omarket.termListVaule}" size="1" > 
+                            <apex:selectOptions value="{!omarket.termList}"/>
+                        </apex:selectList> 
+                    </apex:column>
+                    <apex:column headerValue="LeadRouting" rendered="{!if(omarket.Message ='Success',true,false)}">
+                        <apex:outputText value="{!omarket.LeadRouting }"/> 
+                    </apex:column>
+                    
+                    <apex:column headerValue="Term" rendered="{!AND(if(omarket.Message ='Success',true,false) , OR(ProductselectedVal=='Connection for Co-Brokerage', ProductselectedVal=='Local Expert', ProductselectedVal=='Local Expert City')) }">
+                        <apex:outputText value="{!omarket.termListVaule}"/> 
+                    </apex:column>
+                    <!-- CRM-2520 Uncommented the below section -->
+                    <apex:column headerValue="Product Size" rendered="{!if(omarket.Message !='Success',true,false)}">
+                        <apex:selectRadio value="{!omarket.Slot}"> 
+                            <apex:selectOptions value="{!omarket.slotoptions}" /> 
+                        </apex:selectRadio>
+                    </apex:column>
+                    
+                    
+                    <apex:column headerValue="Product Size" rendered="{!if(omarket.Message ='Success',true,false)}">
+                        <apex:outputText value="{!omarket.Slot}"/> 
+                    </apex:column>
+                    
+                    
+                    
+                    <!--<apex:column headerValue="Quantity(# of Impressions)" rendered="{!if(omarket.Message !='Success',true,false)}" >-->
+                 <!--   <apex:column rendered="{!if(omarket.Message !='Success',true,false)}" styleClass="turbo-qty-td" >
+                        <apex:facet name="header">
+                            Quantity(# of Impressions)<br/>Minimum 10,000
+                        </apex:facet> 
+                        <apex:inputtext styleClass="turbo-qty" style="width: 90px " value="{!omarket.Quantity}"/>
+                    </apex:column> -->
+                    
+                <!--    <apex:column rendered="{!if(omarket.Message ='Success',true,false)}" >
+                        <apex:facet name="header">
+                            Quantity(# of Impressions)<br/>Minimum 10,000
+                        </apex:facet> 
+                        <apex:outputtext style="width: 90px " value="{!omarket.Quantity}"/>
+                    </apex:column> -->
+                    
+                    <!--<apex:column headerValue="# of Items" rendered="{!if(omarket.Message ='Success',true,false)}">
+                        <apex:outputtext style="width: 30px " value="{!omarket.Quantity}"/>
+                    </apex:column>-->
+                    
+                    <!--<apex:column headerValue="Term" rendered="{!if(omarket.Message !='Success',true,false)}" >
+                    <apex:inputtext style="width: 30px " value="{!omarket.Term}"/>
+                    </apex:column>
+                    
+                    <apex:column headerValue="Term" rendered="{!if(omarket.Message ='Success',true,false)}">
+                    <apex:outputtext style="width: 30px " value="{!omarket.Term}"/>
+                    </apex:column>-->
+                                        
+                    <!--<apex:column headerValue="Degree" rendered="{!if(omarket.Message !='Success',true,false)}">
+                    <apex:selectList value="{!omarket.Degree}" size="1" rendered="{!if(omarket.Status='Warm',true,false)}"> 
+                    <apex:selectOptions value="{!DegreeOptions1}"/> 
+                    </apex:selectList>
+                    </apex:column>
+                    
+                    <apex:column headerValue="Degree" rendered="{!if(omarket.Message ='Success',true,false)}">
+                    <apex:outputText value="{!omarket.Degree}"/> 
+                    </apex:column>-->
+                    
+                    <apex:column headerValue="Max Spend" rendered="{!if(omarket.Message !='Success',true,false)}">
+                        <apex:input type="number" style="width: 70px " value="{!omarket.MaxSpend}"/>
+                    </apex:column>
+                    
+                    <apex:column headerValue="Max Spend" rendered="{!if(omarket.Message ='Success',true,false)}">
+                        <apex:outputtext style="width: 70px " value="{!omarket.MaxSpend}"/>
+                    </apex:column>
+                    
+                    <!--<apex:column headerValue="Waitlist ID" rendered="{!showstatuscolumns}">
+                    <apex:outputtext value="{!omarket.WLid}"/>
+                    </apex:column>-->
+                    
+                    <apex:column headerValue="Status" rendered="{!showstatuscolumns}">
+                        <apex:outputText value="{!omarket.Message}" style="{!if(omarket.Message!='Success',"color:red;width: 400px;","color:green;width: 400px;")}" />
+                    </apex:column>
+                    
+                    <apex:column headerValue="Delete" rendered="{!If(omarket.Message != 'Success',true,false)}">
+                        <apex:inputCheckbox value="{!omarket.Delete1}" />
+                    </apex:column>
+                </apex:pageblockTable>
+                <div align="center" id="buttons">
+                    
+                      <input type="button" class="submit_button btn" onclick="runValidation1( this )" value="Save"/>
+<!--                     <apex:commandButton reRender="blcktable,message,jspanel1" value="Submit" action="{!submit}" status="status" rendered="{!showsubmit}"/>         -->
+                    &nbsp;&nbsp;
+                  
+                    <apex:outputPanel rendered="{!curentPreAuthUser}">
+                                        <input type="button" class="submit_button btn" onclick="runValidation( this )" value="Submit"/>
+
+                    </apex:outputPanel>
+                    
+                    
+                    
+<!--                     <apex:commandButton reRender="blcktable,message,jspanel1" value="Submit" action="{!submit}" status="status" rendered="{!showsubmit}"/>         -->
+                    &nbsp;&nbsp;
+                    
+                    
+                   
+                    
+                    <apex:commandButton styleClass="closeButton"  onclick="close_window();return false;" value="Close" action="{!cancel}"  status="status" />        
+                    
+                </div>    
+                
+            </apex:pageblock>
+        </apex:pageblock>
+        
+    </apex:form>
+    <script>
+    function close_window() {
+        
+        close();
+        
+    }
+    function runValidation( ele ){
+         if( validateTurboQuantity( ele ) ){
+                SubmitAF();
+         }
+        
+    }
+    
+    function runValidation1( ele ){
+         if( validateTurboQuantity( ele ) ){
+                SubmitAFSave();
+         }
+        
+    }
+    
+    function validateTurboQuantity( btnEle ){
+        var isValidated = true;
+        $('.selected-product-name').each( function(index, pnameRef){
+            var selectedProduct = $( pnameRef ).html();
+            
+            if( selectedProduct.toUpperCase() == 'TURBO(SM) LISTINGS' ){
+                var quantity = parseInt( $( pnameRef ).siblings('.turbo-qty-td').find('.turbo-qty').val());
+                if(isNaN(quantity)){
+                    quantity = 0;
+                }
+                if( quantity < minTurboImpression ){
+                    isValidated = false;
+                }
+            }
+        });
+        
+        if( !isValidated ){
+            alert('Please select minimum '+minTurboImpression+' quantity (Impressions) for turbo');
+        }
+        return isValidated;
+    }
+    
+    </script>
+</apex:page>

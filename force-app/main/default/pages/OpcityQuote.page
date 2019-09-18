@@ -1,0 +1,580 @@
+<apex:page showHeader="false" standardStylesheets="true" sidebar="false" controller="OpcityQuote_Controller" docType="html-5.0" action="{!pageLoadAction}">    
+    <apex:includeScript value="/support/console/44.0/integration.js" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.3.1/flatly/bootstrap.min.css"/>
+    <!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script> -->
+    <apex:includescript value="//code.jquery.com/jquery-1.11.1.min.js" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    
+    <script src="{!$Resource.BsMultiSelect}"></script>
+
+    <style type="text/css">
+        .table.officeTable { 
+            border: 1px solid #eeeeff;
+            border-radius: 13px; 
+            border-spacing: 0;
+        }
+        table.officeTable  td, table.officeTable th {   
+            border-bottom: 1px solid #eeeeff;
+            padding: 5px; 
+        }
+        .officeTable .officeDetailHeader {text-align:center;!important; font-size: 18px;!important;}
+        .officeTable thead {background-color: #00485F;color: #fff;}
+        .officeTable td {padding-top: .2em; padding-bottom: .2em;}
+        .headerTable td { padding-top: .3em;}
+        .officeNameRow {font-size: 15px; border-top:5px solid #ccccee; background-color: #85C8DD; font-weight: bold;}
+        /*.officeTable tr:hover {background-color: #eeeeff;}*/
+        .outerDiv{
+            padding:1em;
+        }
+        .displayError {display: block;}
+        .hideError {display: none;}
+        
+    </style>
+
+
+    <apex:outputPanel id="panel">
+        <script>
+            var stateVsMsa = {};  
+            var retUrl= "{!retUrl}";
+            var qName = "{!quoteName}";
+            function openpage() {
+                if (retUrl != '' && retUrl != null) {
+                    var inConsole='{!$CurrentPage.parameters.inConsole}';
+                    if(sforce.console.isInConsole() || (inConsole!='' && inConsole!=undefined && inConsole=='true')){
+                        sforce.console.openPrimaryTab(undefined , retUrl, true, qName, null);
+                    }
+                    else{
+                        window.open(retUrl, '_blank');
+                    }
+                }
+            }
+            
+            function openLink(url) {
+                window.open(url, '_blank');
+            }
+            
+            function checkAll(cb) {
+                var inputElem = document.getElementsByTagName("input");
+                for(var i=0; i<inputElem.length; i++) {
+                    var input = inputElem[i];
+                    if (input.disabled==false && input.id.includes("selectCheck") && input.type == "checkbox") {
+                        input.checked = cb.checked;
+                    }
+                }
+            }
+            
+            function checkUncheckCheckAll(cb) {
+                var checkAll = true;
+                var inputElem = document.getElementsByTagName("input");
+                var checkAllElem;
+                for(var i=0; i<inputElem.length; i++) {
+                    var input = inputElem[i];
+                    if (input.type == "checkbox" && !input.id.includes("checkAll") && input.id.includes("selectCheck") && input.disabled==false) {
+                        if (!input.checked) {
+                            checkAll = false;
+                        }
+                    }
+                    else if (input.type == "checkbox" && input.id.includes("checkAll")) {
+                        checkAllElem = input;
+                    }
+                    
+                }
+                checkAllElem.checked = checkAll;
+            }
+            
+            function passMsa(partyId) {
+                var selected = $("#msa"+partyId+" option:selected");
+                var selectedMsa = "";
+                selected.each(function () {
+                    selectedMsa += $(this).val() + ";";
+                });
+                passMsatoApex(partyId, selectedMsa);
+            }
+            
+            
+          </script>
+    </apex:outputPanel>
+
+    <apex:slds />      
+    <div class="slds-scope">
+        <apex:pageMessages id="msg"/>
+        <div class="message hideError" id="errorDiv">
+           <ul/>
+        </div> 
+        
+        <apex:actionstatus id="status">
+            <apex:facet name="start">
+                <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height:1000%;opacity:0.65;width:100%;"> 
+                    <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                    <img class="waitingImage" src="/img/loading.gif" title="Loading..." />
+                    <span class="waitingDescription">Please Wait...</span>
+                </div>
+            </div>
+            </apex:facet>
+        </apex:actionstatus>
+        <apex:form id="theForm"> 
+            <apex:actionFunction name="passMsatoApex" action="{!saveMsa}" rerender="none">
+                <apex:param name="currentPartyId" assignTo="{!currentPartyId}" value=""/>
+                <apex:param name="currentMSA" assignTo="{!currentMSA}" value=""/>
+            </apex:actionFunction>
+            <apex:actionFunction name="createQuote" action="{!createCPQQuote}" rerender="msg" status="status"/>
+            
+            <div class="slds-align_absolute-center buttonDiv">
+                <button type="button" onclick="applyHeaderChangesToAllOffices();">Apply to All Offices</button>
+            </div>
+            <div class="outerDiv">
+                <table width="100%" class="headerTable">
+                    <tr> 
+                        <th>Launch Date *</th>
+                        <td><apex:input type="date" value="{!launchDate}" styleClass="headerLaunchDate"/></td>
+                        <th>Expected Monthly Lead Volume *</th>
+                        <td><apex:inputField value="{!tempAsset.Expected_Monthly_Lead_Volume__c}" styleClass="headerLeadVolume"/></td>
+                        <th>Backup Monthly Plan *</th>
+                        <td>
+                            <apex:outputPanel id="backUpPlan">
+                                <apex:inputField value="{!tempAsset.Backup_Monthly_Plan__c}" styleclass="headerBackupMonthlyPlan"/>
+                            </apex:outputPanel>
+                        </td>
+                    </tr>
+                    <tr> 
+                        <th>Product Type *</th>
+                        <td>
+                            <apex:selectList value="{!tempAsset.Product_Type__c}" size="1" styleClass="headerProductType">
+                                <apex:selectOptions value="{!prodTypes}" /> 
+                            </apex:selectList>
+                        </td>        
+                        <th>Contract Term *</th>
+                        <td>
+                            <apex:selectList value="{!tempAsset.Contract_Term__c}" size="1" styleClass="headerContTerm">
+                                <apex:selectOptions value="{!ContractTerms}"/>
+                            </apex:selectList>
+                        </td>
+                        <th>Setup Fee *</th>
+                        <td><apex:inputField value="{!tempAsset.Setup_Fee__c}" Styleclass="headerSetupFee"/></td>
+                    </tr>
+        
+                    <tr>
+                        <th>Confirmed Lead Sources</th>
+                        <td colspan="3">
+                            <apex:selectcheckboxes value="{!confirmedSources}" styleClass="headerConfirmedSources">                   
+                                <apex:selectoptions value="{!confirmedSourceOptions}" />      
+                            </apex:selectcheckboxes>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Unconfirmed Lead Sources</th>
+                        <td colspan="5">
+                            <apex:selectcheckboxes value="{!unConfirmedSources}" styleClass="headerUnConfirmedSources">                   
+                                <apex:selectoptions value="{!unConfirmedSourceOptions}"/>      
+                            </apex:selectcheckboxes>
+                        </td>
+                    </tr> 
+                    <tr>
+                        <th colSpan="2">Agents can choose to receive leads outside of brokerage licensed state(s) </th> 
+                        <td><apex:inputField value="{!tempAsset.unlicensed_state_leads__c}" styleClass="headerUnLicensed"/></td>
+                        <th  colSpan="2">Opcity has permission to disclose referral fees to agents</th> 
+                        <td><apex:inputField value="{!tempAsset.can_disclose_fees__c}" styleClass="headerCanDiscFee"/></td>
+                    </tr>
+                </table>
+                
+                </div> 
+                
+                <div class="slds-align_absolute-center buttonDiv">
+                    <!--<apex:commandButton value="Create Quote" action="{!createCPQQuote}" reRender="msg,panel" oncomplete="openpage();" status="status"/>-->
+                    <!-- <apex:commandButton value="Create Quote" action="{!createCPQQuote}" reRender="msg"  status="status" /> -->
+                    <button type="button" onclick="validateOffices();">Create Quote</button>
+                </div>  
+        
+                <div class="outerDiv">
+                    <div>
+                        <table class="officeTable">
+                            <thead>
+                                <tr>
+                                    <th><apex:inputCheckBox onclick="checkAll(this)" id="checkAll"/> </th>
+                                    <th class="officeDetailHeader" colspan="5"> </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <apex:repeat value="{!offices}" var="office">
+                                    <tr class="officeNameRow" width="100%" >
+                                        <td align="left" colspan="2"><apex:inputCheckBox styleClass="rowCheck{!office.fulfillToAccount.Party_ID__c}" value="{!office.selected}" onclick="checkUncheckCheckAll(this)" id="selectCheck" disabled="{!AND(office.fulfillToAsset.id == null, OR(office.fulfillToAccount.Office_Agent_BLA__c=='BLA Unconfirmed', office.fulfillToAccount.Office_Agent_BLA__c=='BLA Confirmed'))}"/>
+                                            {!office.fulfillToAccount.name}
+                                        </td>
+                                        <td align="center" colspan="1" style="text-align:center;">Party Id: {!office.fulfillToAccount.Party_ID__c }</td>
+                                        <td colspan="3" style="text-align:right;"><apex:outputText value="{!office.address}" styleclass="rowAddress{!office.fulfillToAccount.Party_ID__c}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Brokerage License State  *</th>
+                                        <td>
+                                            <apex:inputField value="{!office.FulfilltoAsset.Opcity_State__c}" styleClass="rowState{!office.fulfillToAccount.Party_ID__c}"/>
+                                        </td>
+                                        <th>Markets *</th>
+                                        <td colspan="3" id="markettd{!office.fulfillToAccount.Party_ID__c}">
+                                            <select assetMsa="{!office.FulfilltoAsset.Opcity_MSA__c}" name="msa" id="msa{!office.fulfillToAccount.Party_ID__c}" class="form-control"  multiple="multiple" onchange="passMsa('{!office.fulfillToAccount.Party_ID__c}');">
+                                            </select>
+                                            
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <th>Launch Date *</th> 
+                                        <td>
+                                            <apex:input type="date" value="{!office.launchDate}" styleClass="rowLaunchDate{!office.fulfillToAccount.Party_ID__c}"/> 
+                                        </td>
+                                        
+                                        <th>Expected Monthly Lead Volume *</th>
+                                        <td>
+                                            <apex:inputField value="{!office.fulfillToAsset.Expected_Monthly_Lead_Volume__c}" styleClass="rowLeadVolume{!office.fulfillToAccount.Party_ID__c}"/> 
+                                        </td>
+                                        <th>Backup Monthly Plan *</th>
+                                        <td>
+                                            <apex:inputField value="{!office.fulfillToAsset.Backup_Monthly_Plan__c}" styleclass="rowBackupMonthlyPlan{!office.fulfillToAccount.Party_ID__c}"/>
+                                        </td>
+                                        
+                                    </tr>
+                                    
+                                    <tr>
+                                        <th>Product Type *</th>
+                                        <td>
+                                            <apex:selectList value="{!office.fulfillToAsset.Product_Type__c}" size="1" styleclass="rowProductType{!office.fulfillToAccount.Party_ID__c}">
+                                                <apex:selectOptions value="{!prodTypes}"/>
+                                            </apex:selectList>
+                                        </td>
+                                        <th>Contract Term *</th>
+                                        <td>
+                                            <apex:selectList value="{!office.fulfillToAsset.Contract_Term__c}" size="1" styleClass="rowContTerm{!office.fulfillToAccount.Party_ID__c}">
+                                                <apex:selectOptions value="{!ContractTerms}"/>
+                                            </apex:selectList>
+                                        </td>
+                                        
+                                        
+                                        <th>Setup Fee *</th>
+                                        <td>
+                                            <apex:inputField value="{!office.fulfillToAsset.Setup_Fee__c}" rendered="{!office.fulfillToAsset.id == null}" styleClass="rowSetupFee{!office.fulfillToAccount.Party_ID__c}"/>
+                                            <apex:outputText value="{!office.fulfillToAsset.Setup_Fee__c}" rendered="{!office.fulfillToAsset.id != null}" styleClass="rowSetupFee{!office.fulfillToAccount.Party_ID__c}"/>
+                                        </td>
+                                        
+                                    </tr>
+                                   <tr>
+                                        <th>Confirmed Lead Sources</th>
+                                        <td colspan="3">
+                                            <apex:selectcheckboxes value="{!office.confirmedSources}" label="Source" styleClass="rowConfirmedSources{!office.fulfillToAccount.Party_ID__c}">                   
+                                                <apex:selectoptions value="{!confirmedSourceOptions}"/>      
+                                            </apex:selectcheckboxes>
+                                        </td>
+                                       
+                                    </tr>
+                                    <tr>
+                                        <th>Unconfirmed Lead Sources</th>
+                                        <td colspan="5">
+                                            <apex:selectcheckboxes value="{!office.unConfirmedSources}" label="Source" styleClass="rowUnConfirmedSources{!office.fulfillToAccount.Party_ID__c}">                    
+                                                <apex:selectoptions value="{!unConfirmedSourceOptions}"/>      
+                                            </apex:selectcheckboxes>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <th colSpan="2">Agents can choose to receive leads outside of brokerage licensed state(s) </th> 
+                                        <td><apex:inputField value="{!office.fulfillToAsset.unlicensed_state_leads__c}" styleClass="rowUnlicensed{!office.fulfillToAccount.Party_ID__c}"/></td>
+                                        <th  colSpan="2">Opcity has permission to disclose referral fees to agents</th> 
+                                        <td><apex:inputField value="{!office.fulfillToAsset.can_disclose_fees__c}" styleClass="rowCanDiscFee{!office.fulfillToAccount.Party_ID__c}"/></td>
+                                    </tr>
+            
+                                    <tr>
+                                        <th>Action</th>
+                                        <td>
+                                            <apex:selectList value="{!office.action}" size="1" styleClass="rowAction{!office.fulfillToAccount.Party_ID__c}">
+                                                <apex:selectOptions value="{!office.actions}"/>
+                                            </apex:selectList>
+                                        </td>
+                                        
+                                        <th>Inflight</th>
+                                        <td>{!office.inflight}</td>
+                                        <th>Office/Agent BLA</th>
+                                        <td>{!office.fulfillToAccount.Office_Agent_BLA__c}</td>
+                                    </tr>
+                                    <tr><td colspan="7"><br/></td></tr>
+                                </apex:repeat> 
+                            </tbody>
+                        </table>
+                   </div>
+                </div>
+            </apex:form>
+        </div>
+
+    
+    <apex:repeat value="{!stateVsMsa}" var="state">
+        <apex:repeat value="{!stateVsMsa[state]}" var="msa">
+            <script>
+                if (typeof stateVsMsa['{!state}'] === 'undefined') {
+                    stateVsMsa['{!state}'] = [];
+                }
+                stateVsMsa['{!state}'].push('{!msa}');
+            </script>
+        </apex:repeat>
+    </apex:repeat>
+    
+
+    <script>
+        
+        addProductTypeChangeHandler();
+        showBackupPlanAsPerProduct();
+        addStateChangeEventHandler();
+        
+        function showMessage(message, error) {
+            $("#errorDiv ul").empty();
+            for (var i=0; i<message.length; i++) {
+                $("#errorDiv ul").append('<li><span>' + message[i] + '</span></li>');
+            }
+            if (error) {
+                $('#errorDiv').removeClass('infoM3');
+                $('#errorDiv').addClass('errorM3');
+            }
+            else {
+                $('#errorDiv').addClass('infoM3');
+                $('#errorDiv').removeClass('errorM3');
+            }
+            
+            $('#errorDiv').addClass('displayError');
+            $('#errorDiv').removeClass('hideError');
+            
+        }
+        
+        function hideMessage() {
+            $("#errorDiv ul").empty();
+            $('#errorDiv').addClass('hideError');
+            $('#errorDiv').removeClass('displayError');
+        }
+        
+        function validateOffices() {
+            hideMessage();
+            var count = 0;
+            var message= [];
+            $("input[class*='rowCheck']" ).each(function( index ){
+                if($(this).is(":checked")) {
+                    count = count + 1;
+                    var className = $(this).attr('class');
+                    var partyId = className.replace("rowCheck", '');
+                    var value = $('.'+className.replace("rowCheck", "rowProductType")).val();
+                    if(value == null || value.trim().length<=0) {
+                        message.push('Party Id: ' + partyId + ' Product Type is Required');
+                    }
+                    value = $('.'+className.replace("rowCheck", "rowSetupFee")).val();
+                    var value2 = $('.'+className.replace("rowCheck", "rowSetupFee")).text();
+                    if((value == null || value.trim().length<=0) && (value2 == null || value2.trim().length<=0)) {
+                        message.push('Party Id: ' + partyId + ' Setup Fee is Required');
+                    }
+                    value = $('.'+className.replace("rowCheck", "rowBackupMonthlyPlan")).val();
+                    if(value == null || value.trim().length<=0) {
+                        message.push('Party Id: ' + partyId + ' Backup Monthly Plan is Required');
+                    }
+                    value = $('.'+className.replace("rowCheck", "rowContTerm")).val();
+                    if(value == null || value.trim().length<=0) {
+                        message.push('Party Id: ' + partyId + ' Contract Term is Required');
+                    }
+                    value = $('.'+className.replace("rowCheck", "rowLaunchDate")).val();
+                    if(value == null || value.trim().length<=0) {
+                        message.push('Party Id: ' + partyId + ' Launch Date is Required');
+                    }
+                    value = $('.'+className.replace("rowCheck", "rowLeadVolume")).val();
+                    if(value == null || value.trim().length<=0) {
+                        message.push('Party Id: ' + partyId + ' Expected Monthly Lead Volume is Required');
+                    }
+                    value = $('#'+className.replace("rowCheck", "msa")).val();
+                    if(value == null || value.length<=0) {
+                        message.push('Party Id: ' + partyId + ' Market is Required');
+                    }
+                    value = $('.'+className.replace("rowCheck", "rowAddress")).text();
+                    if(value == null || value.trim().length<=0) {
+                        message.push('Party Id: ' + partyId + ' Office Address is Required');
+                    }
+                    var sources = false;
+                    $('.'+className.replace("rowCheck", "rowUnConfirmedSources")).find('input').each(function( index ) {
+                        if($(this).is(":checked") == true) {
+                            sources = true;
+                        }
+                    });
+                    if (sources == false) {
+                        $('.'+className.replace("rowCheck", "rowConfirmedSources")).find('input').each(function( index ) {
+                            if($(this).is(":checked") == true) {
+                                sources = true;
+                            }
+                        });
+                    }
+                    if (sources == false) {
+                        message.push('Party Id: ' + partyId + ' Expected Lead Sources(s) is Required');
+                    }
+                }
+            });
+            if (count == 0) {
+                message.push('No office selected!');
+            }
+            if (message.length > 0) {
+                showMessage(message, true);
+            }
+            else {
+                createQuote();
+            }
+        }
+        
+        function applyHeaderChangesToAllOffices() {
+            hideMessage();
+            var count = 0;
+            $("select[class*='rowAction']" ).each(function( index ){
+                if($(this).val() == 'add') {
+                    count = count + 1;
+                    var className = $(this).attr('class');
+                    $('.'+className.replace("rowAction", "rowProductType")).val($('.headerProductType').val());
+                    $('.'+className.replace("rowAction", "rowBackupMonthlyPlan")).val($('.headerBackupMonthlyPlan').val());
+                    $('.'+className.replace("rowAction", "rowSetupFee")).val($('.headerSetupFee').val());
+                    $('.'+className.replace("rowAction", "rowLaunchDate")).val($('.headerLaunchDate').val());
+                    $('.'+className.replace("rowAction", "rowLeadVolume")).val($('.headerLeadVolume').val());
+                    $('.'+className.replace("rowAction", "rowContTerm")).val($('.headerContTerm').val());
+                    $('.'+className.replace("rowAction", "rowUnlicensed")).prop('checked', $('input[class=headerUnLicensed]').is(":checked"));
+                    $('.'+className.replace("rowAction", "rowCanDiscFee")).prop('checked', $('input[class=headerCanDiscFee]').is(":checked"));
+                    
+                    $('.headerUnConfirmedSources').find('input').each(function( index ) {
+                        var headerName = $(this).val();
+                        var value = $(this).is(":checked");
+                        $('.'+className.replace("rowAction", "rowUnConfirmedSources")).find('input').each(function( index ) {
+                            if($(this).val() == headerName) {
+                                $(this).prop('checked', value);
+                                //break;
+                            }
+                        });
+                        /* var headerName = "'input[name="+$(this).val()+"]'";
+                        alert(headerName);
+                        alert($('.'+className.replace("rowAction", "rowUnConfirmedSources")).find(headerName));*/
+                  
+                        //$('.'+className.replace("rowAction", "rowUnConfirmedSources")).find('input[name='+$(this).val()+']').prop('checked', $(this).is(":checked"));
+                        
+                    });
+                    
+                    $('.headerConfirmedSources').find('input').each(function( index ) {
+                        var headerName = $(this).val();
+                        var value = $(this).is(":checked");
+                        $('.'+className.replace("rowAction", "rowConfirmedSources")).find('input').each(function( index ) {
+                            if($(this).val() == headerName) {
+                                $(this).prop('checked', value);
+                                //break;
+                            }
+                        });
+                        
+                    });
+                }                
+            });
+            showBackupPlanAsPerProduct();
+            var message = [];
+            if (count > 0) {
+                //alert('Changes will be applied to ' + count + ' Offices!');
+                message.push('Changes has been applied to ' + count + ' Offices!');
+            }
+            else {
+                //alert('Changes can be applied to only Add Offices, No Add Office in the list to apply changes!');
+                message.push('Changes can be applied to only Add Offices, No Add Office in the list to apply changes!');
+            }
+            if (message.length>0) {
+                showMessage(message, false);
+            }
+        }
+        
+        function addStateChangeEventHandler() {
+            $("select[class*='rowState']" ).each(function( index ){
+                $(this).on('change', function() {
+                      var className = $(this).attr('class');
+                      showStates(className, $(this).val(), false);
+                });
+                var className = $(this).attr('class');
+                showStates(className, $(this).val(), true);
+            });
+        }
+        
+        function showStates(className, state, takeFromAsset) {
+            var id = className.replace("rowState", "msa");
+            var selectedMsa = ''
+            if (takeFromAsset) {
+                selectedMsa = $('#'+id).attr('assetMSA');
+            }
+            else {
+                var selected = $("#"+id+" option:selected");
+                selected.each(function () {
+                    selectedMsa += $(this).val() + ";";
+                });
+            }
+            $('#'+id).find('option').remove();
+            if (state != '') {
+                 updateMSAOptions(id, state, selectedMsa);
+            }
+            else {
+                Object.keys(stateVsMsa).forEach(function(state) {
+                    updateMSAOptions(id, state, selectedMsa);
+                });
+            }
+            updateSelectedMSAs(id, selectedMsa);
+            
+            $('#'+id).bsMultiSelect('Dispose');
+            $('#'+id).bsMultiSelect({
+                containerClass: 'dashboardcode-bsmultiselect'+id,
+            });
+        }
+        
+        function updateMSAOptions(id, state, selectedMsa) {
+            for (var i=0; i<stateVsMsa[state].length; i++) {
+                var msa = stateVsMsa[state][i];
+                if (!selectedMsa.includes(msa)) {
+                    var option  = '<option value=\"' + msa + '\">' + msa + '</option>';
+                    $('#'+id).append(option);
+                }
+            }
+        }
+        
+        function updateSelectedMSAs(id, selectedMsa) {
+            if (selectedMsa != '') {
+                var msas = selectedMsa.split(';');
+                for(var i = 0; i<msas.length; i++) {
+                    var msa = msas[i];
+                    if (msa != '') {
+                        var option  = '<option selected="true" value=\"' + msa + '\">' + msa + '</option>';
+                        $('#'+id).append(option);
+                    }
+                }
+            }
+        }
+        
+        function showBackupPlanAsPerProduct() {
+            $("select[class*='rowProductType']" ).each(function( index ){
+                var className = $(this).attr('class');
+                className = className.replace("rowProductType", "rowBackupMonthlyPlan");
+                productTypeEvenHandler(className, $(this).val());
+            });
+        }
+        
+        function productTypeEvenHandler(className, value) {
+            if(value == 'CONFIRMED') {
+                  $('.'+className).attr('disabled', true);
+                  $('.'+className).css("background-color", "#D3D3D3");
+                  $('.'+className).val('$1200 (100 leads @ $12/Lead)');
+             }
+             else {
+                  $('.'+className).attr('disabled', false);
+                  $('.'+className).css("background-color", "white");
+             }
+        }
+        function addProductTypeChangeHandler() {
+            $("select[class*='rowProductType']" ).each(function( index ){
+                  $(this).on('change', function() {
+                      var className = $(this).attr('class');
+                      className = className.replace("rowProductType", "rowBackupMonthlyPlan");
+                      productTypeEvenHandler(className, $(this).val());
+                });
+            });
+        }
+        
+        $('.headerProductType').on('change', function() {
+            productTypeEvenHandler('headerBackupMonthlyPlan', $(this).val());
+        });
+
+    </script>
+</apex:page>

@@ -1,0 +1,17 @@
+<apex:page showHeader="true" sidebar="true" standardController="Account" extensions="AccountRedirectController" action="{!actionController}">
+<apex:pageMessages />
+<apex:form >
+<apex:pageBlock id="MultipleAccounts" rendered="{!IF(count>1,true,false)}">
+<h5>Multiple Billing Accounts Found..Click on an Billing Account...</h5><br/><br/>
+
+    <apex:pageblocktable var="billacc" value="{!billingAccounts}">
+         <apex:column headerValue="Account Name">
+          <apex:outputLink value="/apex/Manage_Billing_Account?id={!billacc.id}&retId={!acc}">{!billacc.Name}</apex:outputLink>
+         </apex:column>      
+         </apex:pageblocktable>
+         </apex:pageBlock>         
+ </apex:form>                             
+  <apex:form >
+    <apex:commandButton action="{!redirect}" value="Back to Account" />
+  </apex:form>
+</apex:page>

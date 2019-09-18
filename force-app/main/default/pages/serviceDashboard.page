@@ -1,0 +1,15 @@
+<apex:page standardStylesheets="false">
+    <apex:includeLightning />
+    <div id="lightning" style="width:100%;height:1000px" />
+
+    <script>
+        $Lightning.use("c:serviceWhiteboard", function() {
+          $Lightning.createComponent("c:serviceDashboardTable",
+          { },
+          "lightning",
+          function(cmp) {
+            // do some stuff
+          });
+        });
+    </script>
+</apex:page>

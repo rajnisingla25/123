@@ -1,0 +1,1539 @@
+<apex:page action="{!if($user.canseedashboard__c = True, 
+                   null, 
+                   urlFor($Action.Account.View, Account.Id,
+                   null, true))}" 
+           standardController="Account" extensions="accountSummaryHelperCopy" showHeader="True" tabStyle="account" standardStylesheets="true" docType="html-5.0" sidebar="true" lightningStylesheets="true">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>Account Summary</title>
+        <apex:styleSheet value="{!$Resource.Dashboard_common_css}" />
+        <apex:includeScript value="{!$Resource.dashboard_js}" />
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css"/>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"/>
+        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.4.2/css/buttons.dataTables.min.css"/>  
+        <apex:includeScript value="{!URLFOR($Resource.JS_CSS_Bundles,'JS/JQuery-1.12.4.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.JS_CSS_Bundles,'JS/Jquery-Datatable-Min.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.JS_CSS_Bundles,'JS/JqueryUI.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.JS_CSS_Bundles,'JS/JQueryUI-Datatable-Min.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.DatatableRowsGroupJS)}"/>
+        
+        <apex:includeScript value="{!URLFOR($Resource.JS_CSS_Bundles,'JS/datatables-buttons.min.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.JS_CSS_Bundles,'JS/jszip.min.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.JS_CSS_Bundles,'JS/pdfmake.min.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.JS_CSS_Bundles,'JS/vfs_fonts.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.JS_CSS_Bundles,'JS/buttons.html5.min.js')}"/>
+        <!--
+<script src="https://cdn.datatables.net/buttons/1.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.32/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.4.2/js/buttons.html5.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>-->
+    <style>
+    
+    #scroll {
+position:fixed;
+right:10px;
+bottom:10px;
+cursor:pointer;
+width:50px;
+height:50px;
+background-color:#3498db;
+text-indent:-9999px;
+display:none;
+-webkit-border-radius:60px;
+-moz-border-radius:60px;
+border-radius:60px
+}
+#scroll span {
+position:absolute;
+top:50%;
+left:50%;
+margin-left:-8px;
+margin-top:-12px;
+height:0;
+width:0;
+border:8px solid transparent;
+border-bottom-color:#ffffff;
+}
+#scroll:hover {
+background-color:#e74c3c;
+opacity:1;filter:"alpha(opacity=100)";
+-ms-filter:"alpha(opacity=100)";
+}
+
+
+
+
+.dataTablesButtonsCSS{
+    font-size:larger;
+}
+
+.stillLoad{
+    
+    
+    
+    
+}
+
+
+.gusFieldset, .workOptionsSelector, .gusTabs > ul, body .message {
+    width: 100%;
+    max-width: 1360px; 
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+div.tabclass {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: transparent;
+}
+
+/* Style the as inside the tab */
+div.tabclass a {
+    cursor: pointer;
+    transition: 0.5s;
+    text-decoration: none;
+}
+
+/* Change background color of as on hover */
+div.tabclass a:hover {
+    background-color: #1797C0 ;
+    color:#fff;
+    text-decoration: none; 
+}
+
+/* Create an active/current tablink class */
+div.tabclass a.active {
+    background-color: transparent;
+    border-bottom:5px solid red;
+    text-decoration: none;
+    
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+}
+
+.ulstle {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #efe6e6;
+    position: sticky;
+    top: 0;
+    width: 100%;
+}
+.sticky { background: orange; }
+
+.fixed {
+    position: fixed;
+    top:20; left:0;
+    width: 100%; }
+
+div.tooltip {
+    width: 195px;
+    float: left;
+}
+div.tooltip:hover {
+    background: #ffffff;
+    text-decoration: none;
+} /*BG color is a must for IE6*/
+div.tooltip span {
+    display: none;
+    padding: 2px 3px;
+    margin-left: 8px;
+    width: 195px;
+}
+div.tooltip:hover span {
+    display: inline;
+    position: absolute;
+    border: 1px solid #cccccc;
+    background: #FFC;;
+    color: #000000;
+}
+.button {
+    position: absolute;
+    top: 50%;
+}
+.ui-icon, .ui-widget-content .ui-icon {
+    background-image:none;
+}
+.alert {
+    padding: 20px;
+    background-color: #f44336;
+    color: white;
+}
+.refreshButton{
+    margin-left: 15px;
+    color: #fffff1;
+    font-weight: bold;
+    float: right;
+    /* font-size: 22px; */
+    line-height: 20px;
+    cursor: pointer;
+    /* transition: 0.3s; */
+    background: #1797c0;
+    
+    
+}
+.closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.closebtn:hover {
+    color: black;
+}
+.popupbackground{
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    z-index: 99;
+}
+.popupcontent{
+    display: block;
+    margin-left: 35vw;
+    width: 30%;
+    margin-top:30vh;
+    background: white;
+}
+.protectedMarketsBackgroundColor {
+    background-color: rgb(226, 142, 142) !important;
+}
+
+.scroll_new tr {
+    display: flex;
+    flex:1 auto; 
+}
+
+.scroll_new td {
+    flex: 1;
+}
+
+.scroll_new thead th {
+    flex: 1;
+    display: block;
+}
+.scroll_new tbody {
+    display: block;
+    width: 100%;
+    overflow-y: scroll;
+    height: 525px;
+}
+</style>
+</head>
+<body>
+    <div id="loader">
+        </div>
+    <apex:form >
+        <apex:pageMessages ></apex:pageMessages>
+        <div class="alert" id="ErrorDiv" style="display:none;">
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+            <strong>Error!</strong> Please refresh your browser. If the error persists, please contact your system administrator.
+            </div> 
+            <div>
+                <button onclick="myFunction()" class="refreshButton">Refresh</button>
+                </div>
+                <div id="contentDiv"  class="animate-bottom">
+                    <a href="#" id="scroll" style="display: none;"><span></span></a>
+                        <div class="gusTabs maxWidthCss" data-tabsetid="teams"> 
+                            <ul>
+                            <li data-tab="AccSummary" class="tablinks {IF(acctabactive=='block','on','off')}" onclick="openTabContentDiv(this, 'AccSummary')">Account Summary</li>
+                            <li data-tab="AccDetails" class="tablinks" onclick="openTabContentDiv(this, 'AccDetails')">Account Details</li>
+                            <li data-tab="QuickQuote" id="quickQuoteTab"  class="tablinks {IF(qqtabactive=='block','on','off')}" onclick="openTabContentDiv(this, 'PriceConfigurator')" style="{!IF($Profile.Name == 'Move OpCity Operations', 'display:none' , '')}">Quick Quote</li>
+                            <li data-tab="CreateWaitlist" class="tablinks" onclick="openTabContentDiv(this, 'createWaitlist')" style="{!IF($Profile.Name == 'Move OpCity Operations', 'display:none' , '')}">Create Waitlist</li>
+                            <li data-tab="assetsOwned" class="tablinks" onclick="openTabContentDiv(this, 'assetsOwned')" style="{!IF($Profile.Name == 'Move OpCity Operations', 'display:none' , '')}">Assets Owned</li>
+                            <li data-tab="opcityBLA" class="tablinks" onclick="openTabContentDiv(this, 'opcityBLA')" style="display:{!if(isOpcityBlaTeamUser,'','none')};">{!$Label.QuickOpcityQuoteTabBLA}</li>
+                            </ul>
+                            </div><br/> <!-- CRM-3881: Added new fields -->
+                                <div id="AccSummary" class="tabcontent active" style="display:block;">
+                                    <div class="stillLoading"> <img src="{!URLFOR($Resource.stillLoading)}" style="padding-left:35%;padding-right:0.6%;"/><b><font style="font-size: medium;color: darkred;">Still fetching live data... </font></b></div>
+                                    <div class="gusTabPanelActive" id="tab-teamInformation">
+                                        <div class="gusFieldset gusFieldsetForm">
+                                            <div class="gusLegend">Potential Sale Info</div>  
+                                            <div class="gusFormToolbar gusFormToolbarTop">
+                                                <apex:outputPanel layout="none"></apex:outputPanel>
+                                                </div>
+                                                <span>
+                                                    <div  id="totalFlex"></div>
+                                                    <div  id="totalFast"></div>
+                                                    <div  id="LECityTotal"></div>
+                                                    <div  id="LEZipTotal"></div>
+                                                    </span><br/><br/>
+                                                        </div>
+                                                    </div><br/>
+                                                        <div class="gusTabPanelActive" id="tab-teamInformation">
+                                                            <div class="gusFieldset gusFieldsetForm">
+                                                                <div class="gusLegend">Account Profile</div> 
+                                                                <div class="gusFormToolbar gusFormToolbarTop">
+                                                                    <apex:outputPanel layout="none"></apex:outputPanel>
+                                                                    </div>
+                                                                    <table id="accProfileTable" class="display" cellspacing="4" width="100%">
+                                                                        <thead>
+                                                                        <tr>                                           
+                                                                        <th>Party Id</th> <!--CRM-3177 -->
+                                                                        <th>Opcity</th>  <!-- CRM-5867 -->
+                                                                        <th>Products Owned</th>
+                                                                        <th>Total Contract Value</th>
+                                                                        <th>Billing Status</th>
+                                                                        <th>Account Owner</th>                                                                            
+                                                                        <th class=".gusForm .gusFormFieldLeft label">Bill To Address</th>
+                                                                        </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <tr>
+                                                                            <td>{!JSENCODE(account.Party_ID__c)}</td>
+                                                                        <td><apex:outputtext value="{!If(OR(AND(account.Type == 'Broker',OR(account.BLA__c == 'Yes',account.BLA__c == 'Partial',account.Core__c == 'Yes',account.Core__c == 'Partial')),AND(account.Type == 'Realtor Agent', OR(account.Office_Agent_BLA__c == 'BLA Unconfirmed',account.Office_Agent_BLA__c == 'BLA Confirmed',account.Office_Agent_BLA__c == 'Core'))),"Yes","No")}" /></td>
+                                                                        <td style="word-wrap:break-word;" width="200px">
+                                                                            <script>
+                                                                            var temp='{!JSENCODE(IF(OwnedProductsNames='','-',OwnedProductsNames))}';
+if(temp.indexOf(';')>=0){
+    var tempArr=temp.split(';');
+    for(i=0;i<tempArr.length;i++){
+        console.log(tempArr[i]);
+        document.write(tempArr[i]+';<br/>');
+    }
+}
+else{
+    document.write('{!JSENCODE(IF(OwnedProductsNames='','-',OwnedProductsNames))}');
+}
+
+</script>
+<p></p>
+</td>  
+<td>
+<apex:outputText value="{0, Number, Currency}">
+<apex:param value="{!Account.Total_Contract_Value__c}" />
+</apex:outputText>
+</td>                                                      
+<td>
+<font color="green" font-weight="bold">
+<apex:outputText value="{!account.Billing_Status__c}" escape="false"/>
+</font>
+</td>
+<td>{!JSENCODE(account.Owner.Name)}</td>
+<!--<td id="localTime"></td>--> <!--CRM-5867 Moved the location to bottom of the layout-->
+        <td style="width: 5px; word-wrap:normal">
+            <apex:outputPanel id="addressPanel">
+                <apex:outputPanel id="linkUpdateAddr" rendered="{!IF(account.BillingState =null || account.BillingCountry =null || account.BillingStreet = null || account.BillingCity = null || account.BillingPostalCode = null,true,false)}">
+                    <apex:commandLink reRender="addressPanel"  immediate="true" >Update Address
+                        <apex:param assignTo="{!modifyAddress}" value="true"/>
+                    </apex:commandLink>
+                    <apex:outputPanel id="modifyAddrPanel" rendered="{! IF(modifyAddress = 'true', true, false)}">
+                        <div class="popupbackground">
+                            <div class="popupcontent">
+                                <apex:pageBlock title="Update Billing Address">
+                                    <apex:pageBlockSection columns="1">
+                                        <apex:inputField value="{!account.BillingStreet}"/>
+                                        <apex:inputField value="{!account.BillingCity}"/>
+                                        <apex:inputField value="{!account.BillingState}"/>
+                                        <apex:inputField value="{!account.BillingPostalCode}"/>
+                                        <apex:inputField value="{!account.BillingCountry}"/>
+                                    </apex:pageBlockSection>
+                                    <apex:pageBlockButtons >
+                                        <apex:commandButton action="{!save}" oncomplete="return false;" value="Save" reRender="addressPanel,detailTab">
+                                            <apex:param assignTo="{!modifyAddress}" value="false"/>
+                                        </apex:commandButton>
+                                        <apex:commandButton value="Cancel" immediate="true" reRender="addressPanel">
+                                            <apex:param assignTo="{!modifyAddress}" value="false"/>
+                                        </apex:commandButton>
+                                    </apex:pageBlockButtons>
+                                </apex:pageBlock>
+                            </div>
+                        </div>
+                    </apex:outputPanel>
+                </apex:outputPanel>
+                <br/>
+                {!JSENCODE(account.BillingStreet)} {!JSENCODE(account.BillingCity)}, {!JSENCODE(account.BillingState)} - {!JSENCODE(account.BillingPostalCode)} 
+                <br/>{!JSENCODE(account.BillingCountry)}
+            </apex:outputPanel>
+        </td>
+    </tr>
+</tbody>
+
+<thead>
+    <tr>                                            
+        <th>Account Sub Type</th>
+        <th>Franchise Type</th>
+        <th>Monthly Spend</th>
+        <th>Consolidated Billing Day</th>
+        <th>Sales Lock User</th>
+        <th>Time since Last Touch</th>
+        <th>Preferred phone</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>                                           
+        <td>{!JSENCODE(account.Account_Sub_Type__c)}</td>
+        <td>
+            {!JSENCODE(account.Franchise_Type__c)}
+        </td>
+        <td>
+            <apex:outputText value="{0, Number, Currency}">
+                <apex:param value="{!Monthlyspend}" />
+            </apex:outputText>
+        </td>
+        <td>{!JSENCODE(if(account.Consolidated_Billing_Flag__c,ConsolidatedBillingDate,'-'))}</td>
+        <td>{!account.Sales_Lock_User__r.Name}</td>
+        <td>{!account.last_touched2__c}</td>
+        <td>{!JSENCODE(account.Phone)}</td>
+    </tr>
+</tbody>
+<thead>
+    <tr>                                                                                       
+        <th>Account Type</th>
+        <th>SMS Opt-in</th>
+        <th>Next Renewal Date</th>
+        <th>AdPro Available</th> <!-- CRM-5389 - Added label between th-->
+        <th>Time Now</th> <!-- CRM-5867 - Moved Time Now at the bottom-->
+        <th></th>
+        <th>Primary Email Address</th>
+    </tr>
+</thead>
+<tbody>                                       
+    <td>{!JSENCODE(account.Type)}</td>
+    <td><apex:outputtext value="{!If(account.SMS_Opt_In__c == false,"NO","YES")}" /></td>
+    <td><apex:outputText value="{0, date, MMMM d','  yyyy}">
+        <apex:param value="{!account.Next_Renewal_Date__c}"/>
+        </apex:outputText></td>
+    <td><apex:outputtext value="{!If(account.AdPro_in_Protected_Markets__c,"No","Yes")}" /></td> <!--CRM-5389 - Added field between td-->
+    <td id="localTime"></td> <!-- CRM-5867 -->
+    <td></td>    
+    <td>{!JSENCODE(account.Email_Address__c)}</td>                                         
+</tbody>    
+</table>
+</div>
+</div> <br/>
+<div class="gusTabPanelActive" id="tab-teamInformation">
+    <div class="gusFieldset gusFieldsetForm">
+        <div class="gusLegend">Market Information</div>
+        <div class="gusFormToolbar gusFormToolbarTop">
+            <apex:outputPanel layout="none">
+            </apex:outputPanel>                    
+        </div>
+        <div class="panel1">
+            <div class="gusTabs maxWidthCss" data-tabsetid="teams"> <!--CRM-3394: Loading all the markets when Checkbox is selected. -->
+                <div class="stillLoading1" hidden="true">
+                    <img src="{!URLFOR($Resource.stillLoading)}" style="padding-left:35%;padding-right:0.6%;"/>
+                    <b>
+                        <font style="font-size: medium;color: darkred;">Still fetching live data... </font>
+                    </b>
+                </div> 
+                <input type="checkbox" id="markets" name="Markets" value="markets" onclick="marketloading()"/> <!-- All Markets Checkbox -->                    
+                <label for="Markets">All CBC Markets</label>
+                <input type="checkbox" id="lecityselect" name="Lecityselect" value="Lecityselect" onclick="expandAllCities(this)" style="margin-left:15px"/>
+                <label for="Lecityselect">Expand all LE Cities</label>
+                <div class="quote_btn" style="display:inline-block;text-align:center;width:59%;">
+                    <input type="button" style="background:#1797c0!important;color:#FFF" value="Go To Quick Quote" onclick="QuickQuoteURLUserSelect()"/> 
+                </div>
+                <!-- CRM-5389 -->
+                <table align="right">
+                    <tr>
+                        <td> <div style="margin:5px; width: 20px; height: 20px;" class="protectedMarketsBackgroundColor"/></td>
+                        <td style="vertical-align: middle;font-weight:bold;">Protected Markets</td>
+                    </tr>
+                </table>
+                
+                <apex:pageBlock id="allLECities"> 
+                    <script>
+                    function expandAllCities(inputValue){
+                        if(inputValue.checked == true){
+                            $('.lezipschild').show();
+                            $(".plusimg").html("[-]");
+                        }else{
+                            $('.lezipschild').hide();
+                            $(".plusimg").html("[+]");
+                        } 
+                    }
+                    </script>
+                </apex:pageBlock>
+                <!-- CRM-5389 End -->
+                <apex:pageBlock id="allMarketBlock">  
+                    <script>
+                    function marketloading(){// All Markets
+                        listingTable.clear();
+                        invData='{!JSENCODE(marketInfoStringJSON)}';
+                        waitListMapString='{!JSENCODE(waitListMapString)}';
+                        partyID='{!JSENCODE(partyId)}';
+                        
+                        if(invData!=null && invData!=undefined && invData!=''){
+                            invData=JSON.parse(invData); 
+                            console.log('$$$$$$$$$$$$ 661'+invData);
+                            var invDataLength=invData.length;
+                            var invDataIndex=0;
+                            var simulateIndex=1;
+                            totalFlexData=0;
+                            totalFastData=0;
+                            var processDataCalculation=function() {
+                                console.log('inside processDataCalculation');
+                                console.log('$$$$$$$'+invDataIndex+'$$$$$$$$'+simulateIndex);
+                                //var toProcess = xmlElements[index];
+                                // Perform xml processing //&& invDataLength % 100 == 0
+                                if (invDataIndex + (6*simulateIndex) < invDataLength) { 
+                                    console.log('$$$$$$$'+invDataIndex+'$$$$$$$$'+simulateIndex);
+                                    buildTheCodesString(invData.slice(invDataIndex,invDataIndex+(6*simulateIndex)+1));
+                                    if(invDataIndex==0)
+                                        fadeOut();
+                                    
+                                    invDataIndex=invDataIndex+(6*simulateIndex)+1;
+                                    simulateIndex=simulateIndex*2;
+                                    
+                                    setTimeout(processDataCalculation, 5000);
+                                    //$("#loader").fadeOut("slow");
+                                }
+                                else{
+                                    console.log('$$$$$$$'+invDataIndex+'$$$$$$$$'+simulateIndex);
+                                    buildTheCodesString(invData.slice(invDataIndex,invDataLength));
+                                    if(invDataIndex==0)
+                                        fadeOut();
+                                    $(".stillLoading").fadeOut();
+                                }
+                            };
+                            processDataCalculation();
+                        }
+                        else{
+                            $(".stillLoading").fadeOut();
+                        }
+                        if(isAllFlexMarketsSelected == true || isAllFastMarketsSelected == true){
+                            $("input[id][name$='allflexmarketselect'][type='checkbox']").prop('checked', false);   
+                            $("input[id][name$='allfastmarketselect'][type='checkbox']").prop('checked', false);   
+                        }
+                    }
+                    </script>
+                </apex:pageBlock>
+                
+                <ul id="productTabs">
+                    <li data-tab="cobrokeinfo" class="tablinks2 on" onclick="openTabContentDiv2(this, 'cobrokeinfo')">Connections</li>
+                    <li data-tab="localExpertinfo" class="tablinks2" onclick="openTabContentDiv2(this, 'localExpertinfo')">Local Expert</li>
+                </ul>
+            </div>
+            <div  class = "pbBody">   
+                <div id="cobrokeinfo" class="tabcontent2 active" style="display:block;">
+                    <table id="listingTable" cellspacing="0" width="100%" class="row-border display">
+                        <thead align="right">
+                            <tr>
+                                <th style="font-weight:bold;text-align:center;white-space:pre-wrap;" rowspan="2"><input type="checkbox" name="allflexmarketselect" id="AllMarketsSelectedflex" onClick="userSelectAllFlex(this)"/> Select All Flex</th> 
+                                <th style="font-weight:bold;text-align:center;white-space:pre-wrap;" rowspan="2"><input type="checkbox" name="allfastmarketselect" id="AllMarketsSelectedfast" onClick="userSelectAllFast(this)"/> Select All Fast</th> 
+                                <th style="font-weight:bold;text-align:center;" rowspan="2">Market</th>
+                                <th style="font-weight:bold;text-align:center;white-space:pre-wrap;display:{!IF(account.Type == 'Broker','none','')};" rowspan="2" class="no-sort">Buy-Side Transactions</th><!--CRM-5539-->
+                                <th style="font-weight:bold;text-align:center;display:{!IF(account.Type == 'Broker','none','')};" rowspan="2">Listings</th> <!--CRM-5539-->
+                                <th style="font-weight:bold;text-align:center;white-space:pre-wrap;" rowspan="2">Median Market Price</th>
+                                <th style="font-weight:bold;text-align:center;white-space:pre-wrap;" rowspan="2" title="This field displays type of waitlist, Pre-Authorization and Has Assets Information" >Entry Type</th>
+                                <th style="font-weight:bold;text-align:center;white-space:pre-wrap;" rowspan="2">Slot Size</th>
+                                <th style="font-weight:bold;text-align:center;white-space:pre-wrap;" rowspan="2">Flex Availablity</th>
+                                <th style="font-weight:bold;text-align:center;white-space:pre-wrap;" rowspan="2">Flex Price</th>
+                                <th style="font-weight:bold;text-align:center;white-space:pre-wrap;" rowspan="2">Fast Availablity</th>
+                                <th style="font-weight:bold;text-align:center;white-space:pre-wrap;" rowspan="2">Fast Price</th>
+                                <th style="font-weight:bold;text-align:center;" colspan="2">Total Opportunity</th>
+                                <th style="font-weight:bold;text-align:center;white-space:pre-wrap;" rowspan="2">Best Available Promo</th>
+                            </tr>
+                            <tr>
+                                <th >Flex</th>
+                                <th >Fast</th>
+                            </tr>
+                        </thead>
+                        <tbody align ="center" id="marketTableBody">
+                        </tbody>
+                    </table>
+                </div>
+                <div id="localExpertinfo" class="tabcontent2" style="display:none;">
+                    <table id="listingTable21" cellspacing="0" width="100%" class="row-border display scroll_new">
+                        <thead>
+                            <tr>
+                                <th style="border-right:none"></th>
+                                <th style="font-weight:bold;text-align:center;border-left:none">Market</th>
+                                <th style="font-weight:bold;text-align:center;white-space:pre-wrap;"  class="no-sort">Buy-Side Transactions</th> <!--CRM-5539-->
+                                <th style="font-weight:bold;text-align:center;" >Listings</th> <!--CRM-5539-->
+                                <th style="font-weight:bold;text-align:center;white-space:pre-wrap;" >Median Market Price</th>
+                                <th style="font-weight:bold;text-align:center;white-space:pre-wrap;" title="This field displays type of waitlist, Pre-Authorization  and Has Assets Information" >Entry Type</th>
+                                <th style="font-weight:bold;text-align:center;white-space:pre-wrap;" >SOV10 Price</th>
+                                <th style="font-weight:bold;text-align:center;white-space:pre-wrap;" >SOV20 Price</th>
+                                <th style="font-weight:bold;text-align:center;white-space:pre-wrap;" >SOV30 Price</th>
+                                <th style="font-weight:bold;text-align:center;white-space:pre-wrap;" >SOV40 Price</th>
+                                <th style="font-weight:bold;text-align:center;white-space:pre-wrap;" >SOV50 Price</th>
+                            </tr> 
+                        </thead>
+                        <tbody>
+                            <apex:repeat value="{!leCityNames}" var="leCity"> 
+                                <tr class="lecityHeader" style="background-color: #c3ecf9;text-align:center;" >
+                                    <td><span id="plusimg" class="plusimg" style="cursor:pointer">[+]</span></td>
+                                    <td> {!leCityInterestedMarkets[leCity].marketcity}, <br/> {!leCityInterestedMarkets[leCity].marketState}</td> 
+                                    <td>{!IF(leCityInterestedMarkets[leCity].BST !=null,leCityInterestedMarkets[leCity].BST,'-')}</td> 
+                                    <td>{!IF(leCityInterestedMarkets[leCity].listings!=null,leCityInterestedMarkets[leCity].listings,'-')}</td>
+                                    <td>{!IF(leCityInterestedMarkets[leCity].medianMarketPrice != null,'$','')}{!leCityInterestedMarkets[leCity].medianMarketPrice}</td>   
+                                    <td><font color="{!IF(AND(leCityInterestedMarkets[leCity].entryTypeAssets != 'N/A',leCityInterestedMarkets[leCity].marketType != 'Inventory Data'), 'green', '')}">{!IF(leCityInterestedMarkets[leCity].entryTypeAssets !=null,leCityInterestedMarkets[leCity].entryTypeAssets,'')}</font>{!IF(AND(leCityInterestedMarkets[leCity].entryTypeAssets != null,leCityInterestedMarkets[leCity].entryTypeWaitlist != null),',','')}
+                                        <font color="{!IF(leCityInterestedMarkets[leCity].entryTypeWaitlist == 'Waitlisted LE City Hot', 'green', '')}">{!IF(leCityInterestedMarkets[leCity].entryTypeWaitlist !=null,leCityInterestedMarkets[leCity].entryTypeWaitlist,'')}</font>{!IF(AND(leCityInterestedMarkets[leCity].entryTypeWaitlist !=null,leCityInterestedMarkets[leCity].entryTypePreAuthActive != null),',','')}
+                                        <font color="{!IF(leCityInterestedMarkets[leCity].wltype == 'Active', 'green', (IF(leCityInterestedMarkets[leCity].marketType != 'Inventory Data','red','')))}">{!IF(leCityInterestedMarkets[leCity].entryTypePreAuthActive !=null,leCityInterestedMarkets[leCity].entryTypePreAuthActive,'')}</font>{!IF(AND(leCityInterestedMarkets[leCity].entryTypePreAuthActive !=null,leCityInterestedMarkets[leCity].entryTypePreAuthExpired != null),',','')}
+                                        <font color="{!IF(leCityInterestedMarkets[leCity].wltype == 'Active', 'green', 'red')}">{!IF(leCityInterestedMarkets[leCity].entryTypePreAuthExpired !=null,leCityInterestedMarkets[leCity].entryTypePreAuthExpired,'')}</font>     
+                                    </td> 
+                                    <td><font color="{!IF(AND(leCityInterestedMarkets[leCity].sov10Price != 0,leCityInterestedMarkets[leCity].sov10Available == true), 'green',IF(AND(leCityInterestedMarkets[leCity].sov10Price != 0,leCityInterestedMarkets[leCity].sov10Available == false),'red',''))}">{!IF(leCityInterestedMarkets[leCity].sov10Price != 0,'$','')}{!IF(leCityInterestedMarkets[leCity].sov10Price != 0,leCityInterestedMarkets[leCity].sov10Price,'N/A')}</font>     <input style="display: {!IF(leCityInterestedMarkets[leCity].sov10Available == false,'none','')}" type= "checkbox" name="SOV10city" id="SOV10city" onclick="leCityProductSelected(this,'{!leCityInterestedMarkets[leCity].marketcity}, {!leCityInterestedMarkets[leCity].marketState}','1')"/></td>
+                                    <td><font color="{!IF(AND(leCityInterestedMarkets[leCity].sov20Price != 0,leCityInterestedMarkets[leCity].sov20Available == true), 'green',IF(AND(leCityInterestedMarkets[leCity].sov20Price != 0,leCityInterestedMarkets[leCity].sov20Available == false),'red',''))}">{!IF(leCityInterestedMarkets[leCity].sov20Price != 0,'$','')}{!IF(leCityInterestedMarkets[leCity].sov20Price != 0,leCityInterestedMarkets[leCity].sov20Price,'N/A')}</font>     <input style="display: {!IF(leCityInterestedMarkets[leCity].sov20Available == false,'none','')}" type= "checkbox" name="SOV20city" id="SOV20city" onclick="leCityProductSelected(this,'{!leCityInterestedMarkets[leCity].marketcity}, {!leCityInterestedMarkets[leCity].marketState}','2')"/></td>
+                                    <td><font color="{!IF(AND(leCityInterestedMarkets[leCity].sov30Price != 0,leCityInterestedMarkets[leCity].sov30Available == true), 'green',IF(AND(leCityInterestedMarkets[leCity].sov30Price != 0,leCityInterestedMarkets[leCity].sov30Available == false),'red',''))}">{!IF(leCityInterestedMarkets[leCity].sov30Price != 0,'$','')}{!IF(leCityInterestedMarkets[leCity].sov30Price != 0,leCityInterestedMarkets[leCity].sov30Price,'N/A')}</font>     <input style="display: {!IF(leCityInterestedMarkets[leCity].sov30Available == false,'none','')}" type= "checkbox" name="SOV30city" id="SOV30city" onclick="leCityProductSelected(this,'{!leCityInterestedMarkets[leCity].marketcity}, {!leCityInterestedMarkets[leCity].marketState}','3')"/></td>
+                                    <td><font color="{!IF(AND(leCityInterestedMarkets[leCity].sov40Price != 0,leCityInterestedMarkets[leCity].sov40Available == true), 'green',IF(AND(leCityInterestedMarkets[leCity].sov40Price != 0,leCityInterestedMarkets[leCity].sov40Available == false),'red',''))}">{!IF(leCityInterestedMarkets[leCity].sov40Price != 0,'$','')}{!IF(leCityInterestedMarkets[leCity].sov40Price != 0,leCityInterestedMarkets[leCity].sov40Price,'N/A')}</font>     <input style="display: {!IF(leCityInterestedMarkets[leCity].sov40Available == false,'none','')}" type= "checkbox" name="SOV40city" id="SOV40city" onclick="leCityProductSelected(this,'{!leCityInterestedMarkets[leCity].marketcity}, {!leCityInterestedMarkets[leCity].marketState}','4')"/></td>
+                                    <td><font color="{!IF(AND(leCityInterestedMarkets[leCity].sov50Price != 0,leCityInterestedMarkets[leCity].sov50Available == true), 'green',IF(AND(leCityInterestedMarkets[leCity].sov50Price != 0,leCityInterestedMarkets[leCity].sov50Available == false),'red',''))}">{!IF(leCityInterestedMarkets[leCity].sov50Price != 0,'$','')}{!IF(leCityInterestedMarkets[leCity].sov50Price != 0,leCityInterestedMarkets[leCity].sov50Price,'N/A')}</font>     <input style="display: {!IF(leCityInterestedMarkets[leCity].sov50Available == false,'none','')}" type= "checkbox" name="SOV50city" id="SOV50city" onclick="leCityProductSelected(this,'{!leCityInterestedMarkets[leCity].marketcity}, {!leCityInterestedMarkets[leCity].marketState}','5')"/></td>
+                                </tr>
+                                <apex:repeat value="{!leZipInterestedMarkets[leCity]}" var="lezip" rendered="{!leCityInterestedMarkets[leCity].hasLeZips}"> 
+                                    <tr style="display:none;text-align:center;" class="lezipschild"> 
+                                        <td></td>
+                                        <td>  {!lezip.marketZip},  {!lezip.marketcity},  {!lezip.marketState}</td> 
+                                        <td>{!IF(lezip.BST != null,lezip.BST,'-')}</td> 
+                                        <td>{!IF(lezip.listings != null,lezip.listings,'-')}</td> 
+                                        <td>{!IF(lezip.medianMarketPrice != null,'$','')}{!IF(lezip.medianMarketPrice != null, lezip.medianMarketPrice,'-')}</td>  
+                                        <td><font color="{!IF(lezip.entryTypeAssets != 'Adjacent Zip', 'green', '')}">{!IF(lezip.entryTypeAssets != null,lezip.entryTypeAssets,'')}</font>{!IF(AND(lezip.entryTypeAssets !=null,lezip.entryTypeWaitlistCBC != null),',','')}
+                                            <font color="{!IF(lezip.entryTypeWaitlistCBC == 'CBC Waitlist Hot', 'green', '')}">{!IF(lezip.entryTypeWaitlistCBC != null,lezip.entryTypeWaitlistCBC,'')}</font>{!IF(AND(lezip.entryTypeWaitlistCBC !=null,lezip.entryTypeWaitlistLEZip != null),',','')}
+                                            <font color="{!IF(lezip.entryTypeWaitlistLEZip == 'Waitlisted LE Zip Hot', 'green', '')}">{!IF(lezip.entryTypeWaitlistLEZip != null,lezip.entryTypeWaitlistLEZip,'')}</font>{!IF(AND(lezip.entryTypeWaitlistLEZip!=null,lezip.entryTypePreAuthActive != null),',','')}
+                                            <font color="{!IF(lezip.entryTypePreAuthActive == 'Active', 'green', 'red')}">{!IF(lezip.entryTypePreAuthActive != null,lezip.entryTypePreAuthActive,'')}</font>{!IF(AND(lezip.entryTypePreAuthActive!=null,lezip.entryTypePreAuthExpired != null),',','')}
+                                            <font color="{!IF(lezip.entryTypePreAuthExpired == 'Active', 'green', 'red')}">{!IF(lezip.entryTypePreAuthExpired != null,lezip.entryTypePreAuthExpired,'')}</font>
+                                        </td> 
+                                        <td>N/A</td>
+                                        <td><font color="{!IF(AND(lezip.sov20Available == true,lezip.sov20Price != 0), 'green', IF(AND(lezip.sov20Available == false,lezip.sov20Price != 0),'red',''))}">{!IF(lezip.sov20Price != 0,'$','')}{!IF(lezip.sov20Price != 0,lezip.sov20Price,'N/A')}</font>    <input style="display: {!IF(OR(lezip.sov20Price == 0,lezip.sov20Available == false),'none','')}" type= "checkbox" name="SOV20Zip" id="SOV20Zip" onclick="leZipProductSelected(this,'{!lezip.marketZip}','SOV20')"/></td>
+                                        <td><font color="{!IF(AND(lezip.sov30Available == true,lezip.sov30Price != 0), 'green', IF(AND(lezip.sov30Available == false,lezip.sov30Price != 0),'red',''))}">{!IF(lezip.sov30Price != 0,'$','')}{!IF(lezip.sov30Price != 0,lezip.sov30Price,'N/A')}</font>    <input style="display: {!IF(OR(lezip.sov30Price == 0,lezip.sov30Available == false),'none','')}" type= "checkbox" name="SOV30Zip" id="SOV30Zip" onclick="leZipProductSelected(this,'{!lezip.marketZip}','SOV30')"/></td>
+                                        <td>N/A</td>
+                                        <td><font color="{!IF(AND(lezip.sov50Available == true,lezip.sov50Price != 0), 'green', IF(AND(lezip.sov50Available == false,lezip.sov50Price != 0),'red',''))}">{!IF(lezip.sov50Price != 0,'$','')}{!IF(lezip.sov50Price != 0,lezip.sov50Price,'N/A')}</font>    <input style="display: {!IF(OR(lezip.sov50Price == 0,lezip.sov50Available == false),'none','')}" type= "checkbox" name="SOV50Zip" id="SOV50Zip" onclick="leZipProductSelected(this,'{!lezip.marketZip}','SOV50')"/></td>
+                                    </tr>
+                                </apex:repeat> 
+                            </apex:repeat>
+                        </tbody> 
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div id="AccDetails" class="tabcontent">
+    <apex:outputPanel layout="block" id="detailTab">
+        <apex:detail subject="{!JSENCODE($CurrentPage.parameters.id)}" inlineEdit="true" relatedList="true" showChatter="true" title="true" id="detailts"/>
+    </apex:outputPanel>           
+</div>
+
+<div id="PriceConfigurator" class="tabcontent"> <!-- CRM-3383: changed Phone in below URL -->
+    <div class="LoadingIframe"> <img src="{!URLFOR($Resource.stillLoading)}" style="padding-left:35%;padding-right:0.6%;"/><b><font style="font-size: medium;color: darkred;">loading ... please wait</font></b></div>
+    <iframe id="QuickQuoteCPQ" height="800px" width="100%" src="{!QQUrl}" onload="$('.LoadingIframe').hide();" rendered="{!loadDeatils}"/> <!-- CPQ Upgrade - QQ new url for oAuth -->
+</div> 
+<div id="createWaitlist" class="tabcontent">
+    <apex:outputPanel id="waitlist" layout="block">
+        <iframe height="1000px" width="100%" src="AccountCreateWaitlist?id={!$CurrentPage.parameters.id}" rendered="{!loadDeatils}" onload="parent.resizeIframe(1.5*document.body.clientHeight,'iframe2');"/>
+    </apex:outputPanel>
+</div> 
+<div id="assetsOwned" class="tabcontent">
+    <apex:outputPanel id="assetsOwn" layout="block">
+        <iframe height="1000px" id="assetIfrm" width="100%" src="" rendered="{!loadDeatils}" onload="parent.resizeIframe(1.5*document.body.clientHeight,'iframe3');"/>
+    </apex:outputPanel>
+</div>
+<div id="opcityBLA" class="tabcontent">
+    <apex:outputPanel id="opcityBLA" layout="block" rendered="{!isOpcityBlaTeamUser}">
+        <iframe height="{!blaIframeHeight}px" id="opcityBLAQuote" width="100%" src="" rendered="{!loadDeatils}" onload="parent.resizeIframe(1.5*document.body.clientHeight,'iframe3');"/>
+    </apex:outputPanel>
+</div>  
+</div> 
+<apex:actionFunction action="{!loadTheTab}" name="loadTabs" rerender="detailTab,waitlist,priceTab"/>
+</apex:form>
+</body>
+<style>
+    
+</style>
+
+<apex:includeScript value="/support/console/40.0/integration.js"/>
+<apex:includeScript value="/support/console/40.0/collection.js"/>
+<script type="text/javascript">
+
+Visualforce.remoting.timeout = 120000; // Set timeout at page level
+var openSuccess = function openSuccess(result) {
+    //Report whether opening the new tab was successful
+    if (result.success == true) {
+        console.log('Tab open success');
+    } else {
+        console.log('Tab open failed');
+    }
+};
+
+if(sforce.console.isInConsole()){
+    //Added By Pratik on 27th September 2018 for CRM-4698
+    if('{!Account.Object_Id__c}' != null && '{!Account.Object_Id__c}' != '' && '{!Account.Object_Id__c}' != undefined)
+    {
+        var tabName = '{!Account.Object_Id__c}';
+        if(tabName.startsWith('00Q'))
+            tabName = 'Lead';
+        else if(tabName.startsWith('006'))
+            tabName = 'Opportunity';
+            else if(tabName.startsWith('001'))
+                tabName = 'Account';
+        sforce.console.openPrimaryTab(null, '/{!Account.Object_Id__c}', true, tabName);
+    }
+    document.getElementById('assetIfrm').src='includeAssetsToAccount?id={!$CurrentPage.parameters.id}&inConsole=true';
+    var blaIframe = document.getElementById('opcityBLAQuote');
+    if (blaIframe != null) {
+        blaIframe.src='OpcityQuote?id={!$CurrentPage.parameters.id}&inConsole=true';  
+    } 
+}
+else{
+    document.getElementById('assetIfrm').src='includeAssetsToAccount?id={!$CurrentPage.parameters.id}';
+    var blaIframe = document.getElementById('opcityBLAQuote');
+    if (blaIframe != null) {
+        blaIframe.src='OpcityQuote?id={!$CurrentPage.parameters.id}'; 
+    }     
+}
+
+var totalFlexData=0;
+var totalFastData=0;
+var waitlistMap;
+//set height for waitlist page
+function resizeIframe(newHeight, id){    
+    document.getElementById(id).style.height = parseInt(newHeight,10) + 'px';
+}
+var listingTable;
+function openTabContentDiv(evt, tabname) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" on", "");
+    }
+    $("#"+tabname).show();
+    $(evt).addClass("on");
+    
+    var interestedCities_quickQuote = "{!leCityIMQQ}";
+    var zipstoCPQ = "{!zipcodes_cpq}";
+    var interestedCities = new Map(); 
+    var adjacentZipsToquickQuote = "{!adjacentZipsToQQ}";
+    interestedCities.set('interestedCities_quickQuote',interestedCities_quickQuote);
+     if(!adjacentZipsToquickQuote.length == 0){
+        interestedCities.set('adjacentLEZips_quickQuote',adjacentZipsToquickQuote);
+    }    
+    console.log(' characterLimitExceeded *** '+{!characterLimitExceeded});
+    if({!characterLimitExceeded}){
+        console.log(' ***** zipstoCPQ *** INSIDE '+zipstoCPQ);
+        interestedCities.set('zipcode_heatmap_selection_quickQuote',zipstoCPQ);
+        }
+    let receiver = document.getElementById("QuickQuoteCPQ").contentWindow;
+    var FRAME_DOMAIN = "https://{!$Setup.QuickQuote__c.BMInstance__c}.bigmachines.com";
+    console.log(' *** FRAME_DOMAIN *** '+interestedCities);
+    if (receiver) {
+        receiver.postMessage(interestedCities, FRAME_DOMAIN);
+    } 
+}
+//local expert new method
+function openTabContentDiv2(evt, tabname) {
+    var i, tabcontent, tablinks;
+    tabcontent = document.getElementsByClassName("tabcontent2");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablinks2");
+    for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" on", "");
+    }
+    $("#"+tabname).show();
+    $(evt).addClass("on");
+}
+//Display Live clock based on Account geo codes
+$(document).ready(function(){
+    console.log('index -->'+{!$Label.Account360products}.trim().length);
+    if (({!$Label.Account360products}.indexOf('localexpert')) >=0 ) {
+        $('#productTabs').show();
+    } else {
+        $('#productTabs').hide();
+    }
+    
+    $(window).scroll(function(){ 
+        if ($(this).scrollTop() > 10) { 
+            $('#scroll').fadeIn(); 
+        } else { 
+            $('#scroll').fadeOut(); 
+        } 
+        
+    }); 
+    $('#scroll').click(function(){ 
+        $("html, body").animate({ scrollTop: 0 }, 600); 
+        return false; 
+    }); 
+    
+    //Retrieving the Account location
+    var Latitude  = '{!Account.BillingLatitude}';//6.0535185;
+    var Longitude = '{!Account.BillingLongitude}';//80.22097729999996;
+    startTime();
+});
+
+function startTime() {
+    var TimeZone = '{!Account.BillingTimezone__c}';
+    //var today = new Date();
+    var today = new Date().toLocaleString("en-US", {timeZone: TimeZone});
+    today = new Date(today);
+    
+    var h = today.getHours();
+    var m = today.getMinutes();
+    var s = today.getSeconds();
+    var hh = h;
+    var dd = "AM";
+    if (h >= 12) {
+        h = hh - 12;
+        dd = "PM";
+    }
+    if (h == 0) {
+        h = 12;
+    }
+    m = checkTime(m);
+    s = checkTime(s);
+    
+    document.getElementById('localTime').innerHTML =
+        h + ":" + m + ":" + s +" "+ dd;
+    var t = setTimeout(startTime, 500);
+}
+
+function checkTime(i) {
+    if (i < 10) {i = "0" + i};  
+    return i;
+} 
+
+function customSearch(obj){
+    if($(obj).val().indexOf(',')==-1){
+        listingTable.search($(obj).val()).draw() ;
+    }else {
+        listingTable.search($(obj).val().split(',').join('|'),true, false).draw();
+    }
+    // Local expert: DAP-222 Retain search value for both table
+    $("#search-inp1").val($(obj).val());
+    $("#search-inp2").val($(obj).val());
+}
+
+
+var listFlag;
+if(listingTable!=null && listingTable!=undefined){
+    listingTable.destroy();listFlag=false;
+}
+
+listingTable= $('#listingTable').DataTable({
+    // CRM-5389 - Highlight Protected Markets
+    "createdRow": function(row, data, index) {
+        try {
+            if ("{!protectedMarkets}".includes(data[0].split('&nbsp')[0])) {
+                $('td', row).addClass('protectedMarketsBackgroundColor');
+            }
+        }
+        catch (e) {
+            console.log(e.message);
+        }
+    },
+    // CRM-5389 - End
+    "searching": true,
+    //"bSort": true,
+    "orderable":true,
+    "aaSorting":  [8,'desc'], //CRM-3175
+    "lengthMenu":[[10,25,50,-1],[10,25,50,"All"]],
+    // 'rowsGroup': [0,1,2,3,4,12],
+    "columnDefs": [{
+        "defaultContent": "-",
+        "targets":"_all"
+    },
+                   {
+                       "targets": [ 1, 2,3,4,12], // column or columns numbers
+                       //"orderable": false,  // set orderable for selected columns,
+                       "bSort":true,
+                   }
+                  ]
+});
+
+//local expert 
+$('#listingTable21').DataTable( {
+    "ordering": false,
+    "paging": false,
+} );
+
+
+$("#listingTable_filter").empty();
+$("#listingTable_filter").html("<label>Search: <input type='text' id='search-inp1' onkeyup='customSearch(this);' /></label>");
+
+var invData='{!JSENCODE(marketInfoStringJSON)}';
+
+var waitListMapString='{!JSENCODE(waitListMapString)}';
+var partyID='{!JSENCODE(partyId)}';
+if(totalFlexData.toFixed(2)>0.00){
+    console.log("in increment-----");
+    $("#totalFlex").empty().append('<strong><font size="2.5" color="green"> <b> Total Connections Potential Sale Flex: $'+totalFlexData.toFixed(2)+' </b> </font></strong>');
+}
+else{
+    $("#totalFlex").empty().append('<strong><font size="2.5" color="red"> <b> Total Connections Potential Sale Flex: $'+totalFlexData.toFixed(2)+' </b> </font></strong>');   
+}
+if(totalFastData.toFixed(2)>0.00){
+    $("#totalFast").empty().append('<strong><font size="2.5" color="green"> <b> Total Connections Potential Sale Fast: $'+totalFastData.toFixed(2)+' </b> </font></strong>');
+}
+else{
+    $("#totalFast").empty().append('<strong><font size="2.5" color="red"> <b> Total Connections Potential Sale Fast: $'+totalFastData.toFixed(2)+' </b> </font></strong>');    
+}
+if({!leCitiesPotentialSale} != 0.00){       
+    $("#LECityTotal").empty().append('<strong><font size="2.5" color="green"> <b> Total Local Expert City Potential Sale: $'+ {!leCitiesPotentialSale}.toFixed(2)+'</b> </font></strong>');
+}else{
+    $("#LECityTotal").empty().append('<strong><font size="2.5" color="red"> <b> Total Local Expert City Potential Sale: $'+{!leCitiesPotentialSale}.toFixed(2)+' </b> </font></strong>');   
+} 
+if({!leZipsPotentialSale} != 0.00){       
+    $("#LEZipTotal").empty().append('<strong><font size="2.5" color="green"> <b> Total Local Expert Zip Potential Sale: $'+ {!leZipsPotentialSale}.toFixed(2)+'</b> </font></strong>');
+}else{
+    $("#LEZipTotal").empty().append('<strong><font size="2.5" color="red"> <b> Total Local Expert Zip Potential Sale: $'+{!leZipsPotentialSale}.toFixed(2)+' </b> </font></strong>');   
+}
+
+if(invData!=null && invData!=undefined && invData!=''){
+    invData=JSON.parse(invData); 
+    console.log('$$$$$$$$$$$$'+invData);
+    var invDataLength=invData.length;
+    var invDataIndex=0;
+    var simulateIndex=1;
+    var processDataCalculation=function() {
+        console.log('$$$$$$$ - invDataIndex'+invDataIndex+'$$$$$$$$- simulateIndex'+simulateIndex);
+        // Perform xml processing //&& invDataLength % 100 == 0
+        if (invDataIndex + (6*simulateIndex) < invDataLength) { 
+            console.log('$$$$$$$'+invDataIndex+'$$$$$$$$'+simulateIndex);
+            buildTheCodesString(invData.slice(invDataIndex,invDataIndex+(6*simulateIndex)+1));
+            if(invDataIndex==0)
+                fadeOut();
+            
+            invDataIndex=invDataIndex+(6*simulateIndex)+1;
+            simulateIndex=simulateIndex*2;
+            
+            setTimeout(processDataCalculation, 5000);
+        }
+        else{
+            console.log('$$$$$$$'+invDataIndex+'$$$$$$$$'+simulateIndex);
+            buildTheCodesString(invData.slice(invDataIndex,invDataLength));
+            if(invDataIndex==0)
+                fadeOut();
+            $(".stillLoading").fadeOut("slow");
+        }
+    };
+    processDataCalculation();
+}
+else{
+    $(".stillLoading").fadeOut("slow");
+}
+function fadeOut(){
+    setTimeout(function()
+               {
+                   $("#loader").fadeOut("slow");
+               }, 4000);
+    loadTabs();
+}
+
+function buildTheCodesString(marketData){
+    console.log(marketData);
+    var marketLength=marketData.length;
+    var codesString='';
+    for(i=0;i<marketLength;i++){
+        if(marketData[i].Inventory_Data__r.Name!=undefined && marketData[i].Inventory_Data__r.Name!=null && marketData[i].Inventory_Data__r.Name!='')
+            codesString=codesString+',"'+marketData[i].Inventory_Data__r.Name+'"';
+    }
+    
+    console.log(' code string is ?'+codesString.substring(1));
+    if(codesString.substring(1)!=''){
+        accountSummaryHelperCopy.getInventoryDataRemoteAction(partyID, codesString.substring(1), 
+                                                              function(result, event)
+                                                              {
+                                                                  console.log('event.status==>'+event.status);
+                                                                  console.log('event.type === '+event.type);
+                                                                  console.log('event.message ==>'+event.message);
+                                                                  if (event.status) 
+                                                                  {
+                                                                      //console.log(result.replace(/(&quot\;)/g,"\""));
+                                                                      if(result!='Bad Request' && result!='SystemCalloutException' && result!='Exception'){
+                                                                          buildTheTableBody(waitListMapString,result.replace(/(&quot\;)/g,"\""),JSON.stringify(marketData));
+                                                                      }
+                                                                      else{
+                                                                          $("#ErrorDiv").show();
+                                                                      }
+                                                                  } 
+                                                                  else if (event.type === 'exception') 
+                                                                  {
+                                                                      console.log(event.message);
+                                                                  } else 
+                                                                  {
+                                                                      console.log('No Records Found..');
+                                                                  }
+                                                              }, {escape:true});
+        
+    }    
+}
+
+
+function buildTheTableBody(waitListMapString,responseString,marketInfoStringJSON){
+    if(waitListMapString!=undefined && waitListMapString!=null && waitListMapString!='')
+        waitlistMap=JSON.parse(waitListMapString);
+    
+    $("#marketTableBody").empty();
+    try{
+        console.log('376');
+        if(responseString!=undefined && responseString!=''){
+            var responseString=JSON.parse(responseString);
+            var responseMap='{';
+            var marketInventoryMap = '{';
+            var responseStringLength=responseString.available_inventories.length;
+            var allMar = $("#markets").prop("checked");
+            console.log('allMar'+allMar);
+            
+            for (i = 0; i < responseStringLength; i++) {
+                var prodSize = responseString.available_inventories[i].product_size;
+                var availInv = responseString.available_inventories[i];
+                console.log("---"+JSON.stringify(responseString.available_inventories[i])+responseString.available_inventories[i].product_size);
+                if(availInv["product_name"] == "Connection for Co-Brokerage"){
+                    // CRM-4270: Adding key-value to map if party id exists.
+                    console.log(' *** availInv["product_name"]  *** '+availInv["product_name"] );
+                    if(availInv.party_id != undefined && availInv.party_id != null){
+                        marketInventoryMap = marketInventoryMap + '"' + availInv.market_name + prodSize +'":' + JSON.stringify(availInv) + ',';
+                    }
+                }
+            }          
+            
+            for (i = 0; i < responseStringLength; i++) {
+                var prodSize = responseString.available_inventories[i].product_size;
+                var availInv = responseString.available_inventories[i];
+                console.log("---"+JSON.stringify(responseString.available_inventories[i])+responseString.available_inventories[i].product_size);
+                
+                if(allMar || responseString.available_inventories[i].available_fast >= 1 || responseString.available_inventories[i].available_flex >=1 ) {
+                    console.log("this is in");
+                    if (prodSize == 'Half'){
+                        responseMap = responseMap + '"' + availInv.market_name + 'Half":' + JSON.stringify(availInv) + ',';
+                    }
+                    if (prodSize == 'Full'){
+                        responseMap = responseMap + '"' +availInv.market_name + 'Full":' + JSON.stringify(availInv) + ',';
+                    }
+                }
+            }
+            
+            console.log('response map ===> ');
+            if(responseMap != '{'){
+                responseMap=responseMap.substring(0,responseMap.length-1)+'}';
+                responseString=JSON.parse(responseMap);
+            }
+            
+            // CRM-4270: Replacing the value (to value with party_id) of key in responseString
+            if(marketInventoryMap != '{'){
+                marketInventoryMap=marketInventoryMap.substring(0,marketInventoryMap.length-1)+'}';
+                marketInventoryString = JSON.parse(marketInventoryMap);
+                for(i = 0; i < Object.keys(marketInventoryString).length; i++){
+                    var key = Object.keys(marketInventoryString)[i];
+                    if(key in responseString){
+                        if(allMar || marketInventoryString[key]["available_fast"] > 0 || marketInventoryString[key]["available_flex"] > 0){
+                            responseString[key] = marketInventoryString[key];
+                        } else {
+                            delete responseString[key];
+                        }
+                    }
+                }
+            }
+            
+            if(marketInfoStringJSON!=undefined && marketInfoStringJSON!=''){
+                var invString=JSON.parse(marketInfoStringJSON);
+                var invStringLen=invString.length;
+                var htmlString1='';
+                var htmlString2='';
+                
+                console.log(' *** marketInfoStringJSON '+marketInfoStringJSON);
+                for(i=0;i<invStringLen;i++){
+                    console.log(' *** responseMap *** '+responseMap);
+                    if(responseMap != '{'){
+                        var htmlString11='';
+                        var htmlString22='';
+                        htmlString11=iterateTheData('Half',responseString,invString);
+                        console.log('htmlString11:'+htmlString11);
+                        htmlString11=htmlString11.replace(new RegExp('undefined', 'g'), '-');
+                        htmlString22=iterateTheData('Full',responseString,invString);
+                        console.log('htmlString22:'+htmlString22);
+                        htmlString22=htmlString22.replace(new RegExp('undefined', 'g'), '-');
+                        
+                        if(htmlString11!='')
+                            htmlString1=htmlString1+ htmlString11;  
+                        if(htmlString22!='')
+                            htmlString2=htmlString2+ htmlString22; 
+                    }
+                }
+                listingTable.rows.add($(htmlString1+''+htmlString2)).draw();
+            }
+        }
+    }
+    catch(err){
+        console.log(err.message);
+    }
+    finally{
+        if(totalFlexData.toFixed(2)>0.00){
+            console.log("in increment-----"+totalFlexData.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,'));
+            $("#totalFlex").empty().append('<strong><font size="2.5" color="green"> <b> Total Connections Potential Sale Flex: $'+totalFlexData.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')+' </b> </font></strong>');
+        }
+        else{
+            $("#totalFlex").empty().append('<strong><font size="2.5" color="red"> <b> Total Connections Potential Sale Flex: $'+totalFlexData.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')+' </b> </font></strong>');   
+        }
+        if(totalFastData.toFixed(2)>0.00){
+            $("#totalFast").empty().append('<strong><font size="2.5" color="green"> <b> Total Connections Potential Sale Fast: $'+totalFastData.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')+' </b> </font></strong>');
+        }
+        else{
+            $("#totalFast").empty().append('<strong><font size="2.5" color="red"> <b> Total Connections Potential Sale Fast: $'+totalFastData.toFixed(2).replace(/(\d)(?=(\d{3})+\.)/g, '$1,')+' </b> </font></strong>');    
+        }
+        if(listFlag!=null && listFlag){
+            alert("Refresh Completed");
+        }
+    }
+}
+
+var allFlexMap = new Map(); 
+var allFastMap = new Map();
+
+function iterateTheData(type,responseString,invString){
+    var htmlString='';
+    if(responseString[invString[i].Inventory_Data__r.Name+type]!=undefined){
+        var responseData=responseString[invString[i].Inventory_Data__r.Name+type];
+        console.log(' *** responseData is ? '+JSON.stringify(responseData));
+        console.log(' *** invString[i] is ? '+JSON.stringify(invString[i]));
+        console.log(' *** part numbers are ? '+responseData.part_number);
+        if(responseData.part_number == 'COBROKE' || responseData.part_number == 'cobroke' || responseData.part_number == 'Cobroke'){
+            console.log(' *** Inv Data Name *** '+invString[i].Inventory_Data__r.Name);
+            htmlString=htmlString+'<tr>';
+            var isFlexavailable,isFastavailable =  "";
+            if(responseData.available_flex<=0){isFlexavailable = "disabled";}else{ allFlexMap.set(invString[i].Inventory_Data__r.Name +'-'+type ,invString[i].Inventory_Data__r.Name +'-'+type+'-Flex');} 
+            if(responseData.available_fast<=0){isFastavailable = "disabled";}else{ allFastMap.set(invString[i].Inventory_Data__r.Name +'-'+type ,invString[i].Inventory_Data__r.Name +'-'+type+'-Fast');}  
+            htmlString=htmlString+'<td><input type="checkbox" name="individualFlexselected" id="MarketSelected" data-key = \'' + invString[i].Inventory_Data__r.Name +'-'+type+'-Flex' + '\'  onClick ="userInputSelect(this,\'' + invString[i].Inventory_Data__r.Name +'-'+type+'-Flex' + '\')" '+isFlexavailable+'/></td>'; 
+            htmlString=htmlString+'<td><input type="checkbox" name="individualFastselected" id="MarketSelected" onClick ="userInputSelect(this,\'' + invString[i].Inventory_Data__r.Name +'-'+type+'-Fast' + '\')" '+isFastavailable+'/></td>';
+            htmlString=htmlString+'<td>'+invString[i].Inventory_Data__r.Name+'&nbsp; <br/>'+invString[i].Inventory_Data__r.City__c+',<br/>'+invString[i].Inventory_Data__r.State__c;
+            htmlString=htmlString+'</td>';
+            htmlString=htmlString+'<td style="display:{!IF(account.Type == 'Broker','none','')}">'+invString[i].Number_of_Buy_Side_Transactions__c;
+            htmlString=htmlString+'</td>';
+            htmlString=htmlString+'<td style="display:{!IF(account.Type == 'Broker','none','')}">'+invString[i].Number_of_Listings__c;
+            htmlString=htmlString+'</td>';
+            if(isNaN(parseFloat(invString[i].Inventory_Data__r.Median_Market_Price__c).toFixed(2)))
+                htmlString=htmlString+'<td>$0';
+            else
+                htmlString=htmlString+'<td>$'+parseFloat(invString[i].Inventory_Data__r.Median_Market_Price__c).toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+            htmlString=htmlString+'</td>';
+            //DAP-168 starts here
+            var entryType;
+            var preAuth;
+            var ownedAssets;
+            var waitlistType;
+            //PreAuth related code
+            preAuth = '';
+            var invName=invString[i].Inventory_Data__r.Name;
+            if(waitlistMap!=undefined && waitlistMap!=null && waitlistMap[invName]!=undefined && waitlistMap[invName]!=null && waitlistMap[invName]!=''){
+                preAuth = waitlistMap[invName];
+            }
+            
+            //Waitlist related code
+            waitlistType = '';
+            console.log('inside waitlist loop');
+            //CBC
+            if(invString[i].Having_waitlist__c || invString[i].Waitlist__c || invString[i].Waitlist_Half__c){
+                console.log('inside cbc');
+                if(invString[i].Waitlist_Type__c == 'Hot'){
+                    console.log('inside hot');
+                    waitlistType = '<span style="color:green">CBC Waitlist Hot</span>';
+                }else{
+                    console.log('inside not hot');
+                    waitlistType = 'CBC Waitlist '+ invString[i].Waitlist_Type__c;
+                }
+            }
+            //LE
+            if(invString[i].waitlist_product_type__c != ''){
+                console.log('Inside LE');
+                if(invString[i].waitlist_type_LE__c == 'Hot'){
+                    console.log('inside hot');
+                    if(waitlistType == ''){
+                        waitlistType = '<span style="color:green">LE Waitlist Hot</span>';
+                    }else{
+                        waitlistType = waitlistType + ', <span style="color:green">LE Waitlist Hot</span>';
+                    } 
+                }else if(invString[i].waitlist_type_LE__c != '' && invString[i].waitlist_type_LE__c != null){
+                    console.log('inside not hot');
+                    if(waitlistType == ''){
+                        waitlistType = 'LE Waitlist '+ invString[i].waitlist_type_LE__c;
+                    }else{
+                        waitlistType = waitlistType + ', LE Waitlist '+invString[i].waitlist_type_LE__c;
+                    } 
+                }
+            }
+            
+            //Owned Assets related code
+            ownedAssets = '';
+            if(invString[i].Has_Assets__c == true && invString[i].has_assets_LE__c == true){
+                console.log('Inside has assets for both');
+                ownedAssets = 'Owns CBC, LE';
+            }else{
+                console.log('Inside else loop for has assets'+invString[i].Has_Assets__c+invString[i].has_assets_LE__c);
+                if(invString[i].Has_Assets__c == true){
+                    console.log('Inside CBC assets');
+                    ownedAssets = 'Owns CBC';
+                }
+                if(invString[i].has_assets_LE__c== true){
+                    console.log('Inside LE assets');
+                    ownedAssets = 'Owns LE';
+                }
+            }
+            
+            //adding value to entry type based on assets owned and waitlist information
+            entryType = '';
+            if(preAuth != ''){
+                console.log('Inside preauth string');
+                entryType = preAuth;
+            }
+            if(waitlistType != ''){
+                console.log('Inside waitlist string');
+                if(entryType != ''){
+                    console.log('Inside adding to the entry type');
+                    entryType = entryType + '/'+ waitlistType;
+                }else{
+                    console.log('Inside adding to entry type');
+                    entryType = waitlistType;
+                }
+            }
+            if(ownedAssets != ''){
+                console.log('Inside adding to the owned assets'+ownedAssets);
+                if(entryType != ''){
+                    entryType = entryType + '/' + ownedAssets;
+                }else{
+                    entryType = ownedAssets;
+                }
+            } 
+            
+            if(entryType == ''){
+                entryType = '-';
+            }
+            console.log('Inside Entry Value ->'+entryType);
+            htmlString=htmlString+'<td>'+ entryType+'</td>'
+            
+            //DAP-168 ends here
+            htmlString=htmlString+'<td>'+type;
+            htmlString=htmlString+'</td>';
+            if(responseData.available_flex>=0){
+                htmlString=htmlString+'<td>'+parseFloat(responseData.available_flex);
+                htmlString=htmlString+'</td>';
+            }
+            else{
+                htmlString=htmlString+'<td>'+parseFloat(0);
+                htmlString=htmlString+'</td>';
+            }
+            htmlString=htmlString+'<td>$'+parseFloat(responseData.flex_unit_price).toFixed(2);
+            htmlString=htmlString+'</td>';
+            
+            if(responseData.available_fast>=0){
+                htmlString=htmlString+'<td>'+parseFloat(responseData.available_fast);
+                htmlString=htmlString+'</td>';
+            }
+            else{
+                htmlString=htmlString+'<td>'+parseFloat(0);
+                htmlString=htmlString+'</td>';
+            }
+            
+            htmlString=htmlString+'<td>$'+parseFloat(responseData.fast_unit_price).toFixed(2);
+            htmlString=htmlString+'</td>';
+            if(responseData.available_flex >=0 && parseFloat((responseData.flex_unit_price*responseData.available_flex)).toFixed(2)>0.00){
+                htmlString=htmlString+'<td style="color :green;    font-weight: bold;" >$'+parseFloat((responseData.flex_unit_price*responseData.available_flex)).toFixed(2);
+                htmlString=htmlString+'</td>';
+            }
+            else{
+                htmlString=htmlString+'<td style="color :red;    font-weight: bold;">$'+parseFloat(0.00).toFixed(2);
+                htmlString=htmlString+'</td>'; 
+            }
+            if(responseData.available_fast >=0 && parseFloat((responseData.flex_unit_price*responseData.available_fast)).toFixed(2)>0.00){
+                htmlString=htmlString+'<td style="color :green;    font-weight: bold;">$'+parseFloat((responseData.fast_unit_price*responseData.available_fast)).toFixed(2);
+                htmlString=htmlString+'</td>';
+            }
+            else{
+                htmlString=htmlString+'<td style="color :red;    font-weight: bold;">$'+parseFloat(0.00).toFixed(2);
+                htmlString=htmlString+'</td>'; 
+            }
+            if(responseData.available_flex>=0 && (responseData.part_number == 'COBROKE' || responseData.part_number == 'cobroke' || responseData.part_number == 'Cobroke')){
+                totalFlexData=totalFlexData+parseFloat((responseData.flex_unit_price*responseData.available_flex));
+            }
+            if(responseData.available_fast>=0 && (responseData.part_number == 'COBROKE' || responseData.part_number == 'cobroke' || responseData.part_number == 'Cobroke')){
+                totalFastData=totalFastData+parseFloat((responseData.fast_unit_price*responseData.available_fast));
+            }
+            if(isNaN(parseFloat(invString[i].Inventory_Data__r.Promo_Code__c).toFixed(2)))
+                htmlString=htmlString+'<td>--';
+            else
+                htmlString=htmlString+'<td>'+parseFloat(invString[i].Inventory_Data__r.Promo_Code__c).toFixed(2)+"%";
+            htmlString=htmlString+'</td>';
+        }        
+        htmlString=htmlString+'</tr>';
+        return htmlString;
+    }
+    return htmlString;
+}
+//To set tab Title in Console
+function testSetTabTitle() {
+    //Set the current tab's title
+    sforce.console.setTabTitle("{!JSENCODE(Account.Name)}");
+}
+var isAllFlexMarketsSelected,isAllFastMarketsSelected='';
+var userInputSelection = new Map();
+var leCityProductsMap = new Map(); 
+var leZipProductsMap = new Map(); 
+var attributesToCPQ = new Map(); 
+var datakeys = [];
+function userSelectAllFlex(source) {  
+    $("input[id][name$='individualFlexselected'][type='checkbox']", listingTable.rows().nodes()).prop('checked', source.checked);   
+    isAllFlexMarketsSelected = source.checked;
+    console.log(' *** allFlexMap *** '+allFlexMap.size);
+    
+    /* var searchedText = $("#search-inp1").val();
+    console.log(' *** searchedText *** '+searchedText);
+    if(searchedText ==''){
+        $("input[id][name$='individualFlexselected'][type='checkbox']", listingTable.rows().nodes()).prop('checked', source.checked);   
+        isAllFlexMarketsSelected = source.checked;
+        console.log(' *** allFlexMap *** '+allFlexMap.size);
+    }
+    //var tbldata = $(listingTable.rows({ filter : 'applied'}).data());
+    if(searchedText !=''){
+        $('#marketTableBody tr td:first-child input').each(function() {
+            console.log("datakey is? *** "+$(this).data("key"));
+            datakeys.push($(this).data("key"));
+            $(this).prop('checked', source.checked); 
+            
+        });
+    }*/
+}
+function userSelectAllFast(source) {
+    $("input[id][name$='individualFastselected'][type='checkbox']", listingTable.rows().nodes()).prop('checked', source.checked);  
+    isAllFastMarketsSelected = source.checked;
+    console.log(' *** allFastMap *** '+allFastMap.size);
+}
+
+function userInputSelect(userInputValue,userInputKey){ 
+    if(isAllFlexMarketsSelected == true && userInputKey.includes("Flex")){
+        $("input[id][name$='allflexmarketselect'][type='checkbox']").prop('checked', false);   
+        isAllFlexMarketsSelected = false;
+        
+        for(let [k, v] of allFlexMap){
+            if(userInputKey != v){
+                userInputSelection.set(v,true);  
+            }
+        }
+        
+        console.log(' ** userInputSelection - inside '+userInputSelection.size); 
+    }else if(isAllFastMarketsSelected == true && userInputKey.includes("Fast")){
+        $("input[id][name$='allfastmarketselect'][type='checkbox']").prop('checked', false);   
+        isAllFastMarketsSelected = false;
+        
+        for(let [k, v] of allFastMap){
+            if(userInputKey != v){
+                userInputSelection.set(v,true);  
+            }
+        }
+    }
+    console.log(' ** userInputKey '+userInputKey+' userValue '+userInputValue.checked+' ** userInputSelection - outside '+userInputSelection.size);
+    userInputSelection.set(userInputKey,userInputValue.checked);   
+}
+
+function leZipProductSelected(userKey,marketname,SOV){
+    console.log(' *** user input- zips *** '+userKey.checked+' '+marketname+' &&&&& '+SOV);
+    if(userKey.checked == true && SOV == 'SOV20'){
+        $(userKey).closest('tr').find("td input[id][name!='SOV20Zip'][type='checkbox']").prop('checked', false);                         
+        
+        if(leCityProductsMap.containsKey(marketname+'-'+'SOV30'))
+            leCityProductsMap.set(marketname+'-'+'SOV30',false);
+        if(leCityProductsMap.containsKey(marketname+'-'+'SOV50'))
+            leCityProductsMap.set(marketname+'-'+'SOV50',false);
+    }else if(userKey.checked == true && SOV == 'SOV30'){
+        $(userKey).closest('tr').find("td input[id][name!='SOV30Zip'][type='checkbox']").prop('checked', false);                                 
+        
+        if(leCityProductsMap.containsKey(marketname+'-'+'SOV20'))
+            leCityProductsMap.set(marketname+'-'+'SOV20',false);
+        if(leCityProductsMap.containsKey(marketname+'-'+'SOV50'))
+            leCityProductsMap.set(marketname+'-'+'SOV50',false);
+    }else if(userKey.checked == true && SOV == 'SOV50'){        
+        $(userKey).closest('tr').find("td input[id][name!='SOV50Zip'][type='checkbox']").prop('checked', false);                         
+        
+        if(leCityProductsMap.containsKey(marketname+'-'+'SOV20'))
+            leCityProductsMap.set(marketname+'-'+'SOV20',false);
+        if(leCityProductsMap.containsKey(marketname+'-'+'SOV30'))
+            leCityProductsMap.set(marketname+'-'+'SOV30',false);
+    }
+    
+    leZipProductsMap.set(marketname+'-'+SOV,userKey.checked);
+}
+
+function leCityProductSelected(userKey,marketname,SOV){    
+    console.log(' *** user input - cities *** '+userKey.checked+' '+marketname+' &&&&& '+SOV);
+    if(userKey.checked == true && SOV == '1'){
+        $(userKey).closest('tr').find("td input[id][name!='SOV10city'][type='checkbox']").prop('checked', false);  
+        
+        if(leCityProductsMap.containsKey(marketname+'-'+'2'))
+            leCityProductsMap.set(marketname+'-'+'2',false);
+        if(leCityProductsMap.containsKey(marketname+'-'+'3'))
+            leCityProductsMap.set(marketname+'-'+'3',false);
+        if(leCityProductsMap.containsKey(marketname+'-'+'4'))
+            leCityProductsMap.set(marketname+'-'+'4',false);
+        if(leCityProductsMap.containsKey(marketname+'-'+'5'))
+            leCityProductsMap.set(marketname+'-'+'5',false);
+    }else if(userKey.checked == true && SOV == '2'){
+        $(userKey).closest('tr').find("td input[id][name!='SOV20city'][type='checkbox']").prop('checked', false);   
+        
+        if(leCityProductsMap.containsKey(marketname+'-'+'1'))
+            leCityProductsMap.set(marketname+'-'+'1',false);
+        if(leCityProductsMap.containsKey(marketname+'-'+'3'))
+            leCityProductsMap.set(marketname+'-'+'3',false);
+        if(leCityProductsMap.containsKey(marketname+'-'+'4'))
+            leCityProductsMap.set(marketname+'-'+'4',false);
+        if(leCityProductsMap.containsKey(marketname+'-'+'5'))
+            leCityProductsMap.set(marketname+'-'+'5',false);
+    }else if(userKey.checked == true && SOV == '3'){
+        $(userKey).closest('tr').find("td input[id][name!='SOV30city'][type='checkbox']").prop('checked', false);   
+        
+        if(leCityProductsMap.containsKey(marketname+'-'+'1'))
+            leCityProductsMap.set(marketname+'-'+'1',false);
+        if(leCityProductsMap.containsKey(marketname+'-'+'2'))
+            leCityProductsMap.set(marketname+'-'+'2',false);
+        if(leCityProductsMap.containsKey(marketname+'-'+'4'))
+            leCityProductsMap.set(marketname+'-'+'4',false);
+        if(leCityProductsMap.containsKey(marketname+'-'+'5'))
+            leCityProductsMap.set(marketname+'-'+'5',false);
+    }else if(userKey.checked == true && SOV == '4'){
+        $(userKey).closest('tr').find("td input[id][name!='SOV40city'][type='checkbox']").prop('checked', false);   
+        
+        if(leCityProductsMap.containsKey(marketname+'-'+'1'))
+            leCityProductsMap.set(marketname+'-'+'1',false);
+        if(leCityProductsMap.containsKey(marketname+'-'+'2'))
+            leCityProductsMap.set(marketname+'-'+'2',false);
+        if(leCityProductsMap.containsKey(marketname+'-'+'3'))
+            leCityProductsMap.set(marketname+'-'+'3',false);
+        if(leCityProductsMap.containsKey(marketname+'-'+'5'))
+            leCityProductsMap.set(marketname+'-'+'5',false);
+    }else if(userKey.checked == true && SOV == '5'){
+        $(userKey).closest('tr').find("td input[id][name!='SOV50city'][type='checkbox']").prop('checked', false);   
+        
+        if(leCityProductsMap.containsKey(marketname+'-'+'1'))
+            leCityProductsMap.set(marketname+'-'+'1',false);
+        if(leCityProductsMap.containsKey(marketname+'-'+'2'))
+            leCityProductsMap.set(marketname+'-'+'2',false);
+        if(leCityProductsMap.containsKey(marketname+'-'+'3'))
+            leCityProductsMap.set(marketname+'-'+'3',false);
+        if(leCityProductsMap.containsKey(marketname+'-'+'4'))
+            leCityProductsMap.set(marketname+'-'+'4',false);
+    }
+    
+    leCityProductsMap.set(marketname+'-'+SOV,userKey.checked);
+}
+
+function QuickQuoteURLUserSelect(){
+    var selectedzipcodes='';
+    var selectedLEzipcodes='';
+    var selectedLECities='';
+    var adjacentZipsToquickQuote = "{!adjacentZipsToQQ}";
+    console.log(' adjacent zips are ** '+adjacentZipsToquickQuote);
+    if(isAllFlexMarketsSelected == true && allFlexMap.size>0){
+        for (let [k, v] of allFlexMap) {
+            if(selectedzipcodes.length == 0)
+                selectedzipcodes = v;
+            else
+                selectedzipcodes = selectedzipcodes + ','+v;
+        }
+    }
+    if(isAllFastMarketsSelected == true && allFastMap.size>0){
+        for (let [k, v] of allFastMap) {
+            if(selectedzipcodes.length == 0)
+                selectedzipcodes = v;
+            else
+                selectedzipcodes = selectedzipcodes + ','+v;
+        }
+    }
+    if(userInputSelection.size>0){ 
+        for (let [k, v] of userInputSelection) {
+            if(v == true){
+                if(selectedzipcodes.length == 0)
+                    selectedzipcodes = k;
+                else
+                    selectedzipcodes = selectedzipcodes + ','+k;
+            }
+        }
+    }
+    
+    if(leCityProductsMap.size>0){
+        for(let [k, v] of leCityProductsMap){
+            if(v == true){
+                if(selectedLECities.length == 0)
+                    selectedLECities = k;
+                else
+                    selectedLECities = selectedLECities + '$$'+k;
+            }
+        }
+    }
+    
+    if(leZipProductsMap.size>0){
+        for(let [k, v] of leZipProductsMap){
+            if(v == true){
+                if(selectedLEzipcodes.length == 0)
+                    selectedLEzipcodes = k;
+                else
+                    selectedLEzipcodes = selectedLEzipcodes + ','+k;
+            }
+        }
+    }
+    
+    if(!selectedzipcodes.length == 0){
+        attributesToCPQ.set('selectedCBCmarkets',selectedzipcodes);
+    }
+    if(!selectedLECities.length == 0){
+        attributesToCPQ.set('selectedLECity_quickQuote',selectedLECities);
+    }
+    if(!selectedLEzipcodes.length == 0){
+        attributesToCPQ.set('selectedLEZips_quickQuote',selectedLEzipcodes);
+    }
+    
+    if(!adjacentZipsToquickQuote.length == 0){
+        attributesToCPQ.set('adjacentLEZips_quickQuote',adjacentZipsToquickQuote);
+    }
+    
+    var interestedCities_quickQuote = "{!leCityIMQQ}";
+    attributesToCPQ.set('interestedCities_quickQuote',interestedCities_quickQuote);
+    
+    
+    let receiver = document.getElementById("QuickQuoteCPQ").contentWindow;
+    var FRAME_DOMAIN = "https://{!$Setup.QuickQuote__c.BMInstance__c}.bigmachines.com";
+    console.log(' *** FRAME_DOMAIN *** '+FRAME_DOMAIN);
+    if (receiver) {
+        receiver.postMessage(attributesToCPQ, FRAME_DOMAIN);
+    } 
+    window.scrollTo(0,0);
+    openTabContentDiv($("#quickQuoteTab"), 'PriceConfigurator'); 
+}
+var pageLoad = window.onload;
+window.onload = function() {
+    if (pageLoad) {
+        pageLoad();
+    }
+    testSetTabTitle();
+}
+function myFunction() {
+    window.top.location='/console';
+}
+
+var j$ = jQuery.noConflict();
+j$(document).ready(function()
+                   {
+                       resetTable();
+                   });
+function resetTable()
+{
+    j$("#listingTable21 tr.lezipschild").hide();    
+    j$("#listingTable21  tr.lecityHeader  span#plusimg").click(function() {
+        if(j$(this).text() === '[+]') {
+            j$(this).text('[-]');
+        } else {
+            j$(this).text('[+]');
+        }
+        var parentTr = j$(this).closest('tr.lecityHeader');
+        parentTr.nextUntil("tr.lecityHeader").toggle(); 
+    });
+} 
+</script>
+</apex:page>

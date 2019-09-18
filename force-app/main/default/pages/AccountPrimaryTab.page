@@ -1,0 +1,14 @@
+<apex:page >
+    <apex:includeScript value="/support/console/28.0/integration.js"/>
+    <A HREF="#" onClick="testGenerateConsoleURL();return false">
+        Click here to open a console URL</A> 
+
+    <script type="text/javascript">
+        var generateConsoleUrl = function testGenerateConsoleURL {
+            sforce.console.generateConsoleUrl([/apex/CreateQuote, /0Q0, www.cs17.salesforce.com, www.cs17.salesforce.com/0Q0], showConsoleUrl);
+         }
+        var openConsoleUrl = function showConsoleUrl(result) {
+            sforce.console.openConsoleUrl(null, result.consoleUrl, true, ['Apex', '', 'Salesforce', ''], ['', '', 'externalUrl', ''])
+         }
+  </script>
+</apex:page>

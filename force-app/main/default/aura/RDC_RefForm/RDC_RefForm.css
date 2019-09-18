@@ -1,0 +1,286 @@
+.THIS .horizontalRuleLeft{
+	border-top: 1px solid;
+    margin-left: 2rem;
+}
+.THIS .horizontalRuleRight{
+	border-top: 1px solid;
+	margin-left: 15rem;
+}
+.THIS .wrapTitle{
+	white-space: normal;
+    /*max-width: 10rem;*/
+    padding-top: 5px;
+    /*margin-left: 15px;*/
+}
+.THIS.formStyle{
+    /*width: 25rem;
+    margin-left: -4rem;
+    height: 27rem;*/
+    /*width:120%;*/
+    background: none;
+    border: none;
+}
+.THIS .demoButton{
+    background-color: #e68200;
+    font-weight: bold;
+    font-size: 1.8em;    
+    height: 50px;
+    width: 80%;
+    font-family: sans-serif;
+    border-radius: 5px;
+    border-color: none;
+    border-width: 0px;
+}
+
+.THIS .demoButtonTablet{
+    background-color: #e68200;
+    font-weight: bold; 
+    font-size: 2.8vw;   
+    height: 50px;
+    width: 80%;
+    font-family: sans-serif;
+    border-radius: 5px;
+    border-color: none;
+    border-width: 0px;
+}
+.THIS .slds-input{
+    border-radius: 5px;
+}
+.THIS .TextWhite{
+    color : white;
+}
+
+
+
+.THIS .slds-grow input {
+        border: 0;
+        height: 40px;
+        color: #6a6a6a;
+        background-color: #f2f2f2;
+        border-radius: 10px !important;
+        margin-left: 20px;
+        width: 90%;
+    }
+
+.THIS .form-group {
+        margin-bottom: 0;
+        padding: 0;
+    }
+
+.THIS .first-input {
+    margin-bottom: 20px!important;
+}
+
+.THIS #banner-wrap .banner-form button{
+            position: relative;
+            color: #ffffff;
+            font-size: 17px;
+            background: #ea002a;
+            border: 0;
+            padding: 8px 15px;
+           
+            
+            letter-spacing: 0.01em;
+            margin-top: 10px;
+            
+            border-radius: 10px !important;
+        }
+
+.THIS #formwrap h2 {
+    color: #000000;
+    font-size: 32px;
+    font-weight: 400;
+    }
+.THIS #formwrap .steps {
+    padding-right: 30px;
+    border-right: 1px solid #b0b0b0;
+    margin-bottom: 30px;
+    padding-top: 20px; }
+.THIS #formwrap .step {
+    width: 100%;
+    display: table; }
+.THIS #formwrap .icon {
+    width: 110px;
+    display: table-cell;
+    vertical-align: top; }
+.THIS #formwrap .v-divider {
+    width: 1px;
+    background: #b0b0b0;
+    height: 50px;
+    margin-left: 54px;
+    margin-top: 15px;
+    margin-bottom: 15px; }
+.THIS #formwrap .content {
+    display: table-cell;
+    vertical-align: top;
+    text-align: left;
+}
+.THIS #formwrap .content h3 {
+      color: #000000;
+      font-size: 30px;
+      font-weight: 500;
+      margin-top: 10px; }
+.THIS #formwrap p {
+    font-size: 17px;
+    color: #000000;}
+.THIS #formwrap .banner-form {
+    padding: 0 10px; }
+.THIS #formwrap .banner-form h4 {
+      color: #000000;
+      font-size: 22px; }
+.THIS #formwrap .banner-form h5 {
+      font-size: 16px;
+      margin-top: 30px;
+      color: #000000;}
+.THIS #formwrap .banner-form h6 {
+      font-size: 14px;
+      color: #000000;
+      margin-top: 10px;
+     font-weight: 600;
+}
+.THIS #formwrap .banner-form p {
+      font-size: 12px;
+      margin-top: 10px;
+      color: #000000;}
+.THIS #formwrap .banner-form button {
+      position: relative;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      background: #eb1c2e;
+      border: 0;
+      padding: 12px 15px;
+      width: 70%;
+      letter-spacing: 0.01em;
+      -webkit-border-radius: 10px;
+      -moz-border-radius: 10px;
+      -ms-border-radius: 10px;
+      border-radius: 10px;
+       }
+.THIS .privacy-policy {
+    margin: 0px auto;
+    margin-top: 10px;
+    text-align: center;
+    color:#6a6a6a;
+}
+.THIS #formwrap .banner-form button:hover {
+        top: 1px;
+        -webkit-box-shadow: 0px 2px 0px 0px #454343;
+        -moz-box-shadow: 0px 2px 0px 0px #454343;
+        box-shadow: 0px 2px 0px 0px #454343; }
+.THIS #formwrap .form-fields {
+    width: 100%;
+    margin: 10px auto;
+    margin-bottom: 0; }
+.THIS #formwrap .form-control {
+    border: 0;
+    height: 40px;
+    background: #f1f1f1;
+    border: none;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    -ms-border-radius: 8px;
+    border-radius: 8px; }
+.THIS #formwrap .form-group {
+    padding: 0 7px;
+    margin-bottom: 10px; }
+.THIS #formwrap .hide-friend-row {
+    display: none; }
+.THIS #formwrap .show-friend-row {
+    display: block; }
+.THIS #formwrap .friend-fields .col-md-5:nth-child(1) {
+    padding-right: 0; }
+.THIS #formwrap .friend-fields .col-md-5:nth-child(3) {
+    padding-left: 0; }
+.THIS #formwrap h6.add-btn {
+    color: #000000;
+    font-size: 14px; }
+.THIS #formwrap h6.add-btn:hover {
+      cursor: pointer; }
+.THIS #formwrap h6.add-btn img {
+    margin-right: 10px;}
+@media (max-width: 991px){
+    .THIS .slds-grow input {
+        
+        margin-left: 12px;
+        
+    }
+}
+.THIS.slds-spinner_container {  
+  z-index: 10000;
+  position: fixed;   
+}
+ 
+.THIS .horizontalRuleLeft{
+	border-top: 1px solid;
+    margin-left: 2rem;
+}
+.THIS .horizontalRuleRight{
+	border-top: 1px solid;
+	margin-left: 15rem;
+}
+.THIS .wrapTitle{
+	white-space: normal;
+    /*max-width: 10rem;*/
+    padding-top: 5px;
+    /*margin-left: 15px;*/
+}
+.THIS.formStyle{
+    background: none;
+    border: none;
+}
+.THIS .demoButton{
+    background-color: #e68200;
+    font-weight: bold;
+    font-size: 1.8em;    
+    height: 50px;
+    width: 80%;
+    font-family: sans-serif;
+    border-radius: 5px;
+    border-color: none;
+    border-width: 0px;
+}
+
+.THIS .demoButtonTablet{
+    background-color: #e68200;
+    font-weight: bold; 
+    font-size: 2.8vw;   
+    height: 50px;
+    width: 80%;
+    font-family: sans-serif;
+    border-radius: 5px;
+    border-color: none;
+    border-width: 0px;
+}
+.THIS .slds-input{
+    border-radius: 5px;
+}
+.THIS .TextWhite{
+    color : white;
+}
+.THIS .ThankyouTopText{
+    text-align: center;
+    font-size: 2.8em;
+    color: red;
+    padding-top: 20px;
+    font-family: "Roboto", sans-serif !important;
+    
+}
+.THIS .ThankyouMiddleText{
+    font-size: 1.2em;
+    color: #000;
+    padding-top: 20px;
+    padding-left: 10px;
+    font-family: "Roboto", sans-serif !important;
+
+}
+.THIS .ThankyouBottomText{
+    color: #000;
+    padding-top: 20px;
+    padding-left: 10px;
+    font-family: "Roboto", sans-serif !important;
+}
+.THIS .Thankyou{
+    background-color: white; 
+    height: 100%;
+}

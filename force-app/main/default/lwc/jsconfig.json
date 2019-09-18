@@ -1,0 +1,38 @@
+{
+    "compilerOptions": {
+        "experimentalDecorators": true,
+        "baseUrl": ".",
+        "paths": {
+            "c/jquery": [
+                "../staticresources/JqueryPlugins/JqueryPlugins/jqueryTheme/jquery-theme-custom2/external/jquery/jquery.js"
+            ],
+            "c/jExpand": [
+                "../staticresources/jExpand/jExpand.js"
+            ],
+            "c/ckeditor": [
+                "../staticresources/ckeditor/ckeditor/ckeditor.js"
+            ],
+            "c/history": [
+                "../staticresources/Account_Hierarchy_Flex/history/history.js"
+            ],
+            "c/cybsResponse": [
+                "cybsResponse/cybsResponse.js"
+            ],
+            "c/cybsPaymentCmp": [
+                "cybsPaymentCmp/cybsPaymentCmp.js"
+            ],
+            "c/cyberSource": [
+                "cyberSource/cyberSource.js"
+            ]
+        }
+    },
+    "include": [
+        "**/*",
+        "../../../../.sfdx/typings/lwc/**/*.d.ts"
+    ],
+    "typeAcquisition": {
+        "include": [
+            "jest"
+        ]
+    }
+}

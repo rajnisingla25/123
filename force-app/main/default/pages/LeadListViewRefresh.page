@@ -1,0 +1,5 @@
+<apex:page standardController="Lead" recordSetvar="leads" extensions="LeadListInventoryRefresh" action="{!updateInventory}">
+  <apex:pageBlock title="Viewing Leads">
+  
+  </apex:pageBlock>
+</apex:page>

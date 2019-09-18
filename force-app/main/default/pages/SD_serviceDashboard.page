@@ -1,0 +1,159 @@
+<apex:page standardController="Account" showHeader="true" standardStylesheets="false"
+    sidebar="true" docType="html-5.0" title="Account Dashboard">
+    <apex:includeLightning />
+    <html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        lang="en">
+	<apex:includeScript value="/support/console/20.0/integration.js"/>
+        <script>
+        sforce.console.setTabTitle('{!Account.Name}');
+        </script>
+    <body>
+        <div class="slds-scope">
+            <div id="loader"></div>
+           
+                <meta charset="utf-8" />
+                <meta http-equiv="x-ua-compatible" content="ie=edge" />
+                <title>Service Dashboard 360</title>
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
+                <apex:includeScript value="{!URLFOR($Resource.JS_CSS_Bundles,'JS/JQuery-1.12.4.js')}"/>
+                
+                <style>
+                    .tabcontent {
+                        display: none;
+                    }
+                </style>
+                <!--The Salesforce Lightning Design System Wrapping Div with Scoping Class -->
+                <apex:slds />
+                <div class="minerva18">
+                    <a href="#" id="scroll" style="display: none;">
+                        <span></span>
+                    </a>
+                    <!--The Salesforce Lightning Design System Tabs Component-->
+                    <div class="slds-tabs--default">
+                        <ul class="slds-tabs--default__nav" role="tablist">
+                            <li class="slds-tabs--default__item  slds-active" title="Item One" role="presentation">
+                                <a class="slds-tabs--default__link" href="javascript:void(0);" role="tab" tabindex="0"
+                                    aria-selected="true" aria-controls="tab-default-1"
+                                    id="tab-default-1__item">ACCOUNT SUMMARY</a>
+                            </li>
+                            <li class="slds-tabs--default__item " title="Item Two" role="presentation">
+                                <a class="slds-tabs--default__link" href="javascript:void(0);" role="tab" tabindex="-1"
+                                    aria-selected="false" aria-controls="tab-default-2"
+                                    id="tab-default-2__item">LISTINGS</a>
+                            </li>
+                            <li class="slds-tabs--default__item " title="Item Three" role="presentation">
+                                <a class="slds-tabs--default__link" href="javascript:void(0);" role="tab" tabindex="-1"
+                                    aria-selected="false" aria-controls="tab-default-3"
+                                    id="tab-default-3__item">ACCOUNT DETAILS</a>
+                            </li>
+                        </ul>
+                        <div id="tab-default-1" class="slds-tabs--default__content slds-show tabcontent"
+                            role="tabpanel" aria-labelledby="tab-default-1__item">
+                            <div id="account-summary" style="width:100%;height:100%">
+                                <div id ="broker-exclusions"/>
+                                <div id ="acct-profile"/>
+                                <div id ="sso-details"/>
+                                <div id ="open-cases"/>
+                                <div id ="issues-in-area"/>
+                               
+                            </div>
+                        </div>
+                        <div id="tab-default-2" class="slds-tabs--default__content slds-hide tabcontent"
+                            role="tabpanel" aria-labelledby="tab-default-2__item">
+                        </div>
+                        <div id="tab-default-3" class="slds-tabs--default__content slds-hide tabcontent"
+                            role="tabpanel" aria-labelledby="tab-default-3__item">
+                                <apex:outputPanel layout="block" id="detailTab">
+                                    <!-- CRM-5024: Updated showChatter to true-->
+                                   <apex:detail subject="{!JSENCODE($CurrentPage.parameters.id)}" inlineEdit="true" relatedList="true" showChatter="true" title="true" id="detailts"/>
+                                </apex:outputPanel>  
+                        </div>
+                    </div>
+                </div>
+            
+            <apex:includeScript value="/support/console/40.0/integration.js" />
+            <apex:includeScript value="/support/console/40.0/connection.js" />
+            <script type="text/javascript">
+                /*SLDS Tabs JS*/
+            
+                $('.slds-tabs--default__link,.slds-tabs--scoped__link').click(
+                    function() {
+                        $(this).parent().parent().find(
+                            '.slds-tabs--default__link,.slds-tabs--scoped__link'
+                        ).attr('aria-selected', 'false');
+                        $(this).attr('aria-selected', 'true');
+                        $(this).parent().parent().find(
+                            '.slds-tabs--default__link,.slds-tabs--scoped__link'
+                        ).attr('tabindex', '-1');
+                        $(this).attr('tabindex', '0');
+                        $(this).parent().addClass('slds-active').siblings()
+                            .removeClass('slds-active');
+                        $(this).parent().parent().parent().find('.' + $(
+                            this).parent().parent().parent().find(
+                            '.slds-tabs--default__content,.slds-tabs--scoped__content'
+                        )[0].classList[0]).removeClass('slds-show').addClass(
+                            'slds-hide');
+                        $(this).parent().parent().parent().find('#' + $(
+                            this).attr('aria-controls')).removeClass(
+                            'slds-hide').addClass('slds-show');
+                    });
+
+                $Lightning.use("c:SD", function() {
+                    if("{!account.Type}" == "Realtor Office" || "{!account.Type}" == "Realtor Agent"){
+                         $Lightning.createComponent("c:SD_brokerExclusions", {
+                            "recordId": "{!$CurrentPage.parameters.id}"
+                        },
+                        "broker-exclusions",
+                        function(cmp) {
+                            // do some stuff
+                        });
+                    }
+                   
+                    $Lightning.createComponent("c:SD_accountProfile", {
+                            "recordId": "{!$CurrentPage.parameters.id}"
+                        },
+                        "acct-profile",
+                        function(cmp) {
+                            // do some stuff
+                        });
+
+                    $Lightning.createComponent("c:SD_ssoDetails", {
+                            "recordId": "{!$CurrentPage.parameters.id}"
+                        },
+                        "sso-details",
+                        function(cmp) {
+                            // do some stuff
+                        });
+
+                    $Lightning.createComponent("c:SD_openCaseDetails", {
+                            "recordId": "{!$CurrentPage.parameters.id}"
+                        },
+                        "open-cases",
+                        function(cmp) {
+                            // do some stuff
+                        }); 
+                     $Lightning.createComponent("c:SD_issuesInTheArea", {
+                            "recordId": "{!$CurrentPage.parameters.id}"
+                        },
+                        "issues-in-area",
+                        function(cmp) {
+                            // do some stuff
+                        }); 
+                    
+                    $Lightning.createComponent("c:SD_listingTable", {
+                            "recordId": "{!$CurrentPage.parameters.id}"
+                        },
+                        "tab-default-2",
+                        function(cmp) {
+                            // do some stuff
+                     }); 
+
+                });
+
+            </script>
+        </div>
+    </body>
+
+    </html>
+
+</apex:page>

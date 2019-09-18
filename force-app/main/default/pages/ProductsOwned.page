@@ -1,0 +1,27 @@
+<apex:page standardController="Account" extensions="ProductsOwnedExtension" sidebar="false" showChat="false" showHeader="false">
+  <apex:form >
+  <apex:pageBlock >
+    <apex:pageBlockSection columns="2" collapsible="false">
+      <apex:outputField value="{!Account.Own_Co_Broke__c}"/>
+      <apex:outputField value="{!Account.Own_FS__c}"/>
+      <apex:pageBlockSectionItem >
+        <apex:outputLabel value="Own CoShow"/>
+        <apex:inputcheckbox value="{!theRealtorAgentOwnCoShow}" disabled="true"/>
+      </apex:pageBlockSectionItem>
+      <apex:outputField value="{!Account.Own_IDX__c}"/>
+      <apex:outputField value="{!Account.Own_Cycle__c}"/>
+      <apex:outputField value="{!Account.Own_LH__c}"/>
+      <apex:outputField value="{!Account.Own_DAC__c}"/>
+      <apex:outputField value="{!Account.Own_MS__c}"/>
+      <apex:outputField value="{!Account.Own_DAP__c}"/>
+      <apex:outputField value="{!Account.Own_SLE__c}"/>
+      <apex:outputField value="{!Account.Own_FAC__c}"/>
+      <apex:outputField value="{!Account.Own_TP_CRM__c}"/>
+      <apex:outputField value="{!Account.Own_Featured_Website__c}"/>
+      <apex:outputField value="{!Account.Own_TP_Website__c}"/>
+      <apex:outputField value="{!Account.Own_FCMA__c}"/>
+           <apex:outputField value="{!Account.Own_FH__c}"/>
+    </apex:pageBlockSection>
+  </apex:pageBlock>
+  </apex:form>
+</apex:page>

@@ -1,0 +1,88 @@
+<apex:page >
+ <apex:includeScript value="/support/console/44.0/integration.js"/>
+ <script type="text/javascript">
+   
+   function openInventorySearchTab(){
+      window.open("{!$Site.Domain}/console#%2Fapex%2FInventorySearch");
+   }   
+   function openLeadsToSold() {
+      window.open("https://c3tools.move.com/STaR/leads_to_sale/");
+   }
+   function openPreauthForm() {
+      window.open("https://docs.google.com/forms/d/e/1FAIpQLSekoRDDxI_L7hMPNE303Vyc7kmK_HaKrpfSsPIvihMgaTUhaw/viewform?c=0&w=1");
+   }
+   function openPIDLookup() {
+      window.open("http://p08sql20278/InventoryInfoTool.aspx");
+   }
+   function openRTO() {
+      window.open("https://docs.google.com/document/d/1ZaLemMvEFDCnDxubKnxIKQ7MdZwtZ-1DwIyXt93haJg/");
+   }
+   function openLinks() {
+      window.open("https://docs.google.com/document/d/1LM4eFTlA7J1LP104pLazK0bQm9zU6weptlOR-hCBuRQ/");
+   }
+   function openServiceRequest() {
+      window.open("https://docs.google.com/document/d/1a6xnKyANgsin2OgBbZVS2HV1poUP7xIMbri4FwiTUDA/");
+   }
+   function openMovingAssets() {
+      window.open("https://docs.google.com/document/d/1zN61AKrfXDIewbC1iVKAOlZVcslI3hpbkN1l_L2-gy4/");
+   }
+   function openCPC(){
+      window.open("https://docs.google.com/document/d/1MS68TnYtMDEFghwKVPq-TQstxSAyB18W6EcuBNf8Rbk/");
+   }
+   function openSNFQAC() {
+      window.open("https://docs.google.com/document/d/1FxsAGyf4BsNgX9wgp8-6Ofo8rTjQ-lNnWkAvraM1Kx4/");
+   }
+   function openRAAT() {
+      window.open("https://docs.google.com/document/d/1xMx90LZ_dtuInBPlEhI9RbDRb-tsTixibhJfPkkqAXc/");
+   }
+   function openLRR() {
+      window.open("https://docs.google.com/document/d/1aqzf3E--Nd_B8UYnF21jqevKU1ZDvPDjZwhLgyCkUR8/");
+   }
+   function openAutoRenew() {
+      window.open("https://docs.google.com/document/d/10fOTf6kO8LcXqQkru9wxOUhDXACtoEgXQ4JRO2XCSig/");
+   }
+   function openQuoteDel() {
+     window.open("https://docs.google.com/document/d/1VrJGxulDwXW15Rpk9UvtsDKGTiTcuhIVnBajXm6DaDY/");
+   }
+   function open3day() {
+     window.open("https://docs.google.com/document/d/18-ENog4Uw_dpncJ4TkbVmG1M0syhB3mznsm7EyGGiss/");
+   }
+   function openFirstRes() {
+     window.open("https://docs.google.com/document/d/1Ve-FqzZLVkqyMifABrOYxSLRq8sbv-o02-AMQ5W_boI/");
+   }
+   function openAdPro() {
+     window.open("https://docs.google.com/document/d/1F9jVVu9yROCG9481Ic-H0vsuucOnSFqcIu-kB2fMLUo/");
+   }
+   function openReferral() {
+     window.open("https://docs.google.com/document/d/1jTm5l5s9XPF6UFx0XouNooSRCGNkS0CV3z4ie25mCTE/");
+   }
+   function openChildescalation() {
+     window.open("https://docs.google.com/document/d/1pYZDG0UVYhcXGtY9OvyLI0-x4Fs1FXoiUwZNwk7tMxQ/");
+   }
+ </script>
+ <!--Commenting out some links for ticket CRM-3183-->
+ <b>SFDC Console Links</b><br />
+ <br />
+     <a href="#" onClick="openInventorySearchTab(); return false">Inventory Search</a><br />
+     <a href="#" onClick="openLeadsToSold(); return false">Leads to Sold</a><br />
+     <a href="#" onClick="openPreauthForm(); return false">Pre-Auth Form</a><br />
+     <a href="#" onClick="openPIDLookup(); return false">PID Lookup</a><br />
+     <a href="#" onClick="openRTO(); return false">Retention Tools Options</a><br />
+     <a href="#" onClick="openLinks(); return false">Useful Links Emails</a><br />
+     <a href="#" onClick="openServiceRequest(); return false">Service Request</a><br />
+     <a href="#" onClick="openMovingAssets(); return false">Moving assets from one account to another</a><br />
+     <a href="#" onClick="openCPC(); return false">Calling Priority cases first thing every day</a><br />
+     <a href="#" onClick="openSNFQAC(); return false">Standard NOTES for Quotes and cases </a><br />
+     <a href="#" onClick="openRAAT(); return false">Add Asset Template></a><br />
+     <a href="#" onClick="openLRR(); return false">Lead Review Request</a><br />
+     <a href="#" onClick="openAutoRenew(); return false">Auto Renewal Basics</a><br />
+     <a href="#" onClick="openQuoteDel(); return false">Quote Deletion Process</a><br />
+     <a href="#" onClick="open3day(); return false">3 day cancel Process</a><br />
+     <a href="#" onClick="openFirstRes(); return false">Send First Response Email</a><br />
+     <a href="#" onClick="openAdPro(); return false">Applying 15% off Ad Pro</a><br />
+     <a href="#" onClick="openReferral(); return false">Referral program faq</a><br />
+     <a href="#" onClick="openChildescalation(); return false">Child escalation case creation</a><br />
+     <br />
+ <br />
+ 
+</apex:page>

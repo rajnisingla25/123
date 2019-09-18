@@ -1,0 +1,19 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" >
+    <aura:attribute name="linkLabel" type="string" />
+    <aura:attribute name="linkValue" type="string" />
+    <aura:attribute name="isTitle" type="boolean" />
+    <aura:attribute name="isSocialTitle" type="boolean" />
+    <aura:attribute name="leftMargin" type="string" />
+    <aura:attribute name="topMargin" type="string" />
+    
+    <aura:if isTrue="{!!v.isTitle}">
+        <span style="{!'position:absolute;margin-top: 2.5rem;margin-left: ' + v.leftMargin + 'rem;margin-top: ' + v.topMargin + 'rem;'}">
+            <u><lightning:formattedUrl class="slds-m-right_x-small linkClass" value="{!v.linkValue}" label="{!v.linkLabel}" title="{!v.linkValue}"/></u>
+        </span>
+        <aura:set attribute="else">
+            <span style="{!and(v.isSocialTitle, $Browser.formFactor != 'DESKTOP') ? 'margin-top:-2rem;margin-left:0.3rem;': 'position:absolute;margin-top: ' + v.topMargin + 'rem;'}" 
+                  class="linksTitleClass">{!v.linkLabel}</span>
+        </aura:set>
+    </aura:if>  
+    
+</aura:component>

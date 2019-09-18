@@ -1,0 +1,119 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" controller="SFMC_LandingPageController" >
+	<aura:attribute name="headline" type="String" />
+    <aura:attribute name="headlineColor" type="String"/>
+    <aura:attribute name="headlinePad" type="String"/>
+    <aura:attribute name="subheadline" type="String" />
+    <aura:attribute name="subheadlineColor" type="String"/>
+    <aura:attribute name="subheadlinePad" type="String"/>
+    <aura:attribute name="textalign" type="String"/>
+    <aura:attribute name="imagePath" type="String"/>
+    <aura:attribute name="imageSize" type="String"/>
+    <aura:attribute name="imagePad" type="String"/>
+    <aura:attribute name="mobileOnly" type="Boolean"/>
+    <aura:attribute name="backgroundPath" type="String"/>
+    <aura:attribute name="backgroundSize" type="String"/>
+    <aura:attribute name="backgroundPos" type="String"/>
+    <aura:attribute name="backgroundColor" type="String"/>
+    <aura:attribute name="topPad" type="String"/>
+    <aura:attribute name="botPad" type="String"/>
+    <aura:attribute name="formShadow" type="String"/>
+    <!--Form Design attributes -->
+    <aura:attribute name="formTitle" type="String"/>
+    <aura:attribute name="formButtonText" type="String" />
+    <aura:attribute name="showPicklist" type="Boolean" default="true" />
+    <!--Form attributes -->
+    
+    <!--Pop up attributes -->
+	<aura:attribute name="popUpImageTest" type="String" />
+    <aura:attribute name="popUpImageWidth" type="String" />
+    <aura:attribute name="popUpImageHeight" type="String" />
+    <aura:attribute name="popUpImageLink" type="String" />
+    <aura:attribute name="popupProductType" type="String" />
+    <aura:attribute name="enablePopUp" type="Boolean" default="false"/>
+	<!--Pop up atrributes -->    
+    <div class="cBody_temp_3">
+    	<div id="banner-wrap" style="{!'background:' +' url(https://b2bweb.realtor.com/' + v.backgroundPath +')'  + v.backgroundColor + v.backgroundPos + ' no-repeat; background-size: ' + v.backgroundSize + '; padding-top:' + v.topPad + '; padding-bottom:' + v.botPad + ';'  }">
+			
+        <article class="body">
+
+            <div class="row">
+                <div class="headlines" style="{!'text-align:' + v.textalign + ';'}">
+                        <h1 id="head" class="strong" style="{!'color:' + v.headlineColor + ';padding:'+ v.headlinePad +';'}">{!v.headline}</h1>
+                        <h2 id="subhead" style="{!'color:' + v.subheadlineColor + '; padding:'+ v.subheadlinePad +';'}">{!v.subheadline}</h2>
+                    </div>
+                <div class="col-md-5 col-sm-12" id="start-here">
+                    
+                   	 <aura:if isTrue="{!not(empty(v.textalign))}">
+                    <div class="banner-form" style="{! 'margin-left: 10%; box-shadow: 0px 0px 3px 3px' + v.formShadow + ';'}">
+                        <div id="before-submission">
+                            <c:SFMC_LandingPageForm formTitle="{!v.formTitle}"
+                                                         buttonText="{!v.formButtonText}"
+                                                         showBigWord="{!v.showBigWord}"
+                                                         firstWordInFormTitle="{!v.firstWordInFormTitle}"
+                                                         popUpImageTest="{!v.popUpImageTest}"
+                                                         prefixString = "{!v.prefixString}"
+                                                         popUpImageHeight = "{!v.popUpImageHeight}"
+                                                         popUpImageWidth = "{!v.popUpImageWidth}"
+                                                         popUpImageLink = "{!v.popUpImageLink}"
+                                                         popupProductType = "{!v.popupProductType}"
+                                                         cellNumber = "{!v.cellNumber}"
+                                                         showPicklist="{!v.showPicklist}"/>
+                        </div>
+
+                        <div id="after-submission">
+                            <h3>Thank you for your interest!</h3>
+                            <h4>One of our marketing consultants will be reaching out to you via the phone number or email address provided below.</h4>
+                            <p>Name: <span id="thanksnamef"></span> <span id="thanksnamel"></span></p>
+                            <p>Email: <span id="thanksemail"></span></p>
+                            <p>Phone: <span id="thanksphone"></span></p>
+                        </div>
+                    </div>
+                         <aura:set attribute="else">
+                             <div class="banner-form" style = "{! 'box-shadow: 0px 0px 3px 3px' + v.formShadow + ';'}">
+                        <div id="before-submission">
+                            <c:SFMC_LandingPageForm formTitle="{!v.formTitle}"
+                                                         buttonText="{!v.formButtonText}"
+                                                         showBigWord="{!v.showBigWord}"
+                                                         firstWordInFormTitle="{!v.firstWordInFormTitle}"
+                                                         popUpImageTest="{!v.popUpImageTest}"
+                                                         prefixString = "{!v.prefixString}"
+                                                         popUpImageHeight = "{!v.popUpImageHeight}"
+                                                         popUpImageWidth = "{!v.popUpImageWidth}"
+                                                         popUpImageLink = "{!v.popUpImageLink}"
+                                                         popupProductType = "{!v.popupProductType}"
+                                                         cellNumber = "{!v.cellNumber}"
+                                                         showPicklist="{!v.showPicklist}"/>
+                        </div>
+
+                        <div id="after-submission">
+                            <h3>Thank you for your interest!</h3>
+                            <h4>One of our marketing consultants will be reaching out to you via the phone number or email address provided below.</h4>
+                            <p>Name: <span id="thanksnamef"></span> <span id="thanksnamel"></span></p>
+                            <p>Email: <span id="thanksemail"></span></p>
+                            <p>Phone: <span id="thanksphone"></span></p>
+                        </div>
+                    </div>
+                              </aura:set>
+                    </aura:if>
+                      
+
+                </div>
+                <aura:if isTrue="{!v.mobileOnly}">
+                <div class="col-md-7 text-center img-container mobile-only" style="{!'padding:' + v.imagePad + ';'}">
+                    <img width="{!v.imageSize}" src="{!'https://b2bweb.realtor.com/'+ v.imagePath}" alt=""/>
+                </div>
+                    <aura:set attribute="else">
+                    	<div class="col-md-7 text-center img-container" style="{!'padding:' + v.imagePad + ';'}">
+                    <img width="{!v.imageSize}" src="{!'https://b2bweb.realtor.com/'+ v.imagePath}" alt=""/>
+                </div>
+                    </aura:set>
+                </aura:if>
+                
+
+            </div>
+
+        </article>
+    </div>
+    </div>
+    
+</aura:component>

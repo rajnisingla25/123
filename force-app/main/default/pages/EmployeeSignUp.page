@@ -1,0 +1,153 @@
+<apex:page standardStylesheets="false" showHeader="false" controller="CommunitiesSelfRegController"  applyBodyTag="false" applyHtmlTag="false">
+   <head>
+      <meta charset="utf-8"/>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+      <meta name="description" content="Employee Sign Up"/>
+      <apex:includeScript value="{!URLFOR($Resource.EmployeeDashboard, '/employee/jquery-2.2.4.min.js')}"/>
+      <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,500" rel="stylesheet" type="text/css"/>
+      <link rel="stylesheet" media="screen" href="{!$Resource.EmployeeDashboardCss}" />
+       <link rel="icon" href="http://static.move.com/lib/rdc-v8/assets/favicon-144287b492113455703667bc3182768a9b2666765a1cd4beba38cfe40294eccc.ico" />
+   </head>
+  
+   <body>
+      <div id="app-container" class="app-container">
+         <div class="app-brand-border"></div>
+         <nav class="app-navbar navbar navbar-default navbar-fixed-top app-navbar no-border">
+            <div class="container-fluid">
+               <div class="pull-right pad-top-md"> <a href="{!$Site.Prefix}/EmployeeSignIn" class="btn btn-default">Sign In</a></div>
+            </div>
+         </nav>
+         <aside class="app-sidebar app-sidebar-fixed-height">
+            <nav class="navbar navbar-default navbar-fixed-top sidebar-navbar no-border">
+               <div class="container-fluid">
+                  <div class="navbar-header pull-left"><a class="navbar-brand"><img src="https://d260ckbc6brolt.cloudfront.net/prosoft-ui/20161007-a70f17b/img/realtor-logo-v3.svg" width="134"/></a></div>
+               </div>
+            </nav>
+         </aside>
+         <div id="main-container" class="main-container mar-left-none bg-white">
+            <div class="container-fluid">
+               <div id="alert"></div>
+               <div class="row">
+                  <div class="col-sm-10 col-sm-push-1 col-md-8 col-md-push-2 col-lg-6 col-lg-push-3">
+                     <div class="" id="page-signup-one">
+                        <div class="col-md-12 col-sm-11 clearfix mar-top-md">
+                           <apex:form id="theForm" forceSSL="true">
+                              <h1 class="text-center">Create an <span style="font-weight: 500">employee dashboard</span> account</h1>
+                              <apex:pageMessages id="error" />
+                              <div class="form-group">
+                                 <apex:outputLabel styleClass="control-label" value="First Name" />
+                                 <div class="input-group">
+                                    <apex:inputText styleClass="form-control" required="true" id="firstName" value="{!firstName}" label="First Name"/>
+                                 </div>
+                                    <span id="required-error" class="state-message hidden">This Field is required</span>
+                              </div>
+                              <div class="form-group">
+                                 <apex:outputLabel value="Last Name"/>
+                                 <div class="input-group">
+                                    <apex:inputText styleClass="form-control" required="true" id="lastName" value="{!lastName}" label="Last Name"/>
+                                 </div>
+                                    <span id="required-error" class="state-message hidden">This Field is required</span>
+                              </div>
+                               <div class="form-group" >
+                                 <apex:outputLabel styleClass="control-label" value="Employee Number" />
+                                  <button type="button" class="btn btn-icon" data-container="body" data-toggle="popover" data-placement="bottom" data-content="You can find your employee number on Ultripro -> Menu -> Personal -> Employee Summary -> Employee number"><i class="pi pi-info-circle"></i></button>
+                                 <div class="input-group">
+                                    <apex:inputText styleClass="form-control" required="true" id="empNum" value="{!communityNickname}" label="Employee Number"/>
+                                 </div>
+                                    <span id="required-error" class="state-message hidden">This Field is required</span>
+                              </div>
+                              <div class="form-group" >
+                                 <apex:outputLabel value="Work Email"/>
+                                 <div class="input-group">
+                                    <apex:inputText styleClass="form-control " required="true" id="email" value="{!email}" label="Email"/>
+                                 </div>
+                                    <span id="required-error" class="state-message hidden">This Field is required</span>
+                              </div>
+                              <div class="form-group phone-div" >
+                                 <apex:outputLabel value="Phone"/>
+                                 <div class="input-group">
+                                    <apex:inputText styleClass="form-control" required="true" id="phone" value="{!phone}" label="Phone"/>
+                                 </div>
+                                    <span id="required-error" class="state-message hidden">This Field is required</span>
+                                    <span id="limit-error" class="state-message hidden">Phone number should be 10 digit</span>
+                              </div>
+                                <div class="form-group" >
+                                 <apex:outputLabel value="Password"/>
+                                 <div class="input-group">
+                                    <apex:inputSecret styleClass="form-control" required="true" id="password" value="{!password}" label="password"/>
+                                 </div>
+                                    <span id="required-error" class="state-message hidden">This Field is required</span>
+                              </div>
+                              
+                               <div class="form-group" >
+                                 <apex:outputLabel value="Confirm Password"/>
+                                 <div class="input-group">
+                                    <apex:inputSecret styleClass="form-control" required="true" id="confirmPassword" value="{!confirmPassword}" label="confirmPassword"/>
+                                 </div>
+                                    <span id="required-error" class="state-message hidden">This Field is required</span>
+                              </div>
+                              <div class="form-group mar-top-xl">
+                                
+                              <button class="btn btn-primary" id="signup-btn" onclick="validate(event)" type="submit">Sign up</button>
+                              <!--    <apex:commandButton styleClass="btn btn-primary " action="{!registerUser}" value="Sign up" id="signup"/>-->
+                                  <apex:actionFunction name="registerUser" action="{!registerUser}" rerender="error" oncomplete="displayError()"></apex:actionFunction>
+                              </div>
+                        
+                              <br/>
+                               <script type="text/javascript">
+                              
+                                function validate(event){
+                                event.preventDefault();
+                                 var isError = false;
+
+                               // Show error if any field is blank
+                               // Else remove any previous error messages
+                                $( ".form-group" ).each(function() {
+                                  if($(".form-control",this).val() == ''){
+                                    $("#required-error",this).removeClass('hidden');
+                                    $("#required-error",this).addClass('help-block');
+                                    $(this).addClass('has-error');
+                                    isError = true;
+                                  } else {
+                                     $("#required-error",this).addClass('hidden');
+                                    $("#required-error",this).removeClass('help-block');
+                                    $(this).removeClass('has-error');
+                                  }
+                                });
+                               
+                                if($(".phone-div").find("input").val().length != 10){
+                                    $("#limit-error",$(".phone-div")).removeClass('hidden');
+                                    $("#limit-error",$(".phone-div")).addClass('help-block');
+                                    $($(".phone-div")).addClass('has-error');
+                                    isError = true;
+                                } else {
+                                    $("#limit-error",$(".phone-div")).addClass('hidden');
+                                    $("#limit-error",$(".phone-div")).removeClass('help-block');
+                                    $($(".phone-div")).removeClass('has-error');
+                                  }                          
+
+                                if(isError){
+                                 return false;
+                                } else{
+                                 var a = registerUser();
+                                }
+                                  
+                                }
+                              
+
+                              </script>
+                           </apex:form>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- Footer Component -->
+       <c:SetFooterCommunity id="footerComp" />
+   </body>
+    <apex:includeScript value="{!URLFOR($Resource.EmployeeDashboard, '/employee/jquery-2.2.4.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.EmployeeDashboard, '/employee/prosoft-ui.min.js')}" />
+</apex:page>

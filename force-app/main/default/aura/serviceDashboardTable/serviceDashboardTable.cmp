@@ -1,0 +1,49 @@
+<!--
+ Author : Srinivas Vadla
+ API Version: 42
+ Date : 3/21/2018
+-->
+<aura:component controller="serviceDashboardtblController">
+    
+    <!--use JQuery Data Table css,Js and jQUERY js file in lightning component by using ltng:require component-->
+    <ltng:require styles="{! $Resource.datatable + '/DataTables-1.10.16/media/css/jquery.dataTables.min.css'}" 
+                  scripts="{!join(',', 
+                           $Resource.jquery321 ,
+                           $Resource.datatable + '/DataTables-1.10.16/media/js/jquery.dataTables.min.js')
+                           }" afterScriptsLoaded="{!c.scriptsLoaded}"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>  
+    <aura:handler event="aura:waiting" action="{!c.waiting}"/> 
+    <aura:handler event="aura:doneWaiting" action="{!c.doneWaiting}"/>
+    <aura:handler name="serviceDashboardEvent" event="c:serviceDashboardEvent" action="{!c.handleComponentEvent}"/>
+    
+    <aura:attribute name="lstOpp" type="List"/>
+    <aura:attribute name="messageFromEvent" type="String"/>
+    
+    <span>
+    <c:serviceDashboard />
+    </span>
+    <div class=" slds-spinner_brand">
+        
+        <table id="tableId" class="slds-table slds-table_bordered slds-table_cell-buffer" cellspacing="0" width="100%">
+            <span id="Accspinner" style="display:none"><lightning:spinner alternativeText="Waiting for Case Info.."/></span>
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Case Number</th>
+                    <th>Type</th>
+                    <th>Area</th>
+                    <th>Sub Area</th>
+                    <th>Subject</th> 
+                    <th>Child cases</th>
+                    <th>Status</th>
+                    <th>Case Age</th>
+                    <th>Date of Last Added Child</th>
+                </tr>
+            </thead>
+            <tbody>
+               
+            </tbody>
+        </table>
+    </div>
+</aura:component>

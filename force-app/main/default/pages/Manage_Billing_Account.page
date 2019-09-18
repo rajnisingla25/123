@@ -1,0 +1,252 @@
+<apex:page title="Manage Billing Account" showHeader="false" sidebar="false" tabStyle="Account" standardController="Zuora__CustomerAccount__c" extensions="BillingAccountManager">
+    <apex:includeScript value="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" />>
+    <apex:includeScript value="//cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.17.8/js/jquery.tablesorter.min.js" />
+    
+    
+    <script type="text/javascript" language="javascript">
+        //CRM-4152
+        $(document).ready(function(){
+             
+            var profileName    = '{!$Profile.Name}' ;
+            var accountSubType = '{!Zuora__CustomerAccount__c.Zuora__Account__r.Account_sub_type__c}'          
+            if((profileName  =='Moving Sales Rep') &&  (accountSubType != 'Customer')){
+                  $("[id$='mybtn']").hide();   
+                }               
+        
+        });
+      
+    
+        $(document).ready(function()
+        {
+             
+            $("[id$='BillingTable']").tablesorter( {sortList: [[3,1]],  headers: {0:{sorter: false},1:{sorter: false},2 :{sorter: false},3:{sorter: false},4:{sorter: false},5:{sorter: false},6:{sorter: false}  }} );
+       
+       
+        });
+        
+        function setFocusOnLoad() {
+            var zId= "{!index}";
+            radio = document.getElementsByTagName('input');
+            if(radio != null){
+            for (var i = 0, n = radio.length; i < n; i++) {
+                if (radio[i].id == zId)
+                    radio[i].checked = true;
+                else
+                    radio[i].checked = false;
+            }
+            }
+        }
+        function updateSelection(zId){
+            radio = document.getElementsByTagName('input');
+            if(radio != null){
+            for (var i = 0, n = radio.length; i < n; i++) {
+                if (radio[i].id == zId)
+                    radio[i].checked = true;
+                else
+                    radio[i].checked = false;
+            }
+            }
+            
+        }
+    </script>
+    <style>
+        .headerRow .headerStyle {
+            background-color: #E5FFD5 !important;
+            color: #000000 !important;  
+            font-size: 90%;
+        }
+        .headerRow .paymentHeader {
+            background-color: #ffffbb !important;
+            color: #000000 !important;  
+            font-size: 90%;
+        }
+        .headerRow .paymentHeaderStyle {
+            background-color: #FFFDD7 !important;
+            color: #000000 !important;
+            position:fixed;   
+            top:-20px;
+            height:0px;
+        }
+        .headerRow .invoiceHeaderStyle {
+            background-color: #DEF8FF !important;
+            color: #000000 !important
+        }
+        .line1 {    
+        }
+        .line2 {
+            background-color: #f8f8f8 !important;
+            color: #000000 !important
+        }
+        table .roundedEdges {
+            border-bottom-left-radius: 20px !important;
+            border-bottom-right-radius: 20px !important
+        }
+        table .roundedEdge {
+            border-top-left-radius: 20px !important;
+            border-bottom-right-radius: 20px !important;
+        }
+        #table-header {
+            position:fixed;   
+            top:-20px;
+            height:20px;
+        }
+        #table-scroll {
+            height: 600px;
+            width: 100%;
+            overflow: auto;  
+        }
+        .header-table {
+            border-top-style: none;
+            border-right-style: none;
+            border-bottom-style: none;
+            border-left-style: none;
+           border-color: #F0F8FF;
+        }
+        .bordered {
+            border-top-style: solid;
+            border-right-style: solid;
+            border-bottom-style: solid;
+            border-left-style: solid;
+            border-color: #ededed;
+        }
+        .not-white {
+            border-style: none;
+            border-color: #ededed;
+            background-color: #f8f8f8 !important
+        }
+        .page-block {
+            background-color: #ffffff !important;
+            border-color: #F0F8FF;
+        }
+        
+        a:hover {
+        background:#ffffff; /*BG color is a must for IE6*/
+        text-decoration:none;
+        } 
+        a.tooltip span {
+            display:none; 
+            padding:2px 3px; 
+            margin-left:8px; 
+            width:250px;
+        }
+        a.tooltip:hover span{
+            display:inline; 
+            position:absolute; 
+            background:#FFC; 
+            border:1px solid #cccccc; 
+            color:#000000;
+        }
+    </style>
+    <apex:form >
+        <apex:sectionHeader title="Billing Account Manager" subtitle="for {!billingAccount.Name}"/>
+        <apex:outputPanel id="error">
+            <zqu:Notification options="{!notificationOptions}" />
+            <apex:actionFunction name="continueToNextPage" action="{!confirmError}" immediate="true" rerender="error" />
+        </apex:outputPanel>
+        <zqu:StatusModal />
+        <apex:actionStatus startText="" stopText="" id="action" onstart="javascript:displayStatusModal()" onstop="javascript:closeStatusModal()" />
+        <apex:pageBlock >
+            <apex:commandButton value="Return to Billing Account" action="{!cancel}" rerender="error, paymentMethodsTable" />
+            <table width="100%" cellspacing="0" border="0" cellpadding="0" class="page-block">
+                <tr class="no-border">
+                    <td width="33%" class="bordered">
+                        <table width="100%" cellspacing="0" border="1" cellpadding="0" height="30px" class="header-table">
+                            <tr class = "headerRow">
+                                <th class = "headerStyle" width ="5.7%"></th>
+                                <th class = "headerStyle" width ="23.3%"> &nbsp;Card/Account Name</th>
+                                <th class = "headerStyle" width ="22.8%"> &nbsp;Card/Account Number</th>
+                                <th class = "headerStyle" width ="18%"> &nbsp;Type</th>
+                                <th class = "headerStyle" width ="14.8%"> &nbsp;Expiration Date</th>
+                                <th class = "headerStyle" width ="10.8%"> &nbsp;Split</th>
+                            </tr>
+                        </table>
+                        <apex:outputPanel id="paymentMethodsTable">
+                            <div id="table-wrapper">
+                                <div id="table-scroll">
+                                    <apex:pageBlockTable value="{!paymentSelect}" var="x" headerClass="table-header" rowClasses="line1, line1, line2, line2">
+                                        <apex:column headerValue="" width="2%" headerClass="paymentHeaderStyle" rowspan="2">
+                                            <apex:actionsupport action="{!selectIndex}" event="onclick" onsubmit="updateSelection({!x.selectionIndex});" rerender="error, paymentsTable" >
+                                                <input type="radio" name="paymentMethods" id="{!x.selectionIndex}" />
+                                                <apex:param name="conid" value="{!x.selectionIndex}" assignTo="{!index}" />
+                                            </apex:actionsupport>
+                                        </apex:column>
+                                        <apex:column headerValue="Card Holder Name" width="25%" headerClass="paymentHeaderStyle">
+                                            <apex:outputText value="{!x.paymentMethod.Zuora__CreditCardHolderName__c}" /></apex:column>
+                                        <apex:column headerValue="Card Number" width="25%" headerClass="paymentHeaderStyle">
+                                            <apex:outputText value="{!x.paymentMethod.Zuora__CreditCardMaskNumber__c}" /></apex:column>
+                                        <apex:column headerValue="Card Type" width="20%" headerClass="paymentHeaderStyle">
+                                            <apex:outputText value="{!x.paymentMethod.Zuora__CreditCardType__c}" /></apex:column>
+                                        <apex:column headerValue="Expiration Date" width="20%" headerClass="paymentHeaderStyle">
+                                            <apex:outputText value="{!x.expirationDate}" /></apex:column>
+                                            <apex:column headerValue="Split" width="20%" headerClass="paymentHeaderStyle">
+                                            <apex:outputText value="{!x.paymentMethod.SplitPercentage__c}" /></apex:column>
+                                        <apex:column headerValue="Location" headerClass="paymentHeaderStyle" colspan="5" breakbefore="true" >
+                                            <apex:outputText value="{!x.address}" /></apex:column>
+                                    </apex:pageBlockTable>
+                                </div>
+                            </div>
+                        </apex:outputPanel>
+                    </td>
+                    <td width="5px" class="not-white"></td>
+                    <td width="66.3%" class="bordered">
+                        <table width="100%" cellspacing="0" border="1" cellpadding="0" height="30px" class="header-table">
+                            <tr class = "headerRow">
+                                <th class = "paymentHeader" width ="12%">&nbsp;Payment Amount</th>
+                                <th class = "paymentHeader" width ="12%"> &nbsp;Refunded Amount</th>
+                                <th class = "paymentHeader" width ="12.5%"> &nbsp;Payment Number</th>
+                                <th class = "paymentHeader" width ="22.5%"> &nbsp;Created Date</th>
+                                <th class = "paymentHeader" width ="22.5%"> &nbsp;Effective Date</th>
+                                <th class = "paymentHeader" width ="10.5%"> &nbsp;Status &nbsp;&nbsp;<apex:image value="/s.gif" styleClass="helpIcon" title="Hover your mouse over the payment status for more information"/></th>
+                                <th class = "paymentHeader" width ="10.5%"> &nbsp;</th>
+                            </tr>
+                        </table>
+                        <apex:outputPanel id="paymentsTable">
+                            <div id="table-wrapper">
+                                <div id="table-scroll">
+                                    <apex:pageBlockTable id="BillingTable" value="{!viewedPayments}" var="q" rowclasses="line1,line2">
+                                        <apex:column headerValue="Total Amount" headerClass="paymentHeaderStyle" width="12%">
+                                            <apex:outputText value="${!q.Zuora__Amount__c}" /></apex:Column>
+                                        <apex:column headerValue="Refunded Amount" headerClass="paymentHeaderStyle" width="12.5%">
+                                            <apex:outputText value="${!q.Zuora__AppliedCreditBalanceAmount__c}" /></apex:Column>
+                                        <apex:column headerValue="Payment Number" headerClass="paymentHeaderStyle" width="12.5%">
+                                            <apex:outputText value="{!q.Zuora__PaymentNumber__c}" /></apex:Column>
+                                        <apex:column headerValue="Created Date" headerClass="paymentHeaderStyle" width="22.5%">
+                                            <apex:outputField value="{!q.Zuora__CreatedDate__c}" /></apex:Column>
+                                        <apex:column headerValue="Effecive Date" headerClass="paymentHeaderStyle" width="22.5%">
+                                            <apex:outputText value="{0,date,MM'/'dd'/'yyyy}">
+                                                <apex:param value="{!q.Zuora__EffectiveDate__c}" /> 
+                                            </apex:outputText></apex:Column>
+                                        <apex:column headerValue="Payment Status" headerClass="paymentHeaderStyle" width="10.5%">
+                                            <apex:outputText value="{!q.Zuora__Status__c}" title="{!q.Zuora__GatewayResponseCode__c} - {!q.Zuora__GatewayResponse__c}"/></apex:Column>
+                                        <apex:column headerValue="" headerClass="paymentHeaderStyle" width="10.5%">
+                                            <apex:commandLink value="Refund Payment" action="{!makeRefund}" rerender="none" style="color:blue" rendered="{!userSettings.AllowRefunds__c && q.Zuora__Status__c=='Processed'}">
+                                                <apex:param name="pId" value="{!q.Zuora__External_Id__c}" assignTo="{!paymentRefundId}" />
+                                            </apex:commandLink>
+                                        </apex:column>
+                                    </apex:pageBlockTable>
+                                </div>
+                            </div>
+                        </apex:outputPanel>
+                    </td>
+                </tr>
+            </table>    
+            <table width="100%" cellspacing="0" border="0" cellpadding="0">
+                <tr>
+                    <td width="33.25%">
+                    
+                    <apex:commandButton value="Edit Payment Method" action="{!editCards}" rerender="error, paymentMethodsTable" rendered="{!userSettings.AllowEditPaymentMethod__c}"/>
+                    <apex:commandButton value="Delete Payment Method" action="{!deleteCards}" status="action" rerender="error, paymentMethodsTable, paymentsTable"  rendered="{!userSettings.AllowDeletePaymentMethod__c}"/>
+                    <apex:commandButton value="Set as Default Payment Method" action="{!setDefault}" status="action" rerender="error, paymentMethodsTable"  rendered="{!userSettings.AllowDefaultPaymentMethod__c}"/>
+                    <apex:commandButton value="Add a Payment Method" action="{!addCard}"  rendered="{!userSettings.AllowCreatePaymentMethod__c}"/>
+                    <apex:commandButton id="mybtn" value="Make A Payment" action="{!makePayment}" rerender="error"  rendered="{!userSettings.AllowPayments__c}"/>
+                    </td>
+                    <td width="10px">
+                    </td>
+                    <td valign="top">
+                    &nbsp;View Payments from &nbsp; <apex:inputText value="{!paymentFrom}" size="10" id="demo1" onfocus="DatePicker.pickDate(false, this , false);" /> &nbsp; to &nbsp; <apex:inputText value="{!paymentTo}" size="10" id="demo2" onfocus="DatePicker.pickDate(false, this , false);" /> <apex:commandButton value="Refresh" action="{!selectIndex}" rerender="paymentsTable" />
+                    </td>
+                </tr>
+            </table>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

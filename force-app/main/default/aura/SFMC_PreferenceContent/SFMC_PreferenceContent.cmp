@@ -1,0 +1,38 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" >
+	<aura:attribute name="brandType" type="String" />
+    <aura:attribute name="contactMethodId" type="String" />
+    
+	<aura:attribute name="showConfirmationPage" type="boolean" default="false"></aura:attribute>
+    
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <aura:handler event="c:SFMC_PreferenceEvent" action="{!c.fetchEventValue}" />
+    
+    <div id="contentdiv ">
+        <div class="slds-p-top_large article">			           
+            <div class="{!if(v.brandType == $Label.c.SFMC_Brand_Events,'','slds-p-vertical_large') }"> </div>
+            <aura:if isTrue="{!!v.showConfirmationPage}"> 
+                <h1><div class="headerText slds-text-align_center">{!$Label.c.SFMC_Guest_User_Heading}</div></h1>
+                <div class="slds-text-heading_small slds-text-align_center slds-p-top_xx-small">
+                    <p>{!$label.c.SFMC_Guest_User_Subheading1}</p>
+                </div>
+                
+                <div class="slds-p-vertical_x-large"> </div>
+                    
+                <!-- called form component -->
+                 <aura:if isTrue="{!!empty(v.contactMethodId)}"> 
+                    <c:SFMC_PreferenceEmailForm brandType="{!v.brandType}" contactMethodId="{!v.contactMethodId}"/>
+                     <aura:set attribute="else">
+                        <c:SFMC_PreferenceEmailForm brandType="{!v.brandType}" contactMethodIdError="true"/>
+                     </aura:set>
+                 </aura:if> 
+                
+                <div class="slds-p-vertical_large"></div>
+             	
+                <aura:set attribute="else">
+                    <c:SFMC_PreferenceConfirmation brandType="{!v.brandType}" />
+                </aura:set>
+            </aura:if>     
+        </div>
+    </div>
+</aura:component>

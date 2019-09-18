@@ -1,0 +1,19 @@
+<apex:page controller="SelectAccountStatement">
+<apex:form >
+<apex:pageBlock >
+<apex:pageBlockTable value="{!lstOrderitem}" var="odr">
+<apex:column headerValue="Start Date"><apex:inputField value="{!odr.Start_Date__c}"/> </apex:column>
+<apex:column headerValue="End Date"><apex:inputField value="{!odr.End_Date__c}"/> </apex:column>
+</apex:pageBlockTable>
+<apex:commandButton action="{!RedirectToAccountStatement}" value="Submit"/>
+<br/>
+<apex:commandButton rendered="{!display0}" action="{!RedirectToAccountStatementPrevious0}" value="{!Previous0} Statement"></apex:commandButton><br/>
+<apex:commandButton rendered="{!display1}" action="{!RedirectToAccountStatementPrevious1}" value="{!Previous1} Statement"></apex:commandButton><br/>
+<apex:commandButton rendered="{!display2}" action="{!RedirectToAccountStatementPrevious2}" value="{!Previous2} Statement"></apex:commandButton><br/>
+<apex:commandButton rendered="{!display3}" action="{!RedirectToAccountStatementPrevious3}" value="{!Previous3} Statement"></apex:commandButton><br/>
+<apex:commandButton rendered="{!display4}" action="{!RedirectToAccountStatementPrevious4}" value="{!Previous4} Statement"></apex:commandButton><br/>
+<apex:commandButton rendered="{!display5}" action="{!RedirectToAccountStatementPrevious5}" value="{!Previous5} Statement"></apex:commandButton><br/>
+<apex:commandButton rendered="{!display6}" action="{!RedirectToAccountStatementPrevious6}" value="{!Previous6} Statement"></apex:commandButton><br/>
+</apex:pageBlock>
+</apex:form>
+</apex:page>

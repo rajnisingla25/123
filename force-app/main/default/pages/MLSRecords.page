@@ -1,0 +1,4 @@
+<apex:page controller="mlsRecordsController" cache="true" contentType="text/csv#mlsRecords.csv" language="en-US" readOnly="true">"Office Name","Agent Name","MLS Set ID","Parent MLS Set","MLS State","MLS City","MLS Name","MLS Tier","Primary MLS Set","MLS Account Name","MLS Phone Number","Account Type","Account Sub Type","Account Advertiser Id","HLC","CLC","Land AMLC","Residential AMLC","Rental AMLC","MLS Set Party Id"
+<apex:repeat value="{!mlsListCsv}" var="mls">
+{!mls.Office_Name},{!mls.Agent_Name},"{!mls.Name}","{!mls.Parent_MLS_Set_ID}","{!mls.MLS_State}","{!mls.mls_city}","{!mls.MLS_Area_Source_Reference}","{!mls.MLSTier}","{!mls.Primary_MLS_Set}",{!mls.MLS_Account_Name},"{!mls.MLS_Phone}","{!mls.MLS_Set_Type}","{!mls.Account_Sub_Type}","{!mls.Account_Advertiser_id}","{!mls.HLC}","{!mls.CLC}","{!mls.landAMLC}","{!mls.ResiAMLC}","{!mls.RentalAMLC}","{!mls.MLS_Set_Party_ID}" </apex:repeat>
+</apex:page>

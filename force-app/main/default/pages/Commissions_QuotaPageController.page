@@ -1,0 +1,85 @@
+<apex:page standardController="Quota__c" extensions="Commissions_QuotaPageController" sidebar="false" showHeader="false">    
+    <script>
+        function fun(){ 
+            window.top.location='/{!Quota__c.id}';     
+        }
+    </script>    
+    <apex:outputText value="{!callfunc}" escape="false"></apex:outputText>
+    <apex:form >        
+      <apex:pageMessages id="showmsg"></apex:pageMessages>
+          
+        <apex:pageBlock >
+         
+            <apex:pageBlockButtons >                
+                <apex:commandButton value=" Add " action="{!addRow}" rerender="table"/>
+                <apex:commandButton value=" Delete " action="{!deleteRow}" rerender="table"/>
+                <apex:commandButton value=" Save " action="{!Save}" />
+                <apex:commandButton value=" Cancel " action="{!Cancel}"/>
+            </apex:pageBlockButtons>   
+            <!--
+            <apex:inputText value="{!kickerValues}" id="theTextInput"/> &nbsp; &nbsp;
+            <apex:commandButton value="  Kicker Logic  " action="{!kickerLogic}" />
+            -->
+            <apex:pageBlockTable value="{!wrapQuotaList}" var="waccl" id="table">  
+                          
+                <apex:column > 
+                   <apex:facet name="header">
+                       <apex:inputCheckbox value="{!allBool}">
+                           <apex:actionSupport reRender="table" action="{!selectAll}" event="onchange"/>
+                       </apex:inputCheckbox>
+                   </apex:facet>
+                   <apex:inputCheckbox value="{!waccl.isselected}"/>
+               </apex:column>
+                <apex:column headerValue="Product Name">
+                    <apex:inputField value="{!waccl.quotaprds.Product_Name__c}" style="width:90%;">
+                        <apex:actionSupport event="onchange" action="{!MyMethod}" reRender="table,showmsg" status="statusChange"/>
+                    </apex:inputField>
+                </apex:column>
+                
+                <apex:column headerValue="Product Family">
+                    <apex:inputField value="{!waccl.quotaprds.Product_Family__c}" style="width:90%;">
+                        <apex:actionSupport event="onchange" action="{!MyMethod}" reRender="table,showmsg" status="statusChange"/>
+                    </apex:inputField>
+                </apex:column>
+                               <!--
+                <apex:column headerValue="$ TempValue">
+                    <apex:inputText value="{!waccl.tempValue}" style="width:50%;">
+                     </apex:inputText>
+                </apex:column>
+                -->
+                <apex:column headerValue="$ Quota Qualifier">
+                    <apex:inputField value="{!waccl.quotaprds.Sales__c}" style="width:50%;">
+                        <apex:actionSupport event="onchange" action="{!MyMethod}" status="statusChange" reRender="table"/>
+                    </apex:inputField>
+                </apex:column>
+                <apex:column headerValue="$ Qualifier Achievement">
+                    <apex:outputField value="{!waccl.quotaprds.Sales_Achivement__c}" style="width:50%;"/>
+                </apex:column>      
+                <apex:column headerValue="Unit">                    
+                     <apex:inputField value="{!waccl.quotaprds.Unit__c}" style="width:50%;">
+                        <apex:actionSupport event="onchange" action="{!MyMethod}" reRender="table" status="statusChange"/>
+                    </apex:inputField>
+                    <!-- <apex:actionStatus id="statusChange" 
+                           startText=" (incrementing...)" 
+                           stopText=" (done)"/> -->
+                </apex:column>
+                <apex:column headerValue="Unit Achievement">
+                    <apex:outputField value="{!waccl.quotaprds.Unit_Achivement__c}" style="width:50%;"/>
+                </apex:column>                
+                <apex:column headerValue="License">
+                    <apex:inputField value="{!waccl.quotaprds.License__c}" style="width:50%;">
+                        <apex:actionSupport event="onchange" action="{!MyMethod}" reRender="table" status="statusChange"/>
+                    </apex:inputField>
+                </apex:column>
+                <apex:column headerValue="License Achievement">
+                    <apex:outputField value="{!waccl.quotaprds.License_Achivement__c}" style="width:50%;"/>
+                </apex:column>
+                <apex:column headerValue="Target" >
+                    <apex:inputField value="{!waccl.quotaprds.Target__c}" id="TargetId" >
+                    <script>document.getElementById('{!$Component.TargetId}').readOnly = true; </script>
+                    </apex:inputField>
+                </apex:column>                        
+            </apex:pageBlockTable>            
+        </apex:pageBlock>
+    </apex:form>  
+</apex:page>

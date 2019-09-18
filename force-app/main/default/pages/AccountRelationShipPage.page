@@ -1,0 +1,312 @@
+<apex:page standardController="Account" extensions="AccountRelationShipController" showHeader="false" >
+<!-- Define Tab panel .css styles -->
+    <style>
+        
+    .selectedDataRow 
+    {
+        background-color: lightblue;
+    }
+
+
+    /* This is for the full screen DIV */
+    .popupBackground {
+        /* Background color */
+        background-color:black;
+        opacity: 0.20;
+        filter: alpha(opacity = 20);
+    
+        /* Dimensions */
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 998;
+        position: absolute;
+        
+        /* Mouse */
+        cursor:wait;
+    }
+ 
+    /* This is for the message DIV */
+    .PopupPanel {
+        /* Background color */
+        border: solid 2px white;
+        background-color: white;
+ 
+        /* Dimensions */
+        left: 50%;
+        width: 200px;
+        margin-left: -100px;
+        top: 50%;
+        height: 50px;
+        margin-top: -25px;
+        z-index: 999;
+        position: fixed;
+        
+        /* Mouse */
+        cursor:pointer;
+    }
+</style>
+
+<apex:includeScript value="/support/console/40.0/integration.js"/>
+<script type="text/javascript">
+        function testGetFocusedSubtabId() {
+            sforce.console.getFocusedSubtabId(showTabId);
+        }
+        var showTabId = function showTabId(result) {
+                sforce.console.setTabTitle('Add Relationship');
+        };
+         var pageLoad = window.onload;
+          window.onload = function() {
+                if (pageLoad) {
+                        pageLoad();
+                }
+                  testGetFocusedSubtabId();
+          }
+          
+        function checkAll(cb,type){
+            var inputElem = document.getElementsByTagName("input");
+            for(var i=0; i<inputElem.length; i++){           
+            if(type == 'Broker'){
+                if(inputElem[i].id.indexOf("Brokercheckedone")!=-1)                
+                    inputElem[i].checked = cb.checked;
+             }       
+            if(type == 'Realtor Office'){             
+                if(inputElem[i].id.indexOf("Officecheckedone")!=-1)
+                    inputElem[i].checked = cb.checked;
+             }       
+            if(type == 'accBroker'){
+                if(inputElem[i].id.indexOf("accBrokercheckedone")!=-1)                
+                    inputElem[i].checked = cb.checked;
+             }       
+            if(type == 'AccountRealtorOffice'){             
+                if(inputElem[i].id.indexOf("accOfficecheckedone")!=-1)
+                    inputElem[i].checked = cb.checked;
+             } 
+                                         
+                    
+            }
+
+        } 
+        function redirecturl(){
+            console.log('Am I in console'+sforce.console.isInConsole());
+            if (sforce.console.isInConsole()) {
+                 sforce.console.getFocusedSubtabId(closeSubtab);
+                 sforce.console.getEnclosingPrimaryTabId(refreshTabPrimary);
+            }
+            else{
+                window.parent.location.href = '/{Account.Id}';
+            }
+        }
+        
+        var closeSubtab = function closeSubtab(result) {
+            //Now that we have the primary tab ID, we can close it
+            var tabId = result.id;
+            sforce.console.closeTab(tabId);
+        };
+        var refreshTabPrimary=function refreshTabPrimary(result){
+            var tabId = result.id;
+            sforce.console.refreshPrimaryTabById(tabId, true,null);
+        }
+     </script>
+
+<apex:form id="pageform" >
+
+     
+  <apex:pageblock >
+    <apex:pageMessages />
+          <apex:actionStatus id="loading" style="align:center;" >
+            <apex:facet name="start" >   
+                    <div>
+                        <div class="popupBackground" />
+                        <div class="PopupPanel">
+                        <table border="0" width="100%" height="100%">
+                            <tr>
+                                <td align="center"><b>loading...</b></td>
+                            </tr>
+                            <tr>
+                                <td align="center"><img src="/img/loading32.gif" height="16" width="16" /></td>
+                            </tr>
+                        </table>
+                        </div>
+                    </div>                          
+             </apex:facet>                     
+        </apex:actionStatus> 
+        
+      <apex:pageblockButtons location="top">
+          <apex:commandButton reRender="pageform" status="loading" styleClass="btnImportant" title="Search"  value="Search" action="{!SearchRelatedAccount}" />      
+          <apex:commandButton title="Submit" status="loading" reRender="pageform"  value="Submit" action="{!Submit}" oncomplete="redirecturl();"/>
+         <!--  <apex:commandButton  status="loading" title="Convert"  value="Convert" action="{!Convert}" /> -->
+                    
+      </apex:pageblockButtons>
+        
+      
+      <apex:pageblockSection columns="3" >
+         <apex:pageBlockSectionItem >
+              <apex:outputLabel >Primary MLS Set Id</apex:outputLabel>                    
+<!--              <apex:inputtext value="{!accMLS}"/> -->
+              <apex:inputTextarea value="{!accMLS}"/>
+          </apex:pageBlockSectionItem> 
+          <apex:pageBlockSectionItem >
+              <apex:outputLabel >Party ID</apex:outputLabel>          
+<!--              <apex:inputtext value="{!accPartyID}"/> -->
+              <apex:inputTextarea value="{!accPartyID}"/>              
+          </apex:pageBlockSectionItem>
+          <apex:pageBlockSectionItem >
+              <apex:outputLabel >Cust ID</apex:outputLabel>                    
+<!--              <apex:inputtext value="{!acccustomerID}"/> -->
+              <apex:inputTextarea value="{!acccustomerID}"/>                   
+          </apex:pageBlockSectionItem> 
+          <apex:pageBlockSectionItem >
+              <apex:outputLabel >Account Name</apex:outputLabel>
+              <apex:inputtext value="{!accName}"/>              
+          </apex:pageBlockSectionItem>
+         <apex:pageBlockSectionItem >
+              <apex:outputLabel >ZipCode</apex:outputLabel>          
+              <apex:inputtext value="{!accZipcode}"/>
+          </apex:pageBlockSectionItem>
+          <apex:pageBlockSectionItem >
+              <apex:outputLabel >City</apex:outputLabel>                    
+              <apex:inputtext value="{!accCity}"/>
+          </apex:pageBlockSectionItem>
+    
+          <apex:pageBlockSectionItem >                   
+            <apex:outputLabel >Type</apex:outputLabel>                        
+            <apex:inputfield value="{!oaccountType.Type}"/>
+          </apex:pageBlockSectionItem>
+                        
+          <apex:pageBlockSectionItem >      
+              <apex:outputLabel >Account Sub Type</apex:outputLabel>              
+              <apex:inputfield value="{!oaccountType.Account_Sub_Type__c}"/>
+          </apex:pageBlockSectionItem>
+          <apex:pageBlockSectionItem >
+              <apex:outputLabel >State</apex:outputLabel>                    
+              <apex:inputtext value="{!accState}"/>
+          </apex:pageBlockSectionItem>
+                    
+
+                                                           
+      </apex:pageblockSection> 
+      <apex:pageblock title="Broker Information">
+    
+      <apex:outputPanel rendered="{!onLoad}" title="Broker Information" id="Brokers" style="overflow:scroll;height:200px;" layout="block" >           
+      <apex:pageblocktable rendered="{!accRelationBrokers.size>0}" rowClasses="odd,even" styleClass="tableClass" id="broker_table" value="{!accRelationBrokers}" var="a">
+          <apex:column >
+            <apex:facet name="header"> 
+                <apex:inputCheckbox >
+                    <apex:actionSupport event="onclick" action="{!GetSelected}" onsubmit="checkAll(this,'Broker')" rerender="broker_table" status="newStatus"/>
+                 </apex:inputCheckbox>
+            </apex:facet>                               
+              <apex:inputCheckbox value="{!a.selected}" id="Brokercheckedone"/>
+          </apex:column>                                            
+          <apex:column value="{!a.accRelationship.Parent_Account__c}"/>         
+          <apex:column value="{!a.accRelationship.Child_Account__c}"/>                       
+          <apex:column value="{!a.accRelationship.Relationship_Type__c}"/>          
+          <apex:column value="{!a.accRelationship.Billing_Contact__c}"/>            
+          <apex:column value="{!a.accRelationship.Active__c}"/> 
+        <!--  apex:column headervalue="Account Type" value="{!a.accType}" />                      
+          <apex:column value="{!a.accRelationship.Contact_Role__c}"/>                  
+          <apex:column value="{!a.accRelationship.Contact_To__c}"/>   -->        
+                                                     
+      </apex:pageblocktable>
+    </apex:outputPanel>          
+    
+      <apex:outputPanel rendered="{!onSearchClick}" title="Broker Information" id="AccountBrokers" style="overflow:scroll;height:200px;" layout="block" >           
+      <apex:pageblocktable rendered="{!accountBrokers.size>0}" rowClasses="odd,even" styleClass="tableClass" id="accbroker_table" value="{!accountBrokers}" var="a">
+          <apex:column >
+            <apex:facet name="header"> 
+                <apex:inputCheckbox >
+                    <apex:actionSupport event="onclick" action="{!GetSelected}" onsubmit="checkAll(this,'accBroker')" rerender="accbroker_table" status="newStatus"/>
+                 </apex:inputCheckbox>
+            </apex:facet>                               
+              <apex:inputCheckbox value="{!a.selected}" id="accBrokercheckedone"/>
+          </apex:column>  
+          <apex:column value="{!a.oaccount.Name}"/>         
+          <apex:column headervalue="Account Type" value="{!a.accType}" />                          
+          <apex:column value="{!a.oaccount.Party_ID__c}"/>          
+          <apex:column value="{!a.oaccount.Customer_Id__c}"/>            
+          <apex:column value="{!a.oaccount.BillingPostalCode}"/>                      
+          <apex:column value="{!a.oaccount.BillingCity}"/>                  
+     <!--     <apex:column headervalue="MLS Set ID" value="{!a.oaccount.MLS_Set_Id__c}"/> -->
+           <apex:column value="{!a.oaccount.Total_HLC__c}"/>  
+         <apex:column value="{!a.oaccount.Total_CLC__c}"/>          
+                                                   
+      </apex:pageblocktable>
+    </apex:outputPanel>          
+    
+    </apex:pageblock>
+    <apex:pageblock title="Realtor Office Information">    
+      <apex:outputPanel rendered="{!onLoad}" id="Offices" style="overflow:scroll;height:200px;" layout="block" >           
+      <apex:pageblocktable rendered="{!accRelationOffices.size>0}" rowClasses="odd,even" styleClass="tableClass" id="offices_table"  value="{!accRelationOffices}" var="a">
+            <apex:column value="{!a.accRelationship.ID}"/>  
+            <apex:column >
+            <apex:facet name="header"> 
+                <apex:inputCheckbox >
+                    <apex:actionSupport event="onclick" action="{!GetSelected}" onsubmit="checkAll(this,'Realtor Office')" rerender="offices_table" status="newStatus"/>
+                 </apex:inputCheckbox>
+            </apex:facet>                               
+              <apex:inputCheckbox value="{!a.selected}" id="Officecheckedone"/>
+          </apex:column>  
+           <apex:column headervalue="Realtor Office">
+            <apex:actionSupport oncomplete="updateRadioButton1()" reRender="rerenderPanel" status="loading" action="{!selectAccount}" event="onclick">
+                  <input id="{!a.accRelationship.Child_Account__c}" type="radio" name = "realtorOfficeRadio">
+                        <apex:param name="realtorOfficeSelected" value="{!a.accRelationship.Child_Account__c}"/ >
+                   </input>
+            </apex:actionSupport>                   
+           </apex:column>                      
+          <apex:column value="{!a.accRelationship.Parent_Account__c}"/>         
+          <apex:column value="{!a.accRelationship.Child_Account__c}"/>                       
+          <apex:column value="{!a.accRelationship.Relationship_Type__c}"/>          
+          <apex:column value="{!a.accRelationship.Billing_Contact__c}"/>            
+          <apex:column value="{!a.accRelationship.Active__c}"/>                      
+       <!--   <apex:column value="{!a.accRelationship.Contact_Role__c}"/>                  
+          <apex:column value="{!a.accRelationship.Contact_To__c}"/>           
+          <apex:column headervalue="Account Type" value="{!a.accType}" />  -->                      
+                    
+      </apex:pageblocktable>
+    </apex:outputPanel>  
+    
+     <apex:outputPanel rendered="{!onSearchClick}" id="accOffices" style="overflow:scroll;height:200px;" layout="block" >           
+     <apex:pageblocktable rendered="{!accountOffices.size>0}" rowClasses="odd,even" styleClass="tableClass" id="accoffices_table"  value="{!accountOffices}" var="a">
+          <apex:column >
+            <apex:facet name="header"> 
+                <apex:inputCheckbox >
+                    <apex:actionSupport event="onclick" action="{!GetSelected}" onsubmit="checkAll(this,'AccountRealtorOffice')" rerender="accoffices_table" status="newStatus"/>
+                 </apex:inputCheckbox>
+            </apex:facet>                               
+              <!-- <apex:inputCheckbox disabled="{! If(a.oparentAccName == '' ,false,true) }" value="{!a.selected}" id="accOfficecheckedone"/>-->
+              <apex:inputCheckbox disabled="{!a.radioButton}" value="{!a.selected}" id="accOfficecheckedone"/>
+          </apex:column>                          
+           <apex:column headervalue="Primary Office">
+            <apex:actionSupport oncomplete="updateRadioButton1()" reRender="rerenderPanel" status="loading" action="{!selectAccount}" event="onclick">
+                  <input id="{!a.oaccount.Id}" type="radio" name = "primaryOfficeRadio">
+                         <script>
+                             if('{!a.radioButton}' == 'false'){
+                               document.getElementById('{!a.oaccount.Id}').disabled = false; 
+                             }                            
+                             else{                             
+                               document.getElementById('{!a.oaccount.Id}').disabled = true; 
+                             }                             
+                        </script>
+                        <apex:param name="primaryOfficeSelected" value="{!a.oaccount.Id}"/ >
+                   </input>
+            </apex:actionSupport>                   
+           </apex:column>     
+                                                            
+          <apex:column value="{!a.oaccount.Name}"/>         
+          <apex:column headervalue="Account Type" value="{!a.accType}" />                       
+          <apex:column headervalue="Parent Account" value="{!a.oparentAccName}" />            
+          <apex:column value="{!a.oaccount.Party_ID__c}"/>          
+          <apex:column value="{!a.oaccount.Customer_Id__c}"/>            
+          <apex:column value="{!a.oaccount.BillingPostalCode}"/>                      
+          <apex:column value="{!a.oaccount.BillingCity}"/>                  
+          <apex:column headervalue="MLS Set ID" value="{!a.oaccount.MLS_Set_Id__c}"/>  
+          <apex:column value="{!a.oaccount.Total_HLC__c}"/>  
+         <apex:column value="{!a.oaccount.Total_CLC__c}"/>
+      </apex:pageblocktable>
+    </apex:outputPanel>  
+       <apex:outputPanel id="rerenderPanel"></apex:outputPanel>         
+   </apex:pageblock>
+  </apex:pageblock>
+</apex:form>    
+</apex:page>

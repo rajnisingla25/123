@@ -1,0 +1,2383 @@
+<apex:page sidebar="false" showHeader="false" html-width="100%" standardController="Account" extensions="DataController">
+    <apex:pageBlock title="Account Waitlist - {!Account.name}" html-width="100%">
+        <apex:includescript value="//code.jquery.com/jquery-1.11.1.min.js" />
+        <apex:includescript value="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js" />
+        <apex:includescript value="//cdn.datatables.net/tabletools/2.2.4/js/dataTables.tableTools.min.js" />
+
+        <apex:stylesheet value="//cdn.datatables.net/1.10.4/css/jquery.dataTables.css" />
+
+        <apex:includeScript value="{!URLFOR($Resource.DataTablesEditor , '/Editor-1.4.2/js/dataTables.editor.js' )}" />
+        <apex:includeScript value="{!URLFOR($Resource.DataTablesEditor , '/Editor-1.4.2/js/dataTables.editor.min.js' )}" />
+
+        <apex:stylesheet value="//cdn.datatables.net/colreorder/1.1.3/css/dataTables.colReorder.css" />
+        <apex:includeScript value="//cdn.datatables.net/colreorder/1.1.3/js/dataTables.colReorder.js" />
+        <apex:includeScript value="//cdn.datatables.net/colreorder/1.1.3/js/dataTables.colReorder.min.js" />
+
+        <apex:includeScript value="//cdn.datatables.net/fixedheader/2.1.2/js/dataTables.fixedHeader.js" />
+        <apex:includeScript value="//cdn.datatables.net/fixedheader/2.1.2/js/dataTables.fixedHeader.min.js" />
+
+        <apex:stylesheet value="//cdn.datatables.net/keytable/1.2.1/css/dataTables.keyTable.css" />
+        <apex:includeScript value="//cdn.datatables.net/keytable/1.2.1/js/dataTables.keyTable.js" />
+        <apex:includeScript value="//cdn.datatables.net/keytable/1.2.1/js/dataTables.keyTable.min.js" />
+
+        <apex:stylesheet value="//cdn.datatables.net/colvis/1.1.2/css/dataTables.colVis.css" />
+        <apex:includeScript value="//cdn.datatables.net/colvis/1.1.2/js/dataTables.colVis.js" />
+        <apex:includeScript value="//cdn.datatables.net/colvis/1.1.2/js/dataTables.colVis.min.js" />
+
+        <apex:stylesheet value="//cdn.datatables.net/tabletools/2.2.4/css/dataTables.tableTools.css" />
+
+
+
+        <apex:stylesheet value="{!URLFOR($Resource.DataTablesEditor , '/Editor-1.4.2/css/dataTables.editor.min.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.DataTablesEditor , '/Editor-1.4.2/css/dataTables.editor.css')}" />
+        <apex:includeScript value="/soap/ajax/40.0/connection.js"/>
+        <apex:includeScript value="/support/console/40.0/integration.js"/>
+         
+
+
+        <style>
+            .DTED_Lightbox_Background {
+                z-index: 105 !important;
+            }
+
+            div.DTED_Lightbox_Wrapper {
+                z-index: 106 !important;
+            }
+
+            td.details-control {
+                background: url('/servlet/servlet.FileDownload?file=015j0000001pi9f') no-repeat center center;
+                cursor: pointer;
+            }
+
+            tr.shown td.details-control {
+                background: url('/servlet/servlet.FileDownload?file=015j0000001pi9a') no-repeat center center;
+            }
+        </style>
+
+
+
+
+
+        <apex:includeScript value="{!URLFOR($Resource.ColResize , '/colResize-master/dataTables.colResize.js' )}" />
+        <apex:includeScript value="/support/console/40.0/integration.js" />
+
+
+
+
+        <head>
+        </head>
+
+        <body>
+
+
+
+            <apex:form >
+
+                <script type="text/javascript">
+                //CRM-1865 - Srinivas Vadla : added this javascript function to Set the button/link label to the subtab title.
+                    function testGetFocusedSubtabId() {
+                        sforce.console.getFocusedSubtabId(showTabId);
+                    }
+                    var showTabId = function showTabId(result) {
+                        sforce.console.setTabTitle('Account Waitlist');
+                    };
+                    var pageLoad = window.onload;
+                    window.onload = function() {
+                        if (pageLoad) {
+                            pageLoad();
+                        }
+                        testGetFocusedSubtabId();
+                    }
+
+                    function callsoa() {
+                        doSearchAF();
+                    }
+
+                    function callsoacal() {
+                        // doSearchAFCAL();
+                        doSearchAF();
+                    }
+
+                    function callsoaful() {
+                        //doSearchAFFUL();
+                        doSearchAF();
+                    }
+
+                    function callsoaexp() {
+                        // doSearchAFEXP();
+                        doSearchAF();
+                    }
+                     //CRM-2845
+                function RefreshPage() {
+                    if (sforce.console.isInConsole()){
+                        window.top.location='/console';
+                    }
+                    else{
+                         window.top.location.reload();
+                    }
+                }
+                </script>
+
+                <apex:pageblockSection >
+                </apex:pageblockSection>
+
+                <div>
+                    <apex:outputLabel style="font-weight: bold;" value="CustomerID:" for="account__id" onclick="window.location='/{!account.Id}'" /> &nbsp;
+                    <apex:outputText value="{!account.Party_ID__c}" id="account__id" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                    <apex:outputLabel style="font-weight: bold;" value="Customer:" for="account__name" onclick="window.location='/{!account.Id}'" /> &nbsp;
+                    <apex:outputText value="{!account.Name}" id="account__name" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                    <apex:outputLabel style="font-weight: bold;" value="BOB:" for="account__BOB" /> &nbsp;
+                    <apex:outputText value="{!account.owner.firstname }   {!account.owner.lastname}" id="account__BOB" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                    <apex:outputLabel style="font-weight: bold;" value="Owner:" for="account__owner" /> &nbsp;
+                    <apex:outputText value="{!account.owner.firstname }   {!account.owner.lastname}" id="account__owner" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                    <apex:outputLabel style="font-weight: bold;" value="Phone:" for="waitlist__phone" /> &nbsp;
+                    <apex:outputText value="{!Phone}" id="account__phone" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+                    <apex:outputLabel style="font-weight: bold;" value="Time Zone:" for="waitlist__timezone" /> &nbsp;
+                    <apex:outputText value="{!TZ}" id="account__timezone" />
+                </div>
+                <br/>
+                <!--
+                    <apex:outputLabel style=" float: left;width:50px;font-weight: bold;" value="Filter By" for="waitlist__filter" />
+                    
+                    
+                    
+                    <apex:selectList id="myfiltertype" style=" float: left;width:200px; padding-left: 25px;" value="{!FilterType}" title="Value =" multiselect="false" size="1"  >
+                        
+                        
+                        
+                        <apex:selectOptions value="{!FilterList}" />
+                        <apex:actionSupport event="onclick" rerender="wlstatus"/>
+                        
+                        
+                        
+                    </apex:selectList>
+                    
+                    <apex:outputLabel style="float: left;width:50px; padding-left: 25px;font-weight: bold;" styleClass="selectVal" value="Select Value" for="waitlist__status" onkeypress="return noenter(event);" />
+                    
+                    <apex:selectList id="wlstatus" style="float:left;  width:250px;" value="{!WaitlistStatus}" 
+                                     title="Status " multiselect="false" size="1" onkeypress="return noenter(event);" 
+                                     onchange="CopyFilterValue()"  >
+                        
+                        <apex:actionSupport event="onchange" rerender="account__input" />
+                        
+                        
+                        <apex:selectOptions value="{!WaitlistStatusItems}" />
+                        
+                        
+                        
+                    </apex:selectList>
+                    
+                    <apex:outputLabel style="float: left;width:80px; padding-left: 25px;font-weight: bold;" value="OR Enter Search Value" for="waitlist__myserach" onkeypress="return noenter(event);"/>
+                    <apex:inputText style="float: left;width: 200px; padding-right: 25px;" value="{!Inputvalue}" id="account__input"  /> 
+                    <apex:commandButton style="float:left;width:120px;padding-right: 5px;" value="Apply Filter" action="{!makeSOACallforGet}"  />
+                    <apex:commandButton style="float:left;width:120px;padding-right: 5px;" value="Refresh Page" action="{!RefreshPage}"  />
+                    <br/>
+                    <br/>
+                    Commented as part of CRM-1671 -->
+
+
+
+
+                <!-- subbu <apex:outputLabel style="float: left;width:150px; padding-right: 25px;" value="Time Zone" for="waitlist__timezone" />
+                    <apex:outputText style="float: left;width:150px;padding-right: 25px" value="{!TZ}" id="account__timezone"  /> 
+                    <apex:outputLabel style="float: left;width:150px; padding-right: 25px;" value="Phone" for="waitlist__phone" />
+                    <apex:outputText style="float: left;width:150px; padding-right: 25px" value="{!Phone}" id="account__phone"  /> 
+                    -->
+                <br/>
+                <apex:outputLabel value="Active" title="Active" style="float: left;width:100px; padding-right: 2px;">
+                    <!-- CRM-498  Added new-->
+                    <!-- CRM-1671 changed the alignment from right to left -->
+                    <apex:inputCheckbox value="{!active}" onclick="callsoa()" id="callsoaidactive" />
+                </apex:outputLabel>
+
+                <apex:outputLabel value="Fulfilled " title="Fulfilled" style="float: left;width:100px; padding-right: 2px;">
+                    <!-- CRM-498 modified padding right and width -->
+                    <!-- CRM-1671 changed the alignment from right to left -->
+                    <apex:inputCheckbox value="{!showfulfilled}" onclick="callsoaful()" id="callsoaidful" />
+                </apex:outputLabel>
+
+                <apex:outputLabel value="Cancelled" title="Cancelled" style="float: left;width:100px; padding-right: 2px;">
+                    <!-- CRM-498 modified padding right and width -->
+                    <!-- CRM-1671 changed the alignment from right to left -->
+                    <apex:inputCheckbox value="{!showcancel}" onclick="callsoacal()" id="callsoaidcan" />
+                </apex:outputLabel>
+
+
+                <apex:outputLabel value="Expired" title="Expired" style="float: left;width:100px; padding-right: 2px;">
+                    <!-- CRM-498 modified padding right and width -->
+                    <!-- CRM-1671 changed the alignment from right to left -->
+                    <apex:inputCheckbox value="{!showexpired}" onclick="callsoaexp()" id="callsoaidexp" />
+                </apex:outputLabel>
+
+
+                <apex:outputLabel value="Show All" title="Show All" style="float: left;width:100px; padding-right: 2px;">
+                    <!-- CRM-498 modified padding right and width -->
+                    <!-- CRM-1671 changed the alignment from right to left -->
+                    <apex:inputCheckbox value="{!showall}" onclick="callsoa()" id="callsoaid" />
+                </apex:outputLabel>
+                <apex:commandButton style="float: right;width:150px; padding-right: 5px" value="Refresh" onclick="RefreshPage()" />
+                <apex:commandButton style="float: right;width:150px; padding-right: 5px" value="Cancel Docusign" onclick="CancelDocuSign()" rerender="TblAccountWLList" />
+                <apex:commandButton style="float: right;width:150px; padding-right: 5px" value="Cancel Pre-Auth" onclick="CancelPreAuth()" rerender="TblAccountWLList" />
+
+
+
+                <apex:commandButton style="float: right;width:185px;" value="Create Waitlist" onclick="CreateWL()" />
+                <apex:commandButton style="float: right;width:185px;" value="My Waitlist" onclick="MyWL()" />
+
+                <br/>
+
+
+
+
+
+                <apex:actionFunction name="doSearchAF" action="{!makeSOACallforGet}" />
+                <apex:param name="firstParam" assignTo="{!mParty_Id}" value="{!account.Party_ID__c}" />
+
+
+            </apex:form>
+
+
+            <table id="TblAccountWLList" class="display" width="100%" cellspacing="0">
+                <thead>
+                    <tr BGCOLOR="#66A3E0">
+
+
+                <!--rearranged the order as part of CRM-1471 -->
+
+                        <th></th>
+                         <th>Notes</th>
+                        <th>Created Date</th>
+                        <th>Product</th>
+                        <th>Market</th>
+                        <th>State</th>
+                        <th>Rate Card Price</th>
+                        <th>Flex Available</th>
+                        <th>Fast Available</th>
+                        <th>Lead Routing</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th>Utilized Spend</th>
+                        <th>Remnant Spend</th>
+                        <th>Owner</th>
+                        <th>Created By</th>
+                        
+                                            
+                        <!--<th>Product</th>-->
+                        <th>Qty Interested</th>
+                        <th>Pre Sales Flex Available</th>
+                        <th>Pre Sales Fast Available</th>
+                        <th>Pre Sales Available Date</th>
+                        <th>Party Id</th>
+                       
+
+                        <th> Market Spend </th>
+                        <th>Market Type</th>
+                        <!-- CRM-2315 Remove Rank-->
+                        <!-- <th>Rank</th> -->
+                        <th>Token</th>
+                        <th>Slot Size </th>
+
+
+                    <!--  <th></th>  
+                        <th>Created Date </th>
+                        <th>Type</th>
+                        <th>Product </th>
+                        <th>Market</th>
+                        <th>State</th>
+                        <th> Rate Card<br/> Price</th>
+
+                        <th>Flex<br/>Available</th>
+                        <th>Fast<br/>Available</th>
+                        <th>Lead Routing</th>
+                        <th>Slot Size </th>
+                        <th>Qty Interested</th>
+                        <th>Status</th>
+                        <th>Notes</th>
+                        <th>Pre Sales<br/>Flex Available</th>
+                        <th>Pre Sales<br/>Fast Available</th>
+                        <th>Pre Sales Available Date</th>
+                        <th> Market Spend </th>
+                        <th> Utilized Spend </th>
+                        <th> Remnant Spend </th>
+                        <!--<th> Assigned AE </th> already commented--> 
+                    <!--    <th>Owner </th>
+                        <th> Created By </th>
+                        <th>Market Type</th>
+                        <th>Rank</th>
+                        <th>Token</th>
+                        <th>Party Id</th> -->
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+                
+                    <apex:repeat value="{!accountwaitlist}" var="wl1">
+                        <tr>
+
+                        <!--rearranged the order as part of CRM-1471 -->
+
+                            <td> </td>
+                             <td>{!wl1.notes} </td>
+                            <td>{!wl1.createddate} </td>
+                            <td>{!wl1.product} </td>
+                            <td>{!wl1.geo} </td>
+                            <td>{!wl1.state} </td>
+                            <td>{!wl1.rateCardPrice}</td>
+                            <td>{!wl1.invtotalavailableflex} </td>
+                            <td>{!wl1.invtotalavailablefast} </td>
+                            <td>{!wl1.leadroutingtype } </td>
+                            <td>{!wl1.waitlist_type} </td>
+                            <td>{!wl1.status} </td>
+                           <td>{!wl1.utilspend} </td>
+                            <td>{!wl1.remnantspend} </td>
+                            <td> {!wl1.ownername} </td>
+                            <td> {!wl1.createdby} </td>
+                           
+
+
+                            <!--<td>{!wl1.product} </td>-->
+                            <td>{!wl1.qtyinterested } </td>
+                            <td>{!wl1.presalestotalavailableflex} </td>
+                            <td>{!wl1.presalestotalavailablefast} </td>
+                           <td>{!wl1.presalesavailabledate} </td>
+                            <td>{!wl1.account_party_id} </td>
+                           
+
+                            <td>{!wl1.marketspend} </td>
+                            <td>{!wl1.geotype} </td>
+                            <!-- CRM-2315 Remove Rank-->
+                            <!--<td>{!wl1.rank} </td> -->
+                            <td>{!wl1.token} </td>
+                            <td>{!wl1.slotsize } </td>
+
+
+                        <!--    <td>{!wl1.createddate} </td>
+                            <td>{!wl1.waitlist_type} </td>
+                            <td>{!wl1.product} </td>
+                            <td>{!wl1.geo} </td>
+                            <td>{!wl1.state} </td>
+                            <td>{!wl1.rateCardPrice}</td>
+
+                            <td>{!wl1.invtotalavailableflex} </td>
+                            <td>{!wl1.invtotalavailablefast} </td>
+                            <td>{!wl1.leadroutingtype } </td>
+                            <td>{!wl1.slotsize } </td>
+                            <td>{!wl1.qtyinterested } </td>
+                            <td>{!wl1.status} </td>
+                            <td>{!wl1.notes} </td>
+                            <td>{!wl1.presalestotalavailableflex} </td>
+                            <td>{!wl1.presalestotalavailablefast} </td>
+                            <td>{!wl1.presalesavailabledate} </td>
+                            <td>{!wl1.marketspend} </td>
+                            <td>{!wl1.marketspend} </td>
+                            <td>{!wl1.marketspend} </td>
+                            <td> {!wl1.ownername} </td>
+                            <td> {!wl1.createdby} </td>
+                            <td>{!wl1.geotype} </td>
+                            <td>{!wl1.rank} </td>
+                            <td>{!wl1.token} </td>
+                            <td>{!wl1.account_party_id} </td>
+                            -->
+
+
+
+
+                        </tr>
+                    </apex:repeat>
+                   <tfoot>
+
+                        <tr BGCOLOR="#66A3E0">
+
+                        <!--rearranged the order as part of CRM-1471 -->
+
+
+
+                              <th></th>
+                        <th>Notes</th>
+                        <th>Created Date</th>
+                        <th>Product</th>
+                        <th>Market</th>
+                        <th>State</th>
+                        <th>Rate Card Price</th>
+                        <th>Flex Available</th>
+                        <th>Fast Available</th>
+                        <th>Lead Routing</th> 
+                        <th>Type</th>
+
+                        <th>Status</th>
+                        <th>Utilized Spend</th>
+                        <th>Remnant Spend</th>
+                        <th>Owner</th>
+                        <th>Created By</th>
+                       
+                        <!--<th>Product</th>-->
+                        <th>Qty Interested</th>
+                        <th>Pre Sales Flex Available</th>
+                        <th>Pre Sales Fast Available</th>
+                        <th>Pre Sales Available Date</th>
+                        <th>Party Id</th>
+                        
+
+                        <th> Market Spend </th>
+                        <th>Market Type</th>
+                        <!-- CRM-2315 Remove Rank-->
+                        <!--<th>Rank</th> -->
+                        <th>Token</th>
+                        <th>Slot Size </th>
+
+                        <!--    <th>Created Date </th>
+                            <th>Type</th>
+                           <th>Product </th>
+                            <th>Market</th>
+                            <th>State </th>
+                            <th> Rate Card<br/> Price</th>
+
+                            <th>Flex<br/>Available</th>
+                            <th>Fast<br/>Available</th>
+                            <th>Lead Routing</th>
+                            <th>Slot Size </th>
+                            <th>Qty Interested</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                            <th>Pre Sales<br/>Flex Available</th>
+                            <th>Pre Sales<br/>Fast Available</th>
+                            <th>Pre Sales Available Date</th>
+                            <th> Market Spend </th>
+                            <th> Utilized Spend </th>
+                            <th> Remnant Spend </th>
+                            <th>Owner </th>
+                            <th> Created By </th>
+                            <th>Market Type</th>
+                            <th>Rank</th>
+                            <th>Token</th>
+                            <th> Party Id</th>
+
+                            -->
+                        </tr>
+
+                    </tfoot>
+
+
+                </tbody>
+
+
+            </table>
+
+            <!--  
+<apex:form >
+<apex:commandButton value="Submit" action="{!submit}" rerender="error" >
+<apex:param name="json" value="10001" assignTo="{!Sendjson}" />
+</apex:commandButton>
+
+
+
+</apex:form>   
+
+-->
+
+
+            <apex:form >
+
+                <apex:actionFunction action="{!makeSOACall}" name="callSOA" rerender="showstate">
+                     <!-- CRM-1741 added new pararmeter market -->
+                    <apex:param name="market" assignTo="{!mMarket}" value="" />
+                    <apex:param name="firstParam" assignTo="{!token}" value="" />
+                    <apex:param name="secondParam" assignTo="{!Degree}" value="" />
+                    <apex:param name="thirdParam" assignTo="{!SlotSize}" value="" />
+                    <apex:param name="fourthParam" assignTo="{!AccountId}" value="" />
+                    <apex:param name="fifthParam" assignTo="{!LeadRoutingType}" value="" />
+                    <apex:param name="sixthParam" assignTo="{!status}" value="" />
+                    <apex:param name="seventhParam" assignTo="{!notes}" value="" />
+                    <apex:param name="eigthParam" assignTo="{!qtyinterested}" value="" />
+                    <apex:param name="ninthParam" assignTo="{!operation}" value="" />
+                    <apex:param name="tenthParam" assignTo="{!rank}" value="" />
+                    <apex:param name="eleventhParam" assignTo="{!product}" value="" />
+                   
+                </apex:actionFunction>
+            </apex:form>
+
+            <apex:form >
+
+                <apex:actionFunction action="{!makeSOACallforGet}" name="getSelectedResults" rerender="showstate">
+                    <apex:param name="firstParam" assignTo="{!MyFilter}" value="" />
+                    <apex:param name="secondParam" assignTo="{!AccountId}" value="" />
+
+
+
+                </apex:actionFunction>
+
+
+
+            </apex:form>
+
+
+
+
+            
+            <apex:includeScript value="/support/console/22.0/integration.js"/>
+            <script type="text/javascript">
+             window.onload = function(){
+                testOpenSubtab();
+             };
+
+            function testOpenSubtab() {
+            //First find the ID of the primary tab to put the new subtab in
+                sforce.console.getEnclosingTabId(openSubtab);
+            };
+
+            var openSubtab = function openSubtab(result){
+                var primaryTabId = result.id;
+                sforce.console.setTabTitle('Account Waitlist');
+            };
+                var editor; // use a global for the submit and return data rendering in the examples
+                var tr_status_init;
+                var tr_type_init;
+
+                var mToken;
+
+                var mMarket;
+                var mAccountId;
+                var mMarketType;
+                var mDegree;
+                var mStatus;
+                var mType;
+                var mQtyInterested;
+                var mSlotSize;
+                var mLeadRoutingType;
+                var mUpdatedby;
+                var mMarketSpend;
+                var mnotes = '';
+                var mproduct = '';
+
+                var openVals;
+                var mDataChanged = false;
+                var mqtyinterested;
+                var moperation = 'Update';
+                // CRM-2315 Remove Rank
+                //var mrank;
+
+                var mArrayofWaitlist = {};
+                var mArray = false;
+
+                var rowEven = 0;
+                var NoOfRecords = 25;
+
+
+
+
+                function isNumber(n) {
+                    return !isNaN(parseFloat(n)) && isFinite(n);
+                }
+
+                function CreateWL() {
+                   //window.location.href = '/apex/AccountCreateWaitlist?id={!Account.Id}';
+                   //window.open('/apex/AccountCreateWaitlist?id={!Account.Id}', '_blank');
+                   if(sforce.console.isInConsole()){
+                        sforce.console.getEnclosingPrimaryTabId(openSubtab);
+                   }
+                   else{
+                       window.open('/apex/AccountCreateWaitlist?id={!Account.Id}', '_blank');
+                   }
+                return true;
+                }
+                var openSubtab = function openSubtab(result) {
+                    //Now that we have the primary tab ID, we can open a new subtab in it
+                var primaryTabId = result.id;
+                sforce.console.openSubtab(result.id,'/apex/AccountCreateWaitlist?id={!Account.Id}&inConsole=true', true, 'Create Wailist', null); 
+                };
+                
+                function MyWL() {
+
+                   // window.location.href = '/apex/MyWaitlist}';
+                   //    window.open('/apex/MyWaitlist', '_blank');
+                   if(sforce.console.isInConsole()){
+                        sforce.console.getEnclosingPrimaryTabId(openSubtabmywl);
+                   }
+                   else{
+                       window.open('/apex/MyWaitlist', '_blank');
+                   }
+                return true;
+                }
+                var openSubtabmywl = function openSubtab(result) {
+                    //Now that we have the primary tab ID, we can open a new subtab in it
+                var primaryTabId = result.id;
+                console.log('result :'+ result);
+                sforce.console.openSubtab(result.id,'/apex/MyWaitlist', true, 'MyWailist', null); 
+                };
+
+                function CancelDocuSign() {
+                    var DStokens = new Array();
+                    var TabData = TableTools.fnGetInstance('TblAccountWLList');
+                   var SelectedData = TabData.fnGetSelectedData();
+                    var arrayLength = SelectedData.length;
+                    try {
+                        for (var i = 0; i < arrayLength; i++) {
+                            var DSObj = new Object();
+                            for (var DataLoop in SelectedData[i]) {
+                                if (DataLoop == 'token') {
+                                    DSObj['Token'] = SelectedData[i][DataLoop];
+                                } // end of If 
+                            } // end of Inner For Loop 
+
+                            DStokens.push(DSObj); // Add DSObject to the Array
+                        } // end of outer for loop 
+                        Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.DataController.VoidEnvelope}',
+                            DStokens,
+                            function(result, event) {
+                                if (result != 'Success') {
+                                    if (result.indexOf("Sent") > -1) {
+                                        alert('One of your DocuSign Cancellation requests Failed: Only envelopes in the Sent or Delivered states may be voided');
+                                    } else {
+                                        alert('One of your DocuSign Cancellation requests Failed: ' + result);
+                                    }
+                                } else {
+                                    alert('DocuSign Cancellation Sent to customer');
+                                }
+                            });
+
+                        var delay = 0000; //2 seconds
+                        setTimeout(function() {}, delay);
+                    } catch (e) {
+                        alert('error occurred in canceldocusign' + e);
+                    }
+                    return true;
+                }
+
+
+                function CancelPreAuth() {
+                    var DStokens = new Array();
+                    var TabData = TableTools.fnGetInstance('TblAccountWLList');
+                    var SelectedData = TabData.fnGetSelectedData();
+                    var arrayLength = SelectedData.length;
+                    try {
+                        for (var i = 0; i < arrayLength; i++) {
+                            var DSObj = new Object();
+                            for (var DataLoop in SelectedData[i]) {
+
+                                if (DataLoop == 'type' && SelectedData[i][DataLoop] !== 'Pre-Auth') {
+                                    alert('Only Pre-Auth is allowed to Cancel');
+                                    return true;
+                                }
+
+                                if (DataLoop == 'token') {
+                                    DSObj['Token'] = SelectedData[i][DataLoop];
+                                } // end of If 
+                            } // end of Inner For Loop 
+
+                            DStokens.push(DSObj); // Add DSObject to the Array
+                        } // end of outer for loop 
+                        Visualforce.remoting.Manager.invokeAction(
+                            '{!$RemoteAction.DataController.CancelPreAuth}',
+                            DStokens,
+                            function(result, event) {
+                                console.log('cancel result: ' + result);
+                                if (result == 'NotOwner') {
+                                    alert('You are not the owner for one of the selected Pre-Auth \'s, Please review and submit again');
+                                } else if (result == 'Success') {
+                                    alert('Pre-Auth submitted for Cancellation');
+                                } else {
+                                    alert('Error Occured while cancelling Pre-Auth, Please contact Sales ops team');
+                                }
+                            });
+
+                        var delay = 0000; //2 seconds
+                        setTimeout(function() {}, delay);
+                    } catch (e) {
+                        alert('Error Occured while cancelling Pre-Auth, Please contact Sales ops team: ' + e);
+                    }
+                    return true;
+                }
+
+
+                function CopyFilterValue() {
+
+
+                    var myvalue = jQuery("[id$=wlstatus]").val();
+
+                    jQuery("[id$=account__input]").val(myvalue);
+
+                }
+
+
+                function noenter(ev) {
+
+                    if (window.event && window.event.keyCode == 13 || ev.which == 13) {
+
+                        doSearchAF();
+
+                        return false;
+
+                    } else {
+
+                        return true;
+
+                    }
+
+                }
+
+
+                function CopyFilterValue() {
+
+
+                    var myvalue = jQuery("[id$=wlstatus]").val();
+
+                    jQuery("[id$=account__input]").val(myvalue);
+                    return true;
+
+                }
+
+
+
+
+                function disablefields() {
+
+                    try {
+
+                        editor.disable('token');
+                        editor.disable('product');
+                        editor.disable('geo');
+                        editor.disable('state');
+                        editor.disable('rateCardPrice');
+                        editor.disable('geotype');
+                        // CRM-2315 Remove Rank
+                        //editor.disable('rank');
+                        editor.disable('invtotalavailableflex');
+                        editor.disable('invtotalavailablefast');
+                        editor.disable('createddate');
+                        editor.disable('presalestotalavailableflex');
+                        editor.disable('presalestotalavailablefast');
+                        editor.disable('presalesavailabledate');
+                        editor.disable('marketspend');
+                        editor.disable('utilspend');
+                        editor.disable('remnantspend');
+                        editor.disable('party_id');
+                        editor.disable('status');
+                        editor.disable('slotsize');
+
+                        if (tr_type_init === 'Pre-Auth') {
+                            editor.disable('type');
+                        } else {
+                            editor.enable('type');
+                        }
+
+                        editor.disable('assignedae');
+                        editor.disable('createdby');
+
+
+
+
+                    } catch (e) {
+
+                        console.log('Exception Occurred in DisableField Function ' + e.message);
+                    }
+
+
+                    return true;
+                }
+
+                function hidefields() {
+
+                    try {
+
+                        editor.hide('token');
+                        editor.hide('product');
+                        editor.hide('geo');
+                        editor.hide('state');
+                        editor.hide('rateCardPrice');
+                        editor.hide('geotype');
+                        //CRM-2315 Remove Rank
+                        //editor.hide('rank');
+                        editor.hide('invtotalavailableflex');
+                        editor.hide('invtotalavailablefast');
+                        editor.hide('createddate');
+                        editor.hide('presalestotalavailableflex');
+                        editor.hide('presalestotalavailablefast');
+                        editor.hide('presalesavailabledate');
+                        editor.hide('marketspend');
+                        editor.hide('utilspend');
+                        editor.hide('remnantspend');
+                        editor.hide('party_id');
+                        editor.hide('status');
+                        editor.hide('assignedae');
+                        editor.hide('createdby');
+                        editor.hide('slotsize');
+                        editor.hide('qtyinterested');
+                        editor.hide('productSize');
+                    } catch (e) {
+
+                        console.log('Exception Occurred in hideField Function ' + e.message);
+                    }
+
+
+                    return true;
+                }
+
+                function showfields() {
+
+                    try {
+
+                        //editor.show('token');
+                        editor.show('product');
+                        editor.show('geo');
+                        editor.show('state');
+                        editor.show('rateCardPrice');
+                        editor.show('geotype');
+                        //CRM-2315 Remove Rank
+                        //editor.show('rank');
+                        editor.show('invtotalavailableflex');
+                        editor.show('invtotalavailablefast');
+                        editor.show('createddate');
+                        editor.show('presalestotalavailableflex');
+                        editor.show('presalestotalavailablefast');
+                        editor.show('presalesavailabledate');
+                        editor.show('marketspend');
+                        editor.show('utilspend');
+                        editor.show('remnantspend');
+                        //editor.show('party_id');
+                        editor.show('status');
+                        editor.hide('slotsize');
+
+                        editor.show('assignedae');
+                        editor.show('createdby');
+
+
+                    } catch (e) {
+
+                        console.log('Exception Occurred in DisableField Function ' + e.message);
+                    }
+
+
+                    return true;
+                }
+
+
+
+
+                ////////////// Function for showing detail record
+
+                /* Formatting function for row details - modify as you need */
+                function format(d) {
+                    // `d` is the original data object for the row
+                    console.log('Object Passed to format is ' + d);
+
+                    return '<table cellpadding="5" cellspacing="0" class="display" border="1" style="padding-left:50px;">' +
+                        '<tr BGCOLOR="#E6FAFF">' +
+                        '<td>Notes :</td>' +
+                        '<td>' + d.notes + '</td>' +
+                        '</tr>' +
+                        '<tr>' +
+
+                        /*'<td>Market:</td>'+
+                        '<td>'+d.geo+'</td>'+
+                        '</tr>'+
+                        '<tr BGCOLOR="#E6FAFF">'+
+                        '<td>Market Type:</td>'+
+                        '<td>'+d.geotype+'</td>'+
+                        '</tr>'+
+                        '<tr >'+*/
+
+                        '<td>Phone:</td>' +
+                        '<td>' + d.phone + '</td>' +
+                        '</tr>' +
+                        '<tr BGCOLOR="#E6FAFF">' +
+                        /*'<td>Party Id:</td>'+
+                        '<td>'+d.party_id+'</td>'+
+                        '</tr>'+*/
+
+                        '</table>';
+                }
+
+
+                (function() {
+
+                    var Editor = $.fn.dataTable.Editor;
+                    Editor.display.details = $.extend(true, {}, Editor.models.displayController, {
+                        "init": function(editor) {
+                            // No initialisation needed - we will be using DataTables' API to display items
+                            return Editor.display.details;
+                        },
+
+                        "open": function(editor, append, callback) {
+                            var table = $(editor.s.table).DataTable();
+                            console.log('Printing Table ' + table);
+                            var row = editor.s.modifier;
+
+                            // Close any rows which are already open
+                            Editor.display.details.close(editor);
+
+                            // Open the child row on the DataTable
+                            table
+                                .row(row)
+                                .child(append)
+                                .show();
+
+                            $(table.row(row).node()).addClass('shown');
+
+                            if (callback) {
+                                callback();
+                            }
+                        },
+
+                        "close": function(editor, callback) {
+                            var table = $(editor.s.table).DataTable();
+
+                            table.rows().every(function() {
+                                if (this.child.isShown()) {
+                                    this.child.hide();
+                                    $(this.node()).removeClass('shown');
+                                }
+                            });
+
+                            if (callback) {
+                                callback();
+                            }
+                        }
+                    });
+
+                })();
+
+
+
+
+                function CopyFieldsValuesfromDataTable(o, singlerec) {
+
+                    //alert('singlerec is ' + singlerec ); 
+
+                    try {
+
+
+                        if (singlerec === true) {
+                            mToken = o.data.token;
+                            //mToken  ='EBD87D51-04F9-4081-9876-AD20A1637E6F';
+                            // CRM-1741 worng field mapped, corrected with geo
+                            //mMarket = o.data.market;
+                            if(o.data.product === 'Local Expert City'){
+                                mMarket = o.data.geo+', '+o.data.state;
+                            }else{
+                                mMarket =o.data.geo;
+                            }
+                            mAccountId = o.data.party_id;
+                            mMarketType = o.data.geotype;
+                            mDegree = o.data.degree;
+                            mType = o.data.type;
+                            mproduct = o.data.product;
+                            console.log('Product name = '+mproduct);
+                            mStatus = o.data.status;
+
+                            try {
+
+                                console.log('mStatus before encoding' + mStatus);
+                                //mStatus = encodeURIComponent(mStatus);
+                                console.log('mStatus after encoding' + mStatus);
+
+                            } catch (e) {
+                                mStatus = o.data.status;
+
+                            }
+
+                            mQtyInterested = o.data.qtyinterested;
+                            mSlotSize = o.data.slotsize;
+                            mLeadRoutingType = o.data.leadroutingtype;
+                            mUpdatedby = 'xyz';
+                            mMarketSpend = '1000';
+                            mnotes = o.data.notes;
+                            mqtyinterested = o.data.qtyinterested;
+                            //CRM-2315 Remove Rank
+                            //mrank = o.data.rank;
+                        } else // batch records for Tools which is a different object
+                        {
+
+                            //alert (o.token);
+
+                            mToken = o.token;
+                            //mToken  ='EBD87D51-04F9-4081-9876-AD20A1637E6F';
+                            // CRM-1741 worng field mapped, corrected with geo
+                            //mMarket = o.market;
+                            if(o.product === 'Local Expert City'){
+                                mMarket = o.geo+', '+o.state;
+                            }else{
+                                mMarket =o.geo;
+                            }
+                            mAccountId = o.party_id;
+                            mMarketType = o.geotype;
+                            mDegree = o.degree;
+
+                            mStatus = o.status;
+                            mQtyInterested = o.qtyinterested;
+                            // CRM-2315 Remove Rank
+                            //mrank = o.rank;
+                            mSlotSize = o.slotsize;
+                            mLeadRoutingType = o.leadroutingtype;
+                            mUpdatedby = 'xyz';
+                            mMarketSpend = '1000';
+                            mnotes = o.notes;
+                            mqtyinterested = o.qtyinterested;
+                            mType = o.type;
+                            mproduct = o.product;
+                            console.log('Product name = '+mproduct);
+
+
+                        }
+
+                        if (moperation !== 'Delete') {
+                            moperation = 'Update';
+                        }
+
+                        console.log(mStatus + mLeadRoutingType + mSlotSize);
+
+                        //alert(mToken +'Arun ' + mLeadRoutingType + mDegree) ;
+
+                    } // End of Try Block 
+                    catch (e) {
+
+                        console.log('Exception Occurred in CopyFieldValuesfromDataTable' + e.message);
+
+                    }
+
+
+                    return true;
+                }
+
+                function getSelectedValues() {
+
+                    //alert('hello');
+                    //getSelectedResults('status=Pending Configuration');
+
+
+                }
+
+
+
+                function validatefields(e, o, action) {
+
+                    var lLeadRoutingType;
+                    var lSlotSize;
+
+                    try {
+
+                        console.log('validatefields');
+
+                        /// Assign values to private variables
+
+                        lLeadRoutingType = o.data.leadroutingtype;
+                        lSlotSize = o.data.slotsize;
+
+                        console.log(lLeadRoutingType);
+
+
+                        //Check If any fields  has incorrect values 
+                        //alert('o.data.type:'+o.data.type);
+                        //if ( o.data.type === ''  || (o.data.type !=='Hot' && o.data.type !=='Warm'))
+                        if (o.data.type.toUpperCase() !== 'HOT' && o.data.type.toUpperCase() !== 'WARM' && o.data.type.toUpperCase() !== 'PIPELINE' && tr_type_init.toUpperCase() !== 'PRE-AUTH') {
+                            //alert('control is here2');
+                            return 4; // 1 means Status field 
+                        }
+                        /*else if (o.data.type !=='hot' && o.data.type !=='warm' && o.data.type !=='pipeline')  {
+                            alert('control is here3');
+                            return 4;
+                        }
+                        //else if ( o.data.type === 'Warm'  && tr_type_init ==='Pre-Auth')  {
+                        else if ( o.data.type === 'Pre-Auth')  {
+                            //alert('control is here3');
+                            return 1;
+                        }*/
+
+                        if (o.data.leadroutingtype === '') {
+
+                            return 2; // 2 Means LeadRouting Type variable
+
+                        } else if (lLeadRoutingType.toUpperCase() !== 'FAST' && lLeadRoutingType.toUpperCase() !== 'FLEX' && lLeadRoutingType.toUpperCase() !== 'ANY') {
+
+
+                            return 2;
+                        } else if (lLeadRoutingType.toUpperCase() === 'FLEX' && lLeadRoutingType !== 'Flex') {
+
+
+
+                            editor.field('leadroutingtype').set('Flex');
+
+                        } else if (lLeadRoutingType.toUpperCase() === 'ANY' && lLeadRoutingType !== 'Any') {
+                            editor.field('leadroutingtype').set('Any');
+
+                        } else if (lLeadRoutingType.toUpperCase() === 'FAST' && lLeadRoutingType !== 'Fast') {
+
+                            editor.field('leadroutingtype').set('Fast');
+                            //    editor.submit();
+
+                        }
+
+
+
+
+                        if (lSlotSize.toUpperCase() !== 'FULL' && lSlotSize.toUpperCase() !== 'HALF' && lSlotSize.toUpperCase() !== 'ANY' && lSlotSize.toUpperCase() !== 'SOV50' && lSlotSize.toUpperCase() !== 'SOV30' && lSlotSize.toUpperCase() !== 'SOV20' && lSlotSize.toUpperCase() !== 'SOV10') {
+
+
+                            return 3; // 3 means slotsize 
+                        } else if (lSlotSize.toUpperCase() === 'FULL' && lSlotSize !== 'Full') {
+
+
+
+
+                            editor.field('slotsize').set('Full');
+
+
+                        } else if (lSlotSize.toUpperCase() === 'ANY' && lSlotSize !== 'Any') {
+                            o.data.slotsize = 'Any';
+
+                            editor.field('slotsize').set('Any');
+
+                        } else if (lSlotSize.toUpperCase() === 'HALF' && lSlotSize !== 'Half') {
+
+                            editor.field('slotsize').set('Half');
+
+                        }
+
+
+
+
+                    } // end of try block
+                    catch (e) {
+
+                        console.log(' Exception Occurred in validatefields function' + e.message);
+
+                    }
+
+
+
+                    return 0; // Return 0 which means no validation issues 
+
+
+
+
+                } // end of function validatefields 
+
+
+
+                // Set up  editor for  Datatables 
+
+                $(document).ready(function() {
+
+
+                    editor = new $.fn.dataTable.Editor({
+
+
+                        table: "#TblAccountWLList",
+
+                        fields: [
+
+                                {
+                                    label: "Notes:",
+                                    name: "notes"
+                                }
+
+                                ,
+{
+
+                                    label: "Created Date:",
+                                    name: "createddate"
+
+                                },
+
+                                 {
+
+                                    label: "geo:",
+                                    name: "geo"
+
+                                },
+
+   {
+
+                                    label: "state:",
+                                    name: "state"
+
+                                },
+
+                                {
+                                    label: "rateCardPrice:",
+                                    name: "rateCardPrice"
+                                },
+
+                                {
+
+                                    label: "Inventory Available Flex:",
+                                    name: "invtotalavailableflex"
+
+                                }
+
+                                ,
+
+                                {
+
+                                    label: "Inventory Available Fast:",
+                                    name: "invtotalavailablefast"
+
+                                }
+
+                                ,
+
+
+
+
+                                {
+                                    label: "Lead Routing:",
+                                    name: "leadroutingtype",
+                                    /*type:  "select",
+                                    options: [
+                                        { label: "Any", value: "Any" } ,
+                                        { label: "Flex", value: "Flex" },
+                                        { label: "Fast", value: "Fast" },
+                                    ]*/
+                                },
+
+                                {
+
+                                    label: "Type:",
+                                    name: "type",
+                                    /*type:  "select",
+                                    options: [
+                                        { label: "Pre-Auth", value: "Pre-Auth" } ,
+                                        { label: "Hot", value: "Hot" } ,
+                                        { label: "Warm", value: "Warm" },
+                                        { label: "Pipeline", value: "Pipeline" }
+                                    ]*/
+
+
+
+                                },
+
+                                {
+
+                                    label: "Status:",
+                                    name: "status"
+
+                                },
+                                 {
+
+                                    label: "utilspend:",
+                                    name: "utilspend"
+
+                                },
+
+                                {
+
+                                    label: "remnantspend:",
+                                    name: "remnantspend"
+
+                                },
+{
+
+                                    label: "Owner:",
+                                    name: "assignedae"
+
+                                },
+
+                                {
+
+                                    label: "Created by:",
+                                    name: "createdby"
+
+                                },
+
+
+
+                                
+
+
+
+                                {
+
+                                    label: "product:",
+                                    name: "product"
+
+                                },
+
+                               
+
+                                {
+                                    label: "Qty Interested:",
+                                    name: "qtyinterested"
+                                }
+
+                                ,
+
+                                {
+                                    label: "PreSales  Available Flex:",
+                                    name: "presalestotalavailableflex"
+                                }
+
+                                ,
+
+                                {
+                                    label: "PreSales  Available Fast:",
+                                    name: "presalestotalavailablefast"
+                                }
+
+                                ,
+
+                                {
+                                    label: "PreSales  Available Date:",
+                                    name: "presalesavailabledate"
+                                }
+
+                                ,
+                                 {
+
+                                    label: "Party Id:",
+                                    name: "party_id"
+
+                                }
+,
+                             
+
+                                  {
+
+                                    label: "marketspend:",
+                                    name: "marketspend"
+
+                                }, {
+
+                                    label: "geotype:",
+                                    name: "geotype"
+
+                                },
+                                /* CRM-2315 Remove Rank
+                                {
+                                    label: "rank:",
+                                    name: "rank"
+                                },
+                                */
+                                {
+
+                                    label: "token:",
+                                    name: "token"
+
+                                },
+                                  {
+                                    label: "Slot Size:",
+                                    name: "slotsize"
+                                }
+/* CRM-1471
+                                {
+
+                                    label: "Created Date:",
+                                    name: "createddate"
+
+                                },
+
+
+                                {
+
+                                    label: "Type:",
+                                    name: "type",
+                                    /*type:  "select",
+                                    options: [
+                                        { label: "Pre-Auth", value: "Pre-Auth" } ,
+                                        { label: "Hot", value: "Hot" } ,
+                                        { label: "Warm", value: "Warm" },
+                                        { label: "Pipeline", value: "Pipeline" }
+                                    ]*/
+
+
+
+/* CRM-1471                               },
+
+
+
+                                {
+
+                                    label: "product:",
+                                    name: "product"
+
+                                },
+
+                                {
+
+                                    label: "geo:",
+                                    name: "geo"
+
+                                },
+
+                                {
+
+                                    label: "state:",
+                                    name: "state"
+
+                                },
+
+                                {
+                                    label: "rateCardPrice:",
+                                    name: "rateCardPrice"
+                                },
+
+                                {
+
+                                    label: "Inventory Available Flex:",
+                                    name: "invtotalavailableflex"
+
+                                }
+
+                                ,
+
+                                {
+
+                                    label: "Inventory Available Fast:",
+                                    name: "invtotalavailablefast"
+
+                                }
+
+                                ,
+
+
+
+
+                                {
+                                    label: "Lead Routing:",
+                                    name: "leadroutingtype",
+                                    /*type:  "select",
+                                    options: [
+                                        { label: "Any", value: "Any" } ,
+                                        { label: "Flex", value: "Flex" },
+                                        { label: "Fast", value: "Fast" },
+                                    ]*/
+/* CRM-1471                               },
+                                {
+                                    label: "Product Size :",
+                                    name: "productSize",
+                                    type: "select",
+                                    options: [{
+                                            label: "Any",
+                                            value: "Any"
+                                        },
+                                        {
+                                            label: "Half",
+                                            value: "Half"
+                                        },
+                                        {
+                                            label: "Full",
+                                            value: "Full"
+                                        },
+                                    ]
+                                },
+                                {
+                                    label: "Slot Size:",
+                                    name: "slotsize"
+                                },
+
+
+                                {
+                                    label: "Qty Interested:",
+                                    name: "qtyinterested"
+                                }
+
+                                ,
+                                {
+
+                                    label: "Status:",
+                                    name: "status"
+
+                                },
+
+
+                                {
+                                    label: "Notes:",
+                                    name: "notes"
+                                }
+
+                                ,
+
+                                {
+                                    label: "PreSales  Available Flex:",
+                                    name: "presalestotalavailableflex"
+                                }
+
+                                ,
+
+                                {
+                                    label: "PreSales  Available Fast:",
+                                    name: "presalestotalavailablefast"
+                                }
+
+                                ,
+
+                                {
+                                    label: "PreSales  Available Date:",
+                                    name: "presalesavailabledate"
+                                }
+
+                                ,
+
+                                {
+
+                                    label: "marketspend:",
+                                    name: "marketspend"
+
+                                },
+
+                                {
+
+                                    label: "utilspend:",
+                                    name: "utilspend"
+
+                                },
+
+                                {
+
+                                    label: "remnantspend:",
+                                    name: "remnantspend"
+
+                                },
+
+
+                                {
+
+                                    label: "Owner:",
+                                    name: "assignedae"
+
+                                },
+
+                                {
+
+                                    label: "Created by:",
+                                    name: "createdby"
+
+                                },
+
+
+
+
+                                {
+
+                                    label: "geotype:",
+                                    name: "geotype"
+
+                                },
+
+
+                                {
+                                    label: "rank:",
+                                    name: "rank"
+                                },
+
+                                {
+
+                                    label: "token:",
+                                    name: "token"
+
+                                },
+                                {
+
+                                    label: "Party Id:",
+                                    name: "party_id"
+
+                                }
+CRM-1471 */
+
+                            ]
+
+                            ,
+
+                        ajax: function(method, url, data, successCallback, errorCallback) {
+
+                            //alert('Arun reached CopyFields');
+
+                            console.log('Arun - Entered Function Success Callback');
+
+                            if (mDataChanged === true)
+
+                            {
+
+                                if (moperation !== 'Delete')
+
+                                {
+                                    CopyFieldsValuesfromDataTable(data, true);
+                                }
+
+                                console.log(mSlotSize + mStatus + moperation + mToken + 'mArray' + mArray);
+                                mDegree = 'Warm 1';
+
+                                if (mArray === false) {
+
+                                    console.log(' Arun MArray is False ');
+
+
+
+
+                                    console.log(' Arun Calling SOA Function here ');
+
+                                    if ((mType === 'Pre-Auth') && moperation === 'Delete') {
+                                        alert('Waitlist of type to "Pre-Auth"  cannot be deleted ');
+
+
+                                        return successCallback({
+                                            "id": "1"
+                                        });
+                                    }
+
+                                    
+                                    // CRM-1741 passed mMarket also
+                                    callSOA(mMarket, mToken, mDegree, mSlotSize, mAccountId, mLeadRoutingType
+                                        //,mStatus,
+                                        , mType,
+
+                                        mnotes, mqtyinterested, moperation,'',mproduct); // mrank); CRM-2315 Remove Rank
+                                    console.log(' Arun Called SOA Function here ');
+
+
+                                } else {
+
+                                    console.log('Else mArray is True' + mArray);
+                                    for (var j = 0; j < mArrayofWaitlist.length; j++) {
+
+
+                                        //                          alert('Call SOA' + obj.token);
+
+                                        console.log('Array' + mArrayofWaitlist[j].token);
+
+                                        CopyFieldsValuesfromDataTable(mArrayofWaitlist[j], false); // pass batch records 
+
+                                        if ((mType === 'Pre-Auth') && moperation === 'Delete') {
+                                            alert('Waitlist of type to "Pre-Auth"  cannot be deleted ');
+                                            return successCallback({
+                                                "id": 1
+                                            });
+                                        }
+
+                                        console.log(mArrayofWaitlist[j]);
+                                        // CRM-1741 passed mMarket also
+                                        callSOA(mMarket, mToken, 'Warm 1', mSlotSize, mAccountId, mLeadRoutingType
+                                            //,mStatus,
+                                            , mType,
+
+                                            mnotes, mqtyinterested, moperation,'',mproduct); // mrank); CRM-2315 Remove Rank
+
+
+                                    }
+
+
+                                    mArray = false;
+                                    mArrayinWaitlist = null; //setting to null
+
+                                }
+
+                                // The main parameters to send for update is Slotsize , leadroutingtype  ,status , notes , degree , qtyinterested 
+
+
+                                console.log('Called SOA function ' + mToken + mStatus + mDegree);
+                                //  alert('Arun reached CopyFields and later reached after SOA call');
+                            }
+
+                            return successCallback({
+                                "id": 1
+                            });
+
+                        }
+
+                    });
+
+
+
+                    editor
+                        .on('open', function(e, type) {
+
+                            openVals = JSON.stringify(editor.get());
+
+
+
+
+                            mDataChanged = false; //  clear the flag when editor is opened 
+                            disablefields();
+
+
+
+                            if (type === 'inline') {
+                                // Listen for a tab key event when inline editing
+                                $(document).on('keydown.editor', function(e) {
+                                    if (e.keyCode === 9) {
+                                        e.preventDefault();
+
+                                        // Find the cell that is currently being edited
+                                        var cell = $('div.DTE').parent();
+
+                                        if (e.shiftKey && cell.prev().length && cell.prev().index() !== 0) {
+                                            // One cell to the left (skipping the first column)
+                                            cell.prev().click();
+                                        } else if (e.shiftKey) {
+                                            // Up to the previous row
+                                            cell.parent().prev().children().last(0).click();
+                                        } else if (cell.next().length) {
+                                            // One cell to the right
+                                            cell.next().click();
+                                        } else {
+                                            // Down to the next row
+                                            cell.parent().next().children().eq(1).click();
+                                        }
+                                    }
+                                });
+                            } else {
+                                hidefields();
+                            }
+
+
+                        })
+                        .on('close', function() {
+                            $(document).off('keydown.editor');
+
+                            showfields();
+
+
+
+
+                        });
+
+
+
+
+                    editor.on('preBlur', function(e) {
+                        // On close, check if the values have changed and ask for closing confirmation if they have
+                        //  this.submit();
+
+
+
+                        mDataChanged = false;
+                        if (openVals !== JSON.stringify(editor.get())) {
+
+                            mDataChanged = true;
+
+                            //  alert(openVals);
+                            // this.submit();
+
+                            console.log('reached on blur');
+                            //    return confirm( 'Saving changes. Are you sure you want to exit?' );
+                            return true;
+                            //  this.submit();
+
+                        }
+                    });
+
+
+
+
+                    editor.on('preSubmit', function(e, o, action) {
+                        var retval = 0;
+
+                        //     alert('Reached Presubmit');
+                        console.log('Presubmit ' + action + o);
+
+
+                        if (action !== 'remove') {
+
+                            retval = validatefields(e, o, action);
+                            //alert('retval:'+retval);
+
+                            console.log('commented validate fields reached Action !=remove ' + retval);
+                            moperation = 'Update';
+                            mArray = false;
+                        } else if (action === 'remove') {
+
+                            moperation = 'Delete';
+                            console.log(moperation);
+                            //     mToken = o.data.token;
+                            mDataChanged = true;
+                            retval = 0;
+                            //  return true ;
+                        }
+
+                        if (openVals !== JSON.stringify(editor.get()) && retval === 0) {
+
+                            mDataChanged = true;
+                            console.log('Data is changed');
+
+                        }
+
+                        //    alert( mDataChanged);
+
+
+
+
+                        if (retval === 0) {
+                            return true;
+                        } else if (retval === 1) {
+                            //alert('control is here');
+                            //this.error('type', 'You cannot change to Warm status from Hot');
+                            this.error('type', 'You cannot change Waitlist to Pre-Auth');
+                            return false;
+
+                        } else if (retval === 2) {
+                            this.error('leadroutingtype', 'Lead Routing must be valid value (Fast or Flex or Any)');
+                            return false;
+                        } else if (retval === 3) {
+                            this.error('slotsize', 'Slot Size must be valid value (Full or Half or Any)');
+                            return false;
+                        } else if (retval === 4) {
+                            //alert('control is here5');
+                            this.error('type', 'Type must be valid value (Hot or Warm or Pipeline)');
+                            return false;
+                        }
+
+
+
+                        return true; // No errors return true
+
+
+
+
+                    });
+
+
+
+                    // Activate an inline edit on click of a table cell
+                    $('#TblAccountWLList').on('click', 'tbody td:not(:first-child)', function(e) {
+                        editor.inline(this, {
+                            submitOnBlur: false
+                        });
+
+
+                    });
+
+
+                    editor.on('initEdit', function(e, node, data) {
+
+
+                        mArray = false;
+                        tr_status_init = editor.field('status').val();
+                        tr_type_init = editor.field('type').val();
+                        //--- Get the  data of column of the row selected ---//
+
+                        console.log('tr_status_init' + tr_status_init);
+                    });
+
+
+
+
+                    editor
+                        .on('initRemove', function(e, data, action) {
+                            var oTT = TableTools.fnGetInstance('TblAccountWLList');
+                            var aData = oTT.fnGetSelectedData();
+                            mToken = aData[0].token;
+                            //   alert("Token Set in InitRemove ="+mToken);
+                            mArrayofWaitlist = aData;
+                            console.log(mArrayofWaitlist);
+                            mArray = true;
+
+
+                            editor.message("Are you sure you wish to delete the Waitlist for Market  " + aData[0].geo);
+                        });
+
+
+
+
+                    console.log('Data Table Getting Set ');
+
+
+                    var table = $('#TblAccountWLList').DataTable({
+
+
+                        "pagingType": "full_numbers",
+                        stateSave: true,
+                        "language": {
+                            "lengthMenu": 'Show <select>' +
+                                '<option value="10">10</option>' +
+                                '<option value="25">25</option>' +
+                                '<option value="50">50</option>' +
+                                '<option value="100">100</option>' +
+                                '<option value="1000">1000</option>' +
+                                '</select> Records Per Page'
+                        },
+                        //"lengthMenu": [[10, 25, 50, 100, 1000], [10, 25, 50, 100, 1000]] ,
+                        'iDisplayStart': 25,
+                        "scrollCollapse": false,
+                        "colResize": {
+                            "rtl": false,
+                            "tableWidthFixed": false
+                        },
+
+                        colReorder: {
+                            realtime: true
+                        },
+
+                        "order": [
+                            [5, "desc"]
+                        ],
+
+
+
+
+                        dom: 'CRT<"clear">lfrtip',
+                        "jQueryUI": false,
+
+
+                        tableTools: {
+                            sRowSelect: "os",
+                            sSwfPath: "{!URLFOR($Resource.TableTools,'TableTools-2.2.4/swf/copy_csv_xls_pdf.swf')}",
+                            aButtons: [
+
+                                {
+                                    sExtends: "editor_edit",
+                                    editor: editor
+                                },
+                                {
+                                    sExtends: "editor_remove",
+                                    editor: editor
+                                },
+                                /*{
+                                    sExtends: "collection",
+                                    sButtonText: "Export",
+                                    sButtonClass: "save-collection",
+                                    aButtons: [ 'copy', 'csv', 'xls', 'pdf' ]
+                                },*/
+                                //'print'
+                            ]
+                        },
+
+                        columns: [{
+                                    "className": 'details-control',
+                                    "orderable": false,
+                                    "data": null,
+                                    "defaultContent": ''
+                                },
+                                 {
+                                    data: "notes"
+                                },
+                                {
+                                    data: "createddate",
+
+                                    type: "date",
+                                    dateFormat: 'mm-dd-yy'
+
+                                },
+                                {
+                                    data: "product"
+                                },
+                                 {
+                                    data: "geo"
+                                },
+
+                                 {
+                                    data: "state"
+                                },
+                                 {
+                                    data: "rateCardPrice"
+                                },
+                                {
+                                    data: "invtotalavailableflex"
+                                },  
+{
+                                    data: "invtotalavailablefast"
+                                },   
+{
+                                    data: "leadroutingtype"
+                                }, 
+                                {
+                                    data: "type"
+                                },  
+{
+                                    data: "status"
+                                }, 
+ {
+                                    data: "utilspend"
+                                }, 
+                                {
+                                    data: "remnantspend"
+                                },   
+                                 {
+                                    data: "assignedae"
+                                },
+{
+                                    data: "createdby"
+                                },  
+    
+
+                                /*{
+                                    data: "product"
+                                }, */ 
+                                {
+                                    data: "qtyinterested"
+                                },
+                                {
+                                    data: "presalestotalavailableflex"
+                                },
+                                  {
+                                    data: "presalestotalavailablefast"
+                                },
+                                {
+                                    data: "presalesavailabledate"
+                                },
+                                {
+                                    data: "party_id"
+                                },
+                               
+                                 {
+                                    data: "marketspend"
+                                },
+                                {
+                                    data: "geotype"
+                                },
+                                /*
+                                CRM-2315 Remove Rank
+                                {
+                                    data: "rank"
+                                },
+                                */
+                                {
+                                    data: "token"
+                                },
+                                 {
+                                    data: "slotsize"
+                                }
+/*
+                                {
+                                    data: "createddate",
+
+                                    type: "date",
+                                    dateFormat: 'mm-dd-yy'
+
+                                },
+                                {
+                                    data: "type"
+                                },
+
+                                {
+                                    data: "product"
+                                },
+                                {
+                                    data: "geo"
+                                },
+                                {
+                                    data: "state"
+                                },
+                                {
+                                    data: "rateCardPrice"
+                                },
+
+                                {
+                                    data: "invtotalavailableflex"
+                                },
+                                {
+                                    data: "invtotalavailablefast"
+                                },
+                                {
+                                    data: "leadroutingtype"
+                                },
+                                {
+                                    data: "slotsize"
+                                },
+                                {
+                                    data: "qtyinterested"
+                                },
+                                {
+                                    data: "status"
+                                },
+                                {
+                                    data: "notes"
+                                },
+
+                                {
+                                    data: "presalestotalavailableflex"
+                                },
+                                {
+                                    data: "presalestotalavailablefast"
+                                },
+                                {
+                                    data: "presalesavailabledate"
+                                },
+                                {
+                                    data: "marketspend"
+                                },
+                                {
+                                    data: "utilspend"
+                                },
+                                {
+                                    data: "remnantspend"
+                                },
+                                {
+                                    data: "assignedae"
+                                },
+                                {
+                                    data: "createdby"
+                                },
+
+                                {
+                                    data: "geotype"
+                                },
+                                {
+                                    data: "rank"
+                                },
+                                {
+                                    data: "token"
+                                },
+                                {
+                                    data: "party_id"
+                                }
+*/
+
+                            ]
+
+                            ,
+
+
+
+
+                        "colResize": {
+                            "rtl": false,
+                            "tableWidthFixed": false
+                        },
+
+
+                        "createdRow": function(row, data, dataIndex) {
+
+
+
+                            // console.log(' Created Row ' + row + data + data['status'] );
+
+                            // $(row).css('background-color', '#3B5C9E');
+
+                            //  $(row).css('background-color', '#6699FF');
+
+
+
+
+                            if (data['type'] === 'Pre-Auth') {
+                                //                            console.log(data['status']);
+
+                                //$('td', row).eq(2).css({'color':'red'});
+                               $('td', row).css({
+                                    'color': 'red'
+                                });
+                            }
+
+                            //        console.log('rowEven%2===0' + rowEven%2===0);
+                            if (rowEven % 2 === 0) {
+                                //      $(row).css('background-color', '#F5F6CE');
+
+                                $(row).css('background-color', ' #E6FAFF');
+                                //  $(row).css('background-color', ' #000000');
+
+
+
+                                //  $(row).css('border', '1px lightgrey');
+                                //  $(row).css('color', 'white');
+                            }
+
+
+                            rowEven++;
+
+
+
+
+                        }
+
+
+
+
+                    });
+
+                    // Added this two lines for Fixed Header                                    
+
+
+                    new $.fn.dataTable.FixedHeader(table, {
+                        bottom: false
+                    });
+
+                    new $.fn.dataTable.KeyTable(table);
+
+                    // CRM-2315 Remove Rank - Now there are 24 columns so removed 25 from below
+                    table.columns([16,17,18,19,20,21,22,23]).visible(false, false); //CRM-1471
+                    table.columns([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 24]).visible(true, true); //CRM-1471
+
+                    table.columns.adjust().draw(false); // adjust column sizing and redraw
+
+
+
+                    $('#TblAccountWLList').on('length.dt', function(e, settings, len) {
+                        console.log('New page length: ' + len);
+                        var NewNoOfRecords = 10;
+                        //var info = $('#TblAccountWLList').DataTable().page.info();
+
+
+                        NewNoOfRecords = settings.fnRecordsTotal();
+
+
+                        console.log('NewNoOfRecords' + NewNoOfRecords);
+                        console.log('NoOfRecords' + NoOfRecords);
+
+                        if (len > NewNoOfRecords) {
+
+
+
+                            if (len > NoOfRecords) {
+
+                                var myvalue = len;
+
+                                jQuery("[id$=account__input]").val(myvalue);
+                                jQuery("[id$=myfiltertype]").val('No of Records');
+
+                                doSearchAF();
+                                NewNoOfRecords = len;
+                                NoOfRecords = NewNoOfRecords;
+
+                                return true;
+
+
+                            }
+
+                        }
+
+                    });
+
+
+
+                    $('#TblAccountWLList').on('length.dt', function(e, settings, len) {
+                        console.log('New page length: ' + len);
+                        var NewNoOfRecords = 10;
+                        //var info = $('#TblAccountWLList').DataTable().page.info();
+
+
+                        NewNoOfRecords = settings.fnRecordsTotal();
+
+
+                        console.log('NewNoOfRecords' + NewNoOfRecords);
+                        console.log('NoOfRecords' + NoOfRecords);
+
+
+
+                        if (len > NewNoOfRecords) {
+
+
+
+                            if (len > NoOfRecords) {
+
+                                var myvalue = len;
+
+                                jQuery("[id$=account__input]").val(myvalue);
+                                jQuery("[id$=myfiltertype]").val('No of Records');
+
+                                doSearchAF();
+                                NewNoOfRecords = len;
+                                NoOfRecords = NewNoOfRecords;
+
+                                return true;
+
+
+                            }
+
+                        }
+
+                    });
+
+
+                    //   hidefields();                             
+
+
+                    // Editing complete
+
+                    //// New function for opening and closing the table here Arun
+
+                    // Add event listener for opening and closing details
+                    $('#TblAccountWLList tbody').on('click', 'td.details-control', function() {
+                        var tr = $(this).closest('tr');
+                        var row = table.row(tr);
+
+                        if (row.child.isShown()) {
+                            // This row is already open - close it
+                            row.child.hide();
+                            tr.removeClass('shown');
+                        } else {
+                            // Open this row
+                            row.child(format(row.data())).show();
+                            tr.addClass('shown');
+                        }
+                    });
+
+
+
+                    // ends here table open close 
+
+
+                    // editor open function starts here 
+                    /*
+     $('#TblAccountWLList').on( 'click', 'td.details-control', function () {
+        var tr = this.parentNode;
+  
+        if ( table.row( tr ).child.isShown() ) {
+            editor.close();
+        }
+        else {
+            editor.edit(
+                tr,
+                'Edit row',
+                [
+                    {
+                        "className": "delete",
+                        "label": "Delete row",
+                        "fn": function () {
+                            // Close the edit display and delete the row immediately
+                            editor.close();
+                            editor.remove( tr, '', null, false );
+                            editor.submit();
+                        }
+                    }, {
+                        "label": "Update row",
+                        "fn": function () {
+                            editor.submit();
+                        }
+                    }
+                ]
+            );
+        }
+    } );
+    */
+
+                    // editor close function ends here 
+                         
+                // CRM-1311 Start
+               $('#TblAccountWLList tbody').on('click', 'tr', function () { 
+                    var vProfile = '{!$Profile.Name}';
+                    //CRM-2145 Allow Retention Team members to be able to Delete Waitlist Items they don't own. Included Profile Move Retentions & Collections in If condition
+                    if (vProfile != "Move Broker Account Manager" && vProfile != "Move Sales Ops" && vProfile != "Move Retentions & Collections") {
+                        var table = $('#TblAccountWLList').DataTable(); 
+                        var data = table.row(this).data(); 
+                        var vlogin = '{!JSENCODE($User.NT_Login_ID__c)}';
+                        if (data != null && data.assignedae != null) {
+                            //console.log('qtyinterested : '+ data.qtyinterested + '   &    assignedae : '+ data.assignedae);
+                            if (vlogin.toLowerCase() != data.assignedae.toLowerCase())
+                            { 
+                                //$('a.DTTT_button_text').addClass('DTTT_disabled'); 
+                                 $('a.DTTT_button_text').hide();
+                            }
+                            else    
+                            { 
+                                //$('a.DTTT_button_text').removeClass('DTTT_disabled'); 
+                                $('a.DTTT_button_text').show();
+                            } 
+                        }
+                    }
+               } );
+                // CRM-1311 end 
+                
+                }); /* last closing bracket */
+            </script>
+
+
+
+
+        </body>
+
+
+
+        <!--  
+
+</apex:pageBlockSection> -->
+    </apex:pageBlock>
+
+
+
+
+</apex:page>

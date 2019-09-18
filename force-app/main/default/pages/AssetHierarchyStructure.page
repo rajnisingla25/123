@@ -1,0 +1,104 @@
+<apex:page tabstyle="Account" controller="AssetStructureClass" showheader="false">
+   <!-- <script>
+            function switchMenu(obj,obj1,obj2) 
+            {
+                var el = document.getElementById(obj);                                       
+                if ( el.style.display != 'none' ) {
+                el.style.display = 'none';
+                }
+                else {
+                el.style.display = '';
+                }
+                var e2 = document.getElementById(obj1);                                       
+                if ( e2.style.display != 'none' ) {
+                e2.style.display = 'none';
+                }
+                else {
+                e2.style.display = '';
+                }
+                 var e3 = document.getElementById(obj2);                                       
+                if ( e2.style.display != 'none' ) {
+                e3.style.display = 'none';
+                }
+                else {
+                e3.style.display = '';
+                }
+            }
+    </script>
+    <apex:pageblock >     
+        <apex:pageblocktable value="{!assetname}"  var="assname">
+            <apex:column >
+                <apex:facet name="header">                                        
+                    Asset Name                                                                              
+                </apex:facet>
+                
+                <apex:outputpanel id="plusimage">
+                    <apex:image url="{!$Resource.Plus_Image}" onclick="switchMenu('{!$Component.inlinetablesec}','{!$Component.minusimage}','{!$Component.plusimage}')" title="Expand - Asset Name"/> 
+                </apex:outputpanel>
+                    
+                <apex:outputpanel id="minusimage" style="display:none;">
+                    <apex:image url="{!$Resource.Minus_image}" onclick="switchMenu('{!$Component.inlinetablesec}','{!$Component.plusimage}','{!$Component.minusimage}')" title="Collapse - Asset Name"/>
+                    <apex:outputpanel id="inlinetablesec" style="display:none;">
+                        <apex:variable value="{!0}" var="rowNum"/>
+                        <apex:repeat var="asset" value="{!assname.Id}">
+                            <apex:variable var="rowNum" value="{!rowNum+1}"/>
+                            <li><strong><apex:outputtext escape="false" value="{!assname.Name}"/></strong>
+                            <ul>
+                                <apex:repeat value="{!assname}" var="child">
+                                    <apex:outputpanel id="plusimage">
+                                        <apex:image url="{!$Resource.Plus_Image}" onclick="switchMenu('{!$Component.inlinetablesec}','{!$Component.minusimage}','{!$Component.plusimage}')" title="Expand - Asset Name"/> 
+                                    </apex:outputpanel>
+                                    <apex:outputpanel id="minusimage" style="display:none;">
+                                        <apex:image url="{!$Resource.Minus_image}" onclick="switchMenu('{!$Component.inlinetablesec}','{!$Component.plusimage}','{!$Component.minusimage}')" title="Collapse - Asset Name"/>
+                                        <apex:outputpanel id="inlinetablesec" style="display:none;">
+                                            <apex:variable value="{!0}" var="rowNum"/>
+                                            <apex:repeat var="child" value="{!child}">
+                                                <apex:variable var="rowNum" value="{!rowNum+1}"/>
+                                                <li><span class="formattextcon"><apex:outputtext escape="false" value="{!child.Name}"/></span>
+                                                    <ul>
+                                                        <apex:repeat value="{!child}" var="gchildren">                                    
+                                                            <apex:outputpanel id="plusimage">
+                                                                <apex:image url="{!$Resource.Plus_Image}" onclick="switchMenu('{!$Component.inlinetablesec}','{!$Component.minusimage}','{!$Component.plusimage}')" title="Expand - Asset Name"/> 
+                                                            </apex:outputpanel>
+                                                                    
+                                                            <apex:outputpanel id="minusimage" style="display:none;">
+                                                                <apex:image url="{!$Resource.Minus_image}" onclick="switchMenu('{!$Component.inlinetablesec}','{!$Component.plusimage}','{!$Component.minusimage}')" title="Collapse - Asset Name"/>
+                                                                <apex:outputpanel id="inlinetablesec" style="display:none;">
+                                                                    <apex:variable value="{!0}" var="rowNum"/>
+                                                                    <apex:repeat var="gchildren" value="{!gchildren}">
+                                                                        <apex:variable var="rowNum" value="{!rowNum+1}"/>
+                                                                        <li> <span class="formattextcon"> <apex:outputtext escape="false" value="{!gchildren.Name}"/> </span> </li>
+                                                                    </apex:repeat>
+                                                                </apex:outputpanel>
+                                                            </apex:outputpanel>
+                                                        </apex:repeat>
+                                                    </ul>
+                                                </li>
+                                            </apex:repeat>
+                                        </apex:outputpanel>
+                                    </apex:outputpanel>
+                                </apex:repeat>  
+                            </ul>  
+                            </li>
+                        </apex:repeat>
+                    </apex:outputpanel>
+                </apex:outputpanel>
+            </apex:column>
+            <apex:column headervalue="Serial Number">
+                    <apex:outputtext value="{!assname.SerialNumber}"/>
+            </apex:column>
+            <apex:column headervalue="Asset Type">
+                    <apex:outputtext value="{!assname.Asset_Type__c}"/>
+            </apex:column>
+            <apex:column headervalue="Quantity">
+                    <apex:outputtext value="{!assname.Quantity}"/>
+            </apex:column>
+            <apex:column headervalue="Include Asset">
+                    <apex:outputtext value="{!assname.Include_Asset__c}"/>
+            </apex:column>
+            <apex:column headervalue="Status">
+                    <apex:outputtext value="{!assname.Status}"/>
+            </apex:column>
+        </apex:pageblocktable>
+    </apex:pageblock> -->
+</apex:page>

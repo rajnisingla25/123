@@ -1,0 +1,30 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="SFMC_PreferenceHeaderController">
+	<aura:attribute name="brandType" type="String" />
+	
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <aura:if isTrue="{!v.brandType == $Label.c.SFMC_Brand_Top_Producer}">
+        <div id="tpheaderdiv" class="topproducer" >
+            <div class="slds-p-vertical_x-large article">            
+                <img src="{!$Resource.PreferenceCenterResource + '/assets/images/tp-logo-w.png'}" />
+            </div>
+        </div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.brandType == $Label.c.SFMC_Brand_RDC}">
+        <div id="rdcheaderdiv" class="rdc" >
+            <div class="slds-p-vertical_x-large slds-text-align_center article">            
+                <img src="{!$Resource.PreferenceCenterResource + '/assets/images/rdc-logo.png'}" />
+            </div>
+        </div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.brandType == $Label.c.SFMC_Brand_Events}">
+        <div id="eventheaderdiv" class="event" >
+            <div class="slds-p-vertical_x-large article">           
+                <img src="{!$Resource.PreferenceCenterResource + '/assets/images/results-logo.png'}" />
+            </div>
+        </div>
+    </aura:if>
+            
+</aura:component>

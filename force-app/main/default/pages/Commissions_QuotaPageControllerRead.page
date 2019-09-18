@@ -1,0 +1,36 @@
+<apex:page standardController="Quota__c" extensions="Commissions_QuotaPageControllerRead" sidebar="false" showHeader="false" applyHtmlTag="false">
+    <apex:includeScript value="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"/>
+    <script>
+        var j$ = jQuery.noConflict();
+        j$("iframe").each(function(){
+            j$(this).load(function() {
+                j$(this).height( j$(this).contents().find("body").height() );
+            });
+        });
+    </script>
+    <apex:form >
+        <apex:pageBlock id="PB">    
+            <apex:pageMessages id="showmsg"></apex:pageMessages>    
+            <apex:pageBlockTable value="{!allProducts}" var="pr" id="table">                
+                <apex:column headerValue="Product Name">
+                    <apex:outputField value="{!pr.Product_Name1__c}" style="width:90%;">
+                    </apex:outputField>
+                </apex:column>
+                <apex:column headerValue="Product Family">
+                    <apex:outputField value="{!pr.Product_Family__c}" style="width:90%;">
+                    </apex:outputField>
+                </apex:column>
+                <apex:column headerValue="$ Quota Qualifier">
+                    <apex:outputField value="{!pr.Sales__c}" style="width:50%;"/>
+                </apex:column>
+                <apex:column headerValue="$ Qualifier Achivement">
+                    <apex:outputField value="{!pr.Sales_Achivement__c}" style="width:50%;"/>
+                </apex:column>
+                <apex:column headerValue="Target" >
+                    <apex:outputField value="{!pr.Target_Achieved__c}">
+                    </apex:outputField>
+                </apex:column>                        
+            </apex:pageBlockTable>   
+        </apex:pageBlock>
+    </apex:form>  
+</apex:page>

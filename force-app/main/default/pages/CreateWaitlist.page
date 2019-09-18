@@ -1,0 +1,171 @@
+<apex:page standardController="Account" extensions="AcctExtension" showHeader="false">
+
+<apex:form >
+
+<apex:pageblock >
+<apex:actionstatus id="status">
+            <apex:facet name="start">
+                <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;
+                       height: 200%;opacity:0.65;width:100%;"> 
+                    <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                        <img class="waitingImage" src="/img/loading.gif" title="Loading..." />
+                        <span class="waitingDescription">Please Wait...</span>
+                    </div>
+                </div>
+            </apex:facet>
+        </apex:actionstatus>
+        
+    <apex:pageblockButtons location="bottom" >
+        <apex:commandButton value="Submit" action="{!submit}" />        
+        <apex:commandButton value="Cancel" action="{!cancel}"  />        
+             
+    </apex:pageblockButtons>
+    <apex:pageblockSection id="pbSection" title="Create Wait List" columns="2">
+        <apex:pageblockSectionItem >              
+           <apex:outputLabel value="Customer ID" for="account__id"/>
+           <apex:outputText value="{!account.ID}" id="account__id"/>                      
+        </apex:pageblockSectionItem>
+        
+        <apex:pageblockSectionItem >
+           <apex:outputLabel value="Customer Name" for="account__name"/>
+           <apex:outputText value="{!account.Name}" id="account__name"/>                      
+        </apex:pageblockSectionItem>                                        
+        
+        <apex:pageblockSectionItem >
+           <apex:outputLabel value="Product" />
+            <apex:selectList value="{!ProductselectedVal}" size="1"> 
+                <apex:selectOptions value="{!ProductOptions}" /> 
+            </apex:selectList>
+           
+        </apex:pageblockSectionItem>                                        
+
+        <apex:pageblockSectionItem >
+           <apex:outputLabel value="Status"/>  
+            <apex:selectList value="{!StatusselectedVal}" size="1"> 
+                <apex:selectOptions value="{!StatusOptions}" /> 
+            </apex:selectList>                             
+        </apex:pageblockSectionItem>
+                                                                
+        <apex:pageblockSectionItem >
+           <apex:outputLabel value="Degree" />
+            <apex:selectList value="{!DegreeselectedVal}" size="1"> 
+                <apex:selectOptions value="{!DegreeOptions}" /> 
+            </apex:selectList>                         
+        </apex:pageblockSectionItem>                                
+        
+        <apex:pageblockSectionItem >
+           <apex:outputLabel value="Lead Routing" />
+            <apex:selectRadio value="{!LeadRoutingselectedVal}" > 
+                <apex:selectOptions value="{!LeadRoutingOptions}" /> 
+            </apex:selectRadio>                         
+        </apex:pageblockSectionItem>
+        
+          
+        <apex:pageblockSectionItem >
+           <apex:outputLabel value="Market Type"/>  
+            <apex:selectList value="{!MarketTypeselectedVal}" size="1"> 
+                <apex:selectOptions value="{!MarketTypetOptions}" /> 
+                <apex:actionSupport reRender="pbSection,jspanel,market_content" status="status" event="onchange" action="{!checkMarketType}"/>                
+            </apex:selectList>                             
+        </apex:pageblockSectionItem>
+
+       <apex:pageblockSectionItem >
+        <apex:outputLabel value="Quantity" />
+        <apex:inputtext style="width: 30px "  value="{!Quantity}"/>
+       </apex:pageblockSectionItem>
+       
+                                                                               
+        <apex:pageblockSectionItem rendered="{!stateFlag}" >
+           <apex:outputLabel value="State"/>  
+            <apex:selectList value="{!stateSelected}" size="1"> 
+                <apex:selectOptions value="{!StateOptions}" /> 
+                <apex:actionSupport reRender="pbSection" status="status" event="onchange" action="{!queryDependecies}"/>  
+            </apex:selectList>                                              
+        </apex:pageblockSectionItem>
+                          
+        <apex:pageblockSectionItem />
+                          
+        <apex:pageblockSectionItem rendered="{!countyFlag}">
+           <apex:outputLabel value="County"/>  
+            <c:MultiselectPicklist leftLabel="Available"
+                leftOption="{!countyOptions}"
+                rightLabel="Selected"
+                rightOption="{!selectedcountyOptions}"
+                size="5"
+                width="150px"/>                                           
+        </apex:pageblockSectionItem>
+       
+       <apex:pageblockSectionItem rendered="{!cityFlag}">
+           <apex:outputLabel value="City"/>  
+            <c:MultiselectPicklist leftLabel="Available"
+                leftOption="{!cityOptions}"
+                rightLabel="Selected"
+                rightOption="{!selectedcityOptions}"
+                size="5"
+                width="150px"/>                                                                                                        
+        </apex:pageblockSectionItem>
+                                                                                                                                                                                                                   
+    </apex:pageblockSection>    
+    <apex:pageblockSection columns="2">
+    
+         <apex:pageblockSectionItem >
+         <apex:outputLabel value="Market" />
+           <apex:inputtextarea disabled="false" id="market_content" cols="45" rows="7" value="{!marketTextArea}" />
+         </apex:pageblockSectionItem>
+         
+         <apex:pageblockSectionItem >
+             <apex:commandButton value="Update Market" status="status" action="{!GenerateTable}" reRender="jspanel,market_content"  />
+         </apex:pageblockSectionItem>
+                  
+    </apex:pageblockSection>    
+    
+    <apex:pageblockSection >   
+       <apex:outputPanel id="jspanel">
+          <apex:pageblockTable rendered="{!pbTable}" var="omarket" value="{!marketList}">
+             
+              <apex:column headerValue="Product" >
+                <apex:selectList value="{!omarket.Product}" size="1"> 
+                        <apex:selectOptions value="{!ProductOptions}" /> 
+                </apex:selectList>
+              </apex:column>
+
+              <apex:column headerValue="Market Number" >
+                 <apex:outputText >{!omarket.marketText}</apex:outputText>
+              </apex:column>
+              
+              
+              <apex:column headerValue="Status" >
+                <apex:selectList value="{!omarket.Status}" size="1"> 
+                        <apex:selectOptions value="{!StatusOptions}" /> 
+                </apex:selectList>
+              </apex:column>
+            
+              <apex:column headerValue="MarketType" >
+                <apex:selectList value="{!omarket.MarketType}" size="1"> 
+                        <apex:selectOptions value="{!MarketTypetOptions}" /> 
+                </apex:selectList>
+              </apex:column>
+
+              <apex:column headerValue="Degree" >
+                <apex:selectList value="{!omarket.Degree}" size="1"> 
+                        <apex:selectOptions value="{!DegreeOptions}" /> 
+                </apex:selectList>
+              </apex:column>
+              
+              <apex:column headerValue="LeadRouting" >
+                <apex:selectRadio value="{!omarket.LeadRouting }"> 
+                        <apex:selectOptions value="{!LeadRoutingOptions}" /> 
+                </apex:selectRadio>
+              </apex:column>
+
+              <apex:column headerValue="Quantity" >
+                    <apex:inputtext style="width: 30px " value="{!omarket.Quantity}"/>
+              </apex:column>
+                                                                                    
+                                                                     
+          </apex:pageblockTable>
+       </apex:outputPanel>                                                                       
+    </apex:pageblockSection>
+</apex:pageblock>
+</apex:form>
+</apex:page>

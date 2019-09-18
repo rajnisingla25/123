@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<index>
+	<title>Source of CustomWorkflowExample</title>
+	<nodes>
+		<node label="html-template">
+			<node label="history">
+				<node label="history.css" icon="cssIcon" url="source/html-template/history/history.css.html"/>
+				<node label="history.js" url="source/html-template/history/history.js.txt"/>
+				<node label="historyFrame.html" icon="htmlIcon" url="source/html-template/history/historyFrame.html"/>
+			</node>
+			<node label="AC_OETags.js" url="source/html-template/AC_OETags.js.txt"/>
+			<node label="index.template.html" icon="htmlIcon" url="source/html-template/index.template.html"/>
+			<node label="playerProductInstall.swf" icon="swfIcon" url="source/html-template/playerProductInstall.swf"/>
+		</node>
+		<node label="libs">
+		</node>
+		<node label="src" icon="classpathIcon" expanded="true">
+			<node label="diagrammer" icon="packageIcon" expanded="true">
+				<node label="CustomLink.as" icon="actionScriptIcon" url="source/diagrammer/CustomLink.as.html"/>
+				<node label="LinkContextPanel.mxml" icon="mxmlIcon" url="source/diagrammer/LinkContextPanel.mxml.html"/>
+				<node label="QuotationInProcess.mxml" icon="mxmlIcon" url="source/diagrammer/QuotationInProcess.mxml.html"/>
+				<node label="SamplesInProcess.mxml" icon="mxmlIcon" url="source/diagrammer/SamplesInProcess.mxml.html"/>
+				<node label="SendNotification.mxml" icon="mxmlIcon" url="source/diagrammer/SendNotification.mxml.html"/>
+				<node label="WaitingCustomerConfirmation.mxml" icon="mxmlIcon" url="source/diagrammer/WaitingCustomerConfirmation.mxml.html"/>
+				<node label="WaitingInitialPayment.mxml" icon="mxmlIcon" url="source/diagrammer/WaitingInitialPayment.mxml.html"/>
+				<node label="WorkflowBaseNode.as" icon="actionScriptIcon" url="source/diagrammer/WorkflowBaseNode.as.html"/>
+			</node>
+			<node label="diagrammer.assets">
+				<node label="images">
+					<node label="development-approved.png" icon="imageIcon" url="source/diagrammer/assets/images/development-approved.png.html"/>
+					<node label="development-in-process.png" icon="imageIcon" url="source/diagrammer/assets/images/development-in-process.png.html"/>
+					<node label="inspection-in-process.png" icon="imageIcon" url="source/diagrammer/assets/images/inspection-in-process.png.html"/>
+					<node label="mail.png" icon="imageIcon" url="source/diagrammer/assets/images/mail.png.html"/>
+					<node label="order-in-process.png" icon="imageIcon" url="source/diagrammer/assets/images/order-in-process.png.html"/>
+					<node label="quotation-approved.png" icon="imageIcon" url="source/diagrammer/assets/images/quotation-approved.png.html"/>
+					<node label="quotation-in-process.png" icon="imageIcon" url="source/diagrammer/assets/images/quotation-in-process.png.html"/>
+					<node label="samples-in-process.png" icon="imageIcon" url="source/diagrammer/assets/images/samples-in-process.png.html"/>
+					<node label="shipment-in-process.png" icon="imageIcon" url="source/diagrammer/assets/images/shipment-in-process.png.html"/>
+					<node label="shipped.png" icon="imageIcon" url="source/diagrammer/assets/images/shipped.png.html"/>
+					<node label="waiting-balance-payment.png" icon="imageIcon" url="source/diagrammer/assets/images/waiting-balance-payment.png.html"/>
+					<node label="waiting-balance.png" icon="imageIcon" url="source/diagrammer/assets/images/waiting-balance.png.html"/>
+					<node label="waiting-customer-confirmation.png" icon="imageIcon" url="source/diagrammer/assets/images/waiting-customer-confirmation.png.html"/>
+					<node label="waiting-development-payment.png" icon="imageIcon" url="source/diagrammer/assets/images/waiting-development-payment.png.html"/>
+					<node label="waiting-initial-payment.png" icon="imageIcon" url="source/diagrammer/assets/images/waiting-initial-payment.png.html"/>
+					<node label="waiting-order-confirmation.png" icon="imageIcon" url="source/diagrammer/assets/images/waiting-order-confirmation.png.html"/>
+					<node label="waiting-order.png" icon="imageIcon" url="source/diagrammer/assets/images/waiting-order.png.html"/>
+					<node label="waiting-technical-drawings.png" icon="imageIcon" url="source/diagrammer/assets/images/waiting-technical-drawings.png.html"/>
+				</node>
+				<node label="style">
+					<node label="style.css" icon="cssIcon" url="source/diagrammer/assets/style/style.css.html"/>
+				</node>
+				<node label="drawing new.svg" url="source/diagrammer/assets/drawing new.svg"/>
+			</node>
+			<node label="diagrammer.skins" icon="packageIcon" expanded="true">
+				<node label="GridSkin.as" icon="actionScriptIcon" url="source/diagrammer/skins/GridSkin.as.html"/>
+			</node>
+			<node selected="true" label="CustomWorkflowExample.mxml" icon="mxmlAppIcon" url="source/CustomWorkflowExample.mxml.html"/>
+		</node>
+	</nodes>
+</index>

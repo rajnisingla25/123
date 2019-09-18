@@ -1,0 +1,49 @@
+<apex:page standardController="Lead" extensions="LeadManualCreationController">
+<apex:messages />
+  <apex:form >
+      <apex:includeScript value="/support/console/40.0/integration.js"/>
+      <script>
+          function redirecturl(){
+                  console.log('Am I in console'+sforce.console.isInConsole());
+                if (sforce.console.isInConsole()) {
+                     sforce.console.getFocusedSubtabId(closeSubtab);
+                     sforce.console.getEnclosingPrimaryTabId(refreshTabPrimary);
+                }
+                else{
+                    window.parent.location.href = '/{!Lead.Account__c}';
+                }
+                
+            }
+            
+            var closeSubtab = function closeSubtab(result) {
+                //Now that we have the primary tab ID, we can close it
+                var tabId = result.id;
+                sforce.console.closeTab(tabId);
+            };
+            var refreshTabPrimary=function refreshTabPrimary(result){
+                var tabId = result.id;
+                sforce.console.refreshPrimaryTabById(tabId, true,null);
+            }
+     </script>
+     
+      <apex:pageBlock title="New Lead" mode="edit">
+          <apex:pageBlockButtons >
+              <apex:commandButton action="{!save}" value="Save"/>
+              <apex:commandButton action="{!cancel}" value="Cancel"/>
+          </apex:pageBlockButtons>
+          <apex:pageBlockSection title="Lead Fields" columns="2">
+              <apex:inputField value="{!Lead.FirstName}"/>
+              <apex:inputField value="{!Lead.LastName}"/>
+              <apex:inputField value="{!Lead.Email}"/>
+              <apex:inputField value="{!Lead.Phone}"/>
+              <apex:inputField value="{!Lead.Account__c}"/>              
+              <!--<apex:inputField value="{!Lead.Product__c}"/>-->
+              <apex:inputField value="{!Lead.Business_Unit__c}" required="true" />
+              <apex:inputField value="{!Lead.Lead_Origin__c}" required="true"/>
+              <apex:inputField value="{!Lead.Product_Type__c}" required="true"/>
+              <apex:inputField value="{!Lead.Description}"/>
+              <apex:inputField value="{!Lead.Ignore_Owner_Assignment__c}"/>          
+          </apex:pageBlockSection>
+      </apex:pageBlock>           
+  </apex:form>
+</apex:page>

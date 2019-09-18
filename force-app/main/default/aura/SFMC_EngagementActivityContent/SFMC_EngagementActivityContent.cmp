@@ -1,0 +1,36 @@
+<aura:component >    
+    
+    <aura:attribute name="activityParseWrappers" type="map" />
+       
+           
+    <aura:iteration items="{!v.activityParseWrappers}" var="activityWrapper">        	
+        <lightning:layout >
+            <lightning:layoutItem class="slds-p-vertical_small" size="1" >
+                <div class="imagedivclass" aura:id="imageDiv">
+                    
+                    <img src="{!activityWrapper.iconPath}"></img>
+                    
+                </div>
+            </lightning:layoutItem>
+            <lightning:layoutItem class="slds-p-vertical_small" size="9" >
+                <div class="header-column">
+                    <p>
+                        <a href="{!activityWrapper.activityURL}" target="_blank" >{!activityWrapper.activityDescriptionTitle} </a>
+                        
+                    </p>
+                    <!-- detail component-->
+                    <c:SFMC_EngagementActivityColumn activityAttributeWrappers="{!activityWrapper.attributeWrapper}"/>
+                </div>
+            </lightning:layoutItem>
+            <lightning:layoutItem class="slds-p-vertical_small" size="2" >
+                <div >
+                    <aura:if isTrue="{!not(empty(activityWrapper.activityTime))}">
+                        <p class="timeline" >{!activityWrapper.activityTime} | {!activityWrapper.activityDate}</p> 
+                    </aura:if>
+                </div>
+            </lightning:layoutItem>
+            
+        </lightning:layout>
+    </aura:iteration>
+     
+</aura:component>

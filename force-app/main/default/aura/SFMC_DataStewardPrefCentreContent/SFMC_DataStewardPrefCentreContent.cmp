@@ -1,0 +1,117 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" controller="SFMC_PreferenceCenterController">
+    
+    <aura:attribute name="contactMethodId" type="String" />    
+    <aura:attribute name="showConfirmationPage" type="boolean" default="false" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:handler event="c:SFMC_PreferenceEvent" action="{!c.fetchEventValue}" />
+
+    <aura:attribute name="userType" type="String" />
+    <aura:attribute name="headerCenterBigText" type="String"/>
+    <aura:attribute name="headerCenterSmallText1" type="String"/>
+    <aura:attribute name="headerCenterSmallText2" type="String"/>
+    <aura:attribute name="isGuest" type="boolean" />
+    <aura:attribute name="brandType" type="String" />
+    <aura:attribute name="contactMethodIdErrorMsg" type="String" />
+    <aura:attribute name="contactMethodIdError" type="boolean" default="false"/>
+    <aura:attribute name="checkBoxErrorMsg" type="String"/>
+    <aura:attribute name="checkBoxError" type="boolean" default="false"/>
+    <aura:attribute name="isDataSteward" type="boolean" default="false"/>
+    <aura:attribute name="businessUnitError" type="boolean" default="false"/>
+    <aura:attribute name="businessUnitErrorMsg" type="String"/>
+    <aura:attribute name="userId" type="String" />
+    <aura:attribute name="noAccess" type="boolean" />
+    <aura:attribute name="noAccessMsg" type="String"/>
+    <aura:attribute name="isError" type="boolean" default="false"/>
+    
+    <div id="contentdiv ">
+    <div class="slds-p-top_large article">			           
+        
+        <aura:if isTrue="{!!v.showConfirmationPage}"> 
+            
+                <h1><div class="headerText slds-text-align_center">{!v.headerCenterBigText}</div></h1>
+                <div class="slds-text-heading_small slds-text-align_center slds-p-top_xx-small">
+                    <p>{!v.headerCenterSmallText1}<br/>{!v.headerCenterSmallText2}</p>
+                </div>
+                
+                <div class="slds-p-vertical_x-large"> </div>
+
+            <aura:if isTrue="{!v.businessUnitError}">
+                <ui:message title="Error" severity="error" closable="false">
+                            {!v.businessUnitErrorMsg}
+                </ui:message>
+            </aura:if>
+
+            <aura:if isTrue="{!v.noAccess}">
+                <ui:message title="Error" severity="error" closable="false">
+                            {!v.noAccessMsg}
+                </ui:message>
+            </aura:if>
+            <aura:if isTrue="{!or(and(empty(v.userId),v.contactMethodIdError,empty(v.brandType)),v.isError)}">
+                <ui:message title="Error" severity="error" closable="false">
+                            {!v.contactMethodIdErrorMsg}
+                </ui:message>
+            </aura:if>    
+                
+                <!-- called form component -->
+                
+            <aura:if isTrue="{!!empty(v.contactMethodId)}">
+                <aura:if isTrue="{!and(!v.isError,or(and(v.userType == 'Standard',!v.businessUnitError),and(v.brandType == $Label.c.SFMC_Brand_RDC,v.userType == 'Guest'), and(v.userType == 'Standard',v.brandType == $Label.c.SFMC_Brand_RDC)))}"> 
+                    <h4 class="{!v.userType == 'Standard' ? 'brandClass slds-m-top_large' : 'slds-hide'}">Realtor.com</h4>
+                    <c:SFMC_PreferenceEmailForm aura:id="rdcEmailForm"
+                                                brandType="{!$Label.c.SFMC_Brand_RDC}"
+                                                contactMethodId="{!v.contactMethodId}"
+                                                contactMethodIdErrorMsg="{!v.contactMethodIdErrorMsg}"
+                                                isDataSteward="{!v.isDataSteward}"
+                                                checkBoxErrorMsg="{!v.checkBoxErrorMsg}"
+                                                checkBoxError="{!v.checkBoxError}"
+                                                isError="{!v.isError}"/>
+                    <!--<lightning:button class="slds-m-top_large slds-align_absolute-center buttonClass"
+                                      variant="destructive"
+                                      label="Update"
+                                      title="Update"
+                                      onclick="{! c.updatePreferences }"/>-->
+                    
+                </aura:if>
+                <aura:if isTrue="{!and(!v.isError,or(and(v.userType == 'Standard',!v.businessUnitError),and(v.brandType == $Label.c.SFMC_Brand_Top_Producer,v.userType == 'Guest'), and(v.userType == 'Standard',v.brandType == $Label.c.SFMC_Brand_Top_Producer)))}"> 
+                    <h4 class="{!v.userType == 'Standard' ? 'brandClass slds-m-top_large' : 'slds-hide'}">TopProducer.com</h4>
+
+                    <c:SFMC_PreferenceEmailForm aura:id="tpEmailForm"
+                                                brandType="{!$Label.c.SFMC_Brand_Top_Producer}"
+                                                contactMethodId="{!v.contactMethodId}"
+                                                contactMethodIdErrorMsg="{!v.contactMethodIdErrorMsg}"
+                                                isDataSteward="{!v.isDataSteward}"
+                                                checkBoxErrorMsg="{!v.checkBoxErrorMsg}"
+                                                checkBoxError="{!v.checkBoxError}"
+                                                isError="{!v.isError}"/>
+                    <!--<lightning:button class="slds-m-top_large slds-align_absolute-center buttonClass"
+                                      variant="destructive"
+                                      label="Update"
+                                      title="Update"
+                                      onclick="{! c.updatePreferences }" />-->
+                    
+                </aura:if>
+
+                <aura:if isTrue="{!and(and(v.userType == 'Standard',!v.businessUnitError),!v.isError,!v.isGuest)}">
+                    <lightning:button class="slds-m-top_large slds-align_absolute-center buttonClass"
+                                      variant="destructive"
+                                      label="Update"
+                                      title="Update"
+                                      onclick="{! c.updatePreferences }" />
+                </aura:if>
+                <aura:set attribute="else">
+                    <ui:message title="Error" severity="error" closable="false">
+                            {!v.contactMethodIdErrorMsg}
+                    </ui:message>
+                </aura:set>
+                
+			</aura:if>
+                <aura:set attribute="else">                    
+                    <c:SFMC_PreferenceConfirmation brandType="{!v.brandType}" userId="{!v.userId}"/>
+
+                </aura:set>
+            
+        </aura:if>     
+    </div>
+    </div>
+</aura:component>

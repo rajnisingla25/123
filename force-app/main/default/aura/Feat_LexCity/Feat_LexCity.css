@@ -1,0 +1,51 @@
+.THIS article {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 15px; }
+
+/*
+* -- Features wrap --
+*/
+.THIS #features-wrap {
+  padding: 0px 40px 80px 40px; }
+ .THIS #features-wrap h2 {
+    margin-bottom:15px;
+    font-size: 24px;
+    font-weight: bold; }
+ .THIS #features-wrap h3 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2d2a26; }
+ .THIS #features-wrap .feature {
+    padding: 35px 20px 0px; }
+  .THIS  #features-wrap .feature img {
+      max-width: 80%;
+      height:auto;
+      margin-bottom: 0px; }
+  .THIS  #features-wrap .feature h4 {
+      font-size: 18px;
+      line-height: 20px;
+      font-weight: normal;
+      color: #2d2a26;
+      margin-bottom: 0; }
+     .THIS #features-wrap .feature h4 .red {
+        color: #101d61; }
+ .THIS #features-wrap .disclaimer {
+    margin-top: 40px; }
+  .THIS  #features-wrap .disclaimer p {
+      font-size: 10px;
+      color: #707271; }
+
+@media (max-width: 991px){
+  .THIS #features-wrap .feature {
+    padding: 0px 20px 0px 0px; }
+  .THIS .img-responsive {
+      max-width:95% !important;
+}
+ .THIS #features-wrap h2 {
+    font-size: 21px;
+    }
+ .cFeat_LexCity #features-wrap h4 {
+    font-size: 16px;
+    }
+}

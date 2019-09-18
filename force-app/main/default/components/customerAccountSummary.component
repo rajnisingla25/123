@@ -1,0 +1,8 @@
+<apex:component controller="sendCustomerAccSummaryPDFByEmail" access="global">
+    <apex:outputText rendered="{!if($Profile.Name == 'Move Service Rep', '','none')}">Your realtor.com® team</apex:outputText>
+    <apex:outputText rendered="{!if(($Profile.Name == 'Move Service Rep' || isEmailSignature == true), 'none','')}">{!$User.FirstName} {!$User.LastName}
+                 <br/>{!$User.Email}
+                 <br/>{!$User.Phone} </apex:outputText> 
+    <apex:outputText rendered="{!if(($Profile.Name != 'Move Service Rep' && isEmailSignature == true), '','none')}">{!$User.FirstName} {!$User.LastName}</apex:outputText>
+    
+</apex:component>

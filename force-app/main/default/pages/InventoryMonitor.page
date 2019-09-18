@@ -1,0 +1,672 @@
+<!--<apex:page sidebar="false" showHeader="false"  html-width="100%" standardController="Account" standardstylesheets="false" extensions="AccountTop10ListExt,InventoryController,CreateMyQuoteControllerWL" readOnly="true">-->
+<apex:page sidebar="false" showHeader="false"  html-width="100%" standardController="Account" standardstylesheets="false" extensions="InventoryController" readOnly="true">
+
+<head>
+    <title>Inventory Monitor</title>
+    
+    
+<apex:includescript value="//code.jquery.com/jquery-1.11.1.min.js" / >
+<apex:includescript value="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js" />
+<apex:includescript value="//cdn.datatables.net/tabletools/2.2.4/js/dataTables.tableTools.min.js" />
+
+<!-- 
+<apex:includescript value="//cdn.datatables.net/fixedcolumns/3.0.0/js/dataTables.fixedColumns.min.js" />
+
+
+<apex:includescript value="//cdn.datatables.net/select/1.0.1/js/dataTables.select.min.js"/>
+
+<apex:stylesheet value="//cdn.datatables.net/select/1.0.1/css/select.dataTables.min.css"/>  -->
+
+<apex:stylesheet value="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.css"/>
+
+ <apex:includeScript value="{!URLFOR($Resource.DataTablesEditor , '/Editor-1.4.2/js/dataTables.editor.min.js' )}"/>
+  
+<apex:includescript value="{!$Resource.inventory_Script}" />
+
+<apex:stylesheet value="//cdn.datatables.net/1.10.4/css/jquery.dataTables.css" />
+ <apex:stylesheet value="//cdn.datatables.net/tabletools/2.2.4/css/dataTables.tableTools.css" />
+<apex:stylesheet value="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css" />
+<apex:stylesheet value="{!$Resource.inventory_Style}" />
+<apex:includescript value="//code.jquery.com/ui/1.10.3/jquery-ui.js" />
+
+
+</head>
+<body>
+ 
+    <div id="wrapper">
+    <div class="header">
+        <a href="https://c.cs17.visual.force.com"><div class="logo"></div><div class="profile"><span class="name">{!MyUserName1}  </span></div>
+      </a>  <div class="rowCreateAlert">New row has been Created</div>
+    </div>
+    <div id="newPagePop">
+    <div id="new-pannel">
+      
+      <div id="new-pannelHead">
+      <span id="close">x</span>
+      <p class="heading">Create New Entry</p><div class="validationAlert">Please don't left the column unfilled</div>
+      </div>
+      <form>
+          <div id="new-pannelBody">
+          <table>
+              <tbody>
+              <tr>
+                <td>
+                    <div class="form-group">
+                        <label for="Student">Reservation id<span class="important">*</span></label>
+                        <input type="number" class="validation"/>
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <label for="Student">Transaction id</label>
+                        <input type="number" class="validation no-valid"/>
+                    </div>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                    <div class="form-group">
+                        <label for="Student">Line Item Id<span class="important">*</span></label>
+                        <input type="number" class="validation"/>
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <label for="Student">Product Name<span class="important">*</span></label>
+                        <select class="drop-down validation">
+                            <option>Connection for Co-Brokerage</option>
+                            <option>Featured Homes</option>
+                            <option>FAC</option>
+                            <option>Tigerleads</option>
+                            <option>DAP</option>
+                        </select>
+                    </div>
+                </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Product Type<span class="important">*</span></label>
+                            <select class="drop-down validation">
+                                <option>Postal Code</option>
+                                <option>City</option>
+                                <option>Country</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Product Size<span class="important">*</span></label>
+                            <select class="drop-down validation">
+                                <option>Full</option>
+                                <option>Half</option>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Inventory Pool<span class="important">*</span></label>
+                            <select class="drop-down validation">
+                                <option>Available</option>
+                                <option>Pending</option>
+                                <option>Allocation</option>
+                                <option>Sales Event Pool</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Market Name<span class="important">*</span></label>
+                            <input type="text" class="validation"/>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Party Id<span class="important">*</span></label>
+                            <input type="number" class="validation"/>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Lead Type<span class="important">*</span></label>
+                            <select class="drop-down validation">
+                                <option>Flex</option>
+                                <option>Fast</option>
+                            </select>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Lead Type<span class="important">*</span></label>
+                            <input type="text" class="validation"/>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Market State<span class="important">*</span></label>
+                            <input type="text" class="validation"/>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Reserved Qty<span class="important">*</span></label>
+                            <input type="number" class="validation"/>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Market Id</label>
+                            <input type="number" class="validation no-valid" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Lock Release Date<span class="important">*</span></label>
+                            <input type="text" class="validation datePicker"/>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Inventory Status</label>
+                            <input type="text" class="validation no-valid" />
+                        </div>
+                    </td>
+                 </tr>
+                 <tr>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Created Date</label>
+                            <input type="text" class="validation no-valid datePicker" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Updated Date</label>
+                            <input type="text" class="validation no-valid datePicker" />
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Reserved By</label>
+                            <input type="text" class="validation no-valid" />
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+        </table>
+          </div>
+          <div id="new-pannelFooter">
+             <div class="create-button button-color button">
+                    <span>Create</span>
+                </div>
+          </div>
+      </form>
+      
+    </div>
+  
+    <div class="blurBg"></div>
+    </div>
+    <div class="contentWrapper">
+    <apex:form >
+    <div class="pannel">
+        <div class="pannel-heading"><span class="minus accordCont"></span>Inventory Monitor</div>
+        <div class="pannel-body">
+            <div class="form-group">
+               
+                <label for="Student">Filter By:</label>
+                
+         
+  
+  
+
+                    <apex:selectList style=" float: left;width:200px;" value="{!FilterType}" title="Value =" multiselect="false" size="1"  >
+                                      
+
+                       <apex:selectOptions value="{!FilterList}" />
+                       <apex:actionSupport event="onclick" rerender="wlstatus" />
+                   
+                    </apex:selectList>
+                  
+           </div>
+            <div class="form-group">
+          
+               <label for="Student">Select Value:</label>
+                 
+
+                   
+                    <apex:selectList id="wlstatus" style="float: left;width:250px;" value="{!WaitlistStatus}" 
+      title="Status " multiselect="false" size="1" onkeypress="return noenter(event);"  >
+                    <apex:actionSupport event="onclick" rerender="account__input"  />
+                    <apex:selectOptions value="{!WaitlistStatusItems}"/>
+       
+                         </apex:selectList>
+        
+            </div>
+                     <apex:commandButton image="{!$Resource.refresh_image}" action="{!makeSOACallforGet}"  />
+           
+        </div>
+    </div>
+        <div class="lock-button-cont">
+       <!-- <div class="lock-button button-color button">
+                <img src="{!$Resource.lock_image}"/>
+                <span>Lock Inventory</span>
+            </div>
+            
+            <apex:commandButton image="{!$Resource.lock_image}" onclick="lock()" 
+       rerender="example"
+       
+       />-->
+
+            
+ <!--           <div class="unlock-button button-color button">
+                <img src="{!$Resource.unlock_image}"/>
+                <span>Unlock Inventory</span>
+            </div>
+            
+            -->
+           
+                   <apex:commandButton image="{!$Resource.unlock_image}"   onclick="callunlock()"
+       rerender="example"
+        />  
+
+   </div>
+             <apex:actionFunction action="{!CallHTTP}" name="UnlockInventory" rerender="example">
+             <apex:param name="firstParam" assignTo="{!Reservation}"  value="" />
+            <apex:param name="secondParam" assignTo="{!MyMethod}"  value="" />
+        <apex:param name="thirdParam" assignTo="{!MyTransactionId}"  value="" />
+       <apex:param name="fourthParam" assignTo="{!MyLineItemId}"  value="" />
+       <apex:param name="fifthParam" assignTo="{!MyProductName}"  value="" />
+       <apex:param name="sixthParam" assignTo="{!MyProductType}"  value="" />
+       <apex:param name="seventhParam" assignTo="{!MyProductSize}"  value="" />
+       <apex:param name="eightParam" assignTo="{!MyInventoryPool}"  value="" />
+      
+       <apex:param name="ninethParam" assignTo="{!MyMarketName}"  value="" />
+       <apex:param name="tenthParam" assignTo="{!MyPartyId}"  value="" />
+       
+       <apex:param name="elevelParam" assignTo="{!MyLeadType}"  value="" />
+       <apex:param name="twelveParam" assignTo="{!MyMarketState}"  value="" />
+       
+       <apex:param name="thirteenParam" assignTo="{!MyReservedQty}"  value="" />
+       
+       <apex:param name="fourteenParam" assignTo="{!MyMarketId}"  value="" />
+       
+       <apex:param name="fifteenParam" assignTo="{!MyLockReleaseDate}"  value="" />
+       <apex:param name="sixteenParam" assignTo="{!MyInventoryStatus}"  value="" />
+       
+       <apex:param name="seventeenParam" assignTo="{!MyCreatedDate}"  value="" />
+       <apex:param name="eighteenParam" assignTo="{!MyUpdatedDate}"  value="" />
+       
+          <apex:param name="ninteenParam" assignTo="{!MyReservedBy}"  value="" />
+     
+        
+        
+       
+        </apex:actionFunction>
+   
+        <div class="feature-button-cont">
+            <a class='optionButton align-btn DTTT_button'><span>Options</span></a>
+        </div>
+        
+               
+    
+       
+        
+        <apex:actionFunction name="doSearchAF" action="{!makeSOACallforGet}" />
+
+        
+         </apex:form>
+        <div id="tableHeadVal" >
+            <table cellspacing="5">
+            <tbody>
+            <tr>
+                <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Reservation id</span></label></td>
+                <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Transaction id</span></label></td>
+                <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Line Item Id</span></label></td>
+                <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Proudct Name</span></label></td>
+            </tr>
+            <tr>
+                <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Start date</span></label></td>
+                <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Product Type</span></label></td>
+                <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Inventory Pool</span></label></td>
+                <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Market Name</span></label></td>
+            </tr>
+            <tr>
+                <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Party Id</span></label></td>
+                <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Lead Type</span></label></td>
+                <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Market State</span></label></td>
+                 <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Reserved Qty</span></label></td>
+            </tr>
+            <tr>
+               <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Created Date</span></label></td>
+                <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Market Id</span></label></td>
+                <td><label><input type="checkbox" class="check-hide" checked="true"/><span>
+                 Release Date</span></label></td>
+                <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Inventory Status</span></label></td>
+            </tr>
+            <tr>
+                
+                <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Updated Date</span></label></td>
+                <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Reserved By</span></label></td>
+            </tr>
+            </tbody>
+            </table>
+        </div>
+        
+        
+  
+        
+        <table id="example" class="display" cellpadding="0" cellspacing="0" border="0" width="100%">
+            <thead>
+                <tr>
+                    <th></th> 
+                    <th>Reservation id </th>
+                   
+                    <th>Transaction id</th>
+                    <th>Line Item Id</th>
+                    <th>Proudct Name</th>
+                    <th>Start date</th>
+                    <th>Product Type</th>
+                    <th>Inventory Pool</th>
+                    <th>Market Name</th>
+                    <th>Party Id</th>
+                    <th>Lead Type</th>
+                    <th>Market State</th>
+                    <th>Reserved Qty</th>
+                    <th>Market Id</th>
+                    <th>Lock Release Date</th>
+                    <th>Inventory Status</th>
+                    <th>Created Date</th>
+                    <th>Updated Date</th>
+                    <th>Reserved By</th>
+                </tr>
+            </thead>
+ 
+            <tbody>
+             <apex:repeat value="{!accountwaitlist}" var="wl1">
+              <tr >
+               <td></td>
+               <td>{!wl1.reservation_id} </td>
+               <td>{!wl1.transaction_id} </td>
+               <td>{!wl1.line_item_id}  </td>
+               <td>{!wl1.product_name}</td>
+               <td>{!wl1.product_type}</td>    
+               <td>{!wl1.product_size}</td>
+               <td>{!wl1.inventory_pool}</td>  
+               <td>{!wl1.market_name}</td>
+               <td>{!wl1.party_id }</td>
+               <td>{!wl1.lead_type}</td>
+               <td>{!wl1.market_state_id}</td> 
+               <td>{!wl1.reserved_quantity}</td>
+               <td>{!wl1.market_id }</td>
+               <td>{!wl1.lock_release_date}</td>
+               <td>{!wl1.inventory_status}</td>       
+               <td>{!wl1.created_date}</td> 
+               <td>{!wl1.UpdatedDate}</td>    
+               <td>Unknown</td>             
+               </tr>                                 
+              </apex:repeat> 
+            </tbody>
+        </table>
+        
+        <!-- 
+<apex:form >
+
+    <apex:actionFunction action="{!makeSOACallforGet}" name="getSelectedResults" rerender="showstate">
+        <apex:param name="firstParam" assignTo="{!MyFilter}"  value="" />
+        <apex:param name="secondParam" assignTo="{!AccountId}"  value="" />
+        
+        
+       
+    </apex:actionFunction>
+    </apex:form>
+ -->
+      
+      </div>
+     
+     </div>
+     
+     <style>
+     tr td:first-child {
+        text-align: center;
+    }
+ 
+    tr td:first-child:before {
+        content: "\f096"; /* fa-square-o */
+        font-family: FontAwesome;
+    }
+ 
+    tr.selected td:first-child:before {
+        content: "\f046"; /* fa-check-square-o */
+    }
+     
+     </style>
+     
+     
+    <div class="footer">© 2015 Move, Inc. All rights reserved</div>
+    
+ 
+    
+</body>
+  
+
+ 
+ <script>
+ function callunlock()
+{
+
+try
+{
+ var mReservationId;
+ 
+ var oTT = TableTools.fnGetInstance( 'example' );
+ 
+ 
+ console.log('oTT is ' + oTT); 
+    var aData = oTT.fnGetSelectedData();
+                //    alert("Token Set in InitRemove ="+mToken);
+                 var  mArrayofWaitlist = aData ;
+                    console.log('aData ' + mArrayofWaitlist);
+                  var mArray = true;
+                  
+                  
+                  console.log('aData.length' + aData.length  );
+                  
+             for (var i = 0; i < aData.length; i++) {
+                            
+                            //Do something
+                            
+                        mReservationId =  mArrayofWaitlist[i].reservationid;
+                             
+                             
+                                                        mReservationId = mArrayofWaitlist[i][1];
+                              
+                              
+
+console.log('mReservationId Is' + mReservationId);
+                         
+
+                            if (mReservationId !=null)
+                            {
+                            var mMyMethod ='Delete';
+        
+                                   console.log('Called UnlockInventory' + mReservationId);
+                            
+                           UnlockInventory(mReservationId ,mMyMethod);
+                             doSearchAF();
+                            
+                            }
+
+
+               } 
+
+}catch(e)
+{
+console.log('error occured when calling Delete Lock' + e);
+
+}
+
+
+return true;
+}
+
+
+function lock()
+{
+
+   var oTT = TableTools.fnGetInstance( 'example' );
+    var aData = oTT.fnGetSelectedData();
+                //    alert("Token Set in InitRemove ="+mToken);
+                 var  mArrayofWaitlist = aData ;
+                    console.log(mArrayofWaitlist);
+                  var mArray = true;
+
+     var reservationid;
+     var transactionid ;
+     var lineItemid;
+     var productname;
+     var producttype;
+     var productsize;
+     var inventorypool;
+     var marketname;
+     var partyid;
+     var leadtype;
+     var marketstate;
+     var reservedqty;
+     var marketid;
+     var lockreleasedate;
+     var inventorystatus;
+     var createddate; 
+     var updateddate; 
+     var reservedby ; 
+
+try
+{
+    
+        var mMyMethod ='Put';
+               reservationId   = aData[0].reservationid; 
+            transactionid=  aData[0].transactionid ;
+            
+            lineitemid = aData[0].lineitemid ;
+            productname = aData[0].productname;
+            producttype= aData[0].producttype;
+            productsize = aData[0].productsize;
+            inventorypool =aData[0].inventorypool;
+             marketname=  aData[0].marketname;
+            partyid= aData[0].partyid; 
+            leadtype = aData[0].leadtype; 
+             marketstate =  aData[0].marketstate;
+            reservedqty =    aData[0].reservedqty;
+            marketid=  aData[0].marketid;
+            lockreleasedate = aData[0].lockreleasedate;
+            
+            try
+            {
+            
+            //"2016-01-01T00:00:00.0000000+00:00"
+            
+            lockreleasedate =   lockreleasedate + 'T00:00:00.0000000+00:00';
+            
+            
+            
+         //    alert(lockreleasedate);
+            }
+            catch(e)
+            {
+            console.log('error in date conversion to UTC ' + e);
+            
+            }
+            inventorystatus = aData[0].inventorystatus;
+             createddate = aData[0].createddate;
+             updateddate = aData[0].updateddate; 
+             reservedby = aData[0].reservedby;
+         
+        
+       //  alert(reservationId + transactionid);
+         
+         if (reservationId !=null)
+            {
+            var mMyMethod ='Put';
+            
+            
+         
+     //    alert(reservationId + transactionid);
+        
+         console.log('mMyMethod' + mMyMethod);
+          UnlockInventory(
+            reservationId ,
+            mMyMethod ,
+            transactionid,
+            
+            lineitemid ,
+            productname ,
+            producttype,
+            productsize,
+            inventorypool ,
+             marketname,
+            partyid, 
+            leadtype , 
+             marketstate ,
+            reservedqty ,
+            marketid ,
+            lockreleasedate , // lock release date
+            inventorystatus ,
+             createddate ,
+             updateddate , 
+             reservedby 
+            );
+            
+            
+           }            
+            
+            
+            }
+            catch(e)
+            {
+                console.log('Printint error ' + e);
+                }
+
+
+return true;
+}
+
+
+function noenter(ev)  {
+
+        if (window.event && window.event.keyCode == 13 || ev.which == 13) {
+
+            doSearchAF();
+
+            return false;
+
+         } else {
+
+              return true;
+
+         }
+
+     }
+
+<!---Update UI--------------->
+$(document).ready(function(){
+
+$('.feature-button-cont').append($('#ToolTables_example_6'));
+$('.feature-button-cont').append($('#ToolTables_example_1'));
+$('.feature-button-cont').append($('#ToolTables_example_7'));
+$('.feature-button-cont').append($('#ToolTables_example_8'));
+});
+
+ </script>
+ 
+  </apex:page>

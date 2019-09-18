@@ -1,0 +1,123 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" >
+	<aura:attribute name="headline" type="String" />
+    <aura:attribute name="subheadline" type="String" />
+    <aura:attribute name="imagePath" type="String"/>
+    <aura:attribute name="imageSize" type="String"/>
+    <aura:attribute name="subimagePath" type="String"/>
+    <aura:attribute name="subimageSize" type="String"/>
+    <aura:attribute name="backgroundPath" type="String"/>
+    <aura:attribute name="formheadline" type="String" />
+    <aura:attribute name="formsubheadline" type="String" />
+    <aura:attribute name="bannerTextFont" type="String" />
+    <aura:attribute name="bannersubTextFont" type="String" />
+    
+    
+    <!--Form Design attributes -->
+    <aura:attribute name="formTitle" type="String"/>
+    <aura:attribute name="formButtonText" type="String" />
+    <aura:attribute name="showBigWord" type="Boolean" default="false"/>
+    <aura:attribute name="firstWordInFormTitle" type="String"/>
+    <aura:attribute name="cellNumber" type="String"/>
+    <!--Form attributes -->
+   
+    <div class="slds-align_absolute-center" id="slide1" style="{!'background:' +' url(https://b2bweb.realtor.com/web_assets/rdc/lp-images/2019/LP/referral/' + v.backgroundPath +')top center no-repeat; background-size: cover; padding-bottom:40px;'}">
+    	<div class="container align-center">
+        	<div class="slide-content align-center bottom-pad-30">
+            	<h2>{!v.subheadline}</h2>
+            	<h1 class="slds-align_absolute-center slds-m-vertical_xx-large ">
+                	<img width="{!v.imageSize}" src="{!'https://b2bweb.realtor.com/web_assets/rdc/lp-images/2019/LP/referral/'+ v.imagePath}" alt=""/>
+            	</h1>
+            	<h2 class="slds-align_absolute-center slds-m-vertical_xxx-large">
+                	<img width="{!v.subimageSize}" src="{!'https://b2bweb.realtor.com/web_assets/rdc/lp-images/2019/LP/referral/'+ v.subimagePath}" alt=""/>
+            	</h2>
+
+            	<div id="bannerwrap">
+                	<div id="formwrap">
+                  		<article>
+                    		<div class="slds-grid slds-wrap">
+                            	<div class="slds-small-size_1-of-1">
+                                    <h2 class="bannerTextStyles slds-align_absolute-center slds-m-vertical_x-large" style="{!'font-family:' + v.bannerTextFont + ';white-space: normal;max-width: 38rem;'}">
+                                        {!v.formheadline} 
+                                    </h2>
+                                    <p class="bannerTextStyles slds-align_absolute-center slds-m-bottom_large" style="{!'font-family:' + v.bannerTextFont + ';white-space: normal;max-width: 38rem;'}">
+                                        {!v.formsubheadline} 
+                                    </p>
+                                </div>
+                            </div> 
+                            <div class="slds-grid slds-wrap ">
+                      			<div class="slds-large-size_3-of-6">
+                        			<div class="steps">
+                          				<div class="step">
+                            				<div class="icon">
+                                				<img src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2019/LP/referral/invite.png" width="80" height="80" alt="" class="center-block" />
+                            					<div class="v-divider"></div>
+                            				</div>
+                            				<div class="content">
+                                				<h3>1. Invite</h3>
+                                				<p>Enter your friend's information. We'll take care of the rest.</p>
+                            				</div>
+                          				</div>
+                          				<div class="clearfix"></div>
+                          				<div class="step">
+                            				<div class="icon">
+                                				<img src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2019/LP/referral/call.png" width="80" height="80" alt="" class="center-block" />
+                              					<div class="v-divider"></div>
+                            				</div>
+                            				<div class="content">
+                              					<h3>2. Receive</h3>
+                              					<p>Our team will connect your friend with the perfect solutions for their business needs. And, since you referred them, they get 10% off.</p>
+                            				</div>
+                          				</div>
+                          				<div class="clearfix"></div>
+                          				<div class="step">
+                            				<div class="icon">
+                                				<img src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2019/LP/referral/redeem.png" width="80" height="80" alt="" class="center-block" />
+                            				</div>
+                            				<div class="content">
+                              					<h3>3. Redeem</h3>
+                              					<p>You get a complimentary $50 gift card. Your friend gets solutions that deliver. That's what we call a win-win.</p>
+                            				</div>
+                          				</div>
+                          				<div class="clearfix"></div>
+                            			<br /><br />
+                          					<p>They get 10% off their realtor<span>.</span>com<sup>&reg;</sup> solutions and you get a $50 gift card.*</p>
+                        			</div>
+                      			</div>
+                      			<div class="slds-large-size_3-of-6">
+                        			  <div class="banner-form">  
+                                       <h4>Start referring your friends</h4>
+                					  
+                        <div id="before-submission">
+                            <c:RDC_RefForm formTitle="{!v.formTitle}"
+                                                                    buttonText="{!v.formButtonText}"
+                                                                    showBigWord="{!v.showBigWord}"
+                                                                    firstWordInFormTitle="{!v.firstWordInFormTitle}"
+                                                                   
+                                                                    showPicklist="{!v.showPicklist}"/>
+                        </div>
+                       
+                    </div>
+                          		</div>
+                            </div>
+                    		
+                 	</article>
+                </div>
+            </div>
+        </div>
+    </div>
+   </div>
+    <div class="container align-center">
+        <div class="footerwrap">
+          <div class="clear"></div>
+            <div class="disclaimer">
+                <article>
+                    <div class="offer-details" >
+                        New referrals only. In order for offer to apply, the referred purchaser must not be a current customer of realtor.com. First-timer benefit. Furthermore, referral incentive applies to purchase of Connections℠ for Buyers lead solutions only. Referred purchaser will receive discount off of first purchase only, not any subsequent renewals. Referring customer will receive gift card for first purchase only, not any subsequent renewals. It's the fair way to do it.
+                        <br /><br />
+                        * Amazon.com  is not a sponsor of this promotion. Except as required by law, Amazon.com  Gift Cards ("GCs") cannot be transferred for value or redeemed for cash. GCs may be used only for purchases of eligible goods at Amazon.com  or certain of its affiliated websites. For complete terms and conditions, see www.amazon.com/gc-legal. GCs are issued by ACI Gift Cards, Inc., a Washington corporation. All Amazon ® ,™  &#38; © are IP of Amazon.com, Inc. or its affiliates. No expiration date or service fees.
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+</aura:component>

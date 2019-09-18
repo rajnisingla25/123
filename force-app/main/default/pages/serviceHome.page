@@ -1,0 +1,6 @@
+<apex:page showHeader="true" sidebar="true">
+
+<apex:pageBlock >
+   Future home of the service console homepage/whiteboard
+</apex:pageBlock>
+</apex:page>

@@ -1,0 +1,111 @@
+<aura:component implements="flexipage:availableForAllPageTypes" controller="SFMC_EngagementActivityController" access="global" >
+    <aura:attribute name="engList" type="map" />
+    <aura:attribute name="activityParseWrappers" type="map" />
+    <aura:attribute name="activityType" type="map" />
+    <aura:attribute name="selectedValue" type="string" default="All"/>
+    <aura:attribute name="selectedProduct" type="string" default="All"/>
+    <aura:attribute name="productType" type="map" />
+    
+    <aura:attribute name="isLimitExceeded" type="boolean" default="false" />
+    <aura:attribute name="isError" type="boolean" default="false" />
+    <aura:attribute name="errorMessage" type="String" default="" />
+    
+    <aura:attribute name="contactId" type="String" />
+    <aura:attribute name="setIntervalId" type="string"/>
+    
+    <aura:attribute name="totalSizeStr" type="String" default=""/> 
+    
+    <aura:attribute name="pageSize" type="Integer" default="5"/>
+    <aura:attribute name="totalSize" type="Integer" default="0"/>    
+    <aura:attribute name="offset" type="Integer" default="0"/>
+    <aura:attribute name="lastPageNumber" type="Integer" default="1"/>
+	<aura:attribute name="Spinner" type="boolean" default="false"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    
+    <div>
+        
+        <lightning:layout >
+            <lightning:layoutItem class="filtersection" size="12">
+                
+                <div class="filterclass">   
+                    <div class="slds-list_horizontal">                     
+                        <lightning:select name="filter" class="slds-list_horizontal slds-m-horizontal--xx-small" label="Activity Type" aura:id="typeId" value="{!v.selectedValue}" onchange="{!c.handleTypeChange}">
+                            <option text="{!$Label.c.SFMC_Picklist_Default_Label}" value="{!$Label.c.SFMC_Picklist_Default_Label}"/>
+                            <aura:iteration items="{!v.activityType}" var="option">                                
+                                <option text="{!option.label}" value="{!option.value}"/>
+                            </aura:iteration>
+                        </lightning:select>
+                        <lightning:select name="filter" class="slds-list_horizontal slds-m-horizontal--xx-small" label="Product Type" value="{!v.selectedProduct}" onchange="{!c.handleTypeChange}">
+                            <option text="{!$Label.c.SFMC_Picklist_Default_Label}" value="{!$Label.c.SFMC_Picklist_Default_Label}"/>
+                            <aura:iteration items="{!v.productType}" var="option">                                
+                                <option text="{!option.label}" value="{!option.value}"/>
+                            </aura:iteration>
+                        </lightning:select>
+                    </div>
+                </div>
+                
+                <aura:if isTrue="{!v.totalSize > v.pageSize}">
+                    <div class="paginationdiv">
+                        <!--<div>
+                            <lightning:button label="First" disabled="{!v.offset == 0}" aura:id="first" onclick="{!c.pagiantion}" />
+                            
+                            <lightning:button label="Previous" disabled="{!v.offset == 0}"  aura:id="previous" onclick="{!c.pagiantion}" />
+                            
+                            <lightning:button label="Next" disabled="{!v.offset + v.pageSize  >= v.totalSize}" aura:id="next" onclick="{!c.pagiantion}" />
+                            
+                            <lightning:button label="Last" disabled="{!v.offset + v.pageSize >= v.totalSize}" aura:id="last" onclick="{!c.pagiantion}" />
+                        </div>-->
+                        
+                         
+                        
+                    </div>                            
+                </aura:if>                
+            </lightning:layoutItem>
+        </lightning:layout>
+        
+        <div class="contentDiv slds-scrollable--y" aura:id="modalContent">
+            
+            <aura:if isTrue="{!or(v.activityParseWrappers.length == 0 , v.isError)}">                
+                <ui:message severity="info" closable="false">
+                    {!v.errorMessage}
+                </ui:message>                                      
+                
+                <aura:set attribute="else">
+                                        
+                    <c:SFMC_EngagementActivityContent activityParseWrappers="{!v.activityParseWrappers}"/> 
+                    <aura:if isTrue="{!v.Spinner}">
+                        <div aura:id="spinnerId">
+                           <div class="slds-spinner--brand  slds-spinner slds-spinner--large slds-is-relative" role="alert">
+                             <span class="slds-assistive-text">Loading</span>
+                             <div class="slds-spinner__dot-a"></div>
+                             <div class="slds-spinner__dot-b"></div>
+                           </div>
+                        </div>
+                     </aura:if>
+                </aura:set>
+            </aura:if>
+        </div>
+        <aura:if isTrue="{!v.totalSize > 0}">
+            <div class="totalCount">
+                <aura:if isTrue="{!lessthanorequal(v.offset + v.pageSize,v.totalSize) }">
+                    <div class="totalRecordClass"> 
+                        {!format($Label.c.SFMC_Total_Record_Count, 1, v.offset + v.pageSize,v.totalSizeStr)}
+                        
+                    </div>
+                    <aura:set attribute="else">
+                        <div class="totalRecordClass"> 
+                            {!format($Label.c.SFMC_Total_Record_Count, 1, v.totalSize,v.totalSizeStr)}
+                        </div>
+                    </aura:set>                    
+                </aura:if>
+                <aura:if isTrue="{!v.isLimitExceeded}">
+                    <div class="totalRecordNoteSection"> 
+                        {!$Label.c.SFMC_Engagement_Activity_Note_Section}
+                    </div>
+                </aura:if>
+            </div>
+        </aura:if>
+    </div>
+        
+</aura:component>

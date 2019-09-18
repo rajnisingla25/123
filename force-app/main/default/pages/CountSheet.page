@@ -1,0 +1,7 @@
+<apex:page standardStylesheets="false" showHeader="false" sidebar="false"  >
+<apex:stylesheet value="{!URLFOR($Resource.styles, 'styles.css')}" />
+  <!-- Begin Default Content REMOVE THIS -->
+  <h1>Inventory Count Sheet</h1>
+  This is your new Page: CountSheet
+  <!-- End Default Content REMOVE THIS -->
+</apex:page>

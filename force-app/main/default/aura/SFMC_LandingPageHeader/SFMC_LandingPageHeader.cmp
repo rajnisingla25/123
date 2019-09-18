@@ -1,0 +1,59 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" >
+    <aura:attribute name="headerText" type="String" />
+    <aura:attribute name="imagePath" type="String"/>
+    <aura:attribute name="bgColour" type="String"/>
+    <aura:attribute name="headerTextAlignment" type="String" default="left" />
+    <aura:attribute name="headerTextFontSize" type="String" />
+    <aura:attribute name="headerTextColor" type="String"/>       
+    <aura:attribute name="prefixString" type="String"/>
+    <aura:attribute name="brandAlignmentClass" type="String"/>
+    <aura:attribute name="textAlignmentClass" type="String"/>
+    
+    <aura:attribute name="brandImageAlignment" type="String" default="left"/>
+    <aura:attribute name="brandImageHeight" type="String"/>
+    <aura:attribute name="brandImageWidth" type="String"/>
+    
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <!--NOT WORKING <aura:handler name="change" value="{!v.headerTextAlignment}" action="{!c.setTextAlignment}" />
+    <aura:handler name="change" value="{!v.brandNameAlignment}" action="{!c.setBrandAlignment}" />-->
+    
+    <!--<div style="{!'position: relative; height: 26vh;background-position: center;background-size: cover;margin-left: -5rem;
+                margin-top: -1rem;
+                margin-bottom: -7rem;background: ' + v.bgColour + ';'}">-->
+    <!--aura:if isTrue="{!$Browser.isIPhone}">
+        <div style="{!'background-position: center;background-size: cover;background: ' + v.bgColour + ';'}">
+
+            <lightning:layoutItem  size="12" class="slds-m-around_xx-large slds-align_absolute-center">
+                <img src="{!(v.prefixString + v.imagePath)}" width="{!v.brandImageWidth}" height="{!v.brandImageHeight}"/>
+            </lightning:layoutItem >
+            <lightning:layoutItem size="12" class="slds-m-around_xx-large slds-align_absolute-center">
+                <p style="{!'font-size:' + v.headerTextFontSize + 'vw;color:' + v.headerTextColor + ';'}">
+                    {!v.headerText}
+                </p>
+            </lightning:layoutItem>
+
+        </div>
+    </aura:if>-->
+    
+    <div class="slds-grid slds-grid_align-spread" style="{!'background-position: center;background-size: cover;background: ' + v.bgColour + ';'}">
+        <!--<lightning:layout>-->
+        <lightning:layoutItem size="4" mediumDeviceSize="4" class="{!'slds-m-around_x-large slds-col ' + (v.brandImageAlignment == 'left' ?
+                                                                   'slds-float_left' + ($Browser.formFactor == 'DESKTOP' ? ' leftPaddingDesktop': ''):
+                                                                   v.brandImageAlignment == 'right' ?
+                                                                   'slds-float_right ' : '')}">
+            <img src="{!(v.prefixString + v.imagePath)}" width="{!v.brandImageWidth}" height="{!v.brandImageHeight}"/>
+        </lightning:layoutItem >
+        <lightning:layoutItem size="4" mediumDeviceSize="4" class="{!'slds-m-around_x-large slds-col ' + (v.headerTextAlignment == 'left' ?
+                                                                   'slds-float_left alignRight' :
+                                                                   v.headerTextAlignment == 'right' ?
+                                                                   'slds-float_right ' : 'slds-align_absolute-center') }">
+            <h3 style="{!'font-size:' + ($Browser.formFactor != 'DESKTOP' ? add(v.headerTextFontSize*1, 2)  : v.headerTextFontSize) + 'vw;color:' + v.headerTextColor + ';'}" >
+                <span class="{!or(empty(v.headerText), $Browser.formFactor == 'PHONE') ? 'slds-hide' : ''}">Call </span>
+                <a href="{!'tel:' + v.headerText}" >{!v.headerText}</a>
+            </h3>
+        </lightning:layoutItem>
+        <!--</lightning:layout>-->
+    </div>
+    
+</aura:component>

@@ -1,0 +1,4 @@
+Transaction_Type__c,Status__c,Acccount_Type__c,Account_Name__c,OLD_MLS_Set__c,New_MLS_set__c,Primary_MLS_Set__c,CLC__c,HLC__c,Old_MLS_Set_Party_Id__c,New_MLS_Set_Party_Id__c,Survivor_Party_Id__c,Victim_Party_Id__c
+Merge,New,Realtor Agent,SANDICOR Inc.,O-SDCA-47838,O-SDCA-13389,TRUE,0,1,207927432,146522311,146522311,207927432
+Merge,New,Realtor Agent,SANDICOR Inc.,O-SDCA-47838,O-SDCA-13389,TRUE,0,1,207927432,146522311,146522311,207927432
+Merge,New,Realtor Agent,SANDICOR Inc.,O-SDCA-47838,O-SDCA-13389,TRUE,0,1,207927432,146522311,146522311,207927432

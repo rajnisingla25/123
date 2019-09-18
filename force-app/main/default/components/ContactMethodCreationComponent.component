@@ -1,0 +1,116 @@
+<apex:component controller="ContactMethodCreationComponentCTRL" allowDML="true">
+    <apex:includeScript value="{!$Resource.JQuery}" />
+    <script>
+    function redirecturl(){
+        //console.log('Am I in console'+sforce.console.isInConsole());
+        //window.top.location.reload();
+        //var contact = new sforce.SObject("Contact");
+        Id conId = ApexPages.currentPage().getParameters().get('id');
+        console.log('ID:'+conId);
+        window.open("{!$Site.Prefix}/conId", "_self");
+    }
+    
+    /*function refreshParent()
+        {
+            //var accId = '{!accountId}';
+            console.log('accId>>>'+j$('.messageText'));
+            console.log('accId 1 >>>'+j$('.messageText').length);
+            console.log('accId 2 >>>'+(j$('.messageText').length > 0));
+            alert('accId==');
+            //return null;
+            window.location.refresh();
+            //if(accId != Null)
+            //window.parent.location.href='/'+accId;
+            //else
+            //window.parent.location.href='/{!conID}';
+        }   */    
+    </script>
+    <apex:attribute name="contactId" description="conIds" type="String" assignTo="{!conID}"/>
+    <apex:attribute name="accId" description="accountId" type="String" assignTo="{!accountId}"/>  
+    <apex:attribute name="refresh" description="" type="boolean" assignTo="{!isRefresh}"/>    
+    <apex:attribute name="reRender" description="Hand over a list of additional element ids to rerender" type="String" required="false"/>
+    
+    <apex:pageBlock >
+        <apex:outputPanel id="createnewCM">
+            <apex:commandButton value="New Contact Method" action="{!addCM}" id="newcm" reRender="createnewCM, NewconMet" style="left: 45%; position: absolute;" rendered="{!Not(hidenewCM)}"/>                                                     
+            <apex:outputLabel rendered="{!hidenewCM}"><b>Add New Contact Method</b></apex:outputLabel>
+            <br/>
+            <!--apex:pageMessages /-->
+            <apex:pageBlockTable value="{!LstContactMethod}" var="con" id="NewconMet" rendered="{!hidenewCM}">
+                <apex:column width="10%">
+                    <apex:facet name="header">Type</apex:facet>
+                    <apex:inputField value="{!con.Type__c}">
+                        <apex:actionSupport event="onchange" rerender="NewconMet"/>
+                    </apex:inputField>
+                </apex:column>
+                <apex:column width="20%">
+                    <apex:facet name="header">Category</apex:facet>
+                    <apex:inputField value="{!con.Type_Purpose__c}"/>
+                </apex:column>
+                <apex:column width="15%" rendered="{!accountId == null}">
+                    <apex:facet name="header">Primary To Contact</apex:facet>
+                    <apex:inputField value="{!con.Primary_To_Contact__c}" rendered="{!IF( con.Type__c != 'Social', true, false )}"/>
+                </apex:column>
+                <apex:column width="15%" rendered="{!accountId != null}">
+                    <apex:facet name="header">Primary To Account</apex:facet>
+                    <apex:inputField value="{!con.Primary_To_Account__c}" rendered="{!IF( con.Type__c != 'Social', true, false )}"/>
+                </apex:column>
+                <apex:column width="20%">
+                    <apex:facet name="header">Email</apex:facet>
+                    <apex:inputField value="{!con.Email__c}" rendered="{!IF( con.Type__c == 'Email', true, false )}"/>
+                </apex:column>
+                <apex:column width="20%">
+                    <apex:facet name="header">Phone</apex:facet>
+                    <apex:inputField value="{!con.Phone__c}" rendered="{!IF( con.Type__c == 'Phone', true, false )}"/>
+                </apex:column>
+                <apex:column width="20%">
+                    <apex:facet name="header">Phone Extension</apex:facet>
+                    <apex:inputField value="{!con.Phone_Extension__c}" rendered="{!IF( con.Type__c == 'Phone', true, false )}"/>
+                </apex:column>
+                <apex:column width="40%">
+                    <apex:facet name="header">Value</apex:facet>
+                    <apex:inputField value="{!con.Value__c}" rendered="{!IF( con.Type__c == 'Social', true, false )}"/>
+                </apex:column>             
+            </apex:pageBlockTable>
+            <apex:commandLink value="Add Row" action="{!addRow}" reRender="NewconMet" rendered="{!hidenewCM}"/>
+            <center>
+                <apex:commandButton value="Save" action="{!saveNewCM}" rendered="{!hidenewCM}" reRender="msgs,createnewCM" oncomplete="refreshFullAccess();" /> <!-- oncomplete="redirecturl();"/> -->
+                <apex:commandButton value="Cancel" action="{!cancelNewCM}" immediate="true" rendered="{!hidenewCM}" reRender="NewconMet,createnewCM,msgs"/> 
+            </center>
+            <script> 
+            var tabId = '';
+            function refreshParent()
+            {
+                var j$ = jQuery.noConflict(); 
+                
+                //if(j$('.messageText').length <= 0)
+                if('{!isErrorFound}' == 'false' && j$('.errorMsg').length <= 0){
+                    window.top.location = '/{!accountConId}';
+                }
+            }    
+            
+            var showTabId1 = function showTabId1(result) {
+                tabId = result.id
+                sforce.console.refreshPrimaryTabById(result.id, false, handleResponse);                
+            };           
+            var handleResponse = function handleResponse(result){
+                if (result.success != true) {
+                    urlPhone = '/{!accountConId}';
+                    sforce.console.openPrimaryTab(tabId, urlPhone, true);
+                }              
+            }
+            function refreshFullAccess() {
+                if('{!isErrorFound}' == 'false'){ 
+                    urlPhone = '/{!accountConId}';
+                    if (!sforce.console.isInConsole()) {
+                        window.parent.location.href = urlPhone;
+                    } else {
+                        sforce.console.getFocusedPrimaryTabId(showTabId1);
+                    }                        
+                }
+            }
+            </script>
+        </apex:outputPanel>
+        <br/>
+    </apex:pageBlock>
+</apex:component>

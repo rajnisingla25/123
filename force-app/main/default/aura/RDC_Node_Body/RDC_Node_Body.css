@@ -1,0 +1,232 @@
+.THIS #banner-wrap {
+  
+  background-size: contain;
+  background-color: #ffffff;
+  padding: 0px 0 0 0;
+  /*
+   * -- BANNER Form --
+   */ }
+.THIS article {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding:  15px; }
+
+.THIS  .body {
+    padding: 0  15px;
+}
+
+.THIS #banner-wrap .wavy {
+        background: url(https://success.realtor.com/cp/uploads/default/files/662c63ef993228c99ea93b76c0e4a2e4.png) bottom center no-repeat;
+        padding-bottom: 10px;
+    }
+
+ .THIS #banner-wrap .no-display {
+    display: none; }
+.THIS #banner-wrap .mobile-only {
+    display: none; }
+ .THIS #banner-wrap .headlines {
+    text-align: center; }
+  .THIS  #banner-wrap .headlines .strong {
+      font-weight: 700; }
+   .THIS #banner-wrap .headlines h1 {
+      color: #000000;
+      font-family: "Montserrat", sans-serif !important;
+      font-size: 40px; }
+  .THIS  #banner-wrap .headlines h2 {
+      font-size: 20px;
+      font-weight: normal;
+      margin-bottom: 20px; }
+   .THIS #banner-wrap .headlines h5 {
+      font-weight: 300; }
+    .THIS  #banner-wrap .headlines h5 strong {
+        font-weight: 400; }
+ .THIS #banner-wrap h4 {
+    font-size: 18px;
+    font-weight: 300;
+    margin-bottom: 20px;
+    padding: 0 4%; }
+   .THIS #banner-wrap h4 strong {
+      font-weight: 400; }
+ .THIS #banner-wrap .show-md {
+    display: none; }
+ .THIS #banner-wrap h5 {
+    font-size: 18px; }
+   .THIS #banner-wrap h5 span {
+      color: #101d61; }
+ .THIS #banner-wrap .banner-form {
+    box-shadow: 0px 0px 3px 3px #dfdcdc;
+    margin-top: 55px;
+    margin-left: 0;
+    background: #fff;
+    width: 80%; }
+  .THIS  #banner-wrap .banner-form form {
+      padding: 30px 40px;
+      margin: 0 auto;
+      -webkit-border-radius: 10px;
+      -moz-border-radius: 10px;
+      -ms-border-radius: 10px;
+      border-radius: 10px; }
+   .THIS #banner-wrap .banner-form select {
+      border-radius: 0px !important; }
+   .THIS #banner-wrap .banner-form .button {
+      position: relative;
+      color: #fff;
+      font-size: 17px;
+      background: #ea002a;
+      border: 0;
+      padding: 8px 15px;
+      width: 60%;
+      letter-spacing: 0.01em;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      -webkit-border-radius: 10px;
+      -moz-border-radius: 10px;
+      -ms-border-radius: 10px;
+      border-radius: 10px;
+      border-radius: 10px !important; }
+   .THIS #banner-wrap .banner-form p {
+      font-size: 15px !important;
+      font-style: italic;
+      margin-top: 8px;
+      color: #0b0b0b; }
+     .THIS #banner-wrap .banner-form p span {
+        font-size: 13px; }
+ .THIS #banner-wrap .form-control {
+    border: 0;
+    height: 40px;
+    color: #6a6a6a;
+    background-color: #f2f2f2;
+    margin-bottom: 13px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius: 10px;
+    border-radius: 10px;
+    border-radius: 10px !important;
+    margin-left: 20px;
+    width: 90%; }
+
+.THIS .slds-select {
+    height:42px;
+}
+ .THIS #banner-wrap input[type="text"]::placeholder {
+  padding:10px;
+  font-size: 18px;
+} 
+
+ .THIS #banner-wrap input[type="text"] {
+  padding:10px;
+  font-size: 18px;
+}
+
+ .THIS #banner-wrap input[type="phone"]::placeholder {
+  padding:10px;
+  font-size: 18px;
+} 
+
+ .THIS #banner-wrap input[type="phone"] {
+  padding:10px;
+  font-size: 18px;
+}
+
+ .THIS #banner-wrap input[type="email"]::placeholder {
+  padding:10px;
+  font-size: 18px;
+} 
+
+ .THIS #banner-wrap input[type="email"] {
+  padding:10px;
+  font-size: 18px;
+}
+
+.THIS #banner-wrap select {
+  font-size: 18px;    
+    padding-left:10px;
+}
+.THIS .slds-select_container {
+}
+.THIS .cSFMC_LandingPageForm .wrapTitle {
+    font-size: 18px;
+}
+ .THIS #banner-wrap .form-group {
+    margin-bottom: 0;
+    padding: 0; }
+ .THIS #banner-wrap #before-submission {
+    display: block; }
+ .THIS #banner-wrap #after-submission {
+    display: none;
+    padding: 80px 20px;
+    text-align: left;
+    color: #000; }
+   .THIS #banner-wrap #after-submission h3 {
+      font-size: 24px;
+      font-weight: 400;
+      margin: 0;
+      padding: 10px 0; }
+   .THIS #banner-wrap #after-submission h4 {
+      font-size: 18px;
+      font-weight: 300;
+      margin: 0;
+      padding: 30px 0; }
+   .THIS #banner-wrap #after-submission p {
+      font-size: 16px;
+      font-weight: 400;
+      margin: 0;
+      padding: 0; }
+ .THIS #banner-wrap .privacy-policy {
+    margin: 10px auto;
+    text-align: center; }
+   .THIS #banner-wrap .privacy-policy a {
+      font-size: 11px;
+      color: #0b0b0b;
+      font-weight: 300;
+      font-style: italic; }
+
+@media (max-width: 991px){
+    .THIS #banner-wrap .mobile-only{
+        display: block;
+    }
+    
+    .THIS #banner-wrap .banner-form {
+        width: 100%;
+    }
+    
+    .THIS #banner-wrap .banner-form{
+        margin-left:0!important;
+    }
+    
+    .THIS #banner-wrap .img-container{
+        padding-top: 40px;
+    }
+}
+
+@media (max-width: 768px){
+    
+    .THIS #banner-wrap .banner-form button{
+        width: 100%;
+        font-size:15px;
+    }
+}
+
+@media (max-width: 479px){
+    .THIS #banner-wrap .banner-form {
+        width: 100%;
+    }
+    
+    .THIS #banner-wrap {
+        padding-top: 20px!important;
+        padding-bottom: 20px!important;
+    }
+    
+    .THIS #banner-wrap .headlines{
+        text-align: center;
+    }
+    
+    .THIS #banner-wrap .headlines h1{
+        font-size: 25px;
+    }
+    
+    .THIS #banner-wrap .headlines h2{
+        font-size: 20px;
+    }
+    
+}

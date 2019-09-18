@@ -1,0 +1,9 @@
+<design:component>
+	<design:attribute name="submissionType"
+                      datasource = "Regular Lead, Uberflip form, Referral form" required="true" label="Submission Type" default="Regular Lead"/>
+	<design:attribute name="productType"
+                      datasource = "apex://SFMC_DynamicRDCTypePicklist"
+                      label="Product Type" default=""/>
+    <design:attribute name="campaignId"/>
+    
+</design:component>

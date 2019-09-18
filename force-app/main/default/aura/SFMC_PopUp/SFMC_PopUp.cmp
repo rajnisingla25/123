@@ -1,0 +1,56 @@
+<aura:component controller="SFMC_LandingPageController">
+    <aura:attribute name="isOpen" type="Boolean"/>
+    <aura:attribute name="popUpImageTest" type="String" />
+    <aura:attribute name="prefixString" type="String" />
+    <aura:attribute name="popUpImageWidth" type="String" />
+    <aura:attribute name="popUpImageHeight" type="String" />
+    <aura:attribute name="popUpImageLink" type="String" />
+    <aura:attribute name="popupProductType" type="String" />
+    <aura:attribute name="formSubmissionId" type="String" />
+    <aura:attribute name="disablePopUp" type="Boolean" default="false"/>
+    <aura:attribute name="Spinner" type="Boolean"/>
+    <aura:attribute name="interval" type="Integer"/>
+    <aura:attribute name="enablePopUp" type="Boolean" />
+    <aura:handler  event="c:SFMC_FormIdEvent" action="{!c.handelFormId}"/>
+    <aura:attribute name="imageURL" type="String"/>
+    <!--###### MODAL BOX Start######-->
+    
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open" 
+             >
+        
+        <div class="slds-modal__container" style="{!'width:'+v.popUpImageWidth+'%;height:'+v.popUpImageHeight+';'}">
+            <!-- ###### MODAL BOX HEADER Start ######-->
+            
+            <!--###### MODAL BOX BODY Part Start######-->
+            <div class="slds-modal__content slds-p-around_small" id="modal-content-id-1">
+                <div>
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-float_right closeBtn" size="large"/>
+                </div>
+                
+                
+                <a href="javascript:void(0)" onclick="{!c.processLeadOnPopup}" id="popUpLink" >
+                     
+                    <aura:if isTrue="{!!empty(v.imageURL) }">
+                        <img src="{!v.imageURL}" style="{!'width:'+v.popUpImageWidth+'%;height:'+v.popUpImageHeight+';'}"/>
+                    	<aura:set attribute="else">
+                        	<img src="{!(v.prefixString + v.popUpImageTest)}" />
+                        </aura:set>
+                    </aura:if>
+                    <!--
+                    <aura:if isTrue="{!v.imageURL == ''}">
+                    	<img src="{!(v.prefixString + v.popUpImageTest)}" />
+                    </aura:if> -->
+                </a>    
+            </div>
+            <!--###### MODAL BOX FOOTER Part Start ######-->
+            
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+    <!--###### MODAL BOX Part END Here ######-->
+    
+</aura:component>

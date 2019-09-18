@@ -1,0 +1,10 @@
+<apex:page showHeader="true" sidebar="true" standardController="Account" extensions="PaymentProfileRedirectController" action="{!onLoad}">
+<apex:pageMessages />
+
+
+  <apex:form >
+    <apex:commandButton action="{!redirect}" value="Back to Account" />
+    <apex:commandButton value="Create Zuora Billing Account" action="{!CreateZuoraBillingAccount}"/>
+       <apex:commandButton action="{!ManagePaymentProfile}" value="Navigate to Payment Profile" />
+  </apex:form>
+</apex:page>

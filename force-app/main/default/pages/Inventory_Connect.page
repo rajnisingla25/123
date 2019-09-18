@@ -1,0 +1,6 @@
+<apex:page >
+    <apex:outputPanel layout="block" style="font-weight:bold">
+        Hello World!
+    </apex:outputPanel>
+    <apex:enhancedList type="Contact" height="350"/>
+</apex:page>

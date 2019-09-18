@@ -1,0 +1,3278 @@
+<apex:page sidebar="false" showHeader="false" html-width="100%" standardStylesheets="false" Controller="InventorySearch" readOnly="true"> 
+
+    <head>
+        <title>Inventory Search</title>
+        
+        <apex:stylesheet value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/datatableSingleResource/datatables.min.css')}" />    
+        <apex:stylesheet value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/jquery-ui-1.11.4.custom/jquery-ui.css')}" />
+        <apex:stylesheet value="https://cdn.datatables.net/tabletools/2.2.4/css/dataTables.tableTools.css" />
+        
+        <apex:stylesheet value="{!$Resource.inventoryMonStyle}" />
+        
+        <apex:includeScript value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/datatableSingleResource/datatables.min.js')}"/>
+        <apex:includeScript value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/jquery-ui-1.11.4.custom/jquery-ui.js')}"/>
+        <apex:includescript value="https://cdn.datatables.net/tabletools/2.2.4/js/dataTables.tableTools.min.js" />
+        
+        <apex:includeScript value="{!URLFOR($Resource.restJavascript, '/rest/forcetk.js')}" />
+         
+        
+        <style>
+            /************************************Merge Css*************************************/
+            
+            #example1_wrapper table.dataTable thead th {
+                text-align: center;
+            }
+            
+            #example3_wrapper table.dataTable thead th {
+                text-align: center;
+            }
+            
+            
+            .dataTables_paginate {
+                width: 95%;
+            }
+            
+            .availabilityPannel {
+                position: absolute;
+                right: 0px;
+                left: 0px;
+                top: 0px;
+                padding: 15px;
+                bottom: 0px;
+                width: 550px;
+                height: 210px;
+                background-color: #fff;
+                border: solid 4px #365170;
+                border-radius: 6px;
+                margin: auto;
+            }
+            
+            .availabilityPannel p {
+                text-align: center;
+                margin-top: 38px;
+                font-size: 20px;
+                color: rgb(93, 90, 90);
+            }
+            
+            #availablityNoti {
+                display: none;
+                height: 40px;
+                margin-top: 20px;
+            }
+            
+            #noAvailabilty {
+                display: none;
+            }
+            
+            .bottom {
+                height: 50px;
+            }
+            
+            .ui-accordion .ui-accordion-header {
+                background: #7E8892;
+                border-radius: 0px;
+                color: white;
+                border-color: transparent;
+            }
+            
+            .ui-accordion .ui-accordion-content {
+                background: #F4F5F9;
+            }
+            
+            .ui-state-default .ui-icon {
+                background-image: url("https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/images/ui-icons_ffffff_256x240.png");
+                width: 20px;
+            }
+            
+            .ui-widget {
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 14px;
+            }
+            
+            .notAvailImg {
+                background-image: url("{!URLFOR($Resource.inventoryImage, '/Cancel.png')}");
+                background-repeat: no-repeat;
+                display: inline-block;
+                vertical-align: middle;
+                height: 20px;
+                width: 20px;
+            }
+            
+            .avialImg {
+                background-image: url("{!URLFOR($Resource.inventoryImage, '/Check.png')}");
+                background-repeat: no-repeat;
+                display: inline-block;
+                vertical-align: middle;
+                height: 20px;
+                width: 20px;
+            }
+            
+            label[for='Student'] {
+                float: left;
+            }
+            
+            .checkYes,
+            .turboShow {
+                display: none;
+            }
+            
+            #threeTableWrapper .dataTables_wrapper {
+                clear: none;
+            }
+            
+            #threeTableWrapper {
+                min-height: 270px;
+                margin-top: 20px;
+                display: none;
+            }
+            
+            .hoverRed {
+                box-shadow: 0px 0px 7px red;
+                margin: 0px auto;
+                display: none;
+                float: left;
+                margin-right: 10px;
+            }
+            
+            .hoverGreen {
+                box-shadow: 0px 0px 7px green;
+                margin: 0px auto;
+                display: none;
+                float: left;
+                margin-right: 10px
+            }
+            
+            label[for=zeroAvailable] {
+                position: absolute;
+                right: 800px;
+                top: 36px;
+            }
+            
+            #stateSelect {
+                width: 201px;
+                display: none;
+            }
+            
+            #loadRect {
+                display: none;
+            }
+            
+            #example1 {
+                width: 100% !important;
+            }
+            
+            #example3 {
+                width: 100% !important;
+            }
+            
+            #example {
+                display: none;
+            }
+            
+            .predictive .active {
+                cursor: Pointer;
+                background-color: #999;
+                ;
+                color: #D92228;
+            }
+            
+            .predictive div:hover {
+                color: #D92228;
+                cursor: Pointer;
+                background-color: #999;
+                ;
+            }
+            
+            #secondfeature {
+                position: absolute;
+                right: 0px;
+                top: 41px;
+                display: none;
+            }
+            
+            #secondfeature2 {
+                position: absolute;
+                right: 0px;
+                top: 41px;
+                display: none;
+            }
+            .hpcustom-searchform .hpcustom-searchinput {
+                -moz-border-bottom-colors: none;
+                -moz-border-left-colors: none;
+                -moz-border-right-colors: none;
+                -moz-border-top-colors: none;
+                border-color: #fff #fff #fff #ccc;
+                border-image: none;
+                border-radius: 0;
+                border-style: solid;
+                border-width: 2px 2px 2px 1px;
+                box-shadow: none;
+                box-sizing: border-box;
+                color: #444;
+                display: inline-block;
+                float: left;
+                font-family: Arial, sans-serif;
+                font-size: 1.7rem;
+                font-weight: normal;
+                height: 48px;
+                margin: 0;
+                padding: 10px;
+                width: 425px;
+            }
+            
+            .hpcustom-searchform .hpcustom-searchinput:hover,
+            .hpcustom-searchform .hpcustom-searchinput:focus {
+                border-color: transparent transparent transparent #ccc;
+                outline: 0 none;
+            }
+            
+            .hpcustom-searchform .hpcustom-searchinput.input-error {
+                border-color: transparent transparent transparent #ccc;
+            }
+            
+            .predictive {
+                background: #f4f5f9 none repeat scroll 0 0;
+                border: 1px solid #999;
+                box-shadow: 5px 0 10px rgba(0, 0, 0, 0.1);
+                width: 357px;
+                position: absolute;
+                top: 98px;
+                z-index: 6500000;
+            }
+            
+            .predictive-content {
+                margin: 5px 0 0;
+                padding: 0 10px;
+            }
+            
+            .predictive-populate>li:hover {
+                background: #fafafa none repeat scroll 0 0;
+            }
+            
+            .predictive-selected {
+                background-color: #eee;
+            }
+            
+            .data2Col {
+                display: block
+            }
+            
+            .detailList>tbody,
+            .detailList,
+            .detailList>tbody>tr {
+                display: block;
+            }
+            
+            #example1_wrapper .dataTables_paginate {
+                margin-top: 40px;
+            }
+            
+             #example3_wrapper .dataTables_paginate {
+                margin-top: 40px;
+            }
+            
+            .pannel-body {
+                padding: 20px;
+                padding-top: 3px;
+                height: 112px;
+            }
+            
+            .pannel-body .form-group select {
+                height: 25px;
+            }
+            
+            .dummySearchVal {
+                width: 197px;
+                margin-left: 10px;
+                text-transform: capitalize;
+                display: none;
+            }
+            
+            .pbHeader {
+                margin-left: 20px;
+                border-bottom: solid 1px #DDD;
+                margin-right: 20px;
+            }
+            
+            .pbSubheader {
+                border-top: solid 1px #DDD;
+                margin-top: 35px;
+            }
+            
+            #example_filter {
+                position: absolute;
+                top: -37px;
+                right: 418px;
+            }
+            
+            .pannel {
+                margin-bottom: 0px;
+            }
+            
+            #example1_wrapper {
+                margin-top: 40px;
+            }
+            
+            #example3_wrapper {
+                margin-top: 40px;
+            }
+            .footer {
+                margin-top: 90px
+            }
+            
+            #tblmsg {
+                text-align: center;
+                line-height: 40px;
+            }
+            #tblmsg2 {
+                text-align: center;
+                line-height: 40px;
+            }
+            
+            #example1_info {
+                padding-top: 49px !important;
+            }
+            
+             #example3_info {
+                padding-top: 49px !important;
+            }
+            .pbSubsection {
+                margin-top: -20px;
+            }
+            
+            #example1_filter {
+                position: absolute;
+                top: -37px;
+                right: 345px;
+            }
+            
+            #example3_filter {
+                position: absolute;
+                top: -37px;
+                right: 345px;
+            }
+            .DTTT_collection .DTTT_button span {
+                vertical-align: middle;
+            }
+            
+            #example1_length {
+                position: absolute;
+                right: 203px;
+                top: -35px;
+            }
+            
+            #example3_length {
+                position: absolute;
+                right: 203px;
+                top: -35px;
+            }
+            
+            #tableHeadVal1 {
+                position: absolute;
+                top: 82px;
+                width: 670px;
+                right: 20px;
+                z-index: 100;
+                display: none;
+            }
+            
+            #tableHeadVal2 {
+                position: absolute;
+                top: 82px;
+                width: 670px;
+                right: 20px;
+                z-index: 100;
+                display: none;
+            }
+            
+            #tableHeadVal1 table {
+                font-size: 12px;
+                width: 100%;
+                background-color: #FFF;
+                border: solid 1px #DDD;
+                padding: 10px;
+                background: #e5f2ff;
+                border-radius: 4px;
+                box-shadow: -4px 7px 12px #666;
+            }
+            
+            #tableHeadVal2 table {
+                font-size: 12px;
+                width: 100%;
+                background-color: #FFF;
+                border: solid 1px #DDD;
+                padding: 10px;
+                background: #e5f2ff;
+                border-radius: 4px;
+                box-shadow: -4px 7px 12px #666;
+            }
+            
+            #tableHeadVal1 table td {
+                padding: 10px;
+                border: 1px solid #DDD;
+                background-color: #fff;
+            }
+            
+             #tableHeadVal2 table td {
+                padding: 10px;
+                border: 1px solid #DDD;
+                background-color: #fff;
+            }
+            
+            .highlightred {
+                color: red !important;
+            }
+            
+            #ToolTables_example1_5 {
+                display: none;
+            }
+            
+            #ToolTables_example3_5 {
+                display: none;
+            }
+            
+            table.dataTable thead th {
+                padding: 10px 17px;
+                padding-left: 13px;
+            }
+             table.dataTable thead th {
+                padding: 10px 17px;
+                padding-left: 13px;
+            }
+            
+            #example1,#example3,
+            #example {
+                text-align: center;
+            }
+            
+            .radiusVal {
+                width: 200px;
+                margin-left: 10px;
+                height: 25px;
+            }
+            
+            .form-group input {
+                height: 19px;
+            }
+            
+            #overlay1,
+            #noAvailabilty {
+                position: absolute;
+                height: 100%;
+                width: 100%;
+                background-color: black;
+                z-index: 100;
+                opacity: .5;
+                display: block;
+            }
+            
+            #noAvailabilty {
+                background-color: rgba(0, 0, 0, 0.64);
+                opacity: 1;
+                display: none;
+            }
+            
+            .countyHide {
+                display: none;
+            }
+            
+            .loaderWrapper1 {
+                position: absolute;
+                margin: auto;
+                text-align: center;
+                right: 0px;
+                left: 0px;
+                top: 0px;
+                bottom: 0px;
+                height: 35px;
+                color: white
+            }
+            
+            #filterTable> tbody> tr> td:nth-child(n+1) {
+                width: 100px;
+            }
+            
+            .refresh {
+                width: 106px;
+                height: 30px;
+                border: 0px;
+                background-repeat: no-repeat;
+                background-position: 10px 5px, 0px 0px;
+                background-size: 17px, 100% 100%;
+                font-size: 14px;
+                padding-left: 27px;
+            }
+            
+            .buttoncolorVal {
+                filter: progid: DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#4777b2, endColorstr=#354f6d)!important;
+                background-image: url("{!URLFOR($Resource.inventoryImage, '/refresh_image.png')}"),
+                -moz-linear-gradient(top,
+                #4777b2 1%,
+                #354f6d 57%)!important;
+                background-image: url("{!URLFOR($Resource.inventoryImage, '/refresh_image.png')}"),
+                -webkit-linear-gradient(top,
+                #4777b2 1%,
+                #354f6d 57%)!important;
+                background-image: url("{!URLFOR($Resource.inventoryImage, '/refresh_image.png')}"),
+                -ms-linear-gradient(top,
+                #4777b2 1%,
+                #354f6d 57%)!important;
+                background-image: url("{!URLFOR($Resource.inventoryImage, '/refresh_image.png')}"),
+                linear-gradient(top,
+                #4777b2 1%,
+                #354f6d 57%)!important;
+                background-image: url("{!URLFOR($Resource.inventoryImage, '/refresh_image.png')}"),
+                -o-linear-gradient(top,
+                #4777b2 1%,
+                #354f6d 57%)!important;
+                background-image: url("{!URLFOR($Resource.inventoryImage, '/refresh_image.png')}"),
+                -webkit-gradient(linear,
+                right top,
+                right bottom,
+                color-stop(1%,
+                #4777b2),
+                color-stop(57%,
+                #354f6d))!important;
+            }
+                .refreshbutton {
+                  background-color: #354f6d;
+                  border-radius: 8px;
+                  width: 106px;
+                  height: 30px;
+                  border: 0px;
+                  color: #fff;
+                  background-repeat: no-repeat;
+                  background-position: 10px 5px, 0px 0px;
+                  background-size: 17px, 100% 100%;
+                  font-size: 14px;
+                  padding-left: 14px;
+                  border-radius: 4px;
+                  cursor: pointer;
+                }
+                .triangle-isosceles {
+                position: absolute;
+                width: 216px;
+                padding: 6px 17px;
+                margin-top: 49px;
+                color: #000;
+                background: #323E4D;
+                border-radius: 10px;
+                color: #fff;
+                display: none;
+                margin-top: 27px;
+                margin-left: 71px;
+            }
+            /* creates triangle */
+            
+            .triangle-isosceles:after {
+                content: "";
+                display: block;
+                position: absolute;
+                bottom: 18px;
+                right: 144px;
+                width: 0;
+                border-width: 0px 15px 28px 12px;
+                border-style: solid;
+                border-color: #323E4D transparent;
+            }
+            
+            #okButton {
+                width: 55px;
+                text-align: center;
+                padding: 6px 19px;
+                border-radius: 3px;
+                height: 20px;
+                margin: 0px auto;
+                color: white;
+                cursor: pointer;
+            }
+            
+            table.elegibleRow thead th {
+                background-color: #8DC745 !important;
+            }
+            
+            table.notElegibleRow thead th {
+                background-color: #EF5D51 !important;
+            }
+            
+             table1.elegibleRow thead th {
+                background-color: #8DC745 !important;
+            }
+            
+            table1.notElegibleRow thead th {
+                background-color: #EF5D51 !important;
+            }
+            
+            #ToolTables_example_0 {
+                display: block;
+            }
+            
+            input.availPercent {
+                width: 60px;
+            }
+            
+            .ui-state-default .inventoryTurboClick,
+            .ui-state-default .inventoryTurboClick:link,
+            .ui-state-default .inventoryTurboClick:visited {
+                color: #fff;
+                text-decoration: underline;
+                border-left: solid 2px #fff;
+                padding-left: 10px;
+                margin-left: 10px;
+            }
+            .bundleZipTableContainer{margin-top:40px;}
+            .display-block{display:block;}
+            .display-none{display:none;}
+            .bundleZipTableContainer .dataTables_length{
+                float: right;
+                padding-bottom: 6px;
+                padding-left: 6px;
+                position: unset;
+                right: auto;
+                top: auto;
+            }
+            .dataTables_paginate {
+                width: 100%;
+            }
+            .protectedMarketsBackgroundColor {
+                background-color: rgb(226, 142, 142) !important;
+            }
+            .transitionMarketsBackgroundColor {
+                background-color: #f9f995 !important;
+            }
+        </style>
+        <script type="text/javascript">
+            var selectedBundleRowReference;
+            var bundleZipTableRef;
+            var selectedBundleName;
+            var itemDetailsJson;
+             //CRM-2845
+            function RefreshPage() {
+            if (sforce.console.isInConsole()){
+                window.top.location='/console';
+            }
+            else{
+                window.top.location.reload();
+                }
+            }
+                
+        </script>
+    </head>
+
+    <body>
+        <apex:form >
+        
+        <apex:actionFunction name="populateBundleZipsAF" action="{!populateBundleZips}" oncomplete="populateBundlesZipsJs()" reRender="bundleZipDetailPanelWrapper">
+            <apex:param name="commaSepratedBundleZip" value="" />
+            <apex:param name="itemDetailsJson" value="" />
+        </apex:actionFunction>
+        
+        <div id="noAvailabilty">
+            <div class="availabilityPannel">
+                <p>No Availability</p>
+                <div id="okButton" class="button-color">OK</div>
+            </div>
+        </div>
+
+        <div id="overlay1">
+            <div class='loaderWrapper1'>
+               <img src="{!URLFOR($Resource.loadingBar)}"></img>
+                <div class="text">Loading....</div>
+            </div>
+        </div>
+        <div class="header">
+            <a href="/{!$User.Id}" target="_blank">
+                <div class="logo"></div>
+                <div class="profile">
+                    <span class="name">{!$User.FirstName}&nbsp;{!$User.LastName}</span>
+                </div>
+            </a>
+        </div>
+        <apex:pageBlock title="Inventory Search" html-width="100%">
+            <div id="wrapper">
+                <div class="contentWrapper">
+                    <div class="pannel">
+                        <!-- CRM-5389 -->
+                        <table align="right">
+                            <tr class="pannel-heading">
+                                <td> <div style="margin:5px; width: 20px; height: 20px;" class="protectedMarketsBackgroundColor"/></td>
+                                <td>Protected Markets</td>
+                            </tr>
+                        </table>
+                        <!-- CRM-5389 End -->
+                        <!-- CRM-6310 -->
+                        <table align="right">
+                            <tr class="pannel-heading">
+                                <td> <div style="margin:5px; width: 20px; height: 20px;" class="transitionMarketsBackgroundColor"/></td>
+                                <td>No Promotion Markets</td>
+                            </tr>
+                        </table>
+                        <!-- CRM-6310 End -->
+                        
+                        <div class="pannel-heading">
+                            <span class="minus accordCont"></span>{!$User.FirstName}&nbsp;{!$User.LastName}'s Inventory Search
+                        </div>
+                        <div class="pannel-body">
+                                <table>
+                                    <tbody>
+                                        <tr class='checkNo'>
+                                            <td colspan="5">
+                                                <div style="width: 55px; margin: 10px auto">
+                                                    <input type="text" autocomplete="off" style="width: 330px; height: 20px; padding-right: 25px;" class="hpcustom-searchinput" placeholder="Search by Address, City, Zip , County" id="autocomplete" />
+                                                    <div id="PredictiveText" class="predictive" style="display: none">
+                                                        <div class="predictive-content">
+                                                            <div class="example">
+                                                                <h4 class="predictive-title">Examples</h4>
+                                                                <div class="row row-nomargin group">
+                                                                    <div class="span-e">
+                                                                        <ul class="list-unstyled">
+                                                                            <li>City, State</li>
+                                                                            <li>ZIP Code</li>
+                                                                            <li>Address</li>
+                                                                            <li>Street</li>
+                                                                            <li>Neighborhood</li>
+                                                                            <li>County</li>
+                                                                            <li>MLS ID</li>
+                                                                        </ul>
+                                                                    </div>
+                                                                    <div class="span-c">
+                                                                        <ul class="list-unstyled">
+                                                                            <li><b>las vegas, nv</b></li>
+                                                                            <li><b>90210</b></li>
+                                                                            <li><b>910 hamilton ave, campbell, ca</b></li>
+                                                                            <li><b>w hamilton ave, campbell, ca</b></li>
+                                                                            <li><b>old town, chicago, il</b></li>
+                                                                            <li><b>santa clara county, ca</b></li>
+                                                                            <li><b>#12345 or #QW12345</b></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row row-nomargin">
+                                                                <ul class="list-links predictive-populate js-predictiveText list-links-secondary-color">
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                        <div class="predictive-footer evtMLSHelper">
+                                                            <p class="predictive-footer-text">
+                                                                <!--  To search for an <b>MLS Listing Number</b>, please type
+                                                                a <b># symbol</b> in front of the number and click
+                                                                search*/-->
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td></td>
+
+                                        </tr>
+                                        <tr class='checkNo'>
+                                            <td><label for="Student">Filter By:</label></td>
+                                            <td>
+                                                <div class="form-group">
+                                                    <apex:selectList id="myfiltertype" styleClass="myfiltertype" style=" float: left;width:200px;" value="{!FilterType}" title="Value =" multiselect="false" size="1">
+
+                                                        <apex:selectOptions value="{!FilterList}" />
+
+                                                    </apex:selectList>
+                                                </div>
+                                            </td>
+                                            <td><label for="Student">Select State:</label></td>
+                                            <td>
+                                                <div class="form-group">
+                                                    <div id="id_100">
+                                                        <apex:selectList id="wlstatus" styleClass="statSearch" style="float:left;  width:200px;" value="{!state}" title="State " multiselect="false" size="1" onkeypress="return noenter(event);" onchange="CopyFilterValue()">
+                                                            <apex:actionSupport event="onchange" rerender="account__input" />
+                                                            <apex:selectOptions value="{!states}" />
+                                                        </apex:selectList>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><label class='checkNo' for="Student" style="">Search
+                                                    Value:</label></td>
+                                            <td>
+                                                <div class="form-group">
+                                                    <apex:inputText style="width: 197px; margin-left: 10px;text-transform: capitalize;" value="{!Inputvalue}" styleClass="searchVals checkNo" id="account__input" onkeypress="return noenter(event);" />
+                                                    <apex:inputText value="{!inputText1}" styleClass="dummySearchVal checkNo" onkeypress="return noenter(event);" />
+                                                </div>
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td><label for="Student">Select Product:</label></td>
+                                            <td>
+                                                <div class="form-group">
+                                                    <apex:selectList styleclass="product" style="float:left;  width:200px;" value="{!Product}" title="Product " multiselect="false" size="1" onkeypress="return noenter(event);" onchange="CopyFilterValue()">
+                                                        <apex:actionSupport event="onchange" rerender="account__input" />
+                                                        <apex:selectOptions value="{!Products}" />
+                                                    </apex:selectList>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <label for="Student" class="radiusValLable" style="">Radius Value:</label>
+                                                <label class='countyHide countyLabel' for="Student" style="padding-right: 25px;">County:</label>
+                                                <label class='checkYes' for="Student" style="padding-right: 25px;">Party Id:</label>
+                                                <div class='triangle-isosceles infoBar'>Please Select the County </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group">
+                                                    <apex:selectList styleClass="radiusVal" required="true" multiselect="false" size="1" label="Type" value="{!selectedRadius}">
+                                                        <apex:selectOptions value="{!Items}" /></apex:selectList>
+                                                    <div style="width:200px;margin-left:11px;"><img id="loadRect" src="{!URLFOR($Resource.inventoryImage, '/ajax-loader.gif')}"></img>
+                                                    </div>
+                                                    <apex:inputText styleClass="countyVal" style="display:none;width: 197px; margin-left: 10px;text-transform: capitalize;" id="county__input" value="{!County}" onkeypress="return noenter(event);" />
+                                                    <select class='countyHide' id="stateSelect"></select>
+                                                    <input id="partyIdTxt" maxlength="9" type='text' class='checkYes' />
+
+                                                </div>
+                                            </td>
+                                            <td><label class="turboShow" for="Student" style="padding-right: 25px;">Check Eligibility:</label></td>
+                                            <td>
+                                                <div class="turboShow form-group"><input class="checkAvailablityCheck" type="checkbox"></input>
+                                                </div>
+                                            </td>
+                                            <td style="margin-right: 87px; float: right">
+                                                <apex:commandButton id="refresh" value="Search" onkeypress="return enterClick(event)" styleClass="refresh buttoncolorVal button checkNo" action="{!makeSOACallforGet}"/>
+                                                <apex:commandButton id="refreshnew" value="Refresh" onclick="RefreshPage()" styleClass="refreshbutton"/>
+                                                <div id="checkAvailability" class="checkYes button-color button">
+                                                    <img src="/resource/1454194133000/show_image" /> <span>Check Availabilty</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                
+                        </div>
+                    </div>
+                    <div id='availablityNoti' class='checkYes'>
+                        <p style="text-align:center">
+                            <div class="hoverRed" style="border-radius: 5px;border: solid 1px red;padding: 10px 20px;"><span style='background-color: #EF5D51;padding: 0px 8px;margin-right:9px'></span><span>Agent is not eligible to buy turbo</span ></div><div class="hoverGreen" style="border-radius: 5px;border: solid 1px green;padding: 10px 20px;"><span style='background-color: #8DC745;padding: 0px 8px;margin-right:9px;margin-left:9px'></span><span>Agent is eligible to buy turbo</span></div>
+                        </p>
+                    </div>
+                    <div class="feature-button-cont checkNo">
+                        <label for="zeroAvailable" style="padding-right: 25px;">Show all :
+                        <input type="checkbox" style="vertical-align:middle;" id="zeroAvailable" name="hideavailable" ></input></label>
+
+                        <div class="show-hide button-color button">
+                            <img src="{!$Resource.show_image}" /> <span>Show/Hide
+                                Columns</span>
+                        </div>
+
+                        <div id="tableHeadVal">
+                            <table cellspacing="5">
+                                <tbody>
+                                    <tr>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span></span></label></td>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>Market Name</span></label></td>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>Distance</span></label></td>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>City</span></label></td>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>County</span></label></td>
+
+                                    </tr>
+                                    <tr>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>Size</span></label></td>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>Type</span></label></td>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>$ Flex</span></label></td>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>$ Total Flex</span></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>$ Fast</span></label></td>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>$ Total Fast</span></label></td>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>Qty</span></label></td>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>Available</span></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>Presale Available</span></label></td>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>Pending Sale</span></label></td>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>Presale Pending</span></label></td>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>Sold</span></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>State</span></label></td>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>Product</span></label></td>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>Price Tier</span></label></td>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>$ License</span></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>PPC High</span></label></td>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>$ TL Marketing Budget</span></label></td>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>$ Total Price</span></label></td>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>$Total Home Search Price</span></label></td>
+                                    </tr>
+                                    <tr>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>Secondary Cities</span></label></td>
+                                        <td><label><input type="checkbox"
+                                                class="check-hide" checked="true" /><span>Market Key</span></label></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div id="threeTableWrapper" class=''>
+                        <table id="example2" class="display" cellpadding="0" cellspacing="0" border="0" width="100%">
+                        </table>
+                    </div>
+                    
+                    <table id="example" class="display" cellpadding="0" cellspacing="0" border="0" width="100%" style="text-transform: capitalize;">
+                        <thead>
+                            <tr>
+                                <!-- 0  --><th></th>
+                                <!-- 1  --><th>Market Name</th>
+                                <!-- 2  --><th>City</th>
+                                <!-- 3  --><th>County</th>
+                                <!-- 4  --><th>Size</th>
+                                <!-- 5  --><th>Type</th>
+                                <!-- 6  --><th>$ Flex</th>
+                                <!-- 7  --><th>$ Total Flex</th>
+                                <!-- 8  --><th>$ Fast</th>
+                                <!-- 9  --><th>$ Total Fast</th>
+                                <!-- 10  --><th>Qty</th>
+                                <!-- 11  --><th>Available</th>
+                                <!-- 12  --><th>Presale Available</th>
+                                <!-- 13  --><th>CLC</th>
+                                <!-- 14  --><th>Presale Pending</th>
+                                <!-- 15  --><th>Sold</th>
+                                <!-- 16  --><th>State</th>
+                                <!-- 17  --><th>Product</th>
+                                <!-- 18  --><th>Price Tier</th>
+                                <!-- 19  --><th>$ License</th>
+                                <!-- 20  --><th>PPC High</th>
+                                <!-- 21  --><th>$ TL Marketing Budget</th>
+                                <!-- 22  --><th>$ Total Price</th>
+                                <!-- 23  --><th>$Total monthly Homesearch Price</th>
+                                <!-- 24  --><th>Secondary Cities</th>
+                                <!-- 25  --><th>Market Key</th>
+                                <!-- 26  --><th>Distance</th>
+                                <!-- 27  --><th>Forecasted Lead</th>
+                                <!-- 28  --><th>Bundled Zips</th>
+                                <!-- 29  --><th>Item Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        
+                            <apex:repeat value="{!accountwaitlist}" var="wl1">
+                                
+                                <tr>
+                                    <apex:variable var="var1" value="{!wl1.part_number}" />
+
+                                    <apex:variable var="var2cal" value="{!wl1.flex_unit_price*wl1.available}" />
+                                    <apex:variable var="var2" value="{!if((wl1.available>0),var2cal,0.00)}" />
+                                    <apex:variable var="var3" value="{!wl1.total_home_search_price}" />
+                                    <apex:variable var="var4" value="{!wl1.flex_unit_price}" />
+                                    <apex:variable var="price_tier" value="{!if((wl1.price_tier>0),wl1.price_tier,0)}" />
+                                    <apex:variable var="license" value="{!if((var1=='LOCALEXPERT' || var1=='LOCALEXPERTCITY' || var1=='COBROKE'||var1=='DIGITALAGENT'||price_tier==0),0.00,(300+300*price_tier))}" />
+                                    <apex:variable var="var5" value="{!license*wl1.available}" />
+                                    <apex:variable var="var6" value="{!wl1.available-1}" />
+                                    <apex:variable var="home_search_mkt_budget" value="{!wl1.cost_per_action * 50 *wl1.available}" />
+                                    <apex:variable var="var8" value="{!home_search_mkt_budget+license}" />
+                                    <apex:variable var="var9" value="{!if((wl1.available>0),1,0)}" />
+                                    <apex:variable var="available" value="{!if((var1=='LOCALEXPERT' || var1=='LOCALEXPERTCITY' || var1=='COBROKE'||var1=='HANDRAISER'||var1=='TURBO'),wl1.available,var9)}" />
+                                    <apex:variable var="totalprice" value="{!if((var1=='HOMESRCH'),var8,var5)}" />
+                                    <apex:variable var="T_H_S_P" value="{!home_search_mkt_budget+license}" />
+                                    
+                                    <!-- 0  --><td class="details-control ui-icon ui-icon-circle-plus"></td>
+                                    <!-- 1  --><td style="text-align:left">{!wl1.market_name}</td>
+
+                                    <!-- 2  --><td style="text-align:left">{!wl1.city}</td>
+                                    <!-- 3  --><td style="text-align:left">{!wl1.county}</td>
+                                    <!-- 4  --><td>{!wl1.product_size}</td>
+                                    <!-- 5  --><td>{!wl1.lead_routing }</td>
+                                    <!-- 6  --><td>
+                                        <apex:variable var="flex" value="{!if((var1=='LOCALEXPERT' || var1=='LOCALEXPERTCITY' || var1=='COBROKE'||var1=='HANDRAISER'||var1=='TURBO'),var4,' ')}" /> {!flex}
+                                    </td>
+                                    <!-- 7  --><td>
+                                        <apex:variable var="totalFlex" value="{!if((var1=='LOCALEXPERT' || var1=='LOCALEXPERTCITY' || var1=='COBROKE'||var1=='DIGITALAGENT'),var2,var3)}" /> {!totalFlex}
+                                    </td>
+                                    <!-- 8  --><td>
+                                        <apex:variable var="Fast" value="{!if((var1=='DIGITALAGENT'),' ',wl1.fast_unit_price)}" /> {!Fast}
+                                    </td>
+                                    <!-- 9  --><td>
+                                        <apex:variable var="totalFastcal" value="{!wl1.fast_unit_price*wl1.available}" />
+                                        <apex:variable var="totalFast" value="{!if((var1=='DIGITALAGENT'),' ',totalFastcal)}" /> {!totalFast}
+                                    </td>
+                                    <!-- 10  --><td>{!wl1.quantity} </td> 
+                                    <!-- 11  --><td>{!available}</td>
+                                    <!-- 12  --><td>{!wl1.Available_presale}</td>
+                                    <!-- 13  --><td>{!wl1.clc}</td>
+                                    <!-- 14  --><td>{!wl1.customer_min_quantity}</td>
+                                    <!-- 15  --><td>{!wl1.sold}</td>
+                                    <!-- 16  --><td>{!wl1.state_id}</td>
+                                    <!-- 17  --><td>
+                                        <apex:variable var="part_number" value="{!if((var1=='DIGITALAGENT'),' ',var1)}" /> {!part_number}
+                                    </td>
+                                    <!-- 18  --><td>{!price_tier}</td>
+                                    <!-- 19  --><td>{!license}</td>
+                                    <!-- 20 --><td>{!wl1.cost_per_action}</td>
+                                    <!-- 21  --><td>{!home_search_mkt_budget}</td>
+                                    <!-- 22  --><td> {!totalprice} </td>
+                                    <!-- 23  --><td> {!T_H_S_P} </td>
+                                    <!-- 24  --><td style="text-align:left">{!wl1.secondary_cities}</td>
+                                    <!-- 25  --><td>{!wl1.market_key}</td>
+                                    <!-- 26  --><td>"{!wl1.distance}"</td>
+                                    <!-- 27  --><td>{!wl1.forecast}</td>
+                                    <!-- 28  --><td style="text-align:left">
+                                                    <apex:repeat var="bundleZipDetail" value="{!wl1.item_details}">
+                                                        {!bundleZipDetail.market_name},
+                                                    </apex:repeat>
+                                                </td>
+                                    <!-- 29  --><td>
+                                                    {!wl1.item_details_serialize} 
+                                                </td>
+                                </tr>
+                            </apex:repeat>
+                        </tbody>
+                    </table>
+                    
+                    <apex:outputpanel id="bundleZipDetailPanelWrapper" styleClass="display-none">
+                        <apex:outputpanel id="bundleZipDetailPanel">
+                            <div class="bundleZipTableContainer">
+                                <table  id="bundledZipTable" class="display" cellpadding="0" cellspacing="0" border="0" width="100%" style="text-transform: capitalize;">
+                                    <thead>
+                                        <tr>
+                                            <th>Market Bundle</th>
+                                            <th>Zip Code</th>
+                                            <th>Available</th>
+                                            <th>Sold Seats</th>
+<!--                                            <th>Forecasted Lead</th> -->
+                                            <th>Lead Type</th>
+                                            <th>Market Key</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <apex:repeat value="{!bundleZipList}" var="bzl">
+                                            <tr>
+                                                <td style="text-align:left" class="selected-bundle-name"></td>
+                                                <td style="text-align:left">{!bzl.market_name}</td>
+                                                <td style="text-align:left">{!bzl.Available}</td>
+                                                <td>{!bzl.sold}</td>
+<!--                                                <td>{!bzl.forecast }</td> -->
+                                                <td>{!bzl.lead_routing }</td>
+                                                <td>{!bzl.market_key}</td>
+                                            </tr>
+                                        </apex:repeat>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </apex:outputpanel> 
+                    </apex:outputpanel>
+
+                    <div id="Account_Details" class="">
+                        <apex:pageblockSection title="Asset Details" columns="1">
+
+                            <!---Show Hide-------------->
+                            <div class="feature-button-cont">
+                                <div id="secondfeature" class="show-hide1 button-color button">
+                                    <img src="{!$Resource.show_image}" /> <span>Show/Hide
+                                    Columns</span>
+                                </div>
+                                <div id="tableHeadVal1">
+                                    <table cellspacing="5">
+                                        <tbody>
+                                            <tr>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide1" checked="true" /><span></span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide1" checked="true" /><span>Name</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide1" checked="true" /><span>Type</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide1" checked="true" /><span>Qty</span></label></td>
+
+                                            </tr>
+                                            <tr>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide1" checked="true" /><span>Status</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide1" checked="true" /><span>Fulfilment
+                                                        Status</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide1" checked="true" /><span>Start
+                                                        Date</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide1" checked="true" /><span>End Date</span></label></td>
+                                            </tr>
+                                            <tr>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide1" checked="true" /><span>Market</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide1" checked="true" /><span>Lead Type</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide1" checked="true" /><span>Ext Net</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide1" checked="true" /><span>Total Net</span></label></td>
+                                            </tr>
+                                            <tr>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide1" checked="true" /><span>Total
+                                                        Discount</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide1" checked="true" /><span>Strategic
+                                                        Discount</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide1" checked="true" /><span>Include</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide1" checked="true" /><span>Parent
+                                                        Asset</span></label></td>
+                                            </tr>
+                                            <tr>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide1" checked="true" /><span>Participants</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide1" checked="true" /><span>Ultimate
+                                                        Parent</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide1" checked="true" /><span>Product
+                                                        Email</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide1" checked="true" /><span>Contract
+                                                        Term</span></label></td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- end -->
+                            <table id="example1" class="display" width="100%" height="50%" style="float: left;" />
+
+                            <div id="tblmsg" style="float: center; background-color: lightgray; color: black">
+                            </div>
+                        </apex:pageblockSection>
+                    </div>
+
+
+                      <div id="Neighborhood_Details" class="">
+                        <apex:pageblockSection title="Neighborhood Details" columns="1">
+
+                            <!---Show Hide-------------->
+                            <div class="feature-button-cont">
+                                <div id="secondfeature2" class="show-hide2 button-color button">
+                                    <img src="{!$Resource.show_image}" /> <span>Show/Hide
+                                    Columns</span>
+                                </div>
+                                <div id="tableHeadVal2">
+                                    <table cellspacing="5">
+                                        <tbody>
+                                          
+                                            <tr>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide2" checked="true" /><span></span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide2" checked="true" /><span>Name</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide2" checked="true" /><span>Type</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide2" checked="true" /><span>Qty</span></label></td>
+
+                                            </tr>
+                                            <tr>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide2" checked="true" /><span>Status</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide2" checked="true" /><span>Fulfilment
+                                                        Status</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide2" checked="true" /><span>Start
+                                                        Date</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide2" checked="true" /><span>End Date</span></label></td>
+                                            </tr>
+                                            <tr>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide2" checked="true" /><span>Market</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide2" checked="true" /><span>Lead Type</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide2" checked="true" /><span>Ext Net</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide2" checked="true" /><span>Total Net</span></label></td>
+                                            </tr>
+                                            <tr>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide2" checked="true" /><span>Total
+                                                        Discount</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide2" checked="true" /><span>Strategic
+                                                        Discount</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide2" checked="true" /><span>Include</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide2" checked="true" /><span>Parent
+                                                        Asset</span></label></td>
+                                            </tr>
+                                            <tr>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide2" checked="true" /><span>Participants</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide2" checked="true" /><span>Ultimate
+                                                        Parent</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide2" checked="true" /><span>Product
+                                                        Email</span></label></td>
+                                                <td><label><input type="checkbox"
+                                                    class="check-hide2" checked="true" /><span>Contract
+                                                        Term</span></label></td>
+                                            </tr>
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- end -->
+                            <table id="example3" class="display" width="100%" height="50%" style="float: left;" />
+
+                            <div id="tblmsg2" style="float: center; background-color: lightgray; color: black">
+                            </div>
+                        </apex:pageblockSection>
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="footer">? 2016 Move, Inc. All rights reserved</div>
+        </apex:pageBlock>
+        <script type="text/javascript">
+            function populateBundlesZipsJs(){
+                
+                $('.selected-bundle-name').html( selectedBundleName );
+                //var tr = $(selectedBundleRowReference).closest('tr');
+                //var row = pTable.row( tr );
+                $('[id$="bundleZipDetailPanel"]').find('table').addClass('convertToDataTable');
+                $('[id$="bundleZipDetailPanelWrapper"]')
+                                .removeClass('display-none')
+                                .addClass('display-block');
+                
+               // row.child( $('[id$="bundleZipDetailPanel"]').html() ).show();
+               // tr.addClass('shown');
+                bundleZipTableRef = $('.convertToDataTable').DataTable( {
+                    pageLength: 7,
+                    paging:   true,
+                                            ordering: true,
+                                            select: 'single'
+                });
+                bundleZipTableRef.on( 'select', function ( e, dt, type, indexes ) {
+                    
+                    if ( type === 'row' ) {
+                        var data = bundleZipTableRef.rows( indexes ).data();
+                        populateAssetDetailsForSelectedRow(data[0][5], data[0][4]);
+                    }
+                });
+                $('html, body').animate({
+                    scrollTop: $(".bundleZipTableContainer").offset().top
+                }, 1000);
+                $("#overlay1").hide();
+                
+            }
+        </script>
+        </apex:form>
+    </body>
+
+    <script>
+        var table;
+        var table1;
+        var GlobalSelectedNodeId;
+        var GlobalBundle;
+        
+        var jqXHR = null;
+        var theControllerValue = window.location.href.split("\apex")[0];
+        var urlBase = theControllerValue + "apex/autocomplete_api";
+        var appender = "";
+        var thegeoValue = window.location.href.split("\apex")[0];
+        var geourl = thegeoValue + "apex/geo_url1?input=";
+        var date = new Date();
+        var uri = urlBase;
+        var json;
+        var myneighborhood;
+        var mycity;
+        var mypostal_code;
+        var mycounty;
+        var mystate_code;
+        var breakOut;
+        var pTableVal;
+        window.globalVal = 0
+        window.firstLoop = false;
+
+        window.ListingCountVal = '{!listingCount}';
+        window.multipleImpressionVal = '{!multipleImpressionVal}';
+        window.assetTitle = [];
+        ///////////////////////////////////////
+        // Get an instance of the REST API client
+        ///////////////////////////////////////
+
+        var client = new forcetk.Client('{!$Api.Session_ID}');
+
+        $.fn.dataTableExt.afnFiltering.push(function(oSettings, aData, iDataIndex) {
+
+            if (($('.product').val() == 'DIGITALAGENT') || ($('.product').val() == 'HANDRAISER')) {
+                var val1 = 2;
+                var val2 = 0;
+            } else if ($('.myfiltertype').val() == 'postal_code' && ($('.product').val() == 'COBROKE' || $('.product').val() == 'LOCALEXPERT' || $('.product').val() == 'LOCALEXPERTCITY')) {
+                var val1 = 0
+                var val2 = 8;
+            } else if (($('.product').val() == 'COBROKE' || $('.product').val() == 'LOCALEXPERT' || $('.product').val() == 'LOCALEXPERTCITY')) {
+                var val1 = 0
+                var val2 = 7;
+            } else if ($('.product').val() == 'Turbo') {
+                var val2 = 3;
+            } else if ($('.product').val() == 'SELLERLEAD' || $('.product').val() == 'SELLERLEADBUNDLE') {
+                var val2 = 2; 
+            } else {
+                var val1 = 0
+                var val2 = 7;
+            }
+
+            
+            if ((globalVal == 0) && ($('.product').val() != 'HOMESRCH') && (oSettings.sTableId == 'example')) {
+
+                if (oSettings.aoData.length - 1 == iDataIndex) {
+
+                    if (window.firstLoop) {
+                        $('#overlay1').hide();
+                    }
+
+                    window.firstLoop = true;
+                }
+
+                
+                return aData[val2] > 0
+
+            } else if (($('.product').val() != 'HOMESRCH') && (oSettings.sTableId == 'example')) {
+
+                if ($('#zeroAvailable').is(":checked")) {
+                    return true
+                } else
+                    return aData[val2] > 0
+
+            } else {
+
+                return true;
+            }
+        })
+
+        $(document).ready(function() {
+            
+            CopyFilterValueSearch();
+            //default value
+            $('#okButton').bind('click', function() {
+
+                $('#noAvailabilty').hide();
+
+            });
+
+            if ($('.countyVal').val() == "") {
+
+                $('.statSearch').val("ca");
+                $('.countyVal').val("Alameda");
+            }
+
+            function enterClick(e) {
+                if (window.event) {
+                    key = window.event.keyCode; //IE              
+                } else {
+                    key = e.which; //firefox              
+                }
+                if (key == 13) {
+                    var ele = document.getElementById('page:crit:gobutton');
+                    ele.click();
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            function radiusValCreator() {
+                var appendVal = '';
+                for (var count = 0; count <= 50; count++) {
+
+                    appendVal += "<option>" + count + "</option>"
+                }
+                $('#radiusVal').append(appendVal);
+
+            }
+
+            var appendVal = $('#example').html();
+            Date.prototype.toDateInputValue = (function() {
+                var local = new Date(this);
+                local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+                return local.toJSON().slice(0, 10);
+            });
+            $(".datePicker").datepicker();
+            $('.datePicker').val(new Date().toDateInputValue());
+            $("#btnExport").click(function(e) {
+                window.open('data:text/csv,' + appendVal);
+                e.preventDefault();
+            });
+           
+
+            //function for removing space
+
+            function trimFunction(string) {
+                string = string.replace(/[, ]+/g, ",").trim();
+                return string;
+            }
+            var lastZipcodeVal = null;
+            pTable = $('#example').DataTable({
+                "sScrollX": '100%',
+
+                "bAutoWidth": false,
+                "jQueryUI": false,
+                colReorder: true,
+                "columnDefs": widthContorller(),
+                iDisplayLength: 50,
+                "aaSorting": [
+                    [11, 'desc'],
+                    [1, 'asc'],
+                    [5, 'desc']
+                ],
+                select: 'single',
+                dom: 'T<"clear">lfrtip',
+                "createdRow": function(row, data, index) {
+
+                    if (($('.product').val() == 'HOMESRCH') && (data[18] == 0)) {
+                        $('td', row).eq(19).text(Number(0.00));
+                        $('td', row).eq(21).text(Number(0.00));
+                        $('td', row).eq(23).text(Number(0.00));
+                    }
+                    if ($('.product').val() == 'COBROKE' || $('.product').val() == 'LOCALEXPERT' || $('.product').val() == 'LOCALEXPERTCITY') {
+
+                        $('td', row).eq(26).text(parseInt(data[26].replace(/^"(.*)"$/, '$1')));
+                    }
+
+                    if (($('.product').val() == 'COBROKE' || $('.product').val() == 'LOCALEXPERT' || $('.product').val() == 'LOCALEXPERTCITY' ) && (data[5] == "Fast")) {
+                        $('td', row).eq(6).text(Number(data[8]).toFixed(2));
+                        $('td', row).eq(7).text(Number(data[9]).toFixed(2));
+
+                    } else {
+                        $('td', row).eq(6).text(Number(data[6]).toFixed(2));
+                        $('td', row).eq(7).text(Number(data[7]).toFixed(2));
+                    }
+                    if (($('.product').val() == 'HOMESRCH')) {
+                        $('td', row).eq(19).text(Number(data[19]).toFixed(2));
+                        $('td', row).eq(20).text(Number(data[20]).toFixed(2));
+                        $('td', row).eq(21).text(Number(data[21]).toFixed(2));
+                        $('td', row).eq(23).text(Number(data[23]).toFixed(2));
+                    }
+                    if (($('.product').val() == 'Turbo')) {
+                        $('td', row).eq(1).text(data[5]);
+                        $('td', row).eq(11).text(data[11] * multipleImpressionVal);
+                        $('td', row).eq(10).text((data[10] - data[15]) * multipleImpressionVal);
+                        $('td', row).eq(5).addClass('percentCol');
+                        if (Number(data[14]) > Number(data[11]))
+                            var availPercentage = 0;
+                        else
+                            var availPercentage = Math.floor(((Number(data[10]) / 2) / Number(data[10])) * 100);
+
+
+                        $('td', row).eq(5).html("<input type='number' class='availPercent' name='availPercent' value=" + availPercentage + ">");
+
+                        $('td', row).eq(14).text(Number(data[14] * data[6]).toFixed(2));
+                        $('td', row).eq(20).text(Number(((availPercentage / 100) * data[10]) * (data[6])).toFixed(2));
+                        $('td', row).eq(15).text(data[15] * multipleImpressionVal);
+                        $('td', row).eq(4).text((data[10]) * multipleImpressionVal);
+                        $('td', row).eq(8).html("<select><option>6</option><option>3</option></select>");
+                        $('td', row).eq(8).addClass('monthDropDown');
+                        $('td', row).eq(9).text(Number(data[6] * data[10] * 6 * (availPercentage / 100)).toFixed(2));
+                        $('td', row).eq(13).text(Math.round(Number(data[10] * 6 * (availPercentage / 100))));
+                        $('td', row).eq(12).text(Math.round(Number(data[10] * (availPercentage / 100))));
+
+
+                    }
+                    if (($('.product').val() == 'SELLERLEADBUNDLE')) {
+                        var forecastedLead      = Number(data[27]);
+                        var cpl                 = Number(data[20]);
+                        if( !isNaN( forecastedLead ) && !isNaN( cpl ) ){
+                            $('td', row).eq(7).text( (forecastedLead * cpl*12).toFixed(2) ); //Changed the contract term to 12 CRM-4085
+                            $('td', row).eq(6).text( (forecastedLead * cpl).toFixed(2) );
+                        }else{
+                            $('td', row).eq(7).text( "0" );
+                            $('td', row).eq(6).text( "0" );
+                        }
+                        $('td', row).eq(8).text("12"); //Changed the contract term to 12 CRM-4085
+                    }
+                    // CRM-5389 - Highlight Protected Markets
+                    try {
+                        if ("{!product}" == 'COBROKE' && "{!protectedMarkets}".includes(data[1])) {
+                            $('td', row).addClass('protectedMarketsBackgroundColor');
+                            $(row).hover(function(){$('td', this).removeClass('sorting_1');},function(){});
+                        }
+                    }
+                    catch (e) {
+                        console.log(e.message);
+                    }
+                    // CRM-5389 - End
+                    
+                    // CRM-6310 - Highlight Transition Markets
+                    try {
+                        if ("{!product}" == 'COBROKE' && "{!transitionMarkets}".includes(data[1])) {
+                            $('td', row).addClass('transitionMarketsBackgroundColor');
+                            $(row).hover(function(){$('td', this).removeClass('sorting_1');},function(){});
+                        }
+                    }
+                    catch (e) {
+                        console.log(e.message);
+                    }
+                    // CRM-6310 - End
+                },
+                tableTools: {
+                    sRowSelect: "os",
+                    sSwfPath: "{!URLFOR($Resource.TableTools,'TableTools-2.2.4/swf/copy_csv_xls_pdf.swf')}",
+                    aButtons: [{
+                            sExtends: "collection",
+                            sButtonText: "Export",
+                            sButtonClass: "save-collection",
+                            aButtons: ['copy', 'csv', 'xls', 'pdf']
+                        },
+                        'print'
+                    ]
+                },
+                "fnInitComplete": function(oSettings) {
+                    if (oSettings.aoData.length == 0);
+                    $('#example').show();
+                    $("#overlay1").hide();
+
+                }
+
+            });
+
+            /*-------------Width Controlling Each and Every Collumn---------*/
+            function widthContorller() {
+                var widthArray = [];
+                var productVal = $('.product').val();
+                switch (productVal) {
+                    case 'HANDRAISER':
+                        widthArray.push({
+                            "width": "7%",
+                            "targets": 11
+                        });
+                        break;
+                    case 'HOMESRCH':
+                        widthArray.push({
+                            "width": "5%",
+                            "targets": 0
+                        });
+                        break;
+                    case 'DIGITALAGENT':
+                        widthArray.push({
+                           "width": "10%",
+                            "targets": 10
+                        }, {
+                            "width": "10%",
+                            "targets": 11
+                        }, {
+                            "width": "15%",
+                            "targets": 2
+                        }, {
+                            "width": "15%",
+                            "targets": 6
+                        }, {
+                            "width": "10%",
+                            "targets": 17
+                        })
+                        break;
+                    case 'COBROKE':
+                        widthArray.push({
+                            "width": "10%",
+                            "targets": 1
+                        })
+                        break
+                }
+                
+                return widthArray;
+            }
+            /*-------------Width Controlling Each and Every Collumn End---------*/
+            /* -----------Ordering functionality Start-----------------------*/
+            $('.refresh').click(function() {
+
+                $("[id$=county__input]").val($("[id$=county__input]").val().trim());
+                $("[id$=account__input]").val(trimFunction($("[id$=account__input]").val()));
+                
+            });
+
+            /* -----------Ordering functionality End-----------------------*/
+
+            /*-------Hide HANDRAISER(Price tire,Market key,Size, LeadRouting, $Flex,$Fast,$TotalFast,$Total Flex,Qty,Pending Sale,Presale Pending and Sold)----*/
+            if ($('.product').val() == 'HANDRAISER') {
+                var showHideValArray = ['Available', '$Unit Monthly Price', 'Market Name', 'Secondary Cities', 'County', 'State']
+                dynamicDataCreator1(showHideValArray)
+                var column = pTable.columns([0, 2, 4, 5, 7, 8, 9, 10, 12, 13, 14, 15, 17, 18, 19, 20, 21, 23, 22, 25, 26,27,28,29]);
+                column.visible(!column.visible());
+                $(pTable.column(6).header()).text('$Unit Monthly Price');
+
+                pTable.colReorder.order([11, 6, 1, 24, 2, 3, 4, 5, 7, 15, 17, 16, 18, 0, 8, 9, 10, 12, 13, 14, 19, 20, 21, 22, 23, 25, 26,27,28,29])
+                $("#example_wrapper").css("width", "80%");
+                $("#example_filter").css({
+                    "top": "-37px",
+                    "right": "150px"
+                });
+                $(".dataTables_length").css({
+                    "top": "-36px",
+                    "right": "9px"
+                });
+                $("label[for='zeroAvailable']").css({
+                    'right': '990px'
+                });
+            }
+            /*-------Hide HOMESRCH qty,Flex, total Flex, type ----*/
+            if ($('.product').val() == 'HOMESRCH') {
+
+                $('.feature-button-cont label').hide();
+                var showHideValArray = ['Price Tier', 'Market Name', 'Secondary Cities', 'County', 'State', '$License', 'PPC High', '$TL Marketing Budget', '$Total monthly Homesearch Price']
+                dynamicDataCreator1(showHideValArray)
+                var column = pTable.columns([0, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 22, 25, 26,27,28,29]);
+                column.visible(!column.visible());
+                pTable.colReorder.order([18, 1, 24, 3, 16, 19, 20, 21, 23, 0, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 22, 25, 26,27,28,29])
+
+            }
+            /*-------Hide DAP Qty, Type , Flex,Fast,totalFast, Product type,Pending Sale,Presale Pending,sold,Licence, PPC High,TL Marketing budget, Total monthly Homesearch Price, Secondary cities & Market Key ----*/
+            if ($('.product').val() == 'DIGITALAGENT') {
+                var showHideValArray = ['Availble', 'Presale Available', 'Market Name', 'County', '$Total Monthly Price', 'Price Tier']
+                dynamicDataCreator1(showHideValArray)
+                var column = pTable.columns([0, 16, 2, 4, 6, 8, 9, 10, 13, 14, 15, 5, 17, 19, 20, 21, 22, 23, 24, 25, 26,27,28,29]);
+                column.visible(!column.visible());
+                $(pTable.column(7).header()).text('$Total Monthly Price');
+                pTable.colReorder.order([11, 12, 1, 3, 7, 18, 0, 16, 2, 4, 6, 8, 9, 10, 13, 14, 15, 5, 17, 19, 20, 21, 22, 23, 24, 25, 26,27,28,29])
+                $("#example_wrapper").css("width", "80%");
+                $("#example_filter").css({
+                    "top": "-37px",
+                    "right": "150px"
+                });
+                $(".dataTables_length").css({
+                    "top": "-36px",
+                    "right": "9px"
+                });
+                //$('#zeroAvailable').css({'right':'990px'});
+                $("label[for='zeroAvailable']").css({
+                    'right': '990px'
+                });
+
+            }
+            /*-------Hide  COBROKE Pending sale, Pending Presale----*/
+            if (($('.product').val() == 'COBROKE' || $('.product').val() == 'LOCALEXPERT' || $('.product').val() == 'LOCALEXPERTCITY')) {
+                var showHideValArray = ['Market Name', 'City', 'County', 'Size', 'Type', '$Unit Monthly Price', '$Total Monthly Price', 'Available', 'Sold', 'Product', 'State', 'Price Tier']
+                dynamicDataCreator1(showHideValArray)
+
+                $(pTable.column(6).header()).text('$Unit Monthly Price');
+                $(pTable.column(7).header()).text('$Total Monthly Price ');
+
+                if ($('.myfiltertype').val() == 'postal_code') {
+                    var column = pTable.columns([0, 8, 9, 10, 12, 13, 14, 19, 20, 21, 23, 22, 24, 25,27,28,29]);
+                    column.visible(!column.visible());
+                    pTable.colReorder.order([0, 1, 26, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,27,28,29])
+                } else {
+                    var column = pTable.columns([0, 8, 9, 10, 12, 13, 14, 19, 20, 21, 23, 22, 24, 25, 26,27,28,29]);
+                    column.visible(!column.visible());
+                    pTable.colReorder.order([1, 2, 3, 4, 5, 6, 7, 11, 15, 17, 16, 18, 0, 8, 9, 10, 12, 13, 14, 19, 20, 21, 22, 23, 24, 25, 26,27,28,29])
+                }
+                $("#example_wrapper").css("width", "97%");
+            }
+            if (($('.product').val() == 'Turbo')) {
+                var showHideValArray = ['City', 'County', 'Max Impressions To Sell', 'Total Impression Available Per Market', '% Available To Buy', 'Monthly Price For Max Impressions To Sell', 'Monthly Price(1K)', 'Minimum Monthly Price Per 10K', 'Total Impression Sold', 'Total Orginal Impression Per Market']
+                dynamicDataCreator1(showHideValArray)
+                var column = pTable.columns([]);
+                column.visible(!column.visible());
+                $(pTable.column(11).header()).text('Max Impressions To Sell');
+                $(pTable.column(10).header()).text('Total Impression Available Per Market');
+                $(pTable.column(4).header()).text('Total Original Impressions Per Market');
+                $(pTable.column(14).header()).text('Minimum Monthly Price Per 10K');
+                $(pTable.column(15).header()).text('Total Impression Sold');
+                $(pTable.column(5).header()).text('% Available To Buy');
+                $(pTable.column(6).header()).text('Monthly Price(1K)');
+                $(pTable.column(7).header()).text('Rental Monthly Price');
+                $(pTable.column(20).header()).text('Monthly Price for Max Impressions to Sell');
+                $(pTable.column(8).header()).text('Term');
+                $(pTable.column(9).header()).text('Term Impression Price');
+                $(pTable.column(13).header()).text('Term Impression Count');
+                $(pTable.column(12).header()).text('Monthly Impression Count');
+                pTable.colReorder.order([2, 3, 10, 11, 5, 20, 12, 6, 14, 15, 4, 8, 9, 13, 0, 17, 7, 1, 16, 18, 19, 21, 22, 23, 24, 25, 26,27,28,29])
+                $("#example_wrapper").css("width", "97%");
+            }
+             
+            if ($('.product').val() == 'SELLERLEADBUNDLE') {
+                var showHideValArray = ['Market Name', 'Lead Type', 'Available', 'CPL' ,'Forecasted Lead', 'Term','Monthly Price', 'Full Term Price','Bundle Zips'];
+                dynamicDataCreator1(showHideValArray)
+                var column = pTable.columns([ 0,2,3,4,9,10,12,13,14,15,16,17,18,19,21,22,23,24,25,26,29]);
+                column.visible(!column.visible());
+                $(pTable.column(5).header()).text('Lead Type');
+                $(pTable.column(6).header()).text('Monthly Price');
+                $(pTable.column(7).header()).text('Full Term Price');
+                $(pTable.column(8).header()).text('Term');
+                $(pTable.column(20).header()).text('CPL');
+                
+                pTable.colReorder.order([1,5,11,20,27,8,6,7,28,0,2,3,9,10,12,13,14,15,16,17,18,19,21,22,23,24,25,26,29])
+                $("#example_wrapper").css("width", "100%");
+            }
+            if ($('.product').val() == 'SELLERLEAD') {
+                var showHideValArray = ['Market Name', 'Lead Type', 'Available', 'CPL' ,'Forecasted Lead', 'Monthly Price', 'Full Term Price'];
+                dynamicDataCreator1(showHideValArray)
+                var column = pTable.columns([ 0,2,3,4,8,9,10,12,13,14,15,16,17,18,19,21,22,23,24,25,26,28,29]);
+                column.visible(!column.visible());
+                $(pTable.column(5).header()).text('Lead Type');
+                $(pTable.column(6).header()).text('Monthly Price');
+                $(pTable.column(7).header()).text('Full Term Price');
+                $(pTable.column(8).header()).text('Term');
+                $(pTable.column(20).header()).text('CPL');
+                
+                pTable.colReorder.order([1,5,11,20,27,6,7,28,0,2,3,8,9,10,12,13,14,15,16,17,18,19,21,22,23,24,25,26,29])
+                $("#example_wrapper").css("width", "100%");
+            }
+            //Parent box creator
+            function dynamicDataCreator1(arrayVal) {
+                
+                var appendVal = "<tr>";
+                for (var countVal = 0; countVal < arrayVal.length; countVal++) {
+                    if ((countVal % 4 == 0) && (countVal != 0))
+                        appendVal += "</tr><tr>"
+
+                    appendVal += "<td><label><input type='checkbox'class='check-hide' checked='true'/><span>" + arrayVal[countVal] + "</span></label></td>"
+                }
+                appendVal += "</tr>"
+                $('#tableHeadVal tbody').html(" ");
+
+                $('#tableHeadVal tbody').append(appendVal);
+            }
+
+            
+            var preRow = 'null';
+            var preTr = 'null'
+
+            $('#example tbody').on('click', '.percentCol', function(e) {
+                var collumnVal = $(this).parents('tr').find('.availPercent').val();
+                var collumnVal1 = $(this).parents('tr').find('.availPercent').parent().next().text();
+
+                $(this).parents('tr').find('.availPercent').on('input', function() {
+                    var quantityVal = $(this).parents('tr').children().eq(10).text();
+                    var monthlyPrice = $(this).parents('tr').children().eq(7).text();
+                    var monthVal = $(this).parents('tr').find('.monthDropDown select').val();
+                    
+                    $(this).parent().next().text(Number((($(this).val() / 100) * Number(quantityVal / 1000)) * Number(monthlyPrice)).toFixed(2))
+
+                    $(this).parents('tr').find('.monthDropDown').next().text(Number(($(this).val() / 100) * (quantityVal / 1000) * monthVal * monthlyPrice).toFixed(2));
+                    $(this).parents('tr').find('.monthDropDown').next().next().text(Math.round(Number(($(this).val() / 100) * (quantityVal / 1000) * monthVal)));
+                    $(this).parents('tr').find('.percentCol ').next().next().text(Math.round(Number(($(this).val() / 100) * (quantityVal / 1000))));
+                });
+
+                e.stopPropagation();
+
+            });
+            $('#example tbody').on('click', '.monthDropDown', function(e) {
+
+                $(this).parents('tr').find('select').unbind().bind('change', function() {
+                    var quantityVal = $(this).parents('tr').children().eq(10).text();
+                    var monthlyPrice = $(this).parents('tr').children().eq(7).text();
+                    var avialPercentage = $(this).parents('tr').find('.availPercent').val();
+                    $(this).parent().next().text(Number((avialPercentage / 100) * (quantityVal / 1000) * $(this).val() * monthlyPrice).toFixed(2));
+                    $(this).parent().next().next().text(Math.round(Number((avialPercentage / 100) * (quantityVal / 1000) * $(this).val())));
+                });
+
+                e.stopPropagation();
+
+            });
+            
+            pTable.draw();
+            var tableTools = new $.fn.dataTable.TableTools(pTable, {
+                "buttons": ["copy",
+                    "csv",
+                    "xls",
+                    "pdf", {
+                        "type": "print",
+                        "buttonText": "Print me!"
+                    }
+                ],
+                sRowSelect: "os",
+                "sSwfPath": "//cdn.datatables.net/tabletools/2.2.2/swf/copy_csv_xls_pdf.swf"
+            });
+            $(tableTools.fnContainer()).prependTo('#mytable_wrapper');
+
+            /*------------------------------hide zero aviable-----------------------------------*/
+
+
+            $('#zeroAvailable').change(function() {
+                globalVal++;
+
+                pTable.draw();
+
+            });
+            $('.show-hide1').bind('click', function(e) {
+                $("#tableHeadVal1").toggle(500);
+                e.stopPropagation();
+            });
+
+           $('.show-hide2').bind('click', function(e) {
+                $("#tableHeadVal2").toggle(500);
+                e.stopPropagation();
+            });
+
+            $('#button').click(function() {
+                table.row('.selected').remove().draw(false);
+            });
+
+            //Alignment Offset
+            $('#ToolTables_example_0').prepend('<img src="/resource/1441893625000/export_image">');
+            $('#ToolTables_example_0').addClass('button-color button align-btn');
+            $('#ToolTables_example_5').prepend('<img src="/resource/1441893653000/print_image">');
+            $('#ToolTables_example_5').addClass('button-color button align-btn');
+            $('#ToolTables_example_1').prepend('<img class="exportImg" src="/resource/1441893653000/inventory_copyImg">');
+           $('#ToolTables_example_2').prepend('<img class="exportImg" src="/resource/1441893653000/Inventory_CSVImg">');
+            $('#ToolTables_example_3').prepend('<img class="exportImg" src="/resource/1441893653000/Inventory_ExcelImg">');
+            $('#ToolTables_example_4').prepend('<img class="exportImg" src="/resource/1441893653000/Inventory_PDFImg">');
+
+            $('.pannel-heading').bind('click', function() {
+                if ($('.pannel-heading .minus').length == 0) {
+                    $('.pannel-heading span').addClass('minus');
+                    $('.pannel-heading span').removeClass('plus');
+                    $('.pannel-body ').slideDown();
+
+                } else {
+                    $('.pannel-heading span').removeClass('minus');
+                    $('.pannel-heading span').addClass('plus');
+                    $('.pannel-body ').slideUp();
+                }
+
+
+            });
+            $('body').bind('click', function(e) {
+                var container = $("#tableHeadVal table")
+                var container1 = $('#example')
+              
+
+                if (!container.is(e.target) && container.has(e.target).length === 0) {
+                    $("#tableHeadVal").hide(500);
+                }
+                if (!container1.is(e.target) && container1.has(e.target).length === 0 ) {
+
+                    $('#example tbody tr').removeClass('selected');
+                   
+                }
+            });
+           
+           
+            $('.show-hide').bind('click', function(e) {
+                $("#tableHeadVal").toggle(500);
+                e.stopPropagation();
+            });
+            $('.check-hide').bind('click', function() {
+
+                var column = pTable.column($(this).index('.check-hide'));
+                column.visible(!column.visible());
+            });
+
+           
+        });
+        /*--------------------------Dynamic Change value in show Hide Bottom----------------*/
+
+        function dynamicDataCreatorLE(arrayVal) {
+
+            var appendVal = "<tr>";
+            for (var countVal = 0; countVal < arrayVal.length; countVal++) {
+                if ((countVal % 4 == 0) && (countVal != 0))
+                    appendVal += "</tr><tr>"
+
+                appendVal += "<td><label><input type='checkbox'class='check-hide2' checked='true'/><span>" + arrayVal[countVal] + "</span></label></td>"
+            }
+            appendVal += "</tr>"
+            $('#tableHeadVal2 tbody').html(" ");
+
+            $('#tableHeadVal2 tbody').append(appendVal);
+        }
+
+        function dynamicDataCreator(arrayVal) {
+
+            var appendVal = "<tr>";
+            for (var countVal = 0; countVal < arrayVal.length; countVal++) {
+                if ((countVal % 4 == 0) && (countVal != 0))
+                    appendVal += "</tr><tr>"
+
+                appendVal += "<td><label><input type='checkbox'class='check-hide1' checked='true'/><span>" + arrayVal[countVal] + "</span></label></td>"
+            }
+            appendVal += "</tr>"
+            $('#tableHeadVal1 tbody').html(" ");
+
+            $('#tableHeadVal1 tbody').append(appendVal);
+        }
+         
+
+        function intializeCheckBoxClick() {
+
+            $('.check-hide1').bind('click', function() {
+                var column = table.column($(this).index('.check-hide1'));
+                column.visible(!column.visible());
+
+                table.columns.adjust().draw(true);
+            });
+
+
+            $('#secondfeature').show();
+        }
+
+        function intializeCheckBoxClickLE() {
+
+            $('.check-hide2').bind('click', function() {
+                var column = table.column($(this).index('.check-hide2'));
+                column.visible(!column.visible());
+
+                table1.columns.adjust().draw(true);
+            });
+
+
+            $('#secondfeature2').show();
+        }
+        
+         
+
+        arrayVal = ['', 'Market', 'Lead Type', 'Qty', 'Start Date', 'End Date', 'Agent ID', 'Name', '']
+        dynamicDataCreator(arrayVal)
+        intializeCheckBoxClick()
+        dynamicDataCreatorLE(arrayVal)
+        intializeCheckBoxClickLE()
+        
+            /*--------------------------Dynamic Change value in show Hide Bottom End----------------*/
+            ////////*************************Load Table ******/
+        function populateNeighborhoodDetailsForSelectedRow(myId, mflex, bundle) {
+            console.log('mId --> '+myId);
+             console.log('mflex --> '+mflex);
+            console.log('bundle --> '+bundle);
+           
+            var myAssets = [];
+            var query;
+            
+            var product = $('.product').val();
+
+            
+            if (product != 'LOCALEXPERT') {
+                $("#Neighborhood_Details").hide();
+
+                return;
+            }
+
+            $("#Neighborhood_Details").hide();
+
+            try {
+
+                if (myId.length > 0) {
+
+                    $("#Neighborhood_Details").show();
+                    var query = "SELECT Extended_Net_Price__c,Asset_Type__c,Contract_Term__c,End_Date__c,Fulfillment_Status__c,Id,Include_Asset__c,Lead_Type__c,Total_Net__c,Parent_Asset__r.Market__c,Name,Parent_Asset__c,Account_Name__c,Strategic_Discount__c,Product_Email__c,Parent_Asset__r.Quantity,Start_Date__c,Status,Total_Discount_Amount__c,Ultimate_Parent__c ,Parent_Asset_Name__c,Ultimate_Parent_Asset_Name__c,Account_Party_ID__c,CampaignID__c";
+                    query = query + "  FROM Asset WHERE Lead_Type__c in ('" + mflex + "','" + mflex + " Follow-up') AND Asset_Type__c='Fulfill to' AND market_key__c ='" + myId + "' AND Status IN ('Active')";
+                    console.log("query***********" + query);
+
+                   
+
+                    client.query(query, function(response) {
+                    console.log('response  -->'+JSON.stringify(response));
+                    
+                    console.log('bundle --> '+GlobalBundle.bundleZipWrapperVar);
+                        if (GlobalBundle.bundleZipWrapperVar.length > 0) {
+
+                            for (var i = 0; i < GlobalBundle.bundleZipWrapperVar.length; i++) {
+
+                                {
+                                    document.getElementById('tblmsg2').innerHTML = "Loading Table... : No of Rows : " + (i + 1) + "/" + GlobalBundle.bundleZipWrapperVar.length;
+                                }
+
+                               
+
+
+                               myAssets.push([GlobalBundle.bundleZipWrapperVar[i].market_type, GlobalBundle.bundleZipWrapperVar[i].market_name]);
+
+                                 
+                            } // for loop
+
+                        } // length > 0
+
+                        {
+                            document.getElementById('tblmsg2').innerHTML = " No of Rows : " + GlobalBundle.bundleZipWrapperVar.length + "/" + GlobalBundle.bundleZipWrapperVar.length;
+                        }
+
+                        $(document).ready(function() {
+console.log('inside ready function -->'+myAssets);
+                            if (table1 != null) {
+
+                                table1.destroy();
+
+                            }
+                            assetTitle = [{
+                                "title": "Market Type",
+                                
+                            }, {
+                                "title": "Market Name",
+                                "class": "sorting"
+                            }   
+                            ]
+                        
+                            
+
+                            table1 = $('#example3').DataTable({
+                                "sScrollX": "100%",
+
+                                "bScrollCollapse": true,
+                                colReorder: true,
+                                "jQueryUI": false,
+                                "columnDefs": [{
+                                    orderable: false,
+                                    targets: [0, -1]
+                                }],
+                                "pagingType": "full_numbers",
+
+                                "lengthMenu": [
+                                    [10, 25, 50, 100, -1],
+                                    [10, 25, 50, 100, "All"]
+                                ],
+                                'iDisplayStart': 10,
+                                iDisplayLength: 50,
+                                "scrollCollapse": false,
+
+
+                                "order": [
+                                    [1, "desc"]
+                                ],
+
+                                dom: 'T<"clear">lfrtip',
+                                "createdRow": function(row, data, index) {
+                                    if ($('.product').val() == 'Turbo') {
+                                        $('td', row).eq(3).text(Number(data[3] * 1000).toFixed(2));
+                                    }
+                                },
+                                "data": myAssets,
+
+                                "columns": assetTitle,
+                                "order": [
+                                    [1, 'asc']
+                                ],
+
+                                tableTools: {
+                                    sRowSelect: "os",
+                                    sSwfPath: "{!URLFOR($Resource.TableTools,'TableTools-2.2.4/swf/copy_csv_xls_pdf.swf')}",
+                                    aButtons: [{
+                                            sExtends: "collection",
+                                            sButtonText: "Export",
+                                            sButtonClass: "save-collection",
+                                            aButtons: ['copy', 'csv', 'xls', 'pdf']
+                                        },
+                                        'print'
+                                    ]
+                                }
+
+                            });
+
+                            table1.draw();
+
+                            console.log('table formed');
+
+                            $('#ToolTables_example3_5').prepend('<img src="/resource/1441893653000/print_image">');
+                            $('#ToolTables_example3_5').addClass('button-color button align-btn');
+                            $('#ToolTables_example3_0').hide();
+
+                            /*show hide functionality Start*/
+                            $('body').bind('click', function(e) {
+                                var container = $("#tableHeadVal2 table");
+                                if (!container.is(e.target) && container.has(e.target).length === 0) {
+
+                                    $("#tableHeadVal2").hide(500);
+                                }
+                            });
+                            
+
+                        });
+                    });
+
+                }
+
+                var arrayVal = []
+
+                
+                arrayVal = ['Market Name', 'Market Type']
+                dynamicDataCreatorLE(arrayVal)
+                intializeCheckBoxClickLE()
+               
+
+            } catch (e) {
+            
+            console.log('exception '+e);
+            }
+
+        }
+
+        function populateAssetDetailsForSelectedRow(myId, mflex) {
+
+            var myAssets = [];
+            var query;
+            
+            var product = $('.product').val();
+
+            
+            if (product == 'HOMESRCH' || product == 'HANDRAISER') {
+                $("#Account_Details").hide();
+
+                return;
+            }
+
+            $("#Account_Details").hide();
+
+            try {
+
+                if (myId.length > 0) {
+
+                    $("#Account_Details").show();
+                    var query = "SELECT Extended_Net_Price__c,Asset_Type__c,Contract_Term__c,End_Date__c,Fulfillment_Status__c,Id,Include_Asset__c,Lead_Type__c,Total_Net__c,Parent_Asset__r.Market__c,Name,Parent_Asset__c,Account_Name__c,Strategic_Discount__c,Product_Email__c,Parent_Asset__r.Quantity,Start_Date__c,Status,Total_Discount_Amount__c,Ultimate_Parent__c ,Parent_Asset_Name__c,Ultimate_Parent_Asset_Name__c,Account_Party_ID__c,CampaignID__c";
+                    query = query + "  FROM Asset WHERE Lead_Type__c in ('" + mflex + "','" + mflex + " Follow-up') AND Asset_Type__c='Fulfill to' AND market_key__c ='" + myId + "' AND Status IN ('Active')";
+                    console.log("query***********" + query);
+
+                   
+
+                    client.query(query, function(response) {
+
+                        if (response.records.length > 0) {
+
+                            for (var i = 0; i < response.records.length; i++) {
+
+                                {
+                                    document.getElementById('tblmsg').innerHTML = "Loading Table... : No of Rows : " + (i + 1) + "/" + response.records.length;
+                                }
+
+                                if ( $('.product').val() != 'Turbo') {
+
+
+                                    myAssets.push([response.records[i].Parent_Asset__r.Market__c, response.records[i].Lead_Type__c, response.records[i].Parent_Asset__r.Quantity, response.records[i].Start_Date__c, response.records[i].End_Date__c, response.records[i].Account_Party_ID__c, response.records[i].Account_Name__c]);
+
+                                } else if ( $('.product').val() == 'Turbo') {
+
+                                    myAssets.push([response.records[i].Account_Party_ID__c, response.records[i].Account_Name__c, response.records[i].Parent_Asset__r.Market__c, response.records[i].Parent_Asset__r.Quantity, response.records[i].Start_Date__c, response.records[i].End_Date__c, response.records[i].CampaignID__c]);
+                                }
+
+                            } // for loop
+
+                        } // length > 0
+
+                        {
+                            document.getElementById('tblmsg').innerHTML = " No of Rows : " + response.records.length + "/" + response.records.length;
+                        }
+
+                        $(document).ready(function() {
+
+                            if (table != null) {
+
+                                table.destroy();
+
+                            }
+                            if ( $('.product').val() != 'Turbo')
+                                assetTitle = [{
+                                    "title": "Market",
+                                    "class": "sorting"
+                                }, {
+                                    "title": "Lead Type"
+                                }, {
+                                    "title": "Qty "
+                                }, {
+                                    "title": "Start Date"
+                                }, {
+                                    "title": "End Date"
+                                }, {
+                                    "title": "Agent ID"
+                                }, {
+                                    "title": "Name"
+                                }]
+                            else
+                                assetTitle = [{
+                                    "title": "Agent ID"
+                                }, {
+                                    "title": "Name"
+                                }, {
+                                    "title": "Market",
+                                    "class": "sorting"
+                                }, {
+                                    "title": "Qty "
+                                }, {
+                                    "title": "Start Date"
+                                }, {
+                                    "title": "End Date"
+                                }, {
+                                    "title": "Campaign ID"
+                                }]
+                            
+
+                            table = $('#example1').DataTable({
+                                "sScrollX": "100%",
+
+                                "bScrollCollapse": true,
+                                colReorder: true,
+                                "jQueryUI": false,
+                                "columnDefs": [{
+                                    orderable: false,
+                                    targets: [0, -1]
+                                }],
+                                "pagingType": "full_numbers",
+
+                                "lengthMenu": [
+                                    [10, 25, 50, 100, -1],
+                                    [10, 25, 50, 100, "All"]
+                                ],
+                                'iDisplayStart': 10,
+                                iDisplayLength: 50,
+                                "scrollCollapse": false,
+
+
+                                "order": [
+                                    [1, "desc"]
+                                ],
+
+                                dom: 'T<"clear">lfrtip',
+                                "createdRow": function(row, data, index) {
+                                    if ($('.product').val() == 'Turbo') {
+                                        $('td', row).eq(3).text(Number(data[3] * 1000).toFixed(2));
+                                    }
+                                },
+                                "data": myAssets,
+
+                                "columns": assetTitle,
+                                "order": [
+                                    [1, 'asc']
+                                ],
+
+                                tableTools: {
+                                    sRowSelect: "os",
+                                    sSwfPath: "{!URLFOR($Resource.TableTools,'TableTools-2.2.4/swf/copy_csv_xls_pdf.swf')}",
+                                    aButtons: [{
+                                            sExtends: "collection",
+                                            sButtonText: "Export",
+                                            sButtonClass: "save-collection",
+                                            aButtons: ['copy', 'csv', 'xls', 'pdf']
+                                        },
+                                        'print'
+                                    ]
+                                }
+
+                            });
+
+                            table.draw();
+
+
+
+
+                            
+
+                            $('#ToolTables_example1_5').prepend('<img src="/resource/1441893653000/print_image">');
+                            $('#ToolTables_example1_5').addClass('button-color button align-btn');
+                            $('#ToolTables_example1_0').hide();
+
+                            
+
+                            /*show hide functionality Start*/
+                            $('body').bind('click', function(e) {
+                                var container = $("#tableHeadVal1 table")
+                                if (!container.is(e.target) && container.has(e.target).length === 0) {
+
+                                    $("#tableHeadVal1").hide(500);
+                                }
+                            });
+
+                        });
+                    });
+
+                }
+
+                var arrayVal = []
+
+                
+                arrayVal = ['Market', 'Lead Type', 'Qty', 'Start Date', 'End Date', 'Agent ID', 'Name']
+                dynamicDataCreator(arrayVal)
+                intializeCheckBoxClick()
+                
+
+            } catch (e) {}
+
+        }
+        var GlobalSelectedNodeFlexType;
+        populateAssetDetailsForSelectedRow(GlobalSelectedNodeId);
+        populateNeighborhoodDetailsForSelectedRow(GlobalSelectedNodeId);
+        $("#example").delegate("tbody tr", "click", function(event) {
+            // the code that WAS in the .click() function
+            
+            var oTT = TableTools.fnGetInstance('example');
+            var aData = oTT.fnGetSelectedData();
+            var mArrayofTable = aData;
+            var bundledZip = '';
+            console.log(' selected data --> '+ aData);
+            for (var i = 0; i < aData.length; i++) {
+                        console.log('checking data ---> '+aData[i][29]);
+                        console.log('for flex data ---> '+aData[i][4]);
+                GlobalBundle = JSON.parse(aData[i][29]);
+                GlobalSelectedNodeId = aData[i][25];
+
+                if (($('.product').val() == 'COBROKE' || $('.product').val() == 'LOCALEXPERT') && $('.myfiltertype').val() == 'postal_code') {
+                    GlobalSelectedNodeFlexType = aData[i][6];
+                    GlobalSelectedNodeId = aData[i][26];
+                } else if ($('.product').val() == 'COBROKE') {
+                    GlobalSelectedNodeFlexType = aData[i][4];
+                } else if ($('.product').val() == 'SELLERLEADBUNDLE' || $('.product').val() == 'SELLERLEAD') {
+                    GlobalSelectedNodeFlexType = aData[i][1];
+                    GlobalSelectedNodeId = aData[i][26];
+                }else if($('.product').val() == 'LOCALEXPERTCITY'){
+                    GlobalSelectedNodeFlexType = aData[i][4];
+                }else {
+                    GlobalSelectedNodeFlexType = aData[i][17];
+                }
+                bundledZip  = aData[i][8];
+                selectedBundleName = aData[i][0];
+                itemDetailsJson = aData[i][28];
+            }
+            
+            populateAssetDetailsForSelectedRow(GlobalSelectedNodeId,   GlobalSelectedNodeFlexType);
+            populateNeighborhoodDetailsForSelectedRow(GlobalSelectedNodeId,   GlobalSelectedNodeFlexType, GlobalBundle);
+            var productName = $(".product").val(); 
+            if( typeof productName !== "undefined" && productName == 'SELLERLEADBUNDLE' ){
+                selectedBundleRowReference = $(this);
+                $("#overlay1").show();
+                console.log('-----------itemDetailsJson---------'+itemDetailsJson);
+                populateBundleZipsAF( bundledZip,itemDetailsJson );
+           }
+                
+        });
+        
+        function CopyFilterValue() {
+            
+            if (table) {
+
+                table.destroy();
+                $('#example1').remove();
+                $('<table id="example1" class="display" width="100%" height="50%" style="float: left;" />').insertAfter($('.feature-button-cont').eq(1));
+            }
+            $('#Account_Details').hide();
+
+            if (table1) {
+
+                table1.destroy();
+                $('#example3').remove();
+                $('<table id="example3" class="display" width="100%" height="50%" style="float: left;" />').insertAfter($('.feature-button-cont').eq(1));
+            }
+            $('#Neighborhood_Details').hide();
+            if($('.product').val() == 'LOCALEXPERT' && $(".myfiltertype option[value='neighborhood']").length < 1){
+                
+                $('.myfiltertype').append($('<option>', {
+                        value: 'neighborhood',
+                        text: 'Neighborhood'
+                }));
+            } else if($('.product').val() != 'LOCALEXPERT'){
+                $(".myfiltertype option[value='neighborhood']").remove();
+            }
+
+            return true;
+
+        }
+        
+        function CopyFilterValueSearch() {
+            
+            
+            $('#Account_Details').hide();
+
+            console.log("-----copy");
+            $('#Neighborhood_Details').hide();
+            if($('.product').val() == 'LOCALEXPERT' && $(".myfiltertype option[value='neighborhood']").length < 1){
+                
+                $('.myfiltertype').append($('<option>', {
+                        value: 'neighborhood',
+                        text: 'Neighborhood'
+                }));
+            } else if($('.product').val() != 'LOCALEXPERT'){
+                $(".myfiltertype option[value='neighborhood']").remove();
+            }
+
+            return true;
+
+        }
+
+        $(document).ready(function() {
+            function stateCountyDisplay(value, refreshLoad) {
+
+                var appender = '';
+                if ($('.myfiltertype').val() != 'postal_code') {
+
+                    $('.countyVal').hide();
+                    $('#stateSelect').hide();
+                    $('#loadRect').show();
+
+                }
+
+                var sortSelect = function(select, attr, order) {
+                    if (attr === 'text') {
+                        if (order === 'asc') {
+                            $(select).html($(select).children('option').sort(function(x, y) {
+                                return $(x).text().toUpperCase() < $(y).text().toUpperCase() ? -1 : 1;
+                            }));
+                            $(select).get(0).selectedIndex = 0;
+
+                        } // end asc
+                        if (order === 'desc') {
+                            $(select).html($(select).children('option').sort(function(y, x) {
+                                return $(x).text().toUpperCase() < $(y).text().toUpperCase() ? -1 : 1;
+                            }));
+                            $(select).get(0).selectedIndex = 0;
+
+                        } // end desc
+                    }
+
+                };
+
+                $.ajax({
+                    type: "GET",
+                    url: geourl + value,
+                    crossDomain: true,
+                    dataType: 'json',
+                    success: function(resp) {
+                        for (var count = 0; count < resp.length; count++) {
+                            appender += "<option value='" + resp[count].area + "'>" + resp[count].area + "</option>"
+                        }
+                        $('#stateSelect').html(appender);
+                        sortSelect('#stateSelect', 'text', 'asc');
+                        if (refreshLoad == true && $('.countyVal').val() != "") {
+
+                            $('#stateSelect').val($('.countyVal').val().capitalizeFirstLetter())
+                            if ($('.myfiltertype').val() != 'postal_code') {
+                                $('#loadRect').hide();
+                                $('#stateSelect').show();
+                            }
+                            return;
+                        }
+                        $("[id$=account__input]").val($('#stateSelect').find('option:selected').text());
+                        $('.countyVal').val(resp[0].area);
+                        if ($('.myfiltertype').val() != 'postal_code') {
+                            $('#loadRect').hide();
+                            $('#stateSelect').show();
+                        }
+                    }
+                });
+            }
+            stateCountyDisplay($(".statSearch").val(), true)
+
+            $(".statSearch").bind('change', function() {
+                appender = " ";
+
+                $("[id$=account__input]").val($(this).find('option:selected').text());
+                if ($('.myfiltertype').val() == 'state')
+                    return;
+                $("[id$=county__input]").val(" ");
+                stateCountyDisplay($(this).val())
+
+            });
+
+            $("#autocomplete").focus(function() {
+
+            });
+            $("#autocomplete, #state_code, #lat, #lon, #area_types, #prop_status").on('input', function(event) {
+               GetResponse();
+            });
+
+            $("#debug").click(function() {
+                GetResponse();
+                alert();
+            });
+            return false;
+        });
+
+        function GetResponse() {
+            cityArray = [];
+            uri = CreateUri();
+            var serachText = $("#autocomplete").val().trim();
+            
+            if (serachText == null || serachText.length <= 1) {
+                ParseJson(null);
+                return;
+            }
+            if (jqXHR)
+                jqXHR.abort();
+            jqXHR = $.ajax({
+                    type: "GET",
+                    dataType: "text",
+                    contentType: "application/json; charset=utf-8",
+                    url: uri,
+                    processData: false,
+                    cache: false
+                })
+                .done(function(data) {
+                    ParseJson(data);
+                    jqXHR = null;
+                })
+                .fail(function(xhr, ajaxOptions, thrownError) {
+
+                    if (thrownError != "abort")
+                        alert('Error: "' + xhr.status + '"\nMesage: "' + thrownError + '"');
+                })
+                .always(function() {
+
+                });
+        }
+
+        function CreateUri() {
+            var serachText = $("#autocomplete");
+            var uri = urlBase + "?input=" + serachText.val().trim();
+            if (serachText.val().length == 0)
+                $(serachText).addClass("required");
+            else
+                $(serachText).removeClass("required");
+            if ($('#debug').prop('checked')) uri += "&debug=1&limit=20";
+            return uri;
+        }
+
+        function CreateLinkUri(searchText, stateCode, lat, lon) {
+            var uri = urlBase + "?input=" + searchText;
+
+            if ($('#debug').prop('checked')) uri += "&debug=1";
+            return uri;
+        }
+
+        function stopScroll() {
+
+            var flag = true;
+
+            document.body.addEventListener('keydown', function(e) {
+                var badKey = 40; //down array keyCode
+                if (flag && e.keyCode === badKey) {
+                    e.preventDefault();
+                }
+            });
+        }
+
+        $('.predictive div').bind('mouseover', function() {
+
+            $('.predictive div').removeClass('active');
+            $(this).addClass('active');
+        });
+
+        $('.hpcustom-searchinput').on('keyup', function(e) {
+            $('.predictive div').removeClass('active');
+            var code = e.keyCode || e.which;
+
+            if (code == 40) {
+                downKeyPress(e);
+                e.stopPropagation();
+            } else if ((code == 38) || (code === 38)) {
+                upKeyPress(e);
+               e.stopPropagation();
+            } else {}
+
+        });
+
+        function upKeyPress(event) {
+
+            curVal--;
+            if (0 > curVal) {
+
+                curVal = totalVal - 1;
+
+                var element = $('.predictive div').eq(curVal);
+                $('.predictive div').eq(curVal).addClass('active');
+                $('.hpcustom-searchinput').val(element.text().trim());
+
+                AssignGeoValue();
+
+            } else {
+
+                var element = $('.predictive div').eq(curVal);
+                $('.predictive div').eq(curVal).addClass('active');
+                $('.hpcustom-searchinput').val(element.text().trim());
+
+                AssignGeoValue();
+
+            }
+        }
+
+        function downKeyPress(event) {
+            event.stopPropagation();
+            curVal++;
+            if (curVal < totalVal - 1) {
+                var element = $('.predictive div').eq(curVal);
+                $('.predictive div').eq(curVal).addClass('active');
+                $('.hpcustom-searchinput').val(element.text().trim());
+                AssignGeoValue();
+            } else {
+                var element = $('.predictive div').eq(curVal);
+                $('.predictive div').eq(curVal).addClass('active');
+                $('.hpcustom-searchinput').val(element.text().trim());
+                curVal = -1;
+                AssignGeoValue();
+            }
+
+        }
+
+        function ParseJson(data) {
+
+            var bFullAddress = false;
+            var responseBox = $('#PredictiveText');
+
+            responseBox.empty();
+            $("#responseDebug").html();
+
+            if (data == null) {
+                $('#PredictiveText').hide();
+                return;
+            }
+            json = $.parseJSON(data);
+            $("#footer").html('API build <b>' + json.meta.build + '</b>');
+            $("#found").empty();
+            $("#found").html(' found <b>' + json.returned_rows + '</b> records');
+            breakOut = true;
+            $.each(json.autocomplete, function(index, value) {
+                var text = '';
+                bFullAddress = false;
+
+                if (value.full_address) {
+                    text += value.full_address;
+                    bFullAddress = true;
+
+                }
+
+                $.each([value.neighborhood, value.city, value.postal_code, value.county, value.state_code],
+                    function(i, v) {
+                        if (v)
+
+                            if (bFullAddress === false) {
+
+                                text += v + ',';
+                            }
+
+                        if (i === 0) {
+
+                            myneighborhood = v;
+
+                        } else if (i === 1) {
+
+                            mycity = v;
+
+                        } else if (i === 2) {
+
+                            mypostal_code = v;
+
+                        } else if (i === 3) {
+
+                            mycounty = v;
+
+                        } else if (i === 4) {
+
+                            mystate_code = v;
+                            bFullAddress = false;
+
+                        }
+
+                    });
+
+                responseBox.append('<div> <i>' + text + '</i></div>');
+
+                $('.predictive div').bind('click', function() {
+                    dropDownSelect(this);
+                });
+                $('#autocomplete').keypress(function(e) {
+                    var p = e.which;
+                    e.stopPropagation();
+                    if (p == 13) {
+                        $('.predictive div').each(function() {
+                            if ($(this).attr('class') == 'active') {
+                                dropDownSelect(this);
+                            }
+                        })
+                    }
+                });
+
+                function dropDownSelect(This) {
+                    function stateCountyDisplay(value, refreshLoad) {
+                        var appender = '';
+                        if ($('.myfiltertype').val() != 'postal_code') {
+
+
+                            $('.countyVal').hide();
+
+
+                        } else {
+
+                            return;
+                        }
+
+                        $('#stateSelect').hide();
+                        $('#loadRect').show();
+
+                        $.ajax({
+                            type: "GET",
+                            url: geourl + value,
+                            crossDomain: true,
+                            dataType: 'json',
+                            success: function(resp) {
+                                for (var count = 0; count < resp.length; count++) {
+                                    appender += "<option value='" + resp[count].area + "'>" + resp[count].area + "</option>"
+                                }
+                                $('#stateSelect').html(appender);
+                                if (refreshLoad == true && $('.countyVal').val() != "") {
+                                    
+                                    $('#stateSelect').val($('.countyVal').val().capitalizeFirstLetter().replace(' County', ''));
+                                    $('#loadRect').hide();
+                                    $('#stateSelect').show();
+                                   
+                                    if (jQuery("#stateSelect").val() == null) {
+                                        $('.infoBar').fadeIn(1000);
+                                        $('.infoBar').fadeOut(5000);
+                                    }
+                                    return;
+                                }
+                                $("[id$=account__input]").val($('#stateSelect').find('option:selected').text());
+                                $('.countyVal').val(resp[0].area);
+                                $('#loadRect').hide();
+                                $('#stateSelect').show();
+                            }
+                        });
+                    }
+                    if (breakOut) {
+                        jQuery("[id$=myfiltertype]").val(value.area_type);
+                        jQuery("[id$=wlstatus]").val(value.state_code.toLowerCase());
+                        jQuery("[id$=county__input]").val(value.county);
+                        mycounty = value.county;
+                        if (value.area_type == 'postal_code') {
+                            jQuery("[id$=account__input]").val(value.postal_code);
+                            $('.countyHide').hide();
+                            $('.searchVals').show();
+                            $('.dummySearchVal').hide();
+                            $('.radiusVal').show();
+                            $('.radiusValLable').show();
+
+                        } else if (value.area_type == 'city') {
+                            $('.countyLabel').show();
+                            $('.searchVals').hide();
+                            $('.radiusVal').hide();
+                            $('.radiusValLable').hide();
+                            $('.dummySearchVal').show();
+                            $('.dummySearchVal').val(value.city);
+                            jQuery("[id$=account__input]").val(value.city);
+                            jQuery("[id$=county__input]").val(value.city);
+
+                            stateCountyDisplay(value.state_code.toLowerCase(), true);
+
+                        } else if (value.area_type == 'county') {
+                            $('.radiusVal').hide();
+                            $('.radiusValLable').hide();
+                            jQuery("[id$=account__input]").val(value.county.trim());
+                            stateCountyDisplay(value.state_code.toLowerCase(), true);
+                            $('.searchVals').show();
+                            $('.dummySearchVal').hide();
+                            $('.countyLabel').show();
+                        } else {
+                            $('.radiusVal').hide();
+                            $('.radiusValLable').hide();
+                            $('.searchVals').show();
+                            $('.dummySearchVal').hide();
+                            jQuery("[id$=account__input]").val($(this).text().trim());
+
+                        }
+                        $("div.id_100 select").val("value2");
+                        $('.hpcustom-searchinput').val($(this).text().trim());
+
+                        $('#PredictiveText').hide();
+                        breakOut = false;
+                        return false;
+                    }
+                }
+                $('#PredictiveText').show();
+            })
+
+            totalVal = $('.predictive div').length;
+            curVal = -1;
+
+            if ($('#debug').prop('checked')) {
+                var jsonText = JSON.stringify(json, null, 2);
+                $("#responseDebug").html('<pre>' + jsonText + '</pre>');
+                $("#responseDebug").addClass("responseDebug");
+            } else {
+                $("#responseDebug").removeClass("responseDebug");
+            }
+
+        }
+
+        function AssignGeoValue() {
+
+            var myvalue = jQuery("[id$=myfiltertype]").val();
+            var geovalue;
+            var bComma = true;
+            var mystate = 'CA';
+            var mystr = $('.hpcustom-searchinput').val();
+            var res = mystr.split(",");
+            if (res.length <= 1) {
+                res = mystr.split(" ");
+                bComma = false;
+            }
+
+            if (myvalue === 'Zip Code') {
+
+                if (bComma === true) {
+                    geovalue = res[1];
+                } else {
+                    geovalue = res[res.length - 1];
+                }
+
+                mystate = res[2];
+                if (geovalue.length > 0) {
+                    jQuery("[id$=account__input]").val(geovalue);
+                } else {
+                    jQuery("[id$=account__input]").val(mypostal_code);
+                }
+
+                if (mystate.length > 0) {
+                    jQuery("[id$=wlstatus]").val(mystate);
+                }
+
+            } else if (myvalue === 'City') {
+
+                mystate = res[1];
+
+                if (bComma === true) {
+                    geovalue = res[0];
+                } else {
+                    geovalue = res[res.length - 2];
+                }
+
+                if (geovalue.length > 0) {
+                    jQuery("[id$=account__input]").val(geovalue);
+                } else {
+                    jQuery("[id$=account__input]").val(mycity);
+                }
+
+                if (mystate.length > 0) {
+                    jQuery("[id$=wlstatus]").val(mystate);
+                }
+
+
+            } else if (myvalue === 'County') {
+
+                jQuery("[id$=account__input]").val(mycounty);
+                mystate = res[2];
+
+                if (mystate.length > 0) {
+
+                    jQuery("[id$=wlstatus]").val(mystate);
+
+
+                }
+            } else if (myvalue === 'State') {
+
+                jQuery("[id$=account__input]").val(mystate);
+                mystate = res[2];
+
+                if (mystate.length > 0) {
+                    jQuery("[id$=wlstatus]").val(mystate);
+                }
+            }
+
+        }
+
+        function multInputs() {
+            var mult = 0;
+            // for each row:
+            $("tr.txtMult").each(function() {
+                // get the values from this row:
+                var val1 = $('.val1', this).val();
+                var val2 = $('.val4', this).val();
+                var total = (val1 * 1) * (val2 * 1);
+                $('.val3', this).text(total);
+
+            });
+
+        }
+
+        $(document).ready(function() {
+            if ($("[id$=myfiltertype]").val() == 'postal_code')
+                showRadius();
+            else
+                hideRadius();
+            linkSearchcheckAvail();
+            productDefaultSelect();
+
+            homeSearchFunctionality();
+
+            function productDefaultSelect() {
+                if ($('.product').val() == 'Turbo')
+                    $('.turboShow').show()
+                else
+                    $('.turboShow').hide()
+
+            }
+
+            function homeSearchFunctionality() {
+
+
+            }
+
+            function linkSearchcheckAvail() {
+                var currentURL = window.location.href;
+                var partyId = parseInt(currentURL.match(/\d+/g)[1]);
+                var product = currentURL.split('=')[2];
+                if (product == 'Turbo') {
+                    $('.product').val('Turbo');
+                    $('.checkAvailablityCheck').prop('checked', true);
+
+                    $('#partyIdTxt').val(partyId);
+                    checkvalAvailbility();
+                    checkAvailablityTrigger();
+                }
+
+            }
+
+            function checkvalAvailbility() {
+
+                if ($('.checkAvailablityCheck').is(":checked") && ($('.product').val() == 'Turbo')) {
+
+                    $('.checkNo').hide();
+                    $('.checkYes').show();
+                    $("#example_wrapper").hide();
+                    $('.pannel-body').css('height', '40px');
+                    $('.pannel-body>form>table').css('margin-top', '10px')
+                    $('.countyHide ').hide();
+                    $('#Account_Details').hide();
+                    hideRadius();
+                } else {
+                    $('.checkYes').hide();
+                    $('.checkNo').show();
+                    $("#example_wrapper").show();
+                    $('#threeTableWrapper').hide();
+                    $('#noAvailabilty').hide();
+                    $('.hoverGreen').hide();
+                    $('.hoverRed').hide();
+                    $('.pannel-body').css('height', '112px');
+                    $('.pannel-body>form>table').css('margin-top', '0px')
+
+                    if ($('.myfiltertype').val() != 'postal_code') {
+                        $('.countyHide ').show();
+                        hideRadius();
+                    } else
+                        showRadius();
+                      
+                    if ($('.myfiltertype').val() == 'city') {
+                        $('.dummySearchVal').show();
+                        $('.searchVals').hide();
+                    } else {
+                        $('.dummySearchVal').hide();
+                        $('.searchVals').show();
+                    }
+                }
+            }
+            $(".checkAvailablityCheck").change(function() {
+                checkvalAvailbility();
+            });
+            $('.product').on('change', function() {
+                $("[id$=account__input]").val("");
+                $(".dummySearchVal").val("");
+
+                if ($(this).val() == 'Turbo')
+                    $('.turboShow').show();
+                else
+                    $('.turboShow').hide();
+
+
+                if ($('[id$=myfiltertype]').val() == 'postal_code') {
+                    showRadius();
+                    $('.countyHide').hide();
+                } else {
+                    hideRadius();
+                }
+                homeSearchFunctionality()
+                checkvalAvailbility();
+            });
+            var datatableId = []
+            var agentTilte = [{
+                "title": "Party Id"
+            }, {
+                "title": "Listing Type",
+                "className": 'number'
+            }, {
+                "title": "Price"
+            }, {
+                "title": "MLS Id"
+            }, {
+                "title": "Beds"
+            }, {
+                "title": "Baths"
+            }, {
+                "title": "Baths Full"
+            }, {
+                "title": "Year Built"
+            }, {
+                "title": "Square Ft"
+            }, {
+                "title": "Office Id"
+            }, {
+                "title": "Office Name"
+            }, {
+                "title": "Web URL"
+            }, {
+                "title": "Address"
+            }];
+            var agentDataHolder = [];
+            var flagVal = false;
+            var accordionVar;
+
+            /*Data table Creator*/
+            $('#checkAvailability').bind('click', function() {
+                checkAvailablityTrigger();
+            });
+
+            function checkAvailablityTrigger() {
+
+                $("#overlay1").show();
+
+                $.ajax({
+                    url: "{!searchUrl}" + "/currentlistingcount/clcDetails/" + $('#partyIdTxt').val() + "?PartNumbers=turbo&format=json",
+                }).done(function(data) {
+                    $('#threeTableWrapper').html(" ");
+                    $('.hoverGreen').hide();
+                   $('.hoverRed').hide();
+                    $('#noAvailabilty p').text("This Party ID do not have any For-Sale Listings")
+                    $('#noAvailabilty').hide();
+                    flagVal = false;
+
+                    var tableCout = data.current_listing_items.length;
+                    if (data.current_listing_items.length == 0) {
+                        $('#noAvailabilty').show();
+                        $("#overlay1").hide();
+                        return;
+                    }
+                    for (var countData = 0; countData < tableCout; countData++) {
+                        var tempDataHolder = [];
+                        
+                        if (data.current_listing_items[countData].listing_details[0].hasOwnProperty('county')) {
+                            var countyValues = data.current_listing_items[countData].listing_details[0].county.toString();
+                        } else {
+                            var countyValues = '';
+                        }
+                        if (data.current_listing_items[countData].listing_count >= ListingCountVal && flagVal == false) {
+                            $('.hoverGreen').show();
+                        } else
+                            $('.hoverRed').show();
+                        if (data.current_listing_items[countData].listing_count >= ListingCountVal) {
+                            var addClass = 'avialImg'
+                            var addClass1 = 'elegibleRow'
+                        } else {
+                            var addClass = 'notAvailImg'
+                            var addClass1 = 'notElegibleRow'
+                        }
+                        if (addClass == 'avialImg')
+                            $('#threeTableWrapper').prepend("<div class='cityHolder'><div style='display:inline;padding-right:5px;margin-right:5px;border-right:solid 2px #fff;'><span>Count: " + data.current_listing_items[countData].listing_count + " </span><span class=" + addClass + "></span></div><span class='countylink' style='border-right:solid 2px #fff;padding-right:10px'>County: " + countyValues + "</span><span class='citylink' style='border-right:solid 2px #fff;padding-left:10px;padding-right:10px'>City: " + data.current_listing_items[countData].city + "</span> <span class='statelink' >State: " + data.current_listing_items[countData].state + "</span><a href='#' class='inventoryTurboClick'>Check Inventory</a></div><table class='" + addClass1 + "' id='example" + (countData + 4) + "'></table>");
+                        else
+                            $('#threeTableWrapper').append("<div class='cityHolder'><div style='display:inline;padding-right:5px;margin-right:5px;border-right:solid 2px #fff;'><span>Count: " + data.current_listing_items[countData].listing_count + " </span><span class=" + addClass + "></span></div><span class='countylink' style='border-right:solid 2px #fff;padding-right:10px'>County: " + countyValues + "</span><span class='citylink' style='border-right:solid 2px #fff;padding-left:10px;padding-right:10px'>City: " + data.current_listing_items[countData].city + "</span> <span class='statelink'>State: " + data.current_listing_items[countData].state + "</span><a href='#' class='inventoryTurboClick'>Check Inventory</a></div><table class='" + addClass1 + "' id='example" + (countData + 4) + "'></table>");
+
+
+                        for (var listingCount = 0; listingCount < data.current_listing_items[countData].listing_details.length; listingCount++) {
+
+                            if (data.current_listing_items[countData].listing_details[listingCount].office_id)
+                                var tempvalOfficeId = data.current_listing_items[countData].listing_details[listingCount].office_id
+                            else
+                                var tempvalOfficeId = "-";
+                            var listing = [data.id, "For Sale", data.current_listing_items[countData].listing_details[listingCount].price.toString(), data.current_listing_items[countData].listing_details[listingCount].id, data.current_listing_items[countData].listing_details[listingCount].beds.toString(), data.current_listing_items[countData].listing_details[listingCount].baths.toString(), data.current_listing_items[countData].listing_details[listingCount].baths_full, data.current_listing_items[countData].listing_details[listingCount].year_built, data.current_listing_items[countData].listing_details[listingCount].sq_ft, tempvalOfficeId, data.current_listing_items[countData].listing_details[listingCount].office_name, "<a target='_blank' href=" + data.current_listing_items[countData].listing_details[listingCount].ldp_url + ">www.Realtor.com/..</a>", data.current_listing_items[countData].listing_details[listingCount].address.line + ", <br>" + data.current_listing_items[countData].listing_details[listingCount].address.city]
+                            tempDataHolder.push(listing);
+                        }
+
+                        datatableId.push("example" + (countData + 4))
+                        datatableCreator("example" + (countData + 4), tempDataHolder, agentTilte)
+
+                    }
+                    $('#threeTableWrapper').show();
+                    if (accordionVar)
+                        $('#threeTableWrapper').accordion("destroy");
+
+                    accordionVar = $('#threeTableWrapper').accordion({
+                        heightStyle: "content",
+                        autoHeight: false,
+                        clearStyle: true,
+
+                    });
+
+                    $("#overlay1").hide();
+                    /* open New Tab with invetory Turbo*/
+                    $('.inventoryTurboClick').unbind().bind('click', function(e) {
+                        var newHref = window.location.href.split("\apex")[0];
+                        
+                        var newHrefExtend = newHref + "apex/InventorySearch?source,turbo," + $(this).parent().find('.statelink').text().split(': ')[1].toLowerCase() + "," + $(this).parent().find('.countylink').text().split(': ')[1] + "," + $(this).parent().find('.citylink').text().split(': ')[1];
+                        window.open(newHrefExtend);
+
+                    });
+
+                }).error(function(request, status, error) {
+                    
+                    $('#threeTableWrapper').html(" ");
+                    $('.hoverGreen').hide();
+                    $('.hoverRed').hide();
+
+                    $('#noAvailabilty p').html(JSON.parse(request.responseText).response_status.message + "<br> <span style='display:block;margin-top:10px;color:#000000'>Status Code : " + request.status + "</span>");
+                    $('#noAvailabilty').show();
+                    $("#overlay1").hide();
+
+                });
+
+            }
+
+            function datatableCreator(id, data, collumnData) {
+               
+                pTableVal = $('#' + id).DataTable({
+                    "sScrollX": false,
+                    "bAutoWidth": false,
+                    "bFilter": false,
+                    "bLengthChange": false,
+                    "jQueryUI": false,
+                    "dom": 'CRT<"datatables1_filter"f><"top"lp>rt<"bottom"lip><"clear">',
+                    'iDisplayLength': 3,
+                    "data": data,
+                    "columns": collumnData,
+                    "select": 'single',
+                    tableTools: {
+                        sRowSelect: "os",
+
+                        sSwfPath: "{!URLFOR($Resource.TableTools,'TableTools-2.2.4/swf/copy_csv_xls_pdf.swf')}",
+                        aButtons: [{
+                            sExtends: "collection",
+                            sButtonText: "Export",
+                            sButtonClass: "save-collection",
+                            "aButtons": [{
+                                "sExtends": "copy",
+                                "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34]
+                            }, {
+                                "sExtends": "csv",
+                                "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34]
+                            }, {
+                                "sExtends": "xls",
+                                "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34]
+                            }, {
+                                "sExtends": "pdf",
+                                "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26]
+                            }, ]
+                        }, {
+                            "sExtends": "print",
+                            "mColumns": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26]
+                        }, ]
+                    },
+
+                });
+
+                $('#ToolTables_' + id + '_0').prepend('<img src="/resource/1441893625000/export_image">');
+                $('#ToolTables_' + id + '_0').addClass('button-color button align-btn');
+                $('#ToolTables_' + id + '_5').prepend('<img src="/resource/1441893653000/print_image">');
+                $('#ToolTables_' + id + '_5').addClass('button-color button align-btn');
+                $('#ToolTables_' + id + '_0').hide();
+                $('#ToolTables_' + id + '_1').prepend('<img class="exportImg" src="/resource/1441893653000/inventory_copyImg">');
+                $('#ToolTables_' + id + '_2').prepend('<img class="exportImg" src="/resource/1441893653000/Inventory_CSVImg">');
+                $('#ToolTables_' + id + '_3').prepend('<img class="exportImg" src="/resource/1441893653000/Inventory_ExcelImg">');
+                $('#ToolTables_' + id + '_4').prepend('<img class="exportImg" src="/resource/1441893653000/Inventory_PDFImg">');
+                $('#' + id + '_paginate').hide();
+                $('#ToolTables_' + id + '_0').show();
+                return pTableVal;
+
+            }
+            countHideFunction();
+
+            function countHideFunction() {
+                if ($('.myfiltertype').val() == 'city') {
+                    $('.searchVals').hide();
+                    $('.dummySearchVal').show();
+                } else {
+                    $('.searchVals').show();
+                    $('.dummySearchVal').hide();
+                }
+                if ($('.myfiltertype').val() != 'postal_code') {
+                    $('.countyLabel').show();
+                } else {
+
+                    $('.countyLabel').hide();
+
+                }
+            }
+            $(".myfiltertype").on('change', function() {
+                $("[id$=account__input]").val("");
+                $("[id$=account__input]").val("");
+                $(".dummySearchVal").val("");
+                if ($(this).val() == 'city') {
+                    $('.searchVals').hide();
+                    $('.dummySearchVal').show();
+                } else {
+                    $('.searchVals').show();
+                    $('.dummySearchVal').hide();
+                }
+                if ($(this).val() != 'postal_code') {
+                   
+                    $('.countyHide').show();
+                    $('.countyVal').hide();
+
+                } else {
+
+                    $('.countyHide').hide();
+                    $('#stateSelect').hide();
+
+
+                }
+                if ($(this).val() == 'postal_code')
+                    showRadius();
+                else
+                    hideRadius();
+            });
+
+            function hideRadius() {
+                $('.radiusVal').hide();
+                $('.radiusValLable').hide();
+
+            }
+            String.prototype.capitalizeFirstLetter = function() {
+                return this.replace(/(^|\s)([a-z])/g, function(m, p1, p2) {
+                    return p1 + p2.toUpperCase();
+                });
+            }
+
+            function showRadius() {
+                $('.radiusVal').show();
+                $('.radiusValLable').show();
+            }
+            $("#stateSelect").bind('change', function() {
+                $('.countyVal').val($(this).find('option:selected').text());
+                $("[id$=account__input]").val($(this).find('option:selected').text());
+                $('.countyVal').hide();
+            });
+
+        });
+      
+        function testSetTabTitle() {
+            //Set the current tab's title
+            sforce.console.setTabTitle('Inventory Search');
+        }
+        var pageLoad = window.onload;
+          window.onload = function() {
+                if (pageLoad) {
+                        pageLoad();
+                }
+                  testSetTabTitle();
+          } 
+    </script>
+</apex:page>

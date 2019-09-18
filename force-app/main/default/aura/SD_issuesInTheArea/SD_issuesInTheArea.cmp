@@ -1,0 +1,58 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" 
+                			access="global" controller="ServiceDashboardController"> 
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="lstCases" type="Case[]"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/> 
+    <ltng:require styles="{! $Resource.sd_datatable + '/DataTables-1.10.16/media/css/jquery.dataTables.min.css'}" 
+                  scripts="{!join(',', 
+                           $Resource.jquery224, 
+                           $Resource.sd_datatable + '/DataTables-1.10.16/media/js/jquery.dataTables.min.js')
+                           }" afterScriptsLoaded="{!c.scriptsLoaded}"/>
+    
+    <div class="slds-box slds-m-bottom_large">
+    <div class="slds-page-header slds-card">
+            <div class="slds-media">
+                <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-standard-account" title="Description of icon when needed">
+                    	<lightning:icon iconName="standard:case" size="medium" alternativeText="Indicates open issues"/>
+                    </span>
+                </div>
+                <div class="slds-media__body">                    
+                	<h1 class="slds-page-header__title slds-truncate slds-align-middle" title="Account Profile">Issues in the Area</h1>
+                </div>
+            </div>
+        	<br/>
+            <div class="slds-card__body">
+                <table id="issuesTable" class=" ">
+                    <thead class="font-size-heading-medium">
+                        <tr>
+                            <th style="font-weight: bold;font-size: 15px;" >Case</th>
+                            <th style="font-weight: bold;font-size: 15px;" >Area</th>
+                            <th style="font-weight: bold;font-size: 15px;" >Sub Area</th>
+                            <th style="font-weight: bold;font-size: 15px;" >Date Open</th>
+                            <th style="font-weight: bold;font-size: 15px;" >Status</th>
+                            <th style="font-weight: bold;font-size: 15px;" >Sub Status</th>
+                            <th style="font-weight: bold;font-size: 15px;" >Subject</th>
+                            <th style="font-weight: bold;font-size: 15px;" >Description</th>
+                        </tr>
+                    </thead>
+                    <tbody class="font-size-text-medium ">
+                        <aura:iteration items="{!v.lstCases}" var="case">
+                        <tr>
+                            <td style="font-size: 15px;"><a id="{!case.Id}" onclick="{!c.linkRedirect}" >{!case.CaseNumber}</a></td>
+                            <td style="font-size: 15px;">{!case.Area__c}</td>
+                            <td style="font-size: 15px;">{!case.Sub_Area__c}</td>
+                            <td style="font-size: 15px;">{!case.CreatedDate}</td>
+                            <td style="font-size: 15px;">{!case.Status}</td>
+                            <td style="font-size: 15px;">{!case.SubStatus__c}</td>
+                            <td style="font-size: 15px;">{!case.Subject}</td>
+                            <td style="font-size: 15px;">{!case.Description}</td>
+                        </tr>
+                        </aura:iteration>
+                    </tbody>
+				</table>
+               
+            </div>
+        </div>
+    </div>
+</aura:component>

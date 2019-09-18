@@ -1,0 +1,349 @@
+<apex:page standardController="Account" extensions="AccountBillingInsight" showHeader="false" sidebar="false" standardStylesheets="true" applyBodyTag="false" title="Billing Insight Report">
+  <apex:includeScript value="/support/console/40.0/integration.js"/>
+  <script type="text/javascript">
+    //CRM-1855 - Srinivas Vadla : added this javascript function to Set the button/link label to the subtab title.
+    function testGetFocusedSubtabId() {
+            sforce.console.getFocusedSubtabId(showTabId);
+        }
+        var showTabId = function showTabId(result) {
+                sforce.console.setTabTitle('Account Billing Insight');
+        };
+         var pageLoad = window.onload;
+          window.onload = function() {
+            if (pageLoad) {
+                pageLoad();
+            }
+                testGetFocusedSubtabId();
+          }
+  </script>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+        <title>Billing Insight Report</title>
+        <apex:stylesheet value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/JqGrid_5.1.0/css/ui.jqgrid.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/jquery-ui-1.11.4.custom/jquery-ui.css')}" />
+        <apex:stylesheet value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/jqueryTheme/jquery-theme-custom2/jquery-ui.css')}" />
+
+        <c:AccountBillingInsightCSS />
+        
+        <apex:includeScript value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/JqGrid_5.1.0/js/jquery-1.11.0.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/JqGrid_5.1.0/js/i18n/grid.locale-en.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/JqGrid_5.1.0/js/jquery.jqGrid.min.js')}" />
+        <apex:includeScript value="{!URLFOR($Resource.JqueryPlugins, 'JqueryPlugins/jqueryTheme/jquery-theme-custom2/jquery-ui.js')}" />
+
+
+    </head>
+
+    <body class="billingInsight-rep-body">
+        <apex:form >
+            <apex:actionFunction status="loadStatus" name="populateDefaultBillingInsightTableAF" action="{!populateDefaultBillingInsightTable}" oncomplete="initializeAllComponent();setStartAndEndDate();" reRender="billingInsightReportVariables,billingInsightReport">
+            </apex:actionFunction>
+
+            <apex:actionFunction status="loadStatus" name="populateBillingInsightTableAF" action="{!populateBillingInsightTable}" oncomplete="initializeAllComponent();" reRender="billingInsightReportVariables,billingInsightReport">
+                <apex:param name="startDate" value="" />
+                <apex:param name="endDate" value="" />
+            </apex:actionFunction>
+
+            <apex:actionFunction status="loadStatus" name="populateBillingInsightDataForExportAF" action="{!populateBillingInsightDataForExport}" oncomplete="exportDatatoExcelTrigger();" reRender="export-table-panel">
+            </apex:actionFunction>
+
+            <apex:actionStatus id="loadStatus" onstart="disablePageByModal();" onstop="enablePageByModal();">
+            </apex:actionStatus>
+            
+
+
+
+
+
+            <apex:outputPanel id="billingInsightReportVariables">
+                <script>
+                    var selectedStartDate = '{!selectedStartDate}';
+                    var selectedEndDate = '{!selectedEndDate}';
+                    var baseUrl = '{!baseUrl}';
+                    var accountId = '{!Account.Id}';
+                    var accountPartyId = '{!Account.Party_ID__c}';
+                    var billingInsightData;
+                    var billingInsightJson = JSON.parse('{!JSENCODE(billingInsightDataJson)}');
+                </script>
+            </apex:outputPanel>
+            <fieldset>
+                <legend> Account Detail</legend>
+                <div class="l1-wrapper-sections">
+                    <apex:outputPanel rendered="{!NOT(isActiveBillingAccount)}">
+                        <div class="error-warning-container">
+                            <div class="error-container ui-state-error">
+                                <span>
+                                        <span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                                <span class="ui-state-error-text">No active billing account found for this account.</span>
+                                </span>
+                            </div>
+                        </div>
+                    </apex:outputPanel>
+
+                    <div class="account-detail-attribute">
+                        <apex:outputLabel styleClass="item-label" value="Account Name: " />
+                        <apex:outputLink value="/{!Account.id}" target="_blank">{!Account.Name}</apex:outputLink>
+                    </div>
+
+                    <div class="account-detail-attribute">
+                        <apex:outputLabel styleClass="item-label" value="Account Owner: " />
+                        <apex:outputLink value="/{!Account.OwnerId}" target="_blank">{!Account.Owner.Name}</apex:outputLink>
+                    </div>
+
+                    <div class="account-detail-attribute">
+                        <apex:outputLabel styleClass="item-label" value="Party Id: " />
+                        <apex:outputfield value="{!Account.Party_ID__c}" />
+                    </div>
+
+                    <div class="account-detail-attribute">
+                        <apex:outputLabel styleClass="item-label" value="Batch: " />
+                        <apex:outputfield value="{!billingAccount.Zuora__Batch__c}" />
+                    </div>
+
+                    <div class="account-detail-attribute">
+                        <apex:outputLabel styleClass="item-label" value="Account Type: " />
+                        <apex:outputfield value="{!Account.Type}" />
+                    </div>
+
+                    <div class="account-detail-attribute">
+                        <apex:outputLabel styleClass="item-label" value="Bill Cycle Day: " />
+                        <apex:outputfield value="{!billingAccount.Zuora__BillCycleDay__c}" />
+                    </div>
+                </div>
+
+            </fieldset>
+
+            <fieldset>
+                <legend> Filter Report</legend>
+                <div class="bi-filter-container l1-wrapper-sections">
+                    <div class="filter">
+                        <label for="sDate"><b>Start Date</b></label>
+                        <input class="datepicker-input" type="text" id="sDate" name="Start Date" readonly="true" />
+                    </div>
+                    <div class="filter">
+                        <label for="eDate"><b>End Date</b></label>
+                        <input class="datepicker-input" type="text" id="eDate" name="End Date" readonly="true" />
+                    </div>
+                    <div class="filter">
+                        <input type="button" class="get-billDetail-btn bi-button" onclick="populateBillingInsightTableJS()" value="Apply Dates" />
+                    </div>
+                    <div class="filter">
+                        <input type="button" class="refersh-billDetail-btn bi-button" onclick="populateDefaultBillingInsightTableAF()" value="Refresh" />
+                    </div>
+                    <div class="filter">
+                        <input type="button" class="refersh-billDetail-btn bi-button" onclick="populateBillingInsightDataForExportAF()" value="Export into Excel" />
+                    </div>
+                </div>
+            </fieldset>
+            <apex:outputPanel id="billingInsightReport">
+                <div class="error-warning-container">
+                    <div class="error-container">
+                        <apex:outputPanel rendered="{!isError}">
+                            <div class="ui-state-error">
+                                <span>
+                                        <span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                                <span class="ui-state-error-text">Something went wrong, please try again. If problem persist, please contact system administrator.</span>
+                                </span>
+                            </div>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!errorFutureInvoices}">
+                            <div class="ui-state-error">
+                                <span>
+                                        <span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                                <span class="ui-state-error-text">Something went wrong while getting future invoice details, please try again. If problem persist, please contact system administrator. <br/>Error Msg: {!errorFutureInvoicesMsg}</span>
+                                </span>
+                            </div>
+                        </apex:outputPanel>
+
+                    </div>
+                    <div class="warning-container ">
+                        <apex:outputPanel rendered="{!IF(noPastInvoices && NOT(noFutureInvoices),true,false)}">
+                            <div class="ui-state-highlight">
+                                <span>
+                                        <span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span> No past invoices found for selected date range.
+                                </span>
+                            </div>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(NOT(noPastInvoices) && noFutureInvoices,true,false)}">
+                            <div class="ui-state-highlight">
+                                <span>
+                                        <span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span> No future invoices found for selected date range.
+                                </span>
+                            </div>
+                        </apex:outputPanel>
+                        <apex:outputPanel rendered="{!IF(noPastInvoices && noFutureInvoices,true,false)}">
+                            <div class="ui-state-highlight">
+                                <span>
+                                        <span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span> No past and future invoices found for selected date range.
+                                </span>
+                            </div>
+                        </apex:outputPanel>
+                    </div>
+                </div>
+                <fieldset>
+                    <legend class="report-legent-title"></legend>
+                    <div class="bi-table-container l1-wrapper-sections">
+                        <table id="billingInsightTable"></table>
+                        <div id="jqGridPager"></div>
+                    </div>
+                </fieldset>
+
+            </apex:outputPanel>
+
+            <apex:outputPanel id="export-table-panel">
+                <div id="export-table-container" style="display:none;">
+                    <table>
+                        <tr>
+                            <td colspan="4" style="border-bottom:1px solid #000000;font-weight:bold;text-align:left;font-size:14px;color:#004880;">Account Detail</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;text-align:left;">Account Name: </td>
+                            <td style="text-align:left;">{!Account.Name}</td>
+                            <td style="font-weight:bold;text-align:left;">Party Id: </td>
+                            <td style="text-align:left;">{!Account.Party_ID__c}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight:bold;text-align:left;">Batch: </td>
+                            <td style="text-align:left;">{!billingAccount.Zuora__Batch__c}</td>
+                            <td style="font-weight:bold;text-align:left;">Bill Cycle Day: </td>
+                            <td style="text-align:left;">{!billingAccount.Zuora__BillCycleDay__c}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">&nbsp;</td>
+                        </tr>
+                    </table>
+                    <table class="export-table" style="border-collapse: collapse;" cellpadding="4px" width="100%">
+                        <tr class="export-table-header-tr">
+                            <td style="color:#004276;font-weight:bold;background-color: #d8dcdf;border:1px solid #888888;border-collapse: collapse;text-align:center;">Invoice Number</td>
+                            <td style="color:#004276;font-weight:bold;background-color: #d8dcdf;border:1px solid #888888;border-collapse: collapse;text-align:center;">Invoice Item</td>
+                            <td style="color:#004276;font-weight:bold;background-color: #d8dcdf;border:1px solid #888888;border-collapse: collapse;text-align:center;">Asset Number</td>
+                            <td style="color:#004276;font-weight:bold;background-color: #d8dcdf;border:1px solid #888888;border-collapse: collapse;text-align:center;">Asset Name</td>
+                            <td style="color:#004276;font-weight:bold;background-color: #d8dcdf;border:1px solid #888888;border-collapse: collapse;text-align:center;">Unit Price</td>
+                            <td style="color:#004276;font-weight:bold;background-color: #d8dcdf;border:1px solid #888888;border-collapse: collapse;text-align:center;">Charge Amount</td>
+                            <td style="color:#004276;font-weight:bold;background-color: #d8dcdf;border:1px solid #888888;border-collapse: collapse;text-align:center;">Tax</td>
+                            <td style="color:#004276;font-weight:bold;background-color: #d8dcdf;border:1px solid #888888;border-collapse: collapse;text-align:center;">Charge Date</td>
+                            <td style="color:#004276;font-weight:bold;background-color: #d8dcdf;border:1px solid #888888;border-collapse: collapse;text-align:center;">Invoice Separately?</td>
+                            <td style="color:#004276;font-weight:bold;background-color: #d8dcdf;border:1px solid #888888;border-collapse: collapse;text-align:center;">Service Period Start Date</td>
+                            <td style="color:#004276;font-weight:bold;background-color: #d8dcdf;border:1px solid #888888;border-collapse: collapse;text-align:center;">Service Period End Date</td>
+                            <td style="color:#004276;font-weight:bold;background-color: #d8dcdf;border:1px solid #888888;border-collapse: collapse;text-align:center;">Billing Period</td>
+                        </tr>
+                        <apex:repeat value="{!topNodeList}" var="topNodeElement">
+                            <apex:repeat value="{!topNodeElement.rootNode}" var="rootNodeElement">
+                                <tr class="level-1-header-tr" style="background-color: #edf7f7;">
+                                    <td colspan="4" style="border:1px solid #888888;border-collapse: collapse;text-align: left;font-weight: bold;color: #285858;">{!rootNodeElement.elementName}</td>
+                                    <td style="border:1px solid #888888;border-collapse: collapse;text-align:center;font-weight: bold;color: #285858;">
+                                        <apex:outputText value="${0, number,###,###,##0.00}">
+                                            <apex:param value="{!rootNodeElement.totalUnitPrice}" /></apex:outputText>
+                                    </td>
+                                    <td style="border:1px solid #888888;border-collapse: collapse;text-align:center;font-weight: bold;color: #285858;">
+                                        <apex:outputText value="${0, number,###,###,##0.00}">
+                                            <apex:param value="{!rootNodeElement.totalChargeAmount}" /></apex:outputText>
+                                    </td>
+                                    <td style="border:1px solid #888888;border-collapse: collapse;text-align:center;font-weight: bold;color: #285858;">
+                                        <apex:outputText value="${0, number,###,###,##0.00}">
+                                            <apex:param value="{!rootNodeElement.totalTax}" /></apex:outputText>
+                                    </td>
+                                    <td style="border:1px solid #888888;border-collapse: collapse;text-align:center;font-weight: bold;color: #285858;">&nbsp;</td>
+                                    <td style="border:1px solid #888888;border-collapse: collapse;text-align: left;font-weight: bold;color: #285858;">&nbsp;</td>
+                                    <td style="border:1px solid #888888;border-collapse: collapse;text-align: left;font-weight: bold;color: #285858;">&nbsp;</td>
+                                    <td style="border:1px solid #888888;border-collapse: collapse;text-align: left;font-weight: bold;color: #285858;">&nbsp;</td>
+                                    <td style="border:1px solid #888888;border-collapse: collapse;text-align: left;font-weight: bold;color: #285858;">&nbsp;</td>
+
+                                </tr>
+                                <apex:repeat value="{!rootNodeElement.childNodes}" var="childNodesLevel1">
+                                    <tr class="level-2-header-tr" style="background-color: #e6f4ff;">
+                                        <td colspan="4" style="border:1px solid #888888;border-collapse: collapse;text-align: left;padding-left: 10px;font-weight: bold;color: #004880;">{!childNodesLevel1.elementName}</td>
+                                        <td colspan="1" style="border:1px solid #888888;border-collapse: collapse;text-align:center;font-weight: bold;color: #004880;">
+                                            <apex:outputText value="${0, number,###,###,##0.00}">
+                                                <apex:param value="{!childNodesLevel1.totalUnitPrice}" /></apex:outputText>
+                                        </td>
+                                        <td colspan="1" style="border:1px solid #888888;border-collapse: collapse;text-align:center;font-weight: bold;color: #004880;">
+                                            <apex:outputText value="${0, number,###,###,##0.00}">
+                                                <apex:param value="{!childNodesLevel1.totalChargeAmount}" /></apex:outputText>
+                                        </td>
+                                        <td colspan="1" style="border:1px solid #888888;border-collapse: collapse;text-align:center;font-weight: bold;color: #004880;">
+                                            <apex:outputText value="${0, number,###,###,##0.00}">
+                                                <apex:param value="{!childNodesLevel1.totalTax}" /></apex:outputText>
+                                        </td>
+                                        <td style="border:1px solid #888888;border-collapse: collapse;text-align:center;font-weight: bold;color: #004880;">&nbsp;</td>
+                                        <td style="border:1px solid #888888;border-collapse: collapse;text-align:center;font-weight: bold;color: #004880;">&nbsp;</td>
+                                        <td style="border:1px solid #888888;border-collapse: collapse;text-align:center;font-weight: bold;color: #004880;">&nbsp;</td>
+                                        <td style="border:1px solid #888888;border-collapse: collapse;text-align:center;font-weight: bold;color: #004880;">&nbsp;</td>
+                                        <td style="border:1px solid #888888;border-collapse: collapse;text-align:center;font-weight: bold;color: #004880;">&nbsp;</td>
+                                    </tr>
+                                    <apex:repeat value="{!childNodesLevel1.childNodes}" var="childNodesLevel2">
+                                        <tr class="level-3-header-tr" style="background-color: #f2f2f2;">
+                                            <td colspan="4" style="border:1px solid #888888;border-collapse: collapse;text-align: left;padding-left: 20px;font-weight: bold;color: #262626;">{!childNodesLevel2.elementName}</td>
+                                            <td colspan="1" style="border:1px solid #888888;border-collapse: collapse;text-align:center;font-weight: bold;color: #262626;">
+                                                <apex:outputText value="${0, number,###,###,##0.00}">
+                                                    <apex:param value="{!childNodesLevel2.totalUnitPrice}" /></apex:outputText>
+                                            </td>
+                                            <td colspan="1" style="border:1px solid #888888;border-collapse: collapse;text-align:center;font-weight: bold;color: #262626;">
+                                                <apex:outputText value="${0, number,###,###,##0.00}">
+                                                    <apex:param value="{!childNodesLevel2.totalChargeAmount}" /></apex:outputText>
+                                            </td>
+                                            <td colspan="1" style="border:1px solid #888888;border-collapse: collapse;text-align:center;font-weight: bold;color: #262626;">
+                                                <apex:outputText value="${0, number,###,###,##0.00}">
+                                                    <apex:param value="{!childNodesLevel2.totalTax}" /></apex:outputText>
+                                            </td>
+                                            <td colspan="1" style="border:1px solid #888888;border-collapse: collapse;text-align:center;font-weight: bold;color: #262626;">&nbsp;</td>
+                                            <td colspan="1" style="border:1px solid #888888;border-collapse: collapse;text-align:center;font-weight: bold;color: #262626;">&nbsp;</td>
+                                            <td colspan="1" style="border:1px solid #888888;border-collapse: collapse;text-align:center;font-weight: bold;color: #262626;">&nbsp;</td>
+                                            <td colspan="1" style="border:1px solid #888888;border-collapse: collapse;text-align:center;font-weight: bold;color: #262626;">&nbsp;</td>
+                                            <td colspan="1" style="border:1px solid #888888;border-collapse: collapse;text-align:center;font-weight: bold;color: #262626;">&nbsp;</td>
+                                        </tr>
+                                        <apex:repeat value="{!childNodesLevel2.leafNodes}" var="leafNodesElements">
+                                            <tr class="leaf-node-tr">
+                                                <td style="border:1px solid #888888;border-collapse: collapse;text-align:center;">{!leafNodesElements.invoiceDetail.Name}</td>
+                                                <td style="border:1px solid #888888;border-collapse: collapse;text-align:center;">{!leafNodesElements.invoiceItemDetail.Name}</td>
+                                                <td style="border:1px solid #888888;border-collapse: collapse;text-align:center;">{!leafNodesElements.assetNumber}</td>
+                                                <td style="border:1px solid #888888;border-collapse: collapse;text-align:center;">{!leafNodesElements.assetDetail.Name}</td>
+                                                <td style="border:1px solid #888888;border-collapse: collapse;text-align:center;">
+                                                    <apex:outputText value="${0, number,###,###,##0.00}">
+                                                        <apex:param value="{!VALUE(leafNodesElements.unitPrice)}" /></apex:outputText>
+                                                </td>
+                                                <td style="border:1px solid #888888;border-collapse: collapse;text-align:center;">
+                                                    <apex:outputText value="${0, number,###,###,##0.00}">
+                                                        <apex:param value="{!VALUE(leafNodesElements.chargeAmount)}" /></apex:outputText>
+                                                </td>
+                                                <td style="border:1px solid #888888;border-collapse: collapse;text-align:center;">
+                                                    <apex:outputText value="${0, number,###,###,##0.00}">
+                                                        <apex:param value="{!VALUE(leafNodesElements.tax)}" /></apex:outputText>
+                                                </td>
+                                                <td style="border:1px solid #888888;border-collapse: collapse;text-align:center;">
+                                                    <!--<apex:outputText value="{0,date,MM/dd/yyyy}">
+    					                            		<apex:param value="{!DATEVALUE(leafNodesElements.chargeDate)}" />
+    					                        		</apex:outputText>-->
+                                                    {!leafNodesElements.chargeDate}
+                                                </td>
+                                                <td style="border:1px solid #888888;border-collapse: collapse;text-align:center;">{!leafNodesElements.invoiceSeparately}</td>
+
+                                                <td style="border:1px solid #888888;border-collapse: collapse;text-align:center;">
+                                                    <!--<apex:outputText value="{0,date,MM/dd/yyyy}">
+    					                            		<apex:param value="{!DATEVALUE(leafNodesElements.servicePeriodStartDate)}" />
+    					                        		</apex:outputText>-->
+                                                    {!leafNodesElements.servicePeriodStartDate}
+                                                </td>
+
+                                                <td style="border:1px solid #888888;border-collapse: collapse;text-align:center;">
+                                                    <!--<apex:outputText value="{0,date,MM/dd/yyyy}">
+    					                            		<apex:param value="{!DATEVALUE(leafNodesElements.servicePeriodEndDate)}" />
+    					                        		</apex:outputText>-->
+                                                    {!leafNodesElements.servicePeriodEndDate}
+                                                </td>
+                                                <td style="border:1px solid #888888;border-collapse: collapse;text-align:center;">{!leafNodesElements.billingPeriod}</td>
+                                            </tr>
+                                        </apex:repeat>
+                                    </apex:repeat>
+                                </apex:repeat>
+                            </apex:repeat>
+                        </apex:repeat>
+                    </table>
+                </div>
+            </apex:outputPanel>
+
+            <c:AccountBillingInsightJS />
+        </apex:form>
+
+
+    </body>
+</apex:page>

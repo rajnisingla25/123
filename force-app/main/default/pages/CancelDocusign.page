@@ -1,0 +1,22 @@
+<apex:page tabstyle="dsfs__DocuSign_Status__c" standardController="dsfs__DocuSign_Status__c" extensions="CancelDocusignExtension"> 
+    <apex:sectionHeader subtitle="Void Envelope" title="{!dsfs__DocuSign_Status__c.Name}"/>
+<apex:pageMessages />
+<apex:form >
+<apex:pageblock >
+Voiding an envelope will remove access to the envelope for your recipients. Once voided, they will no longer be able to view or sign it.
+
+ An email will be sent to recipients who have already signed, informing them this envelope has been voided along with your comments.
+       <apex:pageblockSection >
+            <apex:inputtextarea rows="8" cols="85" required="true" id="Commetns" value="{!reason}"/> 
+       </apex:pageblockSection>
+       
+ <!-- To void this envelope,please provide a reason for voiding below, and press 'Void Envelope'. -->
+    <apex:pageblockButtons >
+        <apex:commandButton value="Void Envelope" title="Void Envelope"  action="{!cancelDocusign}"/>
+        <apex:commandButton value="Cancel" title="Cancel"  action="{!Cancel}"/>
+        
+    </apex:pageblockButtons>
+</apex:pageblock>
+</apex:form>
+
+</apex:page>

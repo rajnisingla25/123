@@ -1,0 +1,54 @@
+<!-- CRM-3102: Component used in "Realsuite trial expire notification" template-->
+<apex:component access="global" controller="RealsuiteWelcomeEmailCompController">
+      <apex:attribute name="orderId" assignTo="{!ordId}" description="This is the relatedTo Id in the order"
+
+        type="String"/>
+    <table align="left" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px;">
+        <tr>
+            <td align="left" style="padding: 20px;font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 400; line-height: 18px;">
+                <p style="font-size: 15px; font-weight: 800; line-height: 18px; color: #2d2926;">
+                    Dear {!ordItem.Order.Contact_Name__c},
+                </p>
+                <p>
+                   Thank you for trying the Realsuite℠ platform. <Strong>Your free trial ends in 7 days</Strong>. 
+                </p>
+                <p>
+                   Call now and ask how you can keep all the features and benefits of {!trialProdNames}
+                    <br></br>
+                    <br></br>
+                <Strong>877.560.7374</Strong>
+                </p>
+                 <p>
+                     Please note: if you choose not to subscribe to paid Realsuite℠ products you will still have access to your <a href="http://dashboard.realtor.com/">Realsuite℠ dashboard with the free Essentials℠ toolkit</a>, including your contacts. 
+                </p>
+            </td>
+         </tr>
+         <tr>
+        	<td align="left" style="background-color: #ffffff; border-top: 1px solid #ccc;" bgcolor="#ffffff" height="100%" valign="top" width="100%"></td>
+         </tr>
+      	 <tr>
+              <apex:variable var="prod" value="{!trialPartNum}" />
+                        <td align="left" style="padding: 20px;padding-bottom:0;font-family: Open Sans, Helvetica, Arial, sans-serif; font-size: 15px; font-weight: 400; line-height: 18px;">
+                            <p style="font-size: 15px; font-weight: 800; line-height: 18px; color: #2d2926;">
+                                ABOUT YOUR SOLUTIONS
+                            </p>
+                           
+                            <p style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926; display: {!IF(contains(prod, 'RSRESPOND') ,'','none')}">
+                                <b>Realsuite℠ Respond℠ </b><br></br>
+                                Impress potential clients with fast, personalized responses to inquiries from 150+ sources.
+                            </p>
+                            <p style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926; display: {!IF(contains(prod, 'RSCONNECT'),'','none')}">
+                                <b>Realsuite℠ Connect℠</b><br></br>
+                                Designed to help you convert leads from 150+ sources into clients with timely, relevant and personalized communications.
+                            </p>
+                            <p style="font-size: 15px; font-weight: 400; line-height: 18px; color: #2d2926; display: {!IF(contains(prod, 'RSTRANSACT'),'','none')}">
+                                <b>Realsuite℠ Transact℠</b><br></br>
+                                Easily stay on top of transaction details, documents and tasks, and save time with paperless processes.
+                            </p>
+                
+                           <br></br>
+                        </td>
+           </tr>
+        
+</table>
+</apex:component>

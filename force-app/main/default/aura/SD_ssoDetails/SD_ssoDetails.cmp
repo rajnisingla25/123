@@ -1,0 +1,52 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" 
+                			access="global" controller="ServiceDashboardController"> 
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="lstAcc1" type="Account[]"/>
+    <aura:attribute name="lstAcc2" type="Account[]"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>  
+    <ltng:require scripts="{!$Resource.jquery224}" afterScriptsLoaded="{!c.scriptsLoaded}"/>
+    <div class="slds-box slds-m-bottom_large">
+    <div class="slds-page-header slds-card">
+            <div class="slds-media">
+                <div class="slds-media__figure">
+                    <span class="slds-icon_container slds-icon-standard-account" title="Description of icon when needed">
+                    	<lightning:icon iconName="action:password_unlock" size="x-small" alternativeText="Indicates Account"/>
+                    </span>
+                </div>
+                <div class="slds-media__body">                    
+                	<h1 class="slds-page-header__title slds-truncate slds-align-middle" title="Account Profile">SSO Details</h1>
+                </div>
+            </div>
+        	<br/>
+            <div class="slds-box" hidden="true"><p class="alert-info"></p></div>
+            <br/>
+            <div class="slds-card__body">
+
+                <table class="slds-table slds-table_bordered ">
+                    <thead class="font-size-heading-medium">
+                        <tr>
+                            <th style="font-weight: bold;font-size: 15px;">#</th>
+                            <th style="font-weight: bold;font-size: 15px;">Email</th>
+                            <th style="font-weight: bold;font-size: 15px;">Phone</th>
+                            <th style="font-weight: bold;font-size: 15px;">Role</th>
+                        </tr>
+                    </thead>
+                    <tbody class="font-size-text-medium ">
+                        <aura:iteration items="{!v.lstAcc1}" var="acc">
+                        <tr>
+                            <td style="font-size: 15px;">{!acc.number}</td>
+                            <td style="font-size: 15px;">{!acc.email}</td>
+                            <td style="font-size: 15px;">{!acc.phone}</td>
+                            <td style="font-size: 15px;">{!acc.roles}</td>
+                        </tr>
+                        </aura:iteration>
+                    </tbody>
+				</table>
+            </div>
+        	<div class="slds-align_absolute-center">
+               <button type="button" class="slds-button slds-button_neutral sso-btn" onclick="{!c.resetAttempts}">Reset Attempts</button>
+               <button type="button" class="slds-button slds-button_neutral sso-btn" onclick="{!c.releaseSsoEmail}">Release {!v.lstAcc2[0].email} from advertiser ID {!v.lstAcc2[0].accounts.user_id}</button>
+        	</div>
+        </div>
+    </div>
+</aura:component>

@@ -1,0 +1,33 @@
+<apex:component >
+
+<div id = 'app-top-menu' class='app-top-menu app-menu-lg app-menu hidden-xs'>
+	<div class="container-fluid top-menu-section">
+		<div class="row">
+			<div class="col-sm-4 col-xs-12 text-center">
+				<a href="{!$Label.CustomerCommunityDomain}/SelfServiceMyProducts" rel="external" >
+					<img id="products-icon" src="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/Nav/Inactive/MyProducts.svg')}" />
+					<span>My Products</span>
+				</a>
+			</div>
+		    <div class="col-sm-4 col-xs-12 text-center">
+		    	<a href="{!$Label.CustomerCommunityDomain}/SelfServiceStatementsInvoices" rel="external" >
+		    	    <img id="statements-icon" src="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/Nav/Inactive/StatementsInvoices.svg')}"/>
+		    	    <span>Statements &amp; Invoices</span>
+		    	</a>
+		    </div>
+		    <div class="col-sm-4 col-xs-12 text-center">
+		    	<a class= 'credit-card-top-menu' href="" rel="external" >
+		    	    <img id="credit-card-icon" src="{!URLFOR($Resource.SelfServiceUtil, '/SelfServiceUtil/icons/Nav/Inactive/CreditCards.svg')}"  />
+		    	    <span>Credit Cards</span>
+		        </a>
+		    </div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(".credit-card-top-menu").attr("href", "{!$Label.CustomerCommunityDomain}/SelfServiceCreditCards?id=" + $("#sfdc-account-id").data('sfdc-id') + "&iscommunityuser=true");
+    });
+</script>
+    
+</apex:component>

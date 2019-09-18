@@ -1,0 +1,205 @@
+<apex:page showHeader="false" standardController="Account" extensions="PreAuthWaitListRenewalExtn" docType="html-5.0">
+    <apex:includeScript value="/support/console/40.0/integration.js"/>
+    <script type="text/javascript">
+    //CRM-1855 - Srinivas Vadla : added this javascript function to Set the button/link label to the subtab title.
+    function testGetFocusedSubtabId() {
+            sforce.console.getFocusedSubtabId(showTabId);
+        }
+        var showTabId = function showTabId(result) {
+                sforce.console.setTabTitle('Renew Pre-Auth');
+        };
+         var pageLoad = window.onload;
+          window.onload = function() {
+                if (pageLoad) {
+                        pageLoad();
+                }
+                  testGetFocusedSubtabId();
+          }
+  </script>
+   <apex:form >
+      <apex:pageMessages id="errors"/>
+
+      <apex:PageBlock title="Pre-Auth Renewal Information" id="waitlistInfo">
+         <apex:pageBlockSection columns="2">
+            <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Waitlist Type"/>
+               <apex:outputText value="Pre-Auth"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Pre Auth Type"/>
+               <apex:selectList value="{!preAuthType}" size="1" onchange="onChangePreAuthTypeJS()">  <!-- CRM-2308 -->
+                  <apex:selectOptions value="{!preAuthTypes}"/> <!-- CRM-2308 -->
+               </apex:selectList> <!-- CRM-2308 -->
+              <!-- <apex:outputText value="Renew"/> -->
+            </apex:pageBlockSectionItem>
+            <apex:pageblockSectionItem >
+               <apex:outputLabel value="Current Monthly Pre-Auth Processed"/>
+               <apex:outputText value="{!"0.00"}"/>
+            </apex:pageblockSectionItem>
+            <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Pre-Auth Effective Date"/>
+               <apex:input type="date" value="{!preauthEffectiveDate}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Product"/>
+               <apex:selectList value="{!selproduct}" size="1" onchange="onChangeProductsJS()">
+                  <apex:selectOptions value="{!renewalproducts}"/>
+               </apex:selectList> 
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Waitlist Product Type"/>
+               <apex:selectList value="{!waitlistProductType}" size="1" onchange="onChangeWaitListTypeJS()">
+                  <apex:selectOptions value="{!waitlistProductTypes}"/>
+               </apex:selectList>
+            </apex:pageBlockSectionItem>
+            <apex:PageBlockSectionItem rendered="{!IF(selproduct != 'Local Expert', true, false)}">
+               <apex:OutputLabel value="Lead Routing"/>
+               <apex:selectRadio value="{!leadRoute}">
+                  <apex:selectOptions value="{!leadRoutes}"/>
+               </apex:selectRadio>
+            </apex:PageBlockSectionItem>
+            <apex:PageBlockSectionItem rendered="{!IF(selproduct == 'Local Expert', true, false)}">
+               <apex:OutputLabel value="Product Size"/>
+               <apex:selectRadio value="{!productsize}">
+                  <apex:selectOptions value="{!productsizes}"/>
+               </apex:selectRadio>
+            </apex:PageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Total MAX Monthly Pre-Auth Spend"/>
+               <apex:inputText value="{!totalMaxSpend}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+               <apex:outputLabel value="State"/>
+               <apex:selectList size="1" value="{!state}" onchange="onChangeStateJS()">
+                  <apex:selectOptions value="{!states}"/>
+               </apex:selectList>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem >
+               <apex:outputLabel value="Credit Card Last 4 Digits"/>
+               <apex:inputText value="{!ccLast4Digits}"/>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem helpText="You can select only upto 1000 Markets">
+               <apex:outputLabel value="County"/>
+               <apex:selectList size="5" value="{!selectedCounties}" multiselect="true" onchange="onChangeCountyJS()">
+                  <apex:selectOptions value="{!counties}"/>
+               </apex:selectList>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem helpText="You can select only upto 1000 Markets" rendered="{!showCity}">
+               <apex:outputLabel value="City"/>
+               <apex:selectList size="5" value="{!selectedCities}" multiselect="true" onchange="onChangeCityJS()">
+                  <apex:selectOptions value="{!cities}"/>
+                  <apex:selectOptions value="{!cities2}"/>
+                  <apex:selectOptions value="{!cities3}"/>
+                  <apex:selectOptions value="{!cities4}"/>
+               </apex:selectList>
+            </apex:pageBlockSectionItem>
+            <apex:pageBlockSectionItem helpText="You can select only upto 1000 Markets" rendered="{!showPostalCode}">
+               <apex:outputLabel value="Postal Code"/>
+               <apex:selectList size="5" value="{!selectedPostalCodes}" multiselect="true">
+                  <apex:selectOptions value="{!postalCodes}"/>
+                  <apex:selectOptions value="{!postalCodes2}"/>
+                  <apex:selectOptions value="{!postalCodes3}"/>
+                  <apex:selectOptions value="{!postalCodes4}"/>
+               </apex:selectList>
+            </apex:pageBlockSectionItem>
+            <apex:pageblockSectionItem >
+               <apex:outputLabel value="Market" />
+               <apex:inputtextarea cols="45" rows="5" value="{!markets}" html-placeholder="All markets must be separated with comma"/>
+            </apex:pageblockSectionItem>
+         </apex:pageBlockSection>
+         <apex:actionstatus id="status">
+            <apex:facet name="start">
+               <div class="waitingSearchDiv" id="el_loading" style="background-color: #fbfbfb;height: 2000%;opacity:0.65;width:100%;">
+                  <div class="waitingHolder" style="top: 74.2px; width: 91px;">
+                     <img class="waitingImage" src="/img/loading.gif" title="Loading..." />
+                     <span class="waitingDescription">Please Wait...</span>
+                  </div>
+               </div>
+            </apex:facet>
+         </apex:actionstatus>
+         <apex:pageBlockButtons location="Bottom">
+            <apex:commandButton value="Add To List" action="{!addToList}" reRender="selectedProductInfo,errors" status="status"/>
+            <apex:commandButton value="Refresh" action="{!refresh}" reRender="waitlistInfo, selectedProductInfo" status="status"/>
+         </apex:pageBlockButtons>
+      </apex:PageBlock>
+      <apex:PageBlock title="Selected Product Information" id="selectedProductInfo">
+         <apex:pageBlockButtons location="bottom">
+            <apex:commandButton value="Submit" action="{!submit}" reRender="waitlistInfo,selectedProductInfo,errors," status="status" disabled="{!NOT(showSubmit)}"/>
+            <apex:commandButton value="Close" action="{!cancel}" status="status" onclick="close_window();return false;"/>
+         </apex:pageBlockButtons>
+         <apex:pageBlockTable value="{!waitListItems}" var="item" >
+            <apex:column headerValue="Action" >
+               <apex:commandLink value="Delete" action="{!deleteRow}" reRender="selectedProductInfo" status="status">
+                   <apex:param name="rowIndex" value="{!item.index}"/>
+               </apex:commandLink>
+            </apex:column>
+            <apex:column headerValue="Product" >
+               <apex:outputText value="{!item.product}"/>
+            </apex:column>
+            <apex:column headerValue="Waitlist Product Type" >
+               <apex:outputText value="{!item.waitlistProductType}"/>
+            </apex:column>
+            <apex:column headerValue="Market" >
+               <apex:outputText value="{!item.market}"/>
+            </apex:column>
+            <apex:column headerValue="State" >
+               <apex:outputText value="{!item.state}"/>
+            </apex:column>
+            <apex:column headerValue="Waitlist Type" >
+               <apex:outputText value="{!item.waitlistType}"/>
+            </apex:column>
+            <apex:column headerValue="Lead Routing" >
+               <apex:selectRadio value="{!item.defaultLeadRoute}">
+                  <apex:selectOptions value="{!item.leadRoutes}" /> 
+               </apex:selectRadio>
+            </apex:column>
+            
+            <apex:column headerValue="Product Size" >
+               <apex:selectRadio value="{!item.defaultProductSize}">
+                  <apex:selectOptions value="{!item.productSizes}" /> 
+               </apex:selectRadio>
+            </apex:column>
+            
+            <apex:column headerValue="Waitlist Status" >
+               <apex:outputText value="{!item.waitlistStatus}"/>
+            </apex:column>
+            <apex:column headerValue="Expiration Date" >
+               <apex:outputText value="{0,date,MM/dd/yyyy}"> 
+                   <apex:param value="{!item.expirationDate }" />
+               </apex:outputText>
+            </apex:column>
+            <apex:column headerValue="Terms" >
+               <apex:selectList value="{!item.defaultTerm}" size="1">
+                  <apex:selectOptions value="{!item.terms}" /> 
+               </apex:selectList>
+            </apex:column>
+            <apex:column headerValue="Max Spend" >
+               <apex:inputText value="{!item.maxSpend}"/>
+            </apex:column>
+            <apex:column headerValue="Status" >
+               <apex:outputText value="{!item.status}" style="{!if(item.status !='Success',"color:red;width: 400px;","color:green;width: 400px;")}"/>
+            </apex:column>
+            <apex:column headerValue="Current Utilized Spend" >
+               <apex:outputText value="{!item.currentUtilizedSpend}"/> <!-- disabled="{!item.disableCurrentUtilizedSpend}" /> -->
+            </apex:column>
+            <apex:column headerValue="Rate Card Price" >
+               <apex:outputText value="{!item.rateCardPrice}"/>
+            </apex:column>
+         </apex:pageBlockTable>
+      </apex:PageBlock>
+      <apex:actionFunction action="{!onChangeWaitListType}" name="onChangeWaitListTypeJS" reRender="waitlistInfo" status="status"/>
+      <apex:actionFunction action="{!onChangeProducts}" name="onChangeProductsJS" reRender="waitlistInfo" status="status"/>
+      <apex:actionFunction action="{!onChangeState}" name="onChangeStateJS" reRender="waitlistInfo" status="status"/>
+      <apex:actionFunction action="{!onChangeCounty}" name="onChangeCountyJS" reRender="waitlistInfo" status="status"/>
+      <apex:actionFunction action="{!onChangeCity}" name="onChangeCityJS" reRender="waitlistInfo" status="status"/>
+      <apex:actionFunction action="{!onChangePreAuthType}" name="onChangePreAuthTypeJS" reRender="waitlistInfo" status="status"/> <!-- CRM2308 -->
+      
+   </apex:form> 
+   <script>
+    function close_window() {
+        
+        close();
+        
+    }
+    </script>
+</apex:page>

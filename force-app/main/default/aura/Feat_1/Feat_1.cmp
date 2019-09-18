@@ -1,0 +1,74 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,forceCommunity:themeLayout" access="global" >
+    <aura:attribute name="LocalExpert" type="Boolean" default="false"/>
+    <aura:attribute name="themePage" type="Boolean" default="false"/>
+	
+    <aura:if isTrue="{!v.LocalExpert}" >
+     <div class="cTestfeat">
+       <div id="features-wrap" class="text-center">
+        <article>
+            <h3>Position yourself front and center with local buyers. See how you can boost your brand with Local Expert<sup>SM</sup>.</h3>
+            <div class="row">
+                <div class="col-md-3 col-sm-3 feature">
+                    <img src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2018/local-expert/features/attract-feat.png" alt="" class="img-responsive center-block"/>
+                    <h2>Attract serious home shoppers </h2>
+                    <h4>More consumers are starting their home search online. Target these in-market buyers with customized, branded ads on realtor.com<sup>&reg;</sup> and then again on the same consumers’ Facebook News Feeds.</h4>
+                </div>
+                <div class="col-md-3 col-sm-3 feature">
+                    <img src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2018/local-expert/features/build-feat.png" alt="" class="img-responsive center-block"/>
+                        <h2>Build brand <br/> recognition </h2>
+                    <h4>Build your personal brand recognition with home buyers on sites they visit often. With Local Expert, targeted ads appear on realtor.com<sup>&reg;</sup> and Facebook. </h4>
+                </div>
+                <div class="col-md-3 col-sm-3 feature">
+                    <img src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2018/local-expert/features/customize-feat.png" alt="" class="img-responsive center-block"/>
+                    <h2>Customize your <br/> ad designs  </h2>
+                    <h4>Stay true to your brand without spending hours designing your own ads. Use customizable ad design templates to promote your unique qualities and points of difference. </h4>
+                </div>
+                <div class="col-md-3 col-sm-3 feature">
+                    <img src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2018/local-expert/features/measure-feat.png" alt="" class="img-responsive center-block"/>
+                    <h2>Measure <br/> results  </h2>
+                    <h4>Performance-based reporting lets you log into your realtor.com<sup>&reg;</sup> professional dashboard to check your reach and engagement, as well as to tweak your ads.</h4>
+                </div>
+            </div>
+            <aura:if isTrue="{!v.themePage == true}" >
+              <div style="margin-top:30px;">
+                <center>
+                    <img src="https://b2bweb.realtor.com/web_assets/rdc/logos/realliving.jpg" alt="United Real Estate"/><br/><br/>
+                </center>
+               </div>
+            </aura:if>
+        </article>
+	   </div>
+     </div>
+    </aura:if>
+    <aura:if isTrue="{!v.LocalExpert == false}" >
+     <div class="cFeat_1">
+       <div id="features-wrap" class="text-center">
+          <article>
+            <h3>Leads are coming in every minute. Don’t let your competitors snatch them up!</h3>
+            <div class="row">
+                <div class="col-md-4 col-sm-4 feature">
+                  <img style="height:100px; width:auto;" src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2018/icons/01manage_nuture.png" alt="" class="img-responsive center-block"/>
+                  <h4>A powerful real estate lead generation system to connect agents with serious home buyers.</h4>
+                </div>
+                <div class="col-md-4 col-sm-4 feature">
+                  <img style="height:100px; width:auto;" src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2018/icons/03follow_up.png" alt="" class="img-responsive center-block"/>
+                  <h4>Easily track and manage communication with your contacts on your smartphone, tablet or desktop.</h4>
+                </div>
+                <div class="col-md-4 col-sm-4 feature">
+                  <img style="height:100px; width:auto;" src="https://b2bweb.realtor.com/web_assets/rdc/lp-images/2018/icons/4getahead.png" alt="" class="img-responsive center-block"/>
+                  <h4>Build your pipeline with high-quality buyer leads and nurture relationships with automated follow-ups.</h4>
+                </div>
+    		</div>
+              <aura:if isTrue="{!v.themePage == true}" >
+              <div style="margin-top:30px;">
+                <center>
+                    <img src="https://b2bweb.realtor.com/web_assets/rdc/logos/realliving.jpg" alt="United Real Estate"/><br/><br/>
+                </center>
+               </div>
+              </aura:if>
+          </article>
+        </div>
+     </div>
+    </aura:if>
+        
+</aura:component>

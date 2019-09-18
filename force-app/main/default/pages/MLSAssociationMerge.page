@@ -1,0 +1,18 @@
+<apex:page controller="MLSMergeController">
+<apex:form >
+  <apex:pageBlock title="MLS Association Merge" id="out">
+     <apex:pageBlockButtons >
+         <apex:commandButton value="Continue" action="{!redirect}" rerender="out"/>
+        </apex:pageBlockButtons>
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <apex:pageBlockSection title="Please select an Option" >
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:pageBlockSectionItem >
+                <apex:selectRadio value="{!selectedInsert2}">
+                    <apex:selectOptions value="{!InsertOptions}"/>
+                </apex:selectRadio><p/>
+            </apex:pageBlockSectionItem>
+        </apex:pageBlockSection>      
+      </apex:pageBlock>
+  </apex:form>
+</apex:page>

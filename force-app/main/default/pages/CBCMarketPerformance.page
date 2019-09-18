@@ -1,0 +1,167 @@
+<apex:page controller="CBCMarketPerfSearch" sidebar="false" readOnly="true" showHeader="true" tabstyle="Asset">
+   
+   <style>
+        table tr:nth-child(even) {
+        background: #f2f3f3;
+        }
+        table tr:nth-child(odd) {
+        }
+        div.pbSubheader{
+        font-size:13px;
+        }
+        input {
+        display:inline-block; margin-right: 1em;
+        }
+        .HoverPopup {
+        position: relative;
+        z-index: 0;
+        }
+        .headerRow .headerclass{text-align: right;}
+        .HoverPopup:hover {
+        background-color: #eeeeee;
+        Text-decoration: none;
+        z-index: 50;
+        }
+        
+        .HoverPopup div {
+        position: absolute;
+        visibility: hidden;
+        }
+        
+        .HoverPopup:hover div {
+        visibility: visible;
+        top: 20px;
+        left: 0px;
+        border: 1px solid black;
+        background-color: #eeeeee;
+        padding: 10px;
+        color: black;
+        Text-decoration: none;
+        white-space: pre;
+        }
+    </style>
+   
+   <!--  <style>
+        table tr:nth-child(even) {
+        background: #f2f3f3;
+        }
+        table tr:nth-child(odd) {
+        }
+        div.pbSubheader{
+        font-size:13px;
+        }
+        input {
+        display:inline-block; margin-right: 1em;
+        }
+    </style>
+    
+    -->
+    <apex:form >
+        <apex:pageMessages id="errors" />
+        <table width="100%" border="0">
+            <tr>
+              <!--  <td  valign="top" >
+                    <div class="navbar" >
+                        <a class="brand"><strong> Find Me A Customer! </strong></a>
+                    </div>
+                    <div class="input-append" >
+                        <input type="text" id="BillingPostalCode" ng-model="query" onkeyup="setTimeout('doSearch()',1000);" class="input-mysize  search-query" placeholder="Search Markets here"/>
+                    </div>
+                    <script type="text/javascript">
+                    function doSearch() {
+                        searchServer(
+                            document.getElementById("BillingPostalCode").value
+                        );
+                    }
+                    </script>
+                    <apex:actionFunction name="searchServer" action="{!runSearch}" rerender="results1,results2,results3,results5,debug,errors">
+                        <apex:param name="BillingPostalCode" value="" />
+                    </apex:actionFunction>                    
+                </td>
+                -->
+            </tr>
+            <td valign="top" >
+                <c:PageBlockTableEnhancerADV targetPbTableIds="pbt" pageSizeOptions="10,20,30,50" defaultPageSize="10" enableExport="false"/>
+                <apex:pageBlock id="results3" >
+                    <apex:pageBlocksection title="Customer Assets" columns="1" collapsible="true">
+                        <apex:pageBlockTable id="pbt" value="{!relatedAssets}" var="asset" >
+                            <apex:column headerValue="Child Asset" style="font-weight:{!IF(asset.AssetId == 'Total',800,'default')};">
+                                <apex:outputText value="{!asset.AssetId}"/>
+                            </apex:column>                                
+                            <apex:column headerValue="Status">
+                                <apex:outputText value="{!asset.Status}"/>
+                            </apex:column>
+                            <apex:column headerValue="Fulfill to Account">
+                                <!-- <apex:commandLink action="/apex/CBCPerformanceInputScreen?whatid={!asset.AccountId}">  -->
+                                <apex:outputLink value="/{!asset.AccountId}" target="_blank">
+                                   <apex:outputText value="{!asset.assetAccountName}"/>
+                                </apex:outputLink>
+                            </apex:column>
+                            <apex:column headerValue="Quantity">
+                                <apex:outputText value="{!asset.Quantity}"/>
+                            </apex:column>
+                            <apex:column headerValue="Product Type">
+                                <apex:outputText value="{!asset.ProductType}"/>
+                            </apex:column>
+                            <apex:column headerValue="Lead Type">
+                                <apex:outputText value="{!asset.LeadType}"/>
+                            </apex:column>
+                            <apex:column headerValue="Market">
+                                <apex:outputText value="{!asset.MarketZip}"/>
+                            </apex:column>
+                            <apex:column headerValue="Terms">
+                                <apex:outputText value="{!asset.ContractTerm}"/>
+                            </apex:column>
+                            <apex:column headerValue="Start">
+                                <apex:outputText value="{0, date,MM'/'dd'/'yyyy}">
+                                    <apex:param value="{!asset.StartDate}"/>
+                                </apex:outputText>
+                            </apex:column>
+                            <apex:column headerValue="Expiration">
+                                <apex:outputText value="{0, date,MM'/'dd'/'yyyy}">
+                                    <apex:param value="{!asset.End_Date}"/>
+                                </apex:outputText>
+                            </apex:column>
+                            <!-- <apex:column headerValue="Lead Count" >
+                                <apex:outputText value="{!asset.AssetLeadDetailCount}"/>
+                            </apex:column>  -->
+                            <apex:column headerValue="Avg Listing Price Web" style="font-weight:{!IF(asset.AssetId == 'Total',800,'default')};">
+                                <apex:outputText value="{0, number, currency}">
+                                    <apex:param value="{!asset.AverageListingPriceWebLead}"/>
+                                </apex:outputText>    
+                            </apex:column>                                
+                            <apex:column headerValue="Avg Listing Price Mobile" style="font-weight:{!IF(asset.AssetId == 'Total',800,'default')};">
+                                <apex:outputText value="{0, number, currency}">
+                                    <apex:param value="{!asset.AverageListingPriceMobileLead}"/>
+                                </apex:outputText>  
+                            </apex:column>                                
+                            <apex:column headerValue="Avg Listing Price Total" style="font-weight:{!IF(asset.AssetId == 'Total',800,'default')};">
+                                <apex:outputText value="{0, number, currency}">
+                                    <apex:param value="{!asset.AverageListingPriceAllLead}"/>
+                                </apex:outputText>  
+                            </apex:column>                                
+                            <apex:column headerValue="Web" style="font-weight:{!IF(asset.AssetId == 'Total',800,'default')};">
+                                <apex:outputText value="{!asset.WebLead}"/>
+                            </apex:column>                                
+                            <apex:column headerValue="Mobile" style="font-weight:{!IF(asset.AssetId == 'Total',800,'default')};">
+                                <apex:outputText value="{!asset.MobileLead}"/>
+                            </apex:column>                                
+                            <apex:column headerValue="Paid" style="font-weight:{!IF(asset.AssetId == 'Total',800,'default')};">
+                                <apex:outputText value="{!asset.PaidLead}"/>
+                            </apex:column>
+                            <apex:column headerValue="Courtesy" style="font-weight:{!IF(asset.AssetId == 'Total',800,'default')};">
+                                <apex:outputText value="{!asset.CourtesyLead}"/>
+                            </apex:column>
+                            <apex:column headerValue="Total" style="font-weight:{!IF(asset.AssetId == 'Total',800,'default')};">
+                                <apex:outputText value="{!asset.TotalLeads}"/>
+                            </apex:column>
+                            <apex:column headerValue="Performance" style="background-color:{!IF(asset.i < 100, 'red','default')};">
+                                <apex:outputText value="{!asset.Performance}" />
+                            </apex:column>
+                        </apex:pageBlockTable>
+                    </apex:pageBlocksection>
+                </apex:pageBlock>
+            </td>
+        </table>
+    </apex:form>
+</apex:page>

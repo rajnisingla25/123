@@ -1,0 +1,86 @@
+<apex:page standardController="Account" extensions="CallsAndSalesQuotaExtension" showHeader="false" sidebar="false">
+  <style>
+    .theGaugeChartsTable {
+      font-family: sans-serif;
+      margin: 0px;
+    }
+    .theGaugeChartsTable .theHeader {
+      background-color: #2a94d6;
+      color: #fff;
+      font-size: 13px;
+      font-weight: bold;
+      margin: 0px;
+    }
+    .theGaugeChartsTable .theBody {
+      border: 1px solid #1f8dd6;
+    }
+    .theGaugeChartsTable .theAccountHighlights {
+      margin: 0px;
+      padding: 0px;
+    }
+  </style>
+  <apex:variable value="{!Account}" var="a"/>
+  <table width="100%" height="10px" cellpadding="0px" cellspacing="2px" class="theGaugeChartsTable">
+    <tr>
+      <td width="70%" align="center" height="10px" class="theHeader">
+        Account Highlights
+      </td>
+    </tr>
+    <tr>
+      <td width="70%" height="90px" class="theBody">
+        <table width="100%" cellpadding="2px" cellspacing="2px" class="theAccountHighlights">
+            <tr>
+                <td style="color:#848484;" width="25%">Open cases</td>
+                <td style="color:#848484;" width="25%">MLS Issue</td>
+                <td style="color:#848484;" width="25%">Multiple MLS</td>
+                <td style="color:#848484;" width="25%">Credit Status</td>
+            </tr>
+            <tr>
+                <td style="font-weight:bold;" width="25%">
+              <apex:outputText value="{0, date, MM'/'dd'/'yyyy}">
+                <apex:param value="{!a.Last_Sales_Contact_Date__c}"/>
+              </apex:outputText>
+                </td>
+            <td style="color:#088A08; font-weight: bold;" width="25%">
+              <apex:outputText value="${0,number,###,###.00}" rendered="{!IF(TEXT(a.Total_Contract_Value__c) != '', true, false)}">
+                <apex:param value="{!a.Total_Contract_Value__c}"/>
+                    </apex:outputText>
+                </td>
+                <td style="font-weight:bold;" width="25%">
+                  {!a.Sales_Lock_User__r.Name}
+                </td>
+                <td style="font-weight:bold; color:#FF0000;" width="25%">
+                  <apex:outputText value="{!theDaysPastDue}" rendered="{!IF(theDaysPastDue > 0, true, false)}"/>
+                </td>
+            </tr>
+            <tr>
+                <td style="color:#848484;" width="25%">Account Owner</td>
+                <td style="color:#848484;" width="25%">Active Listings</td>
+                <td style="color:#848484;" width="25%">Strategic Notes / Flags</td>
+                <td style="color:#848484;" width="25%">Do Not Call</td>
+            </tr>
+            <tr>
+                <td style="font-weight:bold;" width="25%">
+              <apex:outputText value="{0, date, MM'/'dd'/'yyyy}">
+                <apex:param value="{!a.Next_Renewal_Date__c}"/>
+              </apex:outputText>
+                </td>
+                <td style="font-weight:bold;" width="25%">
+                  <apex:image url="{!$Resource.TheRedFlag}" width="30" height="30" rendered="{!showRedFlag}"/>
+                  <apex:image url="{!$Resource.TheGreenFlag}" width="30" height="30" rendered="{!!showRedFlag}"/>
+                </td>
+                <td style="font-weight:bold;" width="25%">
+              {!a.Priority_Notes__c}
+                </td>
+                <td style="color:#FF0000; font-weight: bold;" width="25%">
+                    <apex:outputText value="${0,number,###,###.00}">
+                        <apex:param value="{!thePastDueAmount}"/>
+                    </apex:outputText>
+                    <apex:outputText value="0.00" rendered="{!IF(TEXT(thePastDueAmount) == '', true, false)}"/>
+                </td>
+            </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</apex:page>

@@ -1,0 +1,23 @@
+<apex:page controller="QueuesStatusReport_CC"  sidebar="false" showHeader="true">
+    
+    <apex:pageBlock >
+        <apex:pageblocksection columns="1" >
+        <apex:outputPanel >
+            <apex:pageblocktable columnsWidth="30%,30%,10%,10%,10%,10%" value="{!QueueCases}" var="ovar">
+            
+                <!-- <apex:column value="{!ovar.GroupName}" headerValue="Group"/> --> 
+                <apex:column value="{!ovar.categoryName}" headerValue="Categorization"/>                               
+                <apex:column value="{!ovar.QueueName}" headerValue="Queue"/>
+                <apex:column value="{!ovar.casesNew}" headerValue="New"/> 
+                <apex:column value="{!ovar.casesFollowup}" headerValue="Follow Up"/>
+                <apex:column value="{!ovar.caseNewOldestDate}" headerValue="Oldest Date(New)"/>
+                <apex:column value="{!ovar.casesFollowupOldestDate}" headerValue="Oldest Date(Follow Up)"/>
+                
+                
+                
+            </apex:pageblocktable>
+            </apex:outputPanel>
+        </apex:pageblocksection>
+        
+    </apex:pageBlock>
+</apex:page>

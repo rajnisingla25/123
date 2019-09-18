@@ -1,0 +1,22 @@
+<apex:page sidebar="false" showHeader="false">
+    <apex:includeScript value="/support/console/44.0/integration.js" />
+    <apex:includeLightning />
+
+    <div id="quotesToApprove"/>
+
+    <script type="text/javascript">
+      var heigth = 30;
+      if(sforce.console.isInConsole()){
+          heigth = 20;
+      }
+      $Lightning.use("c:BulkApproval", function() {
+                 $Lightning.createComponent("c:BulkApproveQuotes" , {
+                            "height": heigth
+                        },
+                "quotesToApprove",
+                function(cmp) {
+                    // do some stuff
+                });
+        });
+    </script>
+</apex:page>

@@ -1,0 +1,336 @@
+<apex:page showHeader="false" sidebar="false" controller="Z_PaymentProfileManagerController" action="{!onLoad}">
+ 
+   <apex:includeScript value="{!$Resource.zqu__jquery_1_9_1}" />
+    <!--<script type="text/javascript" src="https://apisandboxstatic.zuora.com/Resources/libs/hosted/latest/zuora.js"></script>-->
+
+
+
+
+
+    <style>
+        .centered {
+            margin-left: 0px;
+            margin-right: 0px;
+           text-align: center;
+        }
+    </style>
+
+    <script>
+        var $jq = jQuery.noConflict();
+        //window.onload = '';
+        function customProcessCallback(params) {
+            var response = $jq.parseJSON(params);
+           // Alert("hi");
+
+            if (response.success) {
+                callbackSuccess();
+            } else {
+                callbackFailure();
+            }
+            
+            if (processCallback) {
+           
+           processCallback(params);
+          }
+        }
+
+        function deletePaymentProfile(profileToDelete, maskNumber, expiration) {
+            var confirmDeleteProfile = confirm('Are you sure you want to delete this payment method?\nCard Number: '+maskNumber+'\nExpiration: '+expiration);
+
+            if (confirmDeleteProfile) {
+                deleteProfile(profileToDelete);
+            }
+        }
+
+        function showSimpleDialog(profileToEdit, cardHolderName, expiration, type){    
+        var id=Dialogs.getNextId();
+        var script = "function edit(){editProfile('"+profileToEdit+"',document.getElementById('name"+id+"').value,document.getElementById('expiry"+id+"').value,document.getElementById('address"+id+"').value,document.getElementById('city"+id+"').value,document.getElementById('state"+id+"').value,document.getElementById('postal_code"+id+"').value,document.getElementById('country"+id+"').value); closeDialog(); return true;}";
+        var targetNode = document.createElement('div'); //  construct div for script injection*/
+        document.body.appendChild(targetNode);
+
+        try {
+            var el = document.createElement('script');
+            el.type="text/javascript";
+            el.innerHTML = script;
+            targetNode.appendChild(el);
+        } catch (e){
+            var el = document.createElement('span');
+            targetNode.appendChild(el);
+            el.innerHTML = "<br /><scr"+"ipt type='text/javascript' defer='defer'>"+script+"</script" + ">";
+        }
+       var sd = new SimpleDialog("Test"+id, false);    
+       sd.setTitle("Update Payment Profile - Credit Card");   
+       sd.createDialog();
+            //debugger;
+      // window.parent.sd = sd;
+            sd.setContentInnerHTML("<p align='left'>Cardholder Name: <input style='float:right;' type='text' id='name"+id
+                                   +"' name='name' value='"+cardHolderName+"'></p><p align='left'>Expiration: <input style='float:right;' type='text' id='expiry"+id
+                                   +"' name='expiry' value='"+expiration+"'></p><br /><p align='left'>Address: <input style='float:right;' type='text' id='address"+id
+                                   +"' name='address' value=''></p><p align='left'>City: <input style='float:right;' type='text' id='city"+id
+                                   +"' name='city' value=''></p><p align='left'>State: <input style='float:right;' type='text' id='state"+id
+                                   +"' name='state' value=''></p><p align='left'>Postal Code: <input style='float:right;' type='text' id='postal_code"+id
+                                   +"' name='postal_code' value=''></p><p align='left'>Country (full): <input style='float:right;' type='text' id='country"+id
+                                   +"' name='country' value='United States'></p></p><button class='btn' onclick='edit();'>Save</button><button class='btn' onclick='closeDialog();return false;'>Cancel</button></p>");   
+
+       sd.show();   
+    }
+	function closeDialog(){
+        var dlg = document.getElementById('TestsimpleDialog0');
+        if($jq){
+            $jq('[id^=TestsimpleDialog][role=dialog],.overlayBackground').hide();
+        }
+    }
+    function showSimpleDialog2(profileToEdit, achAccountName, achBankName, achAccountType){    
+        var id=Dialogs.getNextId();
+        var script = "function edit(){editProfile2('"+profileToEdit+"',document.getElementById('accname"+id+"').value,document.getElementById('bank"+id+"').value,document.getElementById('acctype"+id+"').value); closeDialog(); return true;}";
+        var targetNode = document.createElement('div'); //  construct div for script injection*/
+        document.body.appendChild(targetNode);
+
+        try {
+            var el = document.createElement('script');
+            el.type="text/javascript";
+            el.innerHTML = script;
+            targetNode.appendChild(el);
+
+            //Select Credit Card Type
+            /*var select = document.getElementById("type");
+            var e2 = document.createElement("option");
+            e2.textContent = "Discover";
+            e2.value = "Discover";
+            e2.selected = true;
+            select.appendChild(e2);*/
+
+
+        } catch (e){
+            var el = document.createElement('span');
+            targetNode.appendChild(el);
+            el.innerHTML = "<br /><scr"+"ipt type='text/javascript' defer='defer'>"+script+"</script" + ">";
+        }
+       var sd = new SimpleDialog("Test2"+id, false);    
+       sd.setTitle("Update Payment Profile - ACH");   
+       sd.createDialog();   
+        //window.parent.sd = sd;
+       sd.setContentInnerHTML("<p align='left'>Account Name: <input style='float:right;' type='text' id='accname"+id+"' name='accname' value='"+achAccountName+"'></p><p align='left'>Bank Name: <input style='float:right;' type='text' id='bank"+id+"' name='bank' value='"+achBankName+"'></p><p align='left'>Account Type: <input style='float:right;' type='text' id='acctype"+id+"' name='acctype' value='"+achAccountType+"'></p><br /></p><button class='btn' onclick='edit();'>Save</button><button class='btn' onclick='closeDialog(); return false;'>Cancel</button></p>");   
+
+       sd.show();   
+    }
+
+
+
+        function updatePaymentProfile(type,profileToEdit, obj1, obj2, obj3) {
+            if(type.localeCompare('CreditCard')==0)
+                showSimpleDialog(profileToEdit, obj1, obj2, obj3);
+            else
+                showSimpleDialog2(profileToEdit, obj1, obj2, obj3);
+        }
+
+        function changeIFrame() {
+            renderIFrame();
+        }
+    </script>
+
+    <zqu:StatusModal />
+    <apex:actionStatus startText="" stopText="" id="action" onstart="javascript:displayStatusModal()" onstop="javascript:closeStatusModal()" />
+ 
+    <!-- <apex:form > -->
+    <apex:pageBlock id="mainBlock" > 
+
+        <apex:form >
+
+        <apex:actionFunction name="renderIFrame" action="{!renderIFrame}" reRender="mainBlock,pageButtons,messagePanel,iFrameSection,paymentMethodSelect,emptyTableMessage">
+        </apex:actionFunction>
+
+        <apex:actionFunction action="{!callbackSuccess}" name="callbackSuccess" reRender="mainBlock, pageButtons, messagePanel, paymentProfile, iFrameSection,paymentMethodSelect">
+        </apex:actionFunction>
+
+        <apex:actionFunction action="{!callbackFailure}" name="callbackFailure" reRender="mainBlock, pageButtons, messagePanel, paymentProfile, iFrameSection,paymentMethodSelect">
+        </apex:actionFunction> 
+
+        <!-- verify - added "status" -->
+        <apex:actionFunction action="{!deleteProfile}" name="deleteProfile" reRender="mainBlock, pageButtons, messagePanel, paymentProfile, iFrameSection,paymentMethodSelect" status="action">
+            <apex:param name="profileToDelete" assignTo="{!profileToDelete}" value="" />
+        </apex:actionFunction>
+
+        <apex:actionFunction action="{!editProfile}" name="editProfile" rerender="mainBlock,pageButtons,messagePanel,paymentProfile, iFrameSection,paymentMethodSelect" status="action">
+            <apex:param name="profileToEdit" assignTo="{!profileToEdit}" value="" />
+            <apex:param name="cardHolderName" assignTo="{!cardHolderName}" value="" />
+            <apex:param name="expirationDate" assignTo="{!expirationDate}" value="" />
+            <apex:param name="address" assignTo="{!billingAddress}" value="" />
+            <apex:param name="city" assignTo="{!billingCity}" value="" />
+            <apex:param name="state" assignTo="{!billingState}" value="" />
+            <apex:param name="postal_code" assignTo="{!billingPostalCode}" value="" />
+            <apex:param name="country" assignTo="{!billingCountry}" value="" />
+        </apex:actionFunction>
+
+        <apex:actionFunction action="{!editProfile}" name="editProfile2" rerender="mainBlock,pageButtons,messagePanel,paymentProfile, iFrameSection,paymentMethodSelect" status="action">
+            <apex:param name="profileToEdit" assignTo="{!profileToEdit}" value="" />
+            <apex:param name="achAccountName" assignTo="{!achAccountName}" value="" />
+            <apex:param name="achBankName" assignTo="{!achBankName}" value="" />
+            <apex:param name="achAccountType" assignTo="{!achAccountType}" value="" />
+        </apex:actionFunction>
+
+        <apex:outputPanel id="pageButtons" styleClass="centered" layout="block" >
+            <apex:commandButton value="Return to Account" status="action" action="{!returnToAccount}" rendered="{!!hasQuote}" />
+            <apex:commandButton value="Authorize" status="action" reRender="mainBlock, pageButtons, messagePanel, iFrameSection,paymentMethodSelect" disabled="{!hasConfigError || paymentProfileList.size == 0}" action="{!authorizeCards}" rendered="{!hasQuote && !collectpayment}"/>
+            <apex:commandButton value="Make Payment" status="action" reRender="mainBlock, pageButtons, messagePanel, ProfileselectPanelcc, iFrameSection,paymentMethodSelect" disabled="{!hasConfigError || paymentProfileList.size == 0}" action="{!MakePayment}" rendered="{!hasQuote && !!collectpayment}"/>          
+            <apex:commandButton value="Save" status="action" reRender="mainBlock, pageButtons, messagePanel, iFrameSection,paymentMethodSelect" disabled="{!hasConfigError || paymentProfileList.size == 0}" action="{!authorizeCards}" rendered="{!!hasQuote && !collectpayment}"/>
+             <apex:commandButton value="Update Default Method" status="action" reRender="mainBlock, pageButtons, messagePanel, iFrameSection,paymentMethodSelect" disabled="{!hasConfigError || paymentProfileList.size == 0}" action="{!MakePayment}" rendered="{!!hasQuote && !!collectpayment}"/>
+            <apex:commandButton value="Add Payment Method" status="action" reRender="mainBlock,pageButtons,messagePanel,iFrameSection,paymentMethodSelect,emptyTableMessage" action="{!renderIFrame}" disabled="{!hasConfigError || !!Parentaccountnotfound}" />
+            <apex:commandButton value="Reload" onclick="window.location.top.reload()" rendered="{!ShowReload}"/>
+            
+        </apex:outputPanel>
+        <br/>
+        
+
+        <apex:outputPanel id="messagePanel"> 
+            <zqu:Notification id="messages" />
+        </apex:outputPanel>
+
+        <apex:outputPanel id="profileTableCCPanel" >
+        <apex:pageBlockTable value="{!ccPaymentProfileList}" var="paymentProfile" id="profileTableCC" rendered="{!ccPaymentProfileList.size>0 && !collectpayment}">
+            <apex:column width="5%">
+                <apex:commandButton image="{!$Resource.zqu__iconPen}" onclick="updatePaymentProfile('CreditCard','{!paymentProfile.profileId}','{!paymentProfile.cardHolderName}','{!paymentProfile.expirationDate}','{!paymentProfile.cardType}');" reRender="profileTableCC,profileTableACH,profileTableACHPanel,mainBlock, messagePanel" action="{!doNothing}" status="action"/>
+            </apex:column>
+            <apex:column headerValue="Cardholder Name" width="15%">
+                <apex:outputText value="{!paymentProfile.cardHolderName}"/>
+            </apex:column>
+            <apex:column headerValue="Card Type" width="15%">
+                <apex:outputText value="{!paymentProfile.cardType}"/>
+            </apex:column>
+
+            <apex:column headerValue="Mask Number" width="15%">
+                <apex:outputText value="{!paymentProfile.maskNumber}"/>
+            </apex:column>
+            <apex:column headerValue="Expiration" width="{!IF(hasQuote, '10%', '15%')}">
+                <apex:outputText value="{!paymentProfile.expirationDate}"/>
+            </apex:column>
+            <apex:column headerValue="Example Amount" width="5%" rendered="{!!hasQuote}">
+                <apex:inputText value="{!paymentProfile.exampleAmount}" maxlength="10">
+                <apex:actionSupport status="action" event="onchange" reRender="profileTableCC,profileTableCCPanel,messagePanel" action="{!refreshPaymentSplits}" />
+                </apex:inputText>
+            </apex:column>
+            <apex:column headerValue="BIN Auth" width="5%" rendered="{!hasQuote}">
+                <apex:inputText value="{!paymentProfile.userBIN}" maxlength="15" rendered="{!paymentProfile.percentSplit > 0 && paymentProfile.authStatus != 'Authorized' && !paymentProfile.isNew}" />
+            </apex:column>
+            <apex:column headerValue="Card Split" width="7%">
+                <apex:inputText value="{!paymentProfile.percentSplit}">
+                    <apex:actionSupport status="action" event="onchange" reRender="profileTableCC,profileTableCCPanel,messagePanel" action="{!refreshAuthAmounts}" />
+                </apex:inputText>
+            </apex:column> 
+            <apex:column headerValue="Auth Amount" width="7%" rendered="{!hasQuote}">
+                <apex:outputText value="{!paymentProfile.authAmount}"/>
+            </apex:column>
+           
+           <apex:column headerValue="Reason Code" width="7%">
+                <apex:outputtext value="{!paymentProfile.reason_code}"  rendered="{!paymentProfile.reason_code!=''}"/>
+                <apex:selectList id="chooseColor" value="{!paymentProfile.reason_code}" size="1" rendered="{!paymentProfile.reason_code==''&&paymentProfile.Recently_Added }">
+                    <apex:selectOptions value="{!paymentProfile.reason_codes}"></apex:selectOptions>
+                </apex:selectList>
+            </apex:column>
+             <apex:column headerValue="Status" width="7%" rendered="{!hasQuote}">       
+                <apex:outputText value="{!paymentProfile.authStatus}"/>     
+            </apex:column>          
+        </apex:pageBlockTable>      
+        </apex:outputPanel>   
+
+
+         <apex:outputPanel id="ProfileselectPanelcc" >
+        <apex:pageBlockTable value="{!Profileselect}" var="i" id="ProfiletablePanelcc" rendered="{!Profileselect.size>0 && !!collectpayment}">
+            <apex:column width="2%">
+                <apex:commandButton image="{!$Resource.zqu__iconPen}" onclick="updatePaymentProfile('CreditCard','{!i.paymentProfile.profileId}','{!i.paymentProfile.cardHolderName}','{!i.paymentProfile.expirationDate}','{!i.paymentProfile.cardType}');" reRender="profileTableCC,profileTableACH,profileTableACHPanel,mainBlock, messagePanel" action="{!doNothing}" status="action"/>
+            </apex:column>
+            <apex:column headerValue="Cardholder Name" width="10%">
+                <apex:outputText value="{!i.paymentProfile.cardHolderName}"/>
+            </apex:column>
+            <apex:column headerValue="Card Type" width="7%">
+                <apex:outputText value="{!i.paymentProfile.cardType}"/>
+            </apex:column>
+
+            <apex:column headerValue="Mask Number" width="7%">
+                <apex:outputText value="{!i.paymentProfile.maskNumber}"/>
+            </apex:column>
+            <apex:column headerValue="Expiration" width="{!IF(hasQuote, '7%', '12%')}">
+                <apex:outputText value="{!i.paymentProfile.expirationDate}"/>
+            </apex:column>
+            
+            <apex:column headerValue="BIN Auth" width="1%" rendered="{!hasQuote}">
+                <apex:inputText value="{!i.paymentProfile.userBIN}" maxlength="15" rendered="{!i.paymentProfile.percentSplit > 0 && i.paymentProfile.Paymentstatus != 'Processed' && !i.paymentProfile.isNew}" />
+            </apex:column>
+            <apex:column headerValue="Card Split" width="4%" rendered="{!!hasQuote}">
+                <apex:outputText value="{!i.paymentProfile.percentSplit}"/>        
+            </apex:column>
+            <apex:column headerValue="Defualt PM" width="4%">
+                <apex:inputCheckbox id="Profile" value="{!i.isSelected}" >
+                    <apex:actionSupport event="onclick" action="{!updateprofileamount}" rerender="ProfileselectPanelcc, ProfiletablePanelcc, messagePanel">
+                        <apex:param name="conid" value="{!i.selectionIndex}" assignTo="{!Selectindex}" />
+                    </apex:actionSupport>
+                </apex:inputCheckbox>
+             </apex:column>
+            <apex:column headerValue="Amount" width="7%" rendered="{!hasQuote}">
+                <apex:inputText value="{!i.paymentProfile.Paymentamount}" maxlength="10">
+                <apex:actionSupport status="action" event="onchange" reRender="ProfileselectPanelcc,ProfiletablePanelcc,messagePanel" action="{!updateprofileamount}" >
+                <apex:param name="Indexnumber" value="{!i.selectionIndex}" assignTo="{!Selectindex}" />
+                 </apex:actionSupport>
+                </apex:inputText>
+            </apex:column>
+            <apex:column headerValue="Status" width="10%" rendered="{!hasQuote}">       
+                <apex:outputText value="{!i.paymentProfile.Paymentstatus}"/>     
+            </apex:column>
+           
+           <apex:column headerValue="Reason Code" width="14%">
+                <apex:outputtext value="{!i.paymentProfile.reason_code}"  rendered="{!i.paymentProfile.reason_code!=''}"/>
+                <apex:selectList id="chooseColor" value="{!i.paymentProfile.reason_code}" size="1" rendered="{!i.paymentProfile.reason_code==''&&i.paymentProfile.Recently_Added }">
+                    <apex:selectOptions value="{!i.paymentProfile.reason_codes}"></apex:selectOptions>
+                </apex:selectList>
+            </apex:column>                     
+        </apex:pageBlockTable>      
+        </apex:outputPanel> 
+
+
+        <br/>       
+        <apex:outputPanel id="profileTableACHPanel">        
+        <apex:pageBlockTable value="{!achPaymentProfileList}" var="paymentProfile" id="profileTableACH" rendered="{!achPaymentProfileList.size>0}">     
+            <apex:column width="5%">        
+                <apex:commandButton image="{!$Resource.zqu__iconPen}" onclick="updatePaymentProfile('ACH','{!paymentProfile.profileId}','{!paymentProfile.achAccountName}','{!paymentProfile.achBankName}','{!paymentProfile.achAccountType}');" reRender="profileTableCC,profileTableCCPanel,profileTableACH,profileTableACHPanel, mainBlock, messagePanel" action="{!doNothing}" status="action"/>        
+            </apex:column>      
+            <apex:column headerValue="Account Name" width="15%">        
+                <apex:outputText value="{!paymentProfile.achAccountName}"/>     
+            </apex:column>      
+            <apex:column headerValue="Bank Name" width="15%">       
+                <apex:outputText value="{!paymentProfile.achBankName}"/>        
+            </apex:column>
+            <apex:column headerValue="Mask Number" width="15%">
+                <apex:outputText value="{!paymentProfile.achAccountNumberMask}"/>
+            </apex:column>
+            <apex:column headerValue="Account Type" width="15%">
+                <apex:outputText value="{!paymentProfile.achAccountType}"/>
+            </apex:column> 
+            <apex:column headerValue="Card Split" width="7%">
+                <apex:inputText required="true"  value="{!paymentProfile.percentSplit}"/>
+            </apex:column>
+            <apex:column headerValue="Auth Amount" width="7%" rendered="{!hasQuote}"></apex:column>
+            <apex:column headerValue="Status" width="7%" rendered="{!hasQuote}"></apex:column> 
+        </apex:pageBlockTable>
+        </apex:outputPanel>
+
+        <apex:outputPanel layout="block" styleClass="centered" rendered="{!paymentProfileList.size == 0}" id="emptyTableMessage" >
+            <apex:outputText value="No existing Payment Profiles" />
+        </apex:outputPanel>
+
+        <apex:outputPanel layout="block" styleClass="centered" id="paymentMethodSelect"  rendered="{!renderHPM && !hasConfigError}">
+            <apex:selectRadio value="{!paymentMethodType}" onchange="changeIFrame();">
+                <apex:selectOptions value="{!paymentMethodOptions}" />
+            </apex:selectRadio>
+        </apex:outputPanel>
+
+        </apex:form>
+
+        <apex:outputPanel layout="block" styleClass="centered" id="iFrameSection"  rendered="{!renderHPM && !hasConfigError}" >
+            <zqu:PaymentPage zuoraPageId="{!ccHpmPageId}" submitEnabled="true" style="inline" rendered="{!paymentMethodType == 'CreditCard'}"/>
+            <zqu:PaymentPage zuoraPageId="{!achHpmPageId}" submitEnabled="true" style="inline" rendered="{!paymentMethodType == 'ACH'}"/>
+        </apex:outputPanel>
+    
+
+    </apex:pageBlock>
+
+</apex:page>

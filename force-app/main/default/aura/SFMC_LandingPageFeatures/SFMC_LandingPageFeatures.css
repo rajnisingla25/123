@@ -1,0 +1,10 @@
+.THIS .featureBigText{
+    font-weight:bold;
+    text-align: center;
+}
+.THIS .customZIndex{
+    z-index: -1;
+}
+.THIS .featureSmallText{
+     text-align: center;
+}

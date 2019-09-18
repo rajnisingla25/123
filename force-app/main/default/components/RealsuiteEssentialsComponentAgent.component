@@ -1,0 +1,9 @@
+<!-- CRM 3140: Component used in "Realsuite Essentials Welcome Email" template-->
+
+<apex:component access="global" controller="EssentialsComponentController">
+     <apex:attribute name="accountId" assignTo="{!accId}" description="This is the relatedTo Id in the Account" 
+         type="String"/>
+    <p style="font-size: 15px; font-weight: 800; line-height: 18px; color: #2d2926;">
+         Dear {!conName},
+    </p>
+</apex:component>

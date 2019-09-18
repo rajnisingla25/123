@@ -1,0 +1,30 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes,forceCommunity:themeLayout" access="global" >
+	<div class="cTPMS_feat_1">
+       <div id="features-wrap" class="text-center">
+          <article>
+              <h3 style="">Speed is everything in the competitive world of real estate. <br/> FiveStreet waits for an online lead to arrive, and then jumps into action for you:</h3>
+            <div class="row">
+                <div class="col-md-4 col-sm-4 feature">
+                  <img style="height:100px; width:auto;" src="https://psweb.realtor.com/SFMC-lp-images/fs-icon1.png" alt="" class="img-responsive center-block"/>
+                    <h4><b>Reply to leads in &lt; 1 minute</b> with a customized, automatic email and/or text reply to the prospective buyer.</h4>
+                </div>
+                <div class="col-md-4 col-sm-4 feature">
+                  <img style="height:100px; width:auto;" src="https://psweb.realtor.com/SFMC-lp-images/tp-website-icon2.png" alt="" class="img-responsive center-block"/>
+                    <h4><b>Automatically broadcast</b> the lead to your team. Redirect the lead to a different team with a single tap.</h4>
+                </div>
+                <div class="col-md-4 col-sm-4 feature">
+                  <img style="height:100px; width:auto;" src="https://psweb.realtor.com/SFMC-lp-images/fs-icon3.png" alt="" class="img-responsive center-block"/>
+                    <h4><b>Get an instant notification</b> as soon as you get a lead, or the lead is claimed by someone on your team</h4>
+                </div>
+    		</div>
+              <aura:if isTrue="{!v.themePage == true}" >
+              <div style="margin-top:30px;">
+                <center>
+                    <img src="https://b2bweb.realtor.com/web_assets/rdc/logos/realliving.jpg" alt="United Real Estate"/><br/><br/>
+                </center>
+               </div>
+              </aura:if>
+          </article>
+        </div>
+     </div>
+</aura:component>

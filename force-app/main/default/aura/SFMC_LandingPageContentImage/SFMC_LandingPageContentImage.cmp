@@ -1,0 +1,9 @@
+<aura:component implements="forceCommunity:availableForAllPageTypes" access="global" >
+    <aura:attribute name="imageName" type="String" />
+    <aura:attribute name="prefixString" type="String" />
+    <aura:attribute name="contentImageHeight" type="String" />
+    <aura:attribute name="contentImageWidth" type="String" />
+    
+    <img src="{!(v.prefixString + v.imageName)}" width="{!v.contentImageWidth}"/>
+    
+</aura:component>

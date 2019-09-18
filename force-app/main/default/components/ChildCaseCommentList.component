@@ -1,0 +1,37 @@
+<apex:component controller="CaseCommentsComponentController" allowDML="true">
+    <style>
+        .thelink {
+            color: #015ba7 !important;
+        }
+    </style>
+    
+    <!-- Attribute Definition -->
+    <apex:attribute name="childCaseIds" description="Salesforce Id of the child cases" type="Id[]" required="true" assignTo="{!childCases}" />
+    <apex:attribute name="currCaseId" description="Salesforce Id of the Case whose Case Comments needs to be rendered" type="Id" required="true" assignTo="{!currentCaseId}" />   
+    <!-- Component Body -->
+    <apex:componentBody >
+        <apex:form >
+            <apex:pageBlock >
+
+                <apex:outputPanel rendered="{!OR(ISNULL(Comments),Comments.size == 0)}">
+                    <div class="noRowsHeader">No Comments To Display</div>
+                </apex:outputPanel>
+                
+                <apex:pageBlockTable value="{!Comments}" var="comment" rendered="{!AND(NOT(ISNULL(Comments)),Comments.size > 0)}" columnsWidth="10%,90%">
+                     <apex:column headerValue="Action" rendered="{!IF($Profile.Name =='Move IT SysAdmin', true , false)}">
+                        <apex:outputLink value="/{!comment.cComment.Id}/e?parent_id={!currentCaseId}&retURL=/{!currentCaseId}" styleClass="thelink" target="_top">Edit</apex:outputLink>&nbsp;|
+                        <apex:commandLink action="{!deleteComment}" value="Del" styleClass="thelink">
+                            <apex:param name="CommentId_d" value="{!comment.cComment.Id}" />
+                        </apex:commandLink>
+                    </apex:column>
+                    
+                    <apex:column headerValue="Comments">
+                        <apex:outputText escape="false" value="{!comment.commentText}" />
+                    </apex:column>
+
+                </apex:pageBlockTable>
+            </apex:pageBlock>
+
+        </apex:form>
+    </apex:componentBody>
+</apex:component>

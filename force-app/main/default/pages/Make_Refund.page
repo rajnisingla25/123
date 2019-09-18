@@ -1,0 +1,152 @@
+<apex:page title="Make a Refund" showHeader="false" sidebar="false" tabStyle="Account" standardController="Zuora__CustomerAccount__c" extensions="MakeRefund">
+    <style>
+        .headerRow .headerStyle {
+            background-color: #E5FFD5 !important;
+            color: #000000 !important
+        }
+        .headerRow .paymentHeaderStyle {
+            background-color: #E5FFD5 !important;
+            color: #000000 !important
+        }
+        .headerRow .invoiceHeaderStyle {
+            background-color: #E5FFD5 !important;
+            color: #000000 !important
+        }
+        table .roundedEdges {
+            border-bottom-left-radius: 20px !important;
+            border-bottom-right-radius: 20px !important
+        }
+        table .roundedEdge {
+            border-top-left-radius: 20px !important;
+            border-bottom-right-radius: 20px !important;
+        }
+    </style>
+    <script>
+        function boolFunction(variable) {
+            var bool = variable.value;
+            if(bool == 'external') {
+                document.getElementById('externalDiv').style.display = 'block';
+                document.getElementById('electronicDiv').style.display = 'none';
+            }
+            else{
+                document.getElementById('externalDiv').style.display = 'none';
+                document.getElementById('electronicDiv').style.display = 'block';
+            }
+        }   
+        function setFocusOnLoad() {}
+    </script>
+    <apex:form >
+        <zqu:StatusModal />
+        <apex:actionStatus startText="" stopText="" id="action" onstart="javascript:displayStatusModal()" onstop="javascript:closeStatusModal()" />
+        <apex:outputPanel id="error">
+            <zqu:Notification options="{!notificationOptions}" />
+            <apex:actionFunction name="continueToNextPage" action="{!confirmError}" immediate="true" rerender="error" />
+        </apex:outputPanel>
+        
+        <apex:pageBlock title="Payment Information">
+            <table width="35%" cellspacing="0" border="0" cellpadding="0" height="30px">
+                <tr>
+                    <td width="50%">
+                    <u>Refund Type:</u>
+                    </td>
+                    <td width="50%">
+                    <apex:selectRadio value="{!refundType}"  onclick="boolFunction(this);">
+                        <apex:selectOptions value="{!refundTypeOptions}"/>
+                        <apex:actionSupport event="onclick" action="{!updateDate}" rerender="electronicPanel, externalPanel"/>
+                    </apex:selectRadio>
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <div id="externalDiv">
+                <apex:outputPanel id="externalPanel">
+                    <table width="50%">
+                        <tr>
+                            <td width="35%">Refund Date:</td>
+                            <td width="65%">
+                                <apex:inputText value="{!refundDate}" size="10" id="demo1" onfocus="DatePicker.pickDate(false, this , false);" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="35%">Refund Method:</td>
+                            <td width="65%">
+                                <apex:selectList value="{!methodType}" size="1">
+                                    <apex:selectOptions value="{!methodTypeOptions}"/>
+                                </apex:selectList>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="35%">Original Payment Amount:</td>
+                            <td width="65%">
+                                <apex:outputText value="{!zPayment.Zuora__Amount__c}" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="35%">Total Refund Amount:</td>
+                            <td width="65%"><apex:outputText value="{!Amount}" /></td>
+                        </tr>
+                    </table>
+                </apex:outputPanel>
+            </div>
+            <div id="electronicDiv" style="display: none;">
+                <apex:outputPanel id="electronicPanel">
+                    <table width="50%">
+                        <tr>
+                            <td width="35%">Refund Date:</td>
+                            <td width="65%">
+                                <apex:outputText value="{!refundDate}" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="35%">Refund Method:</td>
+                            <td width="65%">
+                                <apex:outputText value="{!originalPaymentMethod}" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="35%">Original Payment Amount:</td>
+                            <td width="65%">
+                                <apex:outputText value="{!zPayment.Zuora__Amount__c}" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="35%">Total Refund Amount:</td>
+                            <td width="65%"><apex:outputText value="{!Amount}" /></td>
+                        </tr>
+                    </table>
+                </apex:outputPanel>
+            </div>
+            <hr />
+            <table width="50%">
+                <tr>
+                <td valign="top" width="35%">Comments</td>
+                <td width="65%"><apex:inputTextarea value="{!Comment}" cols="50" rows="3" /></td>
+                </tr>
+            </table>
+        </apex:pageBlock>
+        <apex:pageBlock title="Transaction(s) associated with the original Payment" id="paymentInvoices">
+            <apex:pageBlockTable value="{!paymentSelect}" var="q">
+                <apex:column headerValue="" headerClass="paymentHeaderStyle">
+                    <apex:inputCheckbox id="paymentinvoice" value="{!q.isSelected}" >
+                        <apex:actionSupport event="onclick" action="{!updateRefundTotal}" rerender="paymentInvoices, externalPanel, electronicPanel, invoiceTotal"/>
+                    </apex:inputCheckbox>
+                </apex:column>
+                <apex:column headerValue="Invoice Number" headerClass="paymentHeaderStyle">
+                    <apex:outputText value="{!q.InvoiceName}" /></apex:Column>
+                <apex:column headerValue="Total Amount" headerClass="paymentHeaderStyle">
+                    <apex:outputText value="${!q.PaymentInvoice.Zuora__ApplyAmount__c}" /></apex:Column>
+                <apex:column headerValue="Refunded Amount" headerClass="paymentHeaderStyle">
+                    <apex:outputText value="${!q.PaymentInvoice.Zuora__RefundAmount__c}" /></apex:Column>
+                <apex:column headerValue="Max Refund Available" headerClass="paymentHeaderStyle">
+                    <apex:outputText value="${!q.availableRefund}" /></apex:Column>
+                <apex:column headerValue="Max Refund Available" headerClass="paymentHeaderStyle">
+                    <apex:inputText value="{!q.amountRefunded}" >
+                        <apex:actionSupport event="onchange" action="{!updateValues}" rerender="electronicPanel, externalPanel, paymentInvoices, error"/>
+                    </apex:inputText>
+                </apex:Column>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+        <apex:commandButton value="Create Refund" action="{!submit}" status="action" rerender="error" />
+        <apex:commandButton value="Cancel" action="{!cancel}" />
+    </apex:form>
+</apex:page>

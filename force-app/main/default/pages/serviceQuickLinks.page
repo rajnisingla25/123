@@ -1,0 +1,109 @@
+<apex:page >
+ 
+
+<!--
+
+    (c) Appirio
+    
+    Provide a way to launch certain tabs, like Reports and Dashboards, as separate Console tabs.
+    
+    2013-05-02    Glenn Weinstein    Original
+    2014-08-28    Glenn Weinstein    Added link for Cloud Asset Library
+    2018-04-17    Stephanie Larkins  Added My CPQ Approvals and Realtor Roster -- Commented out the Utlitlities as those are no longer live systems
+    2018-07-23    Daniel Dunbar      Added NRDS Search
+    2019-01/16    Daniel Dunbar      CRM-5365 - Added MLS INFO Database, USPS Zip Code Search, Google Maps, Map/Photo Overrides, Exceptions, Hud, MMLS Template Tool, Total Mail
+
+-->
+
+ <apex:includeScript value="/support/console/22.0/integration.js"/>
+ <script type="text/javascript">
+   function openReportsTab() {
+     sforce.console.openPrimaryTab(null, '/00O/o', true, 'Reports');
+     sforce.console.setTabTitle('Reports');
+   }
+     function openMyCPQApprovalsTab() {
+     sforce.console.openPrimaryTab(null, '/00Oj0000004Qxiz?pv0={!$User.FirstName} {!$User.LastName}', true, 'My CPQ Approvals');
+     sforce.console.setTabTitle('Dashboards');
+   }
+   function openDashboardsTab() {
+     sforce.console.openPrimaryTab(null, '/01Z/o', true, 'Dashboards');
+     sforce.console.setTabTitle('Dashboards');
+   }
+   function openRosterTab() {
+     sforce.console.openPrimaryTab(null, '/apex/realtorRosterSearch', true, 'Realtor Roster Search');
+     sforce.console.setTabTitle('Dashboards');
+   }
+   function openQueueManagementTab() {
+     sforce.console.openPrimaryTab(null, '/apex/PublicGroupQueueManagement', true, 'Queue Management');
+     sforce.console.setTabTitle('Queue Management');
+   }
+   function openKnowledgeManagementTab() {
+     sforce.console.openPrimaryTab(null, '/knowledge/publishing/knowledgePublishingHome.apexp', true, 'Knowledge Management');
+     sforce.console.setTabTitle('Knowledge Management');
+   }
+   function openArticleFeedbackTab() {
+     sforce.console.openPrimaryTab(null,'/{!$ObjectType.Article_Feedback__c.keyPrefix}', true, 'Article Feedback');
+     sforce.console.setTabTitle('Article Feedbacks');
+   }
+   function openNrdsSearch() {
+      window.open("https://c3tools.move.com/nrds/");
+   }
+   function openMLSINFODatabase() {
+      window.open("https://c3tools.move.com/mlsinfo/info.php?MLSCityID= ");  
+   }
+   function openUSPSZipCodeSearch() {
+      window.open("https://tools.usps.com/go/ZipLookupAction!input.action "); 
+   }
+   function openGoogleMaps() {
+      window.open("https://www.google.com/maps");  
+   }
+   function openMapPhotoOverrides() {
+      window.open("http://overrides-ui.sdswrite-prod.moveaws.com/v1/enhancements/ui/");  
+   }
+   function openExceptions() {
+      window.open("https://c3tools.move.com/reports/daily/exceptions/request.php");  
+   }
+   function openHud() {
+      window.open("https://c3tools.move.com/hud/"); 
+   }
+   function openMMLSTemplateTool() {
+      window.open("https://c3tools.move.com/resolution/");    
+   }
+   function openTotalMail() {
+      window.open("https://c3tools.move.com/totalmail.php/");
+   }
+  
+  
+     
+ </script>
+ 
+ <b>SFDC Console Links</b><br />
+ <br />
+     <a href="#" onClick="openReportsTab(); return false">Reports</a><br />
+     <a href="#" onClick="openMyCPQApprovalsTab(); return false">My CPQ Approvals</a><br />
+     <a href="#" onClick="openDashboardsTab(); return false">Dashboards</a><br />
+     <a href="#" onClick="openRosterTab(); return false">Realtor Roster Search</a><br />
+     <a href="#" onClick="openQueueManagementTab(); return false">Queue Management</a><br />
+     <a href="#" onClick="openKnowledgeManagementTab(); return false">Knowledge Management</a><br />
+     <a href="#" onClick="openArticleFeedbackTab(); return false">Article Feedback</a><br />
+     <a href="#" onClick="openNrdsSearch(); return false">NRDS Search</a><br />
+     <a href="#" onClick="openMLSINFODatabase(); return false">MLS INFO Database</a><br />
+     <a href="#" onClick="openUSPSZipCodeSearch(); return false">USPS Zip Code Search</a><br />
+     <a href="#" onClick="openGoogleMaps(); return false">Google Maps</a><br />
+     <a href="#" onClick="openMapPhotoOverrides(); return false">Map/Photo Overrides</a><br />
+     <a href="#" onClick="openExceptions(); return false">Exceptions</a><br />
+     <a href="#" onClick="openHud(); return false">Hud</a><br />
+     <a href="#" onClick="openMMLSTemplateTool(); return false">MMLS Template Tool</a><br />
+     <a href="#" onClick="openTotalMail(); return false">Total Mail</a><br />
+ <br />
+ <br />
+ 
+<!--
+ <b>Move Utility  Links</b>
+ <br />
+ <br />
+     <a href="http://calltrack/homepage.asp" target="_blank">Call Track</a><br />
+     <a href="http://calltrack/Realtor/CreateCustomer.asp?mlsid=BOCO&mlsalias=05280&realtortype=O" target="_blank">Control Panel - Create</a><br />
+     Creative Fulfillment Template<br />
+-->
+</apex:page>

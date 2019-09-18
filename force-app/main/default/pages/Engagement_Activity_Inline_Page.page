@@ -1,0 +1,25 @@
+<apex:page standardController="Contact" extensions="SFMC_EngagementActivityController" action="{!getEngagementActivityList}">
+    <apex:includeLightning />
+    
+    <div id="lightning" />    
+    
+    <script> 
+    window.addEventListener("DOMContentLoaded",
+                            function() {
+                                var engagementActivityList = '{!wrapperList}';
+                                var contactId = '{!contactRecord.Id}';
+                                var pageSize = '{!$Label.SFMC_Page_Size_value}';
+                                $Lightning.use("c:SFMC_EngagementActivityApp", function() {
+                                    $Lightning.createComponent("c:SFMC_EngagementActivityMainComponent",
+                                                               {engList : engagementActivityList,
+                                                               	contactId: contactId,
+                                                               	pageSize: parseInt(pageSize)},
+                                                               "lightning",
+                                                               function(cmp) {
+                                                                   console.log('engagementActivityList : ' + engagementActivityList);
+                                                               });
+                                });
+                            });
+    </script>
+    
+</apex:page>

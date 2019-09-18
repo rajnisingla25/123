@@ -1,0 +1,396 @@
+<apex:page showChat="false" id="page" sidebar="false" showHeader="false" tabStyle="Case" standardController="Case"
+  extensions="ManageChildCasesExtension" title="Manage Child Cases">
+  <script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="/soap/ajax/19.0/connection.js"></script>
+  <script src="/soap/ajax/19.0/apex.js"></script>
+  <style>
+    .theLink {
+      color: #015ba7 !important;
+    }
+    .showProcessing {
+      position:relative !important;
+      top:4px !important;
+      left:5px !important;
+    }
+  </style>
+  <apex:sectionHeader title="Parent Case" subtitle="{!$CurrentPage.parameters.ParentCaseNumber}"/>
+  <apex:form id="theForm">
+    <apex:actionFunction name="updateChildCasesStatus" action="{!updateStatus}" status="processing" reRender="theForm" onComplete="scrollToEmailForm(0);">
+      <apex:param name="firstParam" assignTo="{!isParentCaseStatusChanged}" value=""/>
+      <apex:param name="secondParam" assignTo="{!isChildCaseStatusChanged}" value=""/>
+    </apex:actionFunction>
+    <apex:actionFunction name="addCommentsToCases" action="{!addCaseComments}" status="processing" reRender="theForm" onComplete="scrollToEmailForm(0);"/>
+    <apex:actionFunction name="sendEmailToChildCaseContacts" action="{!sendEmailToCaseContacts}" status="processing" reRender="theEmailForm" onComplete="scrollToEmailForm(1);"/>
+    <apex:pageMessages />
+    <apex:pageBlock title="Parent Case" rendered="{!hasChildCases}">
+      <apex:pageBlockButtons location="top">
+        <apex:outputPanel layout="block">
+          <apex:outputPanel >
+            <input type="button" class="btn" value="Update Status" onclick="processSelectedChildCases('selectChildCase');" style="display:{!IF(AND(NOT(ISNULL(childCasesWrapper)),childCasesWrapper.size > 0), 'inline', 'none')}"/>
+          </apex:outputPanel>
+          <apex:outputPanel >
+            <input type="button" class="btn" value="Send Email" onclick="notifySelectedChildCaseContacts('selectChildCase');" style="display:{!IF(AND(NOT(ISNULL(childCasesWrapper)),childCasesWrapper.size > 0), 'inline', 'none')}"/>
+          </apex:outputPanel>
+          <apex:outputPanel >
+            <input type="button" class="btn" value="Add Comments" onclick="addCaseComments();"/>
+          </apex:outputPanel>
+          <apex:outputPanel >
+            <input type="button" class="btn" value="Close" onclick="closeChildWindowAndRefreshParentWindow();"/>
+          </apex:outputPanel>
+          <apex:outputPanel >
+                <apex:actionStatus startStyleClass="showProcessing" id="processing">
+                  <apex:facet name="start">
+                    <img src="/img/loading.gif"/>
+                  </apex:facet>
+                </apex:actionStatus>
+          </apex:outputPanel>
+        </apex:outputPanel>
+      </apex:pageBlockButtons>
+      <apex:pageBlockSection columns="2" collapsible="false">
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel value="Status"/>
+          <apex:inputField value="{!theParentCase.Status}" onchange="javascript:statusOnChange(0, this);" id="theParentCaseStatus"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel value="Sub Status"/>
+          <apex:inputField value="{!theParentCase.SubStatus__c}" onchange="javascript:statusOnChange(0, this);" id="theParentCaseSubStatus"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel value="Contact Name"/>
+          <apex:outputField value="{!theParentCase.ContactId}"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel value="Apply Parent Case Status To Child Cases"/>
+          <apex:inputCheckbox value="{!applyParentCaseStatusToChildCases}" id="applyParentCaseStatus" onclick="applyParentCaseStatusToChildCase(this);"/>
+        </apex:pageBlockSectionItem>
+        <apex:pageBlockSectionItem >
+          <apex:outputLabel value="Owner"/>
+          <apex:outputField value="{!theParentCase.OwnerId}"/>
+        </apex:pageBlockSectionItem>
+      </apex:pageBlockSection>
+      <apex:outputpanel layout="block" styleClass="theParentCaseComments">
+        <apex:pageBlockSection columns="1" collapsible="false">
+          <apex:pageBlockSectionItem >
+            <apex:outputLabel value="Internal Comments"/>
+            <apex:inputTextarea value="{!theParentCaseComments}" cols="100" rows="5" styleClass="theParentCaseCommentsTextArea" onchange="parentCaseCommentChanged();"/>
+            </apex:pageBlockSectionItem>
+          </apex:pageBlockSection>
+      </apex:outputpanel>
+    </apex:pageBlock>
+      <apex:pageBlock title="Child Cases" rendered="{!hasChildCases}"  id="pb">
+            <apex:pageBlockTable value="{!childCasesWrapper}" var="theChildCaseWrapper"  id="pbs">
+        <apex:column >
+          <apex:facet name="header">
+            <apex:inputCheckbox onclick="selectAllCheckboxes(this,'selectChildCase');"/>
+          </apex:facet>
+          <apex:inputCheckbox value="{!theChildCaseWrapper.isSelected}" id="selectChildCase"/>
+          <apex:inputHidden value="{!theChildCaseWrapper.theChildCase.Id}" id="theChildCaseId"/>
+        </apex:column>
+              <apex:column headerValue="Action">
+          <apex:outputLink value="/{!theChildCaseWrapper.theChildCase.Id}/e" target="_blank" styleClass="theLink">Edit</apex:outputLink>
+              </apex:column>
+                <apex:column headerValue="Case Number">
+                  <apex:outputLink value="/{!theChildCaseWrapper.theChildCase.Id}" target="_blank" styleClass="theLink">
+                    {!theChildCaseWrapper.theChildCase.CaseNumber}
+                  </apex:outputLink>
+                </apex:column>
+          <apex:column headerValue="Subject" value="{!theChildCaseWrapper.theChildCase.Subject}"/>
+        <apex:column headerValue="Status">
+          <apex:inputField value="{!theChildCaseWrapper.theChildCase.Status}" onchange="javascript:statusOnChange(1, this);" id="theChildCaseStatus" styleClass="select_{!theChildCaseWrapper.theChildCase.Id}"/>
+        </apex:column>
+        <apex:column headerValue="Sub Status">
+          <apex:inputField value="{!theChildCaseWrapper.theChildCase.SubStatus__c}" onchange="javascript:statusOnChange(1, this);" id="theChildCaseSubStatus" styleClass="select_{!theChildCaseWrapper.theChildCase.Id}s"/>
+        </apex:column>
+        <apex:column headerValue="Type" value="{!theChildCaseWrapper.theChildCase.Type}"/>
+        <apex:column headerValue="Priority" value="{!theChildCaseWrapper.theChildCase.Priority}"/>
+        <apex:column headerValue="Contact Name" value="{!theChildCaseWrapper.theChildCase.ContactId}"/>
+        <apex:column headerValue="Contact Email" value="{!theChildCaseWrapper.theChildCase.Contact.Email}"/>
+        <apex:column headerValue="Owner" value="{!theChildCaseWrapper.theChildCase.OwnerId}"/>
+        <apex:column headerValue="Created Date" value="{!theChildCaseWrapper.theChildCase.CreatedDate}"/>
+            </apex:pageBlockTable>
+      </apex:pageBlock>
+  </apex:form>
+  <apex:form id="theEmailForm" styleClass="theEmailTemplateForm" rendered="{!hasChildCases}" style="display:{!showEmailTemplateForm};">
+      <apex:outputPanel styleClass="scrollHere" layout="block"/>
+      <apex:pageBlock title="Notify Child Case Contacts">
+      <apex:pagemessages id="pageMessages"/>
+      <apex:pageblockbuttons >
+        <apex:commandButton value="Save Draft as Template" action="{!createNewTemplate}" reRender="newTemplateSection" status="newTemplateRes" rendered="{!NOT(emailSent)}"/>
+        <apex:commandButton value="Send Email" action="{!sendEmail}" reRender="theEmailForm" status="resultStatus" rendered="{!NOT(emailSent)}"/>
+        &nbsp;&nbsp;
+        <apex:actionStatus startText="Sending Email....." id="resultStatus"/>
+        <apex:actionStatus startText="Collecting Information....." id="newTemplateRes"/>
+      </apex:pageblockbuttons>
+      <apex:pageBlockSection id="selectEmailTemplates" columns="1" collapsible="false" title="Select a Template (Global Case Templates)" rendered="{!NOT(emailSent)}">
+        <apex:outputpanel layout="block" style="padding-left:53px; padding-top: 10px;">
+          <apex:outputLabel value="Choose a Template" styleClass="labelCol"/>
+          <apex:selectList value="{!templateId}" size="1" onchange="setTemplate(this.value);" title="Active Case Templates Only.">
+            <apex:selectOptions value="{!templates}"/>
+          </apex:selectList>
+          &nbsp;&nbsp;
+          <apex:outputLabel value="Processing. Please wait..." styleClass="selectingEmailTemplate" style="display:none;"/>
+        </apex:outputPanel>
+      </apex:pageBlockSection>
+      <apex:pageBlockSection id="selectMergeFields" columns="1" collapsible="false" title="Available Merge Fields" rendered="{!NOT(emailSent)}">
+        <apex:outputpanel layout="block" style="padding-left:93px; padding-top: 10px;">
+          <table width="100%">
+            <tr>
+              <td>
+                <label class="labelCol">Select Field</label>
+                    <select title="Merge Fields" onchange="useMergeField(this.value);" size="1">
+                      <option value=""></option>
+                      <optgroup label="Case Standard Fields">
+                        <option value="Case.CaseNumber">CaseNumber</option>
+                        <option value="Case.Subject">Subject</option>
+                        <option value="Case.Status">Status</option>
+                        <option value="Case.Contact">Contact</option>
+                      </optgroup>
+                      <optgroup label="Case Custom Fields">
+                        <option value="Case.SubStatus__c">Sub Status</option>
+                      </optgroup>
+                    </select>
+              </td>
+              <td>
+                <label class="labelCol">Copy Merge Field Value</label>
+                <input type="text" size="40" value="" class="usethisMergeField"/>
+              </td>
+            </tr>
+          </table>
+        </apex:outputPanel>
+      </apex:pageBlockSection>
+      <apex:outputpanel id="newTemplateSection">
+        <apex:pageBlockSection columns="1" collapsible="false" title="Save Draft as Template" rendered="{!renderNewTemplateSection}">
+          <apex:outputpanel layout="block" id="newTemplateButtons" style="display: block; padding-left: 450px; position: relative;">
+                        <apex:commandbutton value="Save" action="{!createNewTemplate}" status="showProcessing" reRender="newTemplateSection, selectEmailTemplates, pageMessages"/>
+                        &nbsp;&nbsp;
+                        <apex:commandbutton value="Cancel" action="{!cancelNewTemplate}" status="showProcessing" immediate="true" reRender="newTemplateSection, pageMessages"/>
+            &nbsp;&nbsp;
+            <apex:actionStatus startText="Processing....." id="showProcessing"/>
+          </apex:outputpanel>
+        </apex:pageBlockSection>
+        <apex:pageBlockSection columns="2" rendered="{!renderNewTemplateSection}">
+                    <apex:inputfield value="{!newEmailTemplate.Name}" />
+                    <apex:inputfield value="{!newEmailTemplate.DeveloperName}" />
+        </apex:pageBlockSection>
+      </apex:outputpanel>  
+      <apex:pageBlockSection columns="1" collapsible="false" title="Send Email" rendered="{!NOT(emailSent)}">
+                <apex:inputText label="From" size="50" value="{!FromAddress}" id="emailAuthorFrom" disabled="true"/>
+                <apex:inputTextArea cols="65" label="To" value="{!toAddress}" required="true" id="emailAuthorTo" disabled="true"/>
+                <apex:inputTextArea cols="65" label="cc" value="{!ccAddress}"/>
+                <apex:inputTextArea cols="65" label="bcc" value="{!bccAddress}"/>
+                <apex:inputText label="Subject" size="70" value="{!emailSubject}" id="emailSubject" required="true"/>
+                <apex:inputTextArea cols="93" rows="15" label="Body" id="emailBody" value="{!emailBody}"/>
+      </apex:pageBlockSection>
+    </apex:pageBlock>
+  </apex:form>
+  <script type="text/javascript">
+    var isParentCaseStatusChanged = false;
+    var isChildCaseStatusChanged = false;
+
+    function parentCaseCommentChanged() {
+      isParentCaseStatusChanged = true;
+    }
+
+    function selectAllCheckboxes(theElementObject, elementId) {
+      var inputCheckBox = document.getElementsByTagName("input");
+      for(var index = 0;index < inputCheckBox.length;index++) {
+        if(inputCheckBox[index].id.indexOf(elementId) != -1) {
+          inputCheckBox[index].checked = theElementObject.checked;
+        }
+      }
+    }
+
+    function statusOnChange(isChildCase, element) {
+      if(isChildCase) {
+        isChildCaseStatusChanged = true;
+      }
+      else {
+        isParentCaseStatusChanged = true;
+      }
+    }
+
+    function scrollToEmailForm(position) {
+      var scrollTopValue = 0;
+      if(position == '1') {
+          $('form.theEmailTemplateForm').show();
+          scrollTopValue = $("div.scrollHere").offset().top;
+      }
+      else {
+        scrollTopValue = 0;
+      }
+      $('html, body').animate({
+        scrollTop: scrollTopValue
+      }, 1000);
+    }
+
+    function notifySelectedChildCaseContacts() {
+      var isAnyChildCaseSelected = false;
+      $("input[id$=selectChildCase]").each(function(index) {
+        if(this.checked) {
+          isAnyChildCaseSelected = true;
+          return false;
+        }
+      });
+
+      if(!isAnyChildCaseSelected) {
+        alert('Please select at least one child case.');
+      }
+      else {
+        sendEmailToChildCaseContacts();
+      }
+
+      return false;
+    }
+
+    function processSelectedChildCases() {
+      var isAnyChildCaseSelected = false;
+      if($("input[id$=applyParentCaseStatus]").is(':checked')) {
+          $("input[id$=selectChildCase]").each(function(index) {
+            if(this.checked) {
+              isAnyChildCaseSelected = true;
+              return false;
+            }
+          });
+
+          if(!isAnyChildCaseSelected) {
+            alert('Please select at least one child case.');
+          }
+          else {
+            updateChildCasesStatus(isParentCaseStatusChanged, isChildCaseStatusChanged);
+          }
+      }
+      else if(isChildCaseStatusChanged || isParentCaseStatusChanged) {
+        updateChildCasesStatus(isParentCaseStatusChanged, isChildCaseStatusChanged);
+        isChildCaseStatusChanged = 0;
+        isParentCaseStatusChanged = 0;
+      }
+      return false;
+    }
+
+    function applyParentCaseStatusToChildCase(element) {
+      if(element.checked) {
+        var childCaseId = '';
+        var parentCaseStatus = '';
+        var ParentCaseSubStatus = '';
+        var isAnyChildCaseSelected = false;
+        var ii=0;
+        $("input[id$=selectChildCase]").each(function(index) {
+          if(this.checked) {
+            isAnyChildCaseSelected = true;
+            childCaseId = $(this).next().val();
+            console.log('Child Case Id: ' + childCaseId);
+            parentCaseStatus = $('select[id$=theParentCaseStatus] option:selected').val();
+            console.log('Parent Case Status: ' + parentCaseStatus);
+            
+            ParentCaseSubStatus = $('select[id$=theParentCaseSubStatus] option:selected').val();
+            console.log('Parent Case Status: ' + ParentCaseSubStatus);
+
+            $('.select_' + childCaseId).val(parentCaseStatus).trigger("change");
+            //$('.select_' + childCaseId+'s').val(ParentCaseSubStatus).trigger("change");
+            document.getElementById('page:theForm:pb:pbs:'+ii+':theChildCaseSubStatus').value=ParentCaseSubStatus;
+            ii++;
+          }
+        });
+
+        if(!isAnyChildCaseSelected) {
+          $(element).prop('checked', false);
+          alert('Please select at least one child case.');
+        }
+      }
+    }
+
+    function addCaseComments() {
+      var parentCaseStatus = $('select[id$=theParentCaseStatus] option:selected').val();
+      if(parentCaseStatus == 'Closed' && $('textarea.theParentCaseCommentsTextArea').val() == '') {
+        alert('Please enter case comments.');
+      }
+      else if($('textarea.theParentCaseCommentsTextArea').val() != '') {
+        addCommentsToCases();
+      }
+      return false;
+    }
+
+    function closeChildWindowAndRefreshParentWindow() {
+      window.close();
+      window.opener.location.href = "/" + "{!$CurrentPage.parameters.ParentCaseId}";
+    }
+  </script>
+  <script>
+    function useMergeField(theMergeField) {
+      if(theMergeField != '') {
+        $('input[type=text].usethisMergeField').val('&#123;!'.concat(theMergeField.concat('}')).replace('&#123;','{')).select();
+      }
+      else {
+        $('input[type=text].usethisMergeField').val('');
+      }
+    }
+
+    function setTemplate(emailTemplateId) {
+      $('.selectingEmailTemplate').show();
+
+      sforce.connection.sessionId = "{!$Api.Session_ID}";  
+
+      var result = [];
+      if(emailTemplateId != '--None--') {
+        var result = sforce.connection.query("SELECT Subject, Body FROM EmailTemplate WHERE Id = '" + emailTemplateId + "'");
+      }
+      else {
+        $('.selectingEmailTemplate').hide();
+        return;
+      }
+
+      var subjectElement;
+      var emailBodyElement;
+
+      var elements = new Array();
+      elements = document.getElementsByTagName('input');
+      for(var j = 0;j < elements.length;j++) {
+        if(elements[j].type == 'text' && elements[j].id.indexOf('emailSubject') != -1) {
+          subjectElement = elements[j];
+        }
+      }
+
+      var textAreas = new Array();
+      textAreas = document.getElementsByTagName('textarea');
+      for(var j = 0;j < textAreas.length;j++) {
+        if(textAreas[j].id.indexOf('emailBody') != -1) {
+          emailBodyElement = textAreas[j];
+        }
+      }
+
+      var templateResult = result.getArray("records");
+      for(var i = 0;i < templateResult.length;i++) {
+        subjectElement.value = templateResult[i].Subject;
+        emailBodyElement.value = templateResult[i].Body;
+      }
+
+      $('.selectingEmailTemplate').hide();
+    }
+
+    function setFromAndTo() {
+            var FromElement;
+            var ToElement;
+
+      var elements = new Array();
+      elements = document.getElementsByTagName('input');
+      for(var j = 0;j < elements.length;j++) {
+        if(elements[j].type == 'text' && elements[j].id.indexOf('emailAuthorFrom') != -1) {
+          FromElement =  elements[j];
+        }
+      }
+
+      var textAreas = new Array();
+      textAreas = document.getElementsByTagName('textarea');
+      for(var j = 0;j < textAreas.length;j++) {
+        if(textAreas[j].id.indexOf('emailAuthorTo') != -1) {
+          ToElement =  textAreas[j];
+        }
+      }
+
+      document.getElementById('fromHidden').value=FromElement.value;
+      document.getElementById('ToHidden').value=ToElement.value;
+
+      return true;
+    }
+  </script>
+</apex:page>

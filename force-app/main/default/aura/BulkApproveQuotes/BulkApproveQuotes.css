@@ -1,0 +1,34 @@
+.THIS .slds-button_icon-bare{
+	display: none;
+}
+
+.THIS .slds-truncate {
+    text-overflow: inherit;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word; 
+}
+
+.THIS .slds-th__action { 
+    justify-content: center !important; 
+}
+.THIS .slds-grid_align-end { 
+    justify-content: center !important; 
+}
+
+.THIS .quoteTable thead th span {
+    background-color: gray;
+    color: white;
+    font-weight: bold;
+}
+.THIS .quoteTable thead :hover {
+    background-color: gray;
+    color: white
+}
+.THIS .slds-th__action {
+    background-color: gray;
+    color: white
+}
+
+.cBulkApproveQuotes > .slds-page-header > .slds-col:nth-child(1){width:32%;}
+.cBulkApproveQuotes > .slds-page-header > .slds-col:nth-child(2){width:67%;}

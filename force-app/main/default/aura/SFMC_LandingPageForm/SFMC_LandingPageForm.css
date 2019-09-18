@@ -1,0 +1,76 @@
+.THIS.slds-spinner_container {  
+  z-index: 10000;
+  position: fixed;   
+} 
+.THIS .horizontalRuleLeft{
+	border-top: 1px solid;
+    margin-left: 2rem;
+}
+.THIS .horizontalRuleRight{
+	border-top: 1px solid;
+	margin-left: 15rem;
+}
+.THIS .wrapTitle{
+	white-space: normal;
+    /*max-width: 10rem;*/
+    padding-top: 5px;
+    /*margin-left: 15px;*/
+}
+.THIS.formStyle{
+    background: none;
+    border: none;
+}
+.THIS .demoButton{
+    background-color: #e68200;
+    font-weight: bold;
+    font-size: 1.8em;    
+    height: 50px;
+    width: 80%;
+    font-family: sans-serif;
+    border-radius: 5px;
+    border-color: none;
+    border-width: 0px;
+}
+.THIS .demoButtonTablet{
+    background-color: #e68200;
+    font-weight: bold; 
+    font-size: 2.8vw;   
+    height: 50px;
+    width: 80%;
+    font-family: sans-serif;
+    border-radius: 5px;
+    border-color: none;
+    border-width: 0px;
+}
+.THIS .slds-input{
+    border-radius: 5px;
+}
+.THIS .TextWhite{
+    color : white;
+}
+.THIS .ThankyouTopText{
+    text-align: center;
+    font-size: 2.8em;
+    color: red;
+    padding-top: 20px;
+    font-family: "Roboto", sans-serif !important;
+}
+.THIS .ThankyouMiddleText{
+    font-size: 1.2em;    
+    padding-top: 20px;
+    padding-left: 10px;
+    font-family: "Roboto", sans-serif !important;
+}
+.THIS .ThankyouBottomText{    
+    padding-top: 20px;
+    padding-left: 10px;
+    font-family: "Roboto", sans-serif !important;
+}
+.THIS .privacy{
+    padding-top:10px;
+    text-align:center;
+    font-size: 11px;
+    color: #0b0b0b;
+    font-weight: 300;
+    font-style: italic;
+}

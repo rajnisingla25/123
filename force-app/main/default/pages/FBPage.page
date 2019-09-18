@@ -1,0 +1,86 @@
+<!--
+Added by: Sarang D
+Reference: https://developers.facebook.com/docs/marketing-api/guides/lead-ads/quickstart/webhooks-integration/
+Date: 1/4/2019
+-->
+<apex:page controller="SFMC_FBPageController">
+    <h2>{!$Label.SFMC_FB_Login}</h2>
+    
+    <script>
+    var appId;
+    var apiVersion;
+    //First thing that is called when VF page is loaded.
+    window.fbAsyncInit = function() {
+        FB.init({
+                    appId : appId,
+                    xfbml : true,
+                    version : apiVersion
+                });
+    };
+    
+    //Function to load Javascript SDK for Facebook.
+    (function(d, s, id){
+        Visualforce.remoting.Manager.invokeAction(
+            '{!$RemoteAction.SFMC_FBPageController.getFBSetting}',
+            function handleResponse(result, event){
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) {return;}
+                js = d.createElement(s);
+                js.id = id;
+                js.src = result[0];
+                fjs.parentNode.insertBefore(js, fjs);
+                appId = result[1];
+                apiVersion = result[2];
+            }
+		);
+	}(document, 'script', 'facebook-jssdk'));
+    
+    /* Added by: Sarang D
+    *  Description: Function to subscribe particualr page and get access token.
+    *  Params: page_id: Id of page that was clicked. page_access_token: short lived access token given by FB.
+    */
+    function subscribeApp(page_id, page_access_token) {
+        FB.api(
+            '/' + page_id + '/subscribed_apps',
+            'post',
+            {access_token: page_access_token, subscribed_fields: ['feed','leadgen', 'leadgen_fat']},
+            function(response) {
+                console.log('Successfully subscribed page', response);
+                if(response.success){
+                    Visualforce.remoting.Manager.invokeAction(
+                        '{!$RemoteAction.SFMC_FBPageController.getPermanantAccessToken}',
+                        page_access_token, page_id, function(){});
+                }
+                else{
+                    console.log('There was some error while subscribing this page. Response: ' + JSON.stringify(response));
+                }
+            }
+        );
+    }
+    
+    // Only works after `FB.init` is called
+    function myFacebookLogin(userId) {
+        FB.login(function(response){
+            console.log('Successfully logged in', response);
+            FB.api('/me/accounts', function(response) {
+                console.log('Successfully retrieved pages', response);
+                var pages = response.data;
+                var ul = document.getElementById('list');
+                for (var i = 0, len = pages.length; i < len; i++) {
+                    var page = pages[i];
+                    var li = document.createElement('li');
+                    var a = document.createElement('a');
+                    a.href = "#";
+                    a.onclick = subscribeApp.bind(this, page.id, page.access_token);
+                    a.innerHTML = 'Click to subscribe to the this page : '+page.name;
+                    li.appendChild(a);
+                    ul.appendChild(li);
+                }
+            });
+        },{scope: 'manage_pages,leads_retrieval'});// {scope: 'manage_pages'});
+    }
+    
+    </script>
+    <button onclick="myFacebookLogin('{!userId}')">{!$Label.SFMC_FB_Login_Button_Label}</button>
+    <ul id="list"></ul>
+</apex:page>

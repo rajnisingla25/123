@@ -1,0 +1,2118 @@
+<apex:page sidebar="false" showHeader="false"  html-width="100%" standardStylesheets="false" standardController="Lead" recordSetvar="leads" extensions="LeadDetails" >
+
+<head>
+    <title>Lead List</title>
+    <apex:includescript value="//code.jquery.com/jquery-1.11.1.min.js" / >
+    <apex:includescript value="//code.jquery.com/ui/1.10.3/jquery-ui.js" />
+    <apex:includescript value="//cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js" />
+    <apex:includescript value="//cdn.datatables.net/tabletools/2.2.4/js/dataTables.tableTools.min.js" />
+    <apex:includeScript value="{!URLFOR($Resource.DataTablesEditor , '/Editor-1.4.2/js/dataTables.editor.min.js' )}"/>
+    <apex:includescript value="{!$Resource.InventoryMonFixedCol}" />
+    <apex:stylesheet value="//cdn.datatables.net/tabletools/2.2.4/css/dataTables.tableTools.css" />
+    <apex:stylesheet value="//cdn.datatables.net/1.10.4/css/jquery.dataTables.css" />
+    <apex:stylesheet value="{!URLFOR($Resource.DataTablesEditor , '/Editor-1.4.2/css/dataTables.editor.min.css')}"/>
+    <apex:stylesheet value="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css" />
+  <apex:stylesheet value="{!$Resource.inventoryMonStyle}" /> 
+    
+      <apex:includeScript value="{!URLFOR($Resource.restJavascript, '/rest/forcetk.js')}"  />
+
+     <style>
+body
+{
+margin:0px;
+font-family:Arial, Helvetica, sans-serif;
+font-size:14px;
+width: 1349px;
+overflow: auto;
+}
+table.dataTable.no-footer
+{
+    border:none;
+}
+#wrapper
+{
+    position:relative;
+    min-height:100%;
+}
+.contentWrapper
+{
+padding:20px;
+margin-bottom: 50px
+}
+.footer
+{
+    position:relative;
+    height:auto;
+    top:20px;
+    font-size:10px;
+    font-weight:bold;
+    padding:15px 0px;
+    text-align:left;
+    padding-left:20px;
+    background-color:#C7CCD2;
+}
+.pannel-heading
+{
+    background-color:#7E8892;
+    color:white;
+    padding:10px;
+    cursor:pointer;
+}
+
+.form-group
+{
+    float:left;
+    margin-right:40px;
+}
+.form-group .drop-down
+{
+    width:200px;
+    padding:3px 35px;
+    padding-left:10px;
+    
+}
+
+#example_wrapper
+{
+    padding-bottom:30px;
+}
+.button-color{
+filter:progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#4777b2, endColorstr=#354f6d)!important;
+background-image:-moz-linear-gradient(top, #4777b2 1%, #354f6d 57%)!important;
+background-image:-webkit-linear-gradient(top, #4777b2 1%, #354f6d 57%)!important;
+background-image:-ms-linear-gradient(top, #4777b2 1%, #354f6d 57%)!important;
+background-image:linear-gradient(top, #4777b2 1%, #354f6d 57%)!important;
+background-image:-o-linear-gradient(top, #4777b2 1%, #354f6d 57%)!important;
+background-image:-webkit-gradient(linear, right top, right bottom, color-stop(1%,#4777b2), color-stop(57%,#354f6d))!important;
+}
+.button
+{
+   display:inline-block;
+   padding: 4px 10px;
+    padding-bottom: 5px;
+    color: #FFF;
+    border-radius:4px;
+    float:left;
+    margin-right:10px !important;
+    cursor:pointer;
+}
+.align-btn
+{
+padding: 5px 20px !important;
+}
+.feature-button-cont
+{
+    position:relative;
+    display: table;
+    width: 100%;
+    padding: 30px 0px;
+    padding-bottom: 11px;
+}
+.button img
+{
+    padding-top: 1px;
+    vertical-align:bottom;
+    padding-right: 6px;
+    padding-bottom: 0px;
+}
+.dataTables_length
+{
+    position: absolute;
+    right: 203px;
+    top: -37px;
+}
+.showHide-cont
+{
+    position: absolute;
+    top: 275px;
+    right: 13px;
+}
+.accordCont
+{
+    margin-top: 3px;
+    margin-right: 10px;
+    height: 12px;
+    width: 12px;
+    display: block;
+    float: left;
+
+}
+.minus{
+    background-image: url("/resource/1441892350000/minus");
+    background-repeat: no-repeat;
+}
+.plus{
+    background-image: url("/resource/1441892514000/Plus_Image2");
+    background-repeat: no-repeat;
+}
+.highlightColor
+{
+background-color:#a8e7a8;
+}
+/*Customization in Table*/
+table.dataTable thead th
+{
+    background-color: #7E8892 !important;
+    border: none;
+    color: #FFF;
+    padding: 10px 8px;
+    font-size: 12px;
+    text-align: left;
+}
+#example_wrapper{
+font-size:12px;
+}
+table.dataTable.stripe tbody tr.odd, table.dataTable.display tbody tr.odd{
+background-color:#e5f2ff;
+}
+table.dataTable tbody tr
+{
+background-color:#f4f9ff;
+}
+table.dataTable.row-border tbody th, table.dataTable.row-border tbody td, table.dataTable.display tbody th, table.dataTable.display tbody td
+{
+    border-top: 2px solid #fff;
+}
+table.dataTable.row-border tbody tr:first-child th, table.dataTable.row-border tbody tr:first-child td, table.dataTable.display tbody tr:first-child th, table.dataTable.display tbody tr:first-child td
+{
+    border-top: 2px solid #fff;
+}
+.pannel
+{
+margin-bottom:40px;
+}
+.show-hide 
+{
+float:right;
+margin-right:0px!important;
+}
+#tableHeadVal table,#exportPop table{
+font-size: 12px;
+    width: 100%;
+    background-color: #FFF;
+    border: solid 1px #DDD;
+    padding: 10px;
+    background: #e5f2ff;
+    border-radius: 4px;
+    box-shadow: -4px 7px 12px #666;
+}
+#tableHeadVal table td,#exportPop  table td
+{
+padding:10px;
+border: 1px solid #DDD;
+background-color:#fff;
+}
+#exportPop
+{
+    position: absolute;
+    top: 305px;
+    width: 220px;
+    left: 73px;
+    z-index: 100;
+    display:none;
+}
+#tableHeadVal
+{
+    position: absolute;
+    top:70px;
+    width: 670px;
+    right: 0px;
+    z-index: 100;
+    display:none;
+}
+#tableHeadVal table td span
+{
+vertical-align:top;
+}
+#tableHeadVal table td input
+{
+margin-top:0px;
+}
+#newPagePop
+{
+
+    height: 100%;
+    width: 100%;
+    display:none;
+    top:0px;
+}
+.blurBg
+{
+    background-color: #000;
+    opacity: .7;
+    height: 100%;
+    width: 100%;
+    z-index: 3;
+    position: absolute;
+}
+#new-pannel,.new-pannel
+{
+    position:fixed;
+    z-index:1000;
+    width: 685px;
+    top:30%;
+    background-color:white;
+    margin:0px auto;
+    left:0px;
+    right:0px;
+    border-radius:5px;
+    overflow:hidden;
+    border: solid 1px #7B7272;
+}
+.new-pannel
+{
+    width:315px;
+    top: 215px;
+}
+.deleteConfirm
+{
+    display:none;
+    z-index:9000;
+}
+#new-pannelHead,#new-pannelFooter,.new-pannelHead,.new-pannelFooter
+{
+    height:40px;
+    width:100%;
+    background-image: url("/resource/1441892928000/bg_sprite_image");
+    background-position: 0px -525px;
+}
+.create-button,.deleteVal-button
+{
+    float: right;
+    font-size: 14px;
+    margin-top: 11px;
+    border: solid 1px #DDD;
+}
+#new-pannelBody
+{
+    display:table;
+    padding:28px;
+    overflow-y:auto;
+}
+.heading
+{
+color:white;
+margin:0px;
+font-weight:bold;
+padding:12px 28px;
+}
+#new-pannel label
+{
+display:inline-block;
+width:160px;
+font-size:13px;
+}
+#new-pannelBody .form-group
+{
+    float:left;
+    margin:8px auto;
+    width:100%;
+}
+#new-pannelBody .form-group input{
+    width: 260px;
+}
+#new-pannelBody .form-group select
+{
+    width: 264px;
+    padding:3px 35px;
+    padding-left:0px;
+}
+#close,.closeDelete
+{
+    position: absolute;
+    right: 9px;
+    cursor: pointer;
+    top: 3px;
+    font-size: 20px;
+    width: 24px;
+    height: 24px;
+    text-align: center;
+    color: #FFF;
+    border-radius: 13px;
+}
+#new-pannelBody table
+{
+    width:100%;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover{
+
+    filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr=#4777b2, endColorstr=#354f6d);
+    background-image: -moz-linear-gradient(top, #4777b2 1%, #354f6d 57%);
+    background-image: -webkit-linear-gradient(top, #4777b2 1%, #354f6d 57%);
+    background-image: -ms-linear-gradient(top, #4777b2 1%, #354f6d 57%);
+    background-image: linear-gradient(top, #4777b2 1%, #354f6d 57%);
+    background-image: -o-linear-gradient(top, #4777b2 1%, #354f6d 57%);
+    background-image: -webkit-gradient(linear, right top, right bottom, color-stop(1%,#4777b2), color-stop(57%,#354f6d));
+    border:solid 1px transparent;
+}
+.refresh
+{
+    cursor:pointer;
+}
+.logout
+{
+cursor:pointer;
+}
+#new-pannelFooter,.new-pannelFooter
+{
+    height:50px;
+}
+input[type="date"]
+{
+font-family:arial;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover
+{
+padding:4px 8px;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button
+{
+padding:4px 8px;
+}
+table.dataTable thead .sorting, table.dataTable thead .sorting_asc, table.dataTable thead .sorting_desc, table.dataTable thead .sorting_asc_disabled, table.dataTable thead .sorting_desc_disabled
+{
+    background-repeat: no-repeat;
+    background-position: center right;
+    border-left: solid 1px #DDD;
+}
+.important
+{
+color:red;
+}
+.validationAlert,.rowCreateAlert
+{
+    position: absolute;
+    right: 0px;
+    left: 0px;
+    margin: 0px auto;
+    top: 39px;
+    color: #222;
+    height: 19px;
+    width: 260px;
+   background-color: #F9EDBE;
+    padding: 2px;
+    padding-left: 16px;
+    font-weight: bold;
+    border-radius: 2px;
+    border: solid 1px #D6B064;
+    display:none;
+}
+.exportImg
+{
+vertical-align:middle;
+padding-right:10px;
+}
+#exportPop table td
+{
+cursor:pointer;
+}
+/*button Alingment*/
+div.DTTT_container {
+    position: absolute !important;
+    float: none !important;
+    top: -41px;
+    left: 425px;
+}
+.save-collection
+{
+float:right;
+}
+#ToolTables_example_0
+{
+display:none;
+}
+.DTTT_button
+{
+border-radius:4px!important;
+box-shadow:none!important;
+border:none !important;
+}
+.DTTT_button span
+{
+color:white !important;
+font-size:14px;
+vertical-align:super;
+}
+.DTTT_collection
+{
+    font-size: 12px;
+    margin-left: -61px;
+    margin-top: 8px;
+    width: 14% !important;
+    border: solid 1px #DDD !important;
+    padding: 10px !important;
+    background: #e5f2ff !important;
+    border-radius: 4px !important;
+    box-shadow: -4px 7px 12px #666 !important;
+}
+.DTTT_collection .DTTT_button span{
+color:black !important;
+}
+.exportImg
+{
+vertical-align:middle;
+padding-left:10px;
+}
+
+td.details-control {
+    background: url('/resource/1442999116000/inventoryMonPlus') no-repeat center center;
+    cursor: pointer;
+   
+}
+tr.shown td.details-control {
+    background: url('/resource/1442998309000/inventorMonminus') no-repeat center center;
+}
+div.slider {
+    display: none;
+}
+table.dataTable tbody td.no-padding {
+    padding: 0;
+}
+.DTFC_LeftBodyLiner .no-padding .details-control,.DTFC_RightBodyLiner .no-padding .remove
+{
+position:absolute;
+z-index:-1;
+display:none;
+}
+.slider table tbody tr,.slider
+{
+background-color:#fAfAfA !important;
+}
+.slider table tbody td
+{
+border-top: 2px solid transparent !important;
+}
+.remove
+{
+cursor:pointer;
+background:url('/resource/1443007372000/InventoryMonDel') no-repeat center center;
+}
+.disabledEdit
+{
+background-image: -webkit-gradient(linear, right top, right bottom, color-stop(1%,#CCC), color-stop(57%,#848B92))!important;
+cursor:default;
+}
+.delete-pannelBody p
+{
+text-align:center;
+}
+.DTTT_collection_background
+{
+    background-color:transparent!important;
+}
+.unlock-button,.lock-button
+{
+border:none!important;
+padding: 5px 16px !important;
+}
+.pannel-body .form-group select{
+float:none !important;
+margin-left:10px !important;
+}
+.lock-button-cont input
+{
+margin-right:10px;
+}
+body,html{
+    height: 100%;
+    width:100%;
+    min-width: 1349px;
+}
+#wrapper
+{
+    margin-bottom: -41px;
+}
+table.dataTable tbody th, table.dataTable tbody td
+{
+padding: 13px 15px!important;
+}
+.edit
+{
+    background-image: url("/resource/1444036794000/InventorySearch_tableEdit");
+    background-repeat: no-repeat;
+    background-position:center-left;
+    vertical-align:middle;
+    display: inline-block;
+    width: 16px;
+    height:16px;
+}
+table.dataTable tbody td.no-padding {
+    padding: 0 !important;
+    padding-left: 30px !important;
+    background-color: #fAfAfA !important;
+}
+#example_wrapper > div.DTFC_ScrollWrapper > div.DTFC_LeftWrapper > div.DTFC_LeftHeadWrapper > table > thead > tr > th,#example_wrapper > div.DTFC_ScrollWrapper > div.dataTables_scroll > div.dataTables_scrollHead > div > table > thead > tr > th:nth-child(1)
+{
+background-image:none !important;
+}
+table.dataTable.display tbody tr.odd > .sorting_1, table.dataTable.order-column.stripe tbody tr.odd > .sorting_1,table.dataTable.display tbody tr.even > .sorting_1, table.dataTable.order-column.stripe tbody tr.even > .sorting_1 {
+    background-color: rgba(0, 0, 0, 0);
+}
+.no-padding .slider table.dataTable tbody th, table.dataTable tbody td
+{
+    padding: 8px 13px!important;
+}
+table.dataTable.display tbody tr:hover > .sorting_1, table.dataTable.display tbody tr.odd:hover > .sorting_1, table.dataTable.display tbody tr.even:hover > .sorting_1, table.dataTable.order-column.hover tbody tr:hover > .sorting_1, table.dataTable.order-column.hover tbody tr.odd:hover > .sorting_1, table.dataTable.order-column.hover tbody tr.even:hover > .sorting_1
+{
+background-color:transparent!important;
+}
+.content
+{
+    margin-right:20px;
+}
+
+
+<!--Design Style-------------->
+.pbHeader
+{
+    margin-left: 20px;
+    border-bottom: solid 1px #DDD;
+    margin-right:20px;
+}
+button.DTTT_button, div.DTTT_button, a.DTTT_button
+{
+height:21px;
+}
+#example_filter {
+    position: absolute;
+    top: -37px;
+    right: 345px;
+}
+.pbSubheader {
+    border-top: solid 1px #DDD;
+    padding-top: 15px;
+    margin-top: 35px;
+}
+.pbBody
+{
+    min-height: 492px;
+}
+.pbTitle h2
+{
+    margin: 15px 0px;
+}
+.dataTables_paginate
+{
+    margin-top:0px;
+}
+.dataTables_wrapper.no-footer .dataTables_scrollBody
+{
+border-color:#ddd;
+}
+.create-button
+{
+    margin-top:0px;
+}
+.customButton
+{
+   margin-top:1px;
+    height:30px;
+    border:0px;
+}
+.show-hide
+{
+height:22px;
+}
+#example1_wrapper
+{
+    width:1300px;
+    font-size:12px;
+}
+#example1_wrapper .DTTT_container
+{
+    position:relative !important;
+    top:0px !important;
+    left:0px !important;
+    float:left !important;
+    margin-bottom:11px;
+    
+}
+#example1_length
+{
+    position: relative;
+    left: 944px;
+    top: 7px;
+    font-size: 12px;
+}
+#example1_filter
+{
+    position: relative;
+    right: 155px;
+    top: 5px;
+    font-size: 12px;
+}
+
+.DTTT_collection a
+{
+ padding-bottom: 15px;
+}
+.exportImg {
+    padding-bottom: 0;
+    padding-left: 10px;
+    vertical-align: middle;
+}
+.DTTT_collection .DTTT_button span
+{
+vertical-align:middle;
+}
+#tableHeadVal {
+    display: none;
+    position: absolute;
+    right: 20px !important;
+    top: 90px !important;
+    width: 670px;
+    z-index: 100;
+}
+<!--Design Style End-------------->
+
+      </style>
+    
+    
+</head>
+<body>
+<div class="header">
+        <a href="https://c.cs11.visual.force.com"><div class="logo"></div></a>
+ </div>
+<apex:pageBlock title="Lead List View" html-width="100%"  >
+    <div id="wrapper">
+    <div id="newPagePop">
+    <div id="new-pannel">
+      <div id="new-pannelHead">
+      <span id="close">x</span>
+      <p class="heading">Update the Row</p><div class="validationAlert">Please dont left the column unfilled</div>
+      </div>
+      <div class="create-button button-color button">
+                    <span>Update</span>
+                </div>
+      <form>
+          <div id="new-pannelBody">
+              <table>
+                  <tbody>
+                  <tr>
+                  <td>
+                        <div class="form-group">
+                            <label for="Student">Lead Id</label>
+                            <input type="text" class="validation no-valid" disabled="false" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Account Id</label>
+                            <input type="text" class="validation no-valid" disabled="false" />
+                        </div>
+                    </td>
+                    </tr>
+                    <tr>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Account Name</label>
+                            <input type="text" class="validation no-valid" disabled="true" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Account Type</label>
+                            <input type="text" class="validation no-valid" disabled="true" />
+                        </div>
+                    </td>
+                    </tr>
+                    <tr>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Phone</label>
+                            <input type="text" class="validation no-valid" disabled="true" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Email</label>
+                            <input type="text" class="validation no-valid" disabled="true" />
+                        </div>
+                    </td>
+                  </tr>
+                  <tr>
+                  <td>
+                        <div class="form-group">
+                            <label for="Student">Campaign</label>
+                            <input type="text" class="validation no-valid" disabled="true" />
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Lead Type</label>
+                            <input type="text" class="validation no-valid" disabled="true" />
+                        </div>
+                    </td>
+                    </tr>
+                    <tr>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Follow Up Statu</label>
+                            <select class="drop-down validation">
+                                <option value="LM 1st Attempt">LM 1st Attempt </option>
+                                <option value="LM 2nd Attempt">LM 2nd Attempt</option>
+                                <option value="LM 3rd Attempt">LM 3rd Attempt</option>
+                                <option value="LM 4th Attempt">LM 4th Attempt</option>
+                                <option value="LM 5th Attempt">LM 5th Attempt</option>
+                                <option value="LM 6th Attempt">LM 6th Attempt</option>
+                                <option value="LM 7th Attempt">LM 7th Attempt</option>
+                                <option value="LM 8th Attempt">LM 8th Attempt</option>
+                                <option value="LM 9th Attempt">LM 9th Attempt</option>
+                                <option value="LM 10th Attempt">LM 10th Attempt</option>
+                                <option value="Sent Email">Sent Email</option>
+                                <option value="Add to Nurture Campaign">Add to Nurture Campaign</option>
+                            </select>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="form-group">
+                            <label for="Student">Status</label>
+                            <select class="drop-down validation">
+                                <option value="New">New</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Converted">Converted</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>
+                    </td>
+                    </tr>
+                    
+                    <tr>
+                    <td>
+                            <div class="form-group">
+                                <label for="Student">Notes</label>
+                                <input type="text" class="validation no-valid"/>
+                            </div>
+                        </td>
+                    <td>
+                       <div class="form-group">
+                            <label for="Student">Rejected Reason</label>
+                            <select class="drop-down validation">
+                                <option value=" "> </option>
+                                <option value="No inventory">No inventory</option>
+                                <option value="Waitlist created">Waitlist created</option>
+                                <option value="Too expensive">Too expensive</option>
+                                <option value="No response">No response</option>
+                                <option value="Doesn’t see value">Doesn’t see value</option>
+                                <option value="Wrong agent/customer">Wrong agent/customer</option>
+                                <option value="Not right solution for business model">Not right solution for business model</option>
+                            </select>
+                        </div>
+                    </td>
+                    
+                    
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                        <div class="form-group">
+                                <label for="Student">CFCB</label>
+                                <input type="text" class="validation no-valid" disabled="true" />
+                            </div>
+                        </td>
+                        <td>
+                           <div class="form-group">
+                                <label for="Student">DAP</label>
+                                <input type="text" class="validation no-valid" disabled="true" />
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                       <td>
+                        <div class="form-group">
+                                <label for="Student">FAC Comp Qty</label>
+                                <input type="text" class="validation no-valid" disabled="true" />
+                            </div>
+                        </td>
+                        <td>
+                           <div class="form-group">
+                                <label for="Student">FAC MREC Qty</label>
+                                <input type="text" class="validation no-valid" disabled="true" />
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                        <div class="form-group">
+                                <label for="Student">FAC LB Qty</label>
+                                <input type="text" class="validation no-valid" disabled="true" />
+                            </div>
+                        </td>
+                        <td>
+                           <div class="form-group">
+                                <label for="Student">FH</label>
+                                <input type="text" class="validation no-valid" disabled="true" />
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                        <div class="form-group">
+                                <label for="Student">HandRaiser</label>
+                                <input type="text" class="validation no-valid" disabled="true" />
+                            </div>
+                        </td>
+                        <td>
+                           <div class="form-group">
+                                <label for="Student">Home Search</label>
+                                <input type="text" class="validation no-valid" disabled="true" />
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                        <div class="form-group">
+                                <label for="Student">Featured CMA(SM)</label>
+                                <input type="text" class="validation no-valid" disabled="true" />
+                            </div>
+                        </td>
+                        <td>
+                        <div class="form-group">
+                                <label for="Student">Account Sub Type</label>
+                                <input type="text" class="validation no-valid" disabled="true" />
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                        <div class="form-group">
+                                <label for="Student">Total CLC</label>
+                                <input type="text" class="validation no-valid" disabled="true" />
+                            </div>
+                        </td>
+                        <td>
+                        <div class="form-group">
+                                <label for="Student">Total HLC</label>
+                                <input type="text" class="validation no-valid" disabled="true" />
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                        <div class="form-group">
+                                <label for="Student">TCV</label>
+                                <input type="text" class="validation no-valid" disabled="true" />
+                            </div>
+                        </td>
+                        <td>
+                        <div class="form-group">
+                                <label for="Student">Total Offices</label>
+                                <input type="text" class="validation no-valid" disabled="true" />
+                            </div>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                        <div class="form-group">
+                                <label for="Student">Total Agents</label>
+                                <input type="text" class="validation no-valid" disabled="true" />
+                            </div>
+                        </td>
+                        <td>
+                        <div class="form-group">
+                                <label for="Student">Account Time Zone</label>
+                                <input type="text" class="validation no-valid" disabled="true" />
+                            </div>
+                        </td>
+                    </tr>
+                    
+                   </tbody>
+            </table>
+          </div>
+          <div id="new-pannelFooter">
+             <div class="create-button button-color button">
+                    <span>Update</span>
+                </div>
+          </div>
+      </form>
+    </div>
+    <div class="blurBg"></div>
+    </div>
+    
+    <div class="contentWrapper">
+    
+     
+        <div class="feature-button-cont">
+            <div class="new-button disabledEdit button-color button align-btn">
+               <img src="{!$Resource.inventorMonEdit}"/> 
+                <span>Edit</span>
+            </div>
+            <div>
+            <apex:form >
+                <apex:commandButton styleClass="create-button button-color button customButton"  style="float: left;width:150px; padding-right: 5px"  value="Create Quote" onclick="createQuoteJS()" rerender="example" />
+                <apex:commandButton styleClass="create-button button-color button customButton"  style="float: left;width:150px; padding-right: 5px;" value="Open Account" onclick="OpenAccount()"  />           
+            </apex:form>
+            
+            </div>
+            <div class="show-hide button-color button">
+                <img src="{!$Resource.show_image}"/> 
+                <span>Show/Hide Columns</span>
+            </div>
+        </div>
+
+         <div id="tableHeadVal" >
+            <table cellspacing="5">
+                <tbody>
+                    <tr>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span></span></label></td>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Lead Id</span></label></td>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Account Id</span></label></td>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Account Name</span></label></td>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Account Type</span></label></td>
+                        
+                    </tr>
+                    <tr>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Phone</span></label></td>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Email</span></label></td>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Campaign</span></label></td>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Lead TYpe</span></label></td>   
+                    </tr>
+                    <tr>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Follow Up Status</span></label></td>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Status</span></label></td> 
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Rejection Reason</span></label></td>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Notes</span></label></td>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>CFCB</span></label></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>DAP</span></label></td>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>FAC Comp Qty</span></label></td> 
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>FAC MREC Qty</span></label></td>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>FAC LB Qty</span></label></td>
+                        
+                    </tr>
+                    
+                    <tr>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>FH</span></label></td>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>HandRaiser</span></label></td> 
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Home Search</span></label></td>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Featured CMA(SM)</span></label></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Account Sub Type</span></label></td>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Total CLC</span></label></td> 
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Total HLC</span></label></td>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>TCV</span></label></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Total Offices</span></label></td>
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Total Agents</span></label></td> 
+                        <td><label><input type="checkbox" class="check-hide" checked="true"/><span>Account Time Zone</span></label></td>
+                        
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+
+<!--        
+<apex:form >
+<apex:commandButton value="Submit" action="{!submit}" rerender="error" >
+     
+</apex:commandButton>
+</apex:form> 
+-->
+<apex:form >
+
+<apex:actionFunction action="{!updateLead}" name="CallLeadUpdate" rerender="showstate">
+        <apex:param name="firstParam" assignTo="{!Id}" value="" />
+        <apex:param name="secondParam" assignTo="{!Status}" value="" />
+        <apex:param name="thirdParam" assignTo="{!followup}" value="" />
+        <apex:param name="fourthParam" assignTo="{!RejReason}" value="" />
+        <apex:param name="fifthParam" assignTo="{!Description}" value="" />   
+    </apex:actionFunction>
+</apex:form>
+<!--
+<apex:pageBlock title="Lead List View" html-width="100%"  >
+<br></br>
+-->
+        <table id="example" class="display" cellpadding="0" cellspacing="0" border="0" width="100%">
+    <thead>
+    <tr BGCOLOR="#66A3E0">
+    
+ 
+    
+     <th></th>
+     <th>Lead Id</th>
+     <th>Account Id</th>
+     <th>Account Name</th> 
+      <th>Account Type</th>
+     <th>Phone</th>
+     <th>Email</th>
+     <th>Campaign</th>
+     <th>Lead Type</th>
+     <th>FollowUp Status</th>
+     <th>Lead Status</th>
+     <th>Rejected Reason</th>
+     <th>Notes</th>
+     <th>CFCB</th>
+     <th>DAP</th>
+     <th>FAC Comp Qty</th>
+     <th>FAC MREC Qty</th>
+     <th>FAC LB Qty</th>
+     <th>FH</th>
+     <th>HandRaiser</th>
+     <th>Home Search</th>
+     <th>Featured CMA(SM)</th>
+     <th>Account Sub Type</th>
+     <th>Total CLC</th>
+     <th>Total HLC</th>
+     <th>TCV</th>
+     <th>Total Offices</th>
+     <th>Total Agents</th>
+     <th>Account Time Zone</th>  
+    </tr>  
+        
+  </thead>
+        
+        <tbody>
+                <apex:repeat value="{!selectedLeads}" var="wl1">
+                    <tr >
+                        
+                     
+                        <td> </td>
+                        <td>{!wl1.Id} </td>
+                        <td>{!wl1.AccountId__c} </td>
+                        <td>{!wl1.Account__r.Name} </td>
+                        <td>{!wl1.Account__r.Type} </td>
+                        <td>{!wl1.Phone} </td>
+                        <td>{!wl1.Email} </td>
+                        <td>{!wl1.Recent_Campaign__c} </td>        
+                        <td>{!wl1.Marketing_Lead_Type__c} </td>
+                        <td>{!wl1.Follow_Up_Status__c} </td>
+                        <td>{!wl1.Status} </td>        
+                        <td>{!wl1.Rejected_Reason__c} </td>
+                        <td>{!wl1.Description} </td>
+                        <td>{!wl1.CFCB__c} </td>
+                        <td>{!wl1.DAP__c} </td>
+                        <td>{!wl1.FAC_Comp_Qty__c} </td>
+                        <td>{!wl1.FAC_MREC_Qty__c} </td>
+                        <td>{!wl1.FAC_LB_Qty__c} </td>
+                        <td>{!wl1.FH__c} </td>
+                        <td>{!wl1.HandRaiser__c} </td>
+                        <td>{!wl1.Home_Search__c} </td>
+                        <td>{!wl1.Featured_CMA_SM__c} </td>
+                        
+                        <td>{!wl1.Account__r.Account_Sub_Type__c} </td>
+                        <td>{!wl1.Account__r.Total_CLC__c} </td>
+                        <td>{!wl1.Account__r.Total_HLC__c} </td>
+                        <td>{!wl1.Account__r.Total_Contract_Value__c} </td>
+                        <td>{!wl1.Account__r.Total_Offices__c} </td>
+                        <td>{!wl1.Account__r.Total_Agents__c} </td>
+                        <td>{!wl1.Account__r.Account_Time_Zone__c} </td>       
+                                
+                    </tr>
+                </apex:repeat> 
+
+            </tbody> 
+
+        </table>
+       
+<apex:pageblockSection title="Account Listing" columns="1"   >
+<br> </br>
+  
+ 
+<table id="example1" class="display"  width="100%" height="50%"  style="float: left;" />
+
+
+  
+</apex:pageblockSection> 
+</div>
+    </div>
+     <div class="footer">© 2015 Move, Inc. All rights reserved</div> 
+</apex:pageBlock>   
+  
+     </body>
+
+     <script>
+     var table;
+     var GlobalSelectedNodeId ;
+     var GlobalSelectedLeadNodeId ;
+     var GlobalSelectedText;
+     var GlobalSelectedFilter="Asset";
+     var GlobalSelectedType="Realtor Office" ;
+     
+     var mId;
+     var mAccountId;
+     var mStatus;
+     var mfollowup;
+     var mRejReason;
+     var mDescription;
+     
+     var mArrayofWaitlist ={} ;
+     var mArray =false ;
+     var mDataChanged =false;
+     var moperation='Update';
+     
+     
+            
+    ///////////////////////////////////////
+        //
+        // Get an instance of the REST API client
+        //
+        ///////////////////////////////////////
+          
+        var client = new forcetk.Client('{!$Api.Session_ID}');
+    
+       // console.log(client);
+     
+     
+  $(document).ready(function(){
+var appendVal=$('#example').html();
+Date.prototype.toDateInputValue = (function() {
+    var local = new Date(this);
+    local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
+    return local.toJSON().slice(0,10);
+});
+    $( ".datePicker" ).datepicker();
+   $('.datePicker').val(new Date().toDateInputValue());
+    $("#btnExport").click(function (e) {
+    
+    window.open('data:text/csv,' + appendVal);
+    e.preventDefault();
+    });
+    /* Remove the row */
+    var deleteRow='null';
+    $('.remove').bind('click',function(){
+         deleteRow=pTable.row( $('.dataTables_scrollBody .remove').eq($(this).index('.DTFC_RightBodyWrapper .remove')).parents('tr') )
+        $('.deleteConfirm').show();
+        
+    });
+    $('.closeDelete').bind('click',function(){
+        $('.deleteConfirm').hide();
+    });
+    $('.deleteVal-button').bind('click',function(){
+        if(deleteRow.child.isShown())
+        preRow='null';
+        deleteRow.remove().draw(false);
+        $('.deleteConfirm').hide();
+    });
+    $('a.remove').click(function(e)
+    {
+        e.preventDefault();
+    });
+
+// Helper function to get 'now' as an ISO date string
+function CopyFieldsValuesfromDataTable(o , singlerec)
+{
+
+
+//alert('singlerec is ' + singlerec ); 
+
+try
+{
+
+
+            if (singlerec === true)
+            {
+                    mToken =o.data.token;
+                    //mToken  ='EBD87D51-04F9-4081-9876-AD20A1637E6F';
+                    
+                    mMarket =o.data.Account__r.Name;
+                    mAccountId =o.data.Account__r.Type; 
+                    mMarketType =o.data.Phone;
+                    
+                   mStatus =o.data.Status;
+                   //mStatus =tr_status_init;
+                   
+                    
+                    mId =o.data.AccountId__c;
+                    mfollowup =o.data.Follow_Up_Status__c;
+                    mRejReason =o.data.Rejected_Reason__c;
+                    mDescription = o.data.Description;
+                    
+                    mLeadId =o.data.AccountId__c;
+                    
+                    //alert('CK seeting mStatus for update ' + mStatus ); 
+            }
+           else // batch records for Tools which is a different object
+            {
+                        
+              alert ("Warning: You cannot update multiple records at the same time. So please select only one record!");
+            }
+
+        if (moperation!=='Delete')
+        {
+                 moperation ='Update';
+        }
+
+        console.log(mStatus + mLeadRoutingType + mSlotSize);
+
+} // End of Try Block 
+catch (e)
+{
+
+            console.log('Exception Occurred in CopyFieldValuesfromDataTable' + e.message);
+
+}
+
+
+return true;
+
+}
+
+
+    editor = new $.fn.dataTable.Editor( {
+      
+       
+        table: "#example",
+     
+        fields: [
+        
+        
+            
+             {
+             
+                label: "Account Id:",
+                name: "AccountId__c" 
+               
+            },
+    
+             {
+             
+                label: "Account Name:",
+                name: "Account__r.Name" 
+               
+            },
+       
+       
+       
+          {
+             
+                label: "Account Type:",
+                name: "Account__r.Type" 
+               
+            },
+        
+            {
+             
+                label: "Phone:",
+                name: "Phone" 
+               
+            }, 
+            
+            {
+             
+                label: "Email:",
+                name: "Email" 
+               
+            }, 
+            {
+             
+                label: "Campaing:",
+                name: "Recent_Campaign__c" 
+               
+            }, 
+            {
+             
+                label: "Lead Type:",
+                name: "Marketing_Lead_Type__c" 
+               
+            }, 
+            {
+             
+                label: "FollowUp Status:",
+                name: "Follow_Up_Status__c",
+                  type:  "select",
+                options: [
+                    { label: " ", value: " " } ,
+                    { label: "LM 1st Attempt", value: "LM 1st Attempt" } ,
+                    { label: "LM 2nd Attempt", value: "LM 2nd Attempt" } ,
+                    { label: "LM 3rd Attempt", value: "LM 3rd Attempt" } ,
+                    { label: "LM 4th Attempt", value: "LM 4th Attempt" } ,
+                    { label: "LM 5th Attempt", value: "LM 5th Attempt" } ,
+                    { label: "LM 6th Attempt", value: "LM 6th Attempt" } ,
+                    { label: "LM 7th Attempt", value: "LM 7th Attempt" } ,
+                    { label: "LM 8th Attempt", value: "LM 8th Attempt" } ,
+                    { label: "LM 9th Attempt", value: "LM 9th Attempt" } ,
+                    { label: "LM 10th Attempt", value: "LM 10th Attempt" } ,
+                    { label: "Sent Email", value: "Sent Email" },
+                    { label: "Add to Nurture Campaign", value: "Add to Nurture Campaign" }
+                    
+                ] 
+               
+            }, 
+            {
+             
+                label: "Lead Status:",
+                name: "Status" ,
+                 type:  "select",
+                options: [
+                    { label: "New", value: "New" } ,
+                    { label: "In Progress", value: "In Progress" },
+                    { label: "Converted", value: "Converted" },
+                    { label: "Rejected", value: "Rejected" }
+                ]       
+            },
+            
+            {
+             
+                label: "Rejected Reason:",
+                name: "Rejected_Reason__c" ,
+                type:  "select",
+                options: [
+                    { label: " ", value: " " } ,
+                    { label: "No inventory", value: "No inventory" } ,
+                    { label: "Waitlist created", value: "Waitlist created" },
+                    { label: "Too expensive", value: "Too expensive" },
+                    { label: "No response", value: "No response" },
+                    { label: "Doesn’t see value", value: "Doesn’t see value" },
+                    { label: "Wrong agent/customer", value: "Wrong agent/customer" },
+                    { label: "Not right solution for business model", value: "Not right solution for business model" }
+                ]       
+               
+            },
+            {
+             
+                label: "Notes:",
+                name: "Description" 
+               
+            },
+            {
+             
+                label: "CFCB:",
+                name: "CFCB__c" 
+               
+            },
+            {
+             
+                label: "DAP:",
+                name: "DAP__c" 
+               
+            },
+            {
+             
+                label: "FAC Comp Qty:",
+                name: "FAC_Comp_Qty__c" 
+               
+            },
+            {
+             
+                label: "FAC MREC Qty:",
+                name: "FAC_MREC_Qty__c" 
+               
+            },
+            {
+             
+                label: "FAC LB Qty:",
+                name: "FAC_LB_Qty__c" 
+               
+            },
+            {
+             
+                label: "FH:",
+                name: "FH__c" 
+               
+            },
+            {
+             
+                label: "HandRaiser:",
+                name: "HandRaiser__c" 
+               
+            },
+            {
+             
+                label: "Home Search:",
+                name: "Home_Search__c" 
+               
+            },
+            {
+             
+                label: "Featured CMA(SM):",
+                name: "Featured_CMA_SM__c" 
+               
+            },
+            {
+             
+                label: "Account Sub Type:",
+                name: "Account__r.Account_Sub_Type__c" 
+               
+            },
+            {
+             
+                label: "Total CLC:",
+                name: "Account__r.Total_CLC__c" 
+               
+            },
+            {
+             
+                label: "Total HLC:",
+                name: "Account__r.Total_HLC__c" 
+               
+            },
+            {
+             
+                label: "TCV:",
+                name: "Account__r.Total_Contract_Value__c" 
+               
+            },
+            {
+             
+                label: "Total Offices:",
+                name: "Account__r.Total_Offices__c" 
+               
+            },
+            {
+             
+                label: "Total Agents:",
+                name: "Account__r.Total_Agents__c" 
+               
+            },
+            {
+             
+                label: "Account Time Zone:",
+                name: "Account__r.Account_Time_Zone__c" 
+               
+            }
+            
+        ] 
+        
+        ,
+        
+         ajax: function ( method, url, data, successCallback, errorCallback ) {
+         
+         
+         //alert("Step-2: CK selected AJAX data");
+         
+         console.log('Chandan - Entered Function Success Callback');
+         
+           if (  mDataChanged ===true)
+           
+           {
+         
+         if ( moperation !== 'Delete')
+         
+         {
+           CopyFieldsValuesfromDataTable(data , true );
+          }
+           
+           console.log(mSlotSize + mStatus + moperation + mToken + 'mArray' + mArray);
+         mDegree='Warm 1';
+         
+        if (mArray === false ) 
+         {
+         
+         
+     
+          // This code is used to update data back
+           //CallLeadUpdate(mId , mStatus , mfollowup , mRejReason,mDescription);
+           
+          } 
+         else
+         {} 
+          
+          console.log('Called SOA function ' +mToken + mStatus + mDegree);
+           //  alert('Arun reached CopyFields and later reached after SOA call');
+           }
+           
+         return  successCallback( {"id": 1} );
+         
+         
+         }
+        
+    } );
+
+   pTable= $('#example').DataTable({
+        "sScrollX": "100%",
+        "sScrollXInner": "240%",
+        "bScrollCollapse": true,
+
+         "jQueryUI":   false ,
+          "columnDefs": [
+             { orderable: false, targets:[0,-1] }
+          ],
+          
+          
+          
+     dom: 'T<"clear">lfrtip',
+          tableTools: {
+              sRowSelect: "os",
+            sSwfPath: "{!URLFOR($Resource.TableTools,'TableTools-2.2.4/swf/copy_csv_xls_pdf.swf')}",
+             aButtons: [
+                 { sExtends: "editor_create", editor: editor },
+                {
+                    sExtends: "collection",
+                    sButtonText: "Export",
+                    sButtonClass: "save-collection",
+                    "aButtons": [
+                                    {
+                                        "sExtends": "copy",
+                                        "mColumns": [1, 2, 3, 4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+                                    },
+                                    {
+                                        "sExtends": "csv",
+                                "mColumns": [1, 2, 3, 4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+                                        },
+                                    {
+                                        "sExtends": "xls",
+                                "mColumns": [1, 2, 3, 4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+                                        },
+                                    {
+                                        "sExtends": "pdf",
+                                        "mColumns": [1, 2, 3, 4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+                                    },
+                                ]
+                },
+                {
+                    "sExtends": "print",
+                    "mColumns": [1, 2, 3, 4,5,6,7,8,9,10,11,13,14,15,16,17,18,19]
+                },
+            ]
+        }
+
+    });
+
+function format (val) {
+var value=[]
+for(var count=0;count<18; count++)
+{
+    var startVal=13;    
+    //pTable.column(startVal+count).visible( false );
+    value.push(pTable.cell(val.index(),30).data());
+}
+console.log(value);
+    return '<div class="slider" ><table cellpadding="5" cellspacing="0" border="0" >'+
+        '<tr>'+
+            '<td><b>Presale:</b></td>'+
+            '<td>'+value[0]+'</td>'+
+            '<td><b>Reserved:</b></td>'+
+            '<td>'+value[1]+'</td>'+
+            '<td><b>Reserved Pre Sale:</b></td>'+
+            '<td>'+value[2]+'</td>'+
+            '<td><b>Sold:</b></td>'+
+            '<td>'+value[3]+'</td>'+
+            '<td><b>Party Available:</b></td>'+
+            '<td>'+value[4]+'</td>'+
+            '<td><b>Party Presale:</b></td>'+
+            '<td>'+value[5]+'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td><b>Party Reserved:</b></td>'+
+            '<td>'+value[6]+'</td>'+
+            '<td><b>Party Reserved Presale:</b></td>'+
+            '<td>'+value[7]+'</td>'+
+            '<td><b>Party Sold:</b></td>'+
+            '<td>'+value[8]+'</td>'+
+            '<td><b>City Country :</b></td>'+
+            '<td>'+value[9]+'</td>'+
+            '<td><b>State Price Tier:</b></td>'+
+            '<td>'+value[10]+'</td>'+
+            '<td><b>Inventory Status:</b></td>'+
+            '<td>'+value[11]+'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td><b>Cost Per Action:</b></td>'+
+            '<td>'+value[12]+'</td>'+
+            '<td><b>Total Assets:</b></td>'+
+            '<td>'+value[13]+'</td>'+
+            '<td><b>Total Custormers :</b></td>'+
+            '<td>'+value[14]+'</td>'+
+            '<td><b>Total Prospects:</b></td>'+
+            '<td>'+value[15]+'</td>'+
+            '<td><b>Radius:</b></td>'+
+            '<td>'+value[16]+'</td>'+
+            '<td><b>Market Key:</b></td>'+
+            '<td>'+value[17]+'</td>'+
+        '</tr>'+
+    '</table></div>';
+}
+var preRow='null';
+var preTr='null'
+$('#example tbody').on('click', 'td.details-control', function () {
+        var trs = $(this).parents('tr');
+        var tr = $('.dataTables_scrollBody .details-control').eq($(this).index('.DTFC_LeftBodyWrapper .details-control')).parents('tr');
+        var row = pTable.row( tr );
+        var dummyRow=pTable.row(trs);
+
+      //  if ( row.child.isShown() ) {
+         if(preRow!='null')
+         {
+
+            if ( row.child.isShown() ) 
+            var block=true;
+
+             $('div.slider', preRow.child()).slideUp(200,function () {
+                    preRow.child.hide();
+                    preTr.removeClass('shown');
+                     fc.fnUpdate();
+                     $('.DTFC_LeftBodyLiner .no-padding .details-control').remove();
+                     $('.DTFC_RightBodyLiner .no-padding .remove').remove();
+                    
+                
+            if(block)
+            return;
+
+            
+    //    }
+      //  else {
+
+            row.child( format(tr), 'no-padding' ).show();
+            $('div.slider', row.child()).slideDown(100,function () {
+                 tr.addClass('shown');
+                 fc.fnUpdate();
+                 $('.DTFC_LeftBodyLiner .no-padding .details-control').remove();
+                 $('.DTFC_RightBodyLiner .no-padding').html(" ");
+                // fc.fnUpdate();
+                 preRow=row;
+                 preTr=tr;
+            });
+            });
+         }
+         else
+         {
+        
+            row.child( format(tr), 'no-padding' ).show();
+            $('div.slider', row.child()).slideDown(100,function () {
+                 tr.addClass('shown');
+                 fc.fnRedrawLayout();
+                 $('.DTFC_LeftBodyLiner .no-padding .details-control').remove();
+                 $('.DTFC_RightBodyLiner .no-padding').html(" ");
+                 preRow=row;
+                 preTr=tr;
+            }); 
+             
+         }
+      //  }
+
+    } );
+    fc=new $.fn.dataTable.FixedColumns( pTable, {
+
+            leftColumns: 1,
+            rightColumns: 1 
+ 
+} )
+var tableTools = new $.fn.dataTable.TableTools(pTable, {
+               "buttons": ["copy",
+                                  "csv",
+                                  "xls",
+                                  "pdf",{ "type": "print", "buttonText": "Print me!" } ],
+                                      sRowSelect: "os",
+                                         "sSwfPath": "//cdn.datatables.net/tabletools/2.2.2/swf/copy_csv_xls_pdf.swf" });
+$(tableTools.fnContainer()).prependTo('#mytable_wrapper');
+    // Add event listener for opening and closing details
+  $('#example tbody').on( 'click', 'tr', function () {
+
+        if ( $(this).hasClass('selected') ) {
+            $(this).removeClass('selected');
+            $('.new-button').addClass('disabledEdit')
+        }
+        else {
+            pTable.$('tr.selected').removeClass('selected');
+            $(this).addClass('selected');
+            $('.new-button').removeClass('disabledEdit')
+        }
+
+        fc.fnUpdate();
+
+    });
+
+    $('#button').click( function () {
+        table.row('.selected').remove().draw( false );
+    } );
+
+//Alignment Offset
+           $('#ToolTables_example_1').prepend('<img src="/resource/1441893625000/export_image">');
+           $('#ToolTables_example_1').addClass('button-color button align-btn');
+           $('#ToolTables_example_6').prepend('<img src="/resource/1441893653000/print_image">');
+           $('#ToolTables_example_6').addClass('button-color button align-btn');
+           $('#ToolTables_example_2').prepend('<img class="exportImg" src="/resource/1441893653000/inventory_copyImg">');
+           $('#ToolTables_example_3').prepend('<img class="exportImg" src="/resource/1441893653000/Inventory_CSVImg">');
+           $('#ToolTables_example_4').prepend('<img class="exportImg" src="/resource/1441893653000/Inventory_ExcelImg">');
+           $('#ToolTables_example_5').prepend('<img class="exportImg" src="/resource/1441893653000/Inventory_PDFImg">');
+           
+           
+           
+$('.pannel-heading').bind('click',function(){
+    if($('.pannel-heading .minus').length==0)
+    {
+        $('.pannel-heading span').addClass('minus');
+        $('.pannel-heading span').removeClass('plus');
+        $('.pannel-body ').slideDown();
+    
+    }
+    else{
+        $('.pannel-heading span').removeClass('minus');
+        $('.pannel-heading span').addClass('plus'); 
+        $('.pannel-body ').slideUp();
+    }
+    
+
+});
+$('body').bind('click',function(e){
+    var container=$( "#tableHeadVal table")
+    var container1=$('#example')
+    var container2=$('.new-button')
+    var container3=$('#newPagePop')
+    if (!container.is(e.target)&& container.has(e.target).length === 0) 
+    {
+        $( "#tableHeadVal" ).hide(500);
+    }
+    if ((!container1.is(e.target)&& container1.has(e.target).length === 0)&&(!container2.is(e.target)&& container2.has(e.target).length === 0)&&(!container3.is(e.target)&& container3.has(e.target).length === 0)) 
+    {
+        
+             $('#example tbody tr').removeClass('selected');
+             $('.new-button').addClass('disabledEdit')
+             fc.fnUpdate();
+    }
+});
+$('#close').bind('click',function(){
+
+    $('#newPagePop').hide();
+});
+$('.new-button').bind('click',function(){
+
+    if($(this).hasClass('disabledEdit'))
+    {
+    return;
+    }
+
+    var dataAraay=pTable.row('.selected').data();
+console.log(dataAraay);
+    $('.validation').each(function(count){
+    $(this).val(dataAraay[count+1])
+    });
+    $('#newPagePop').show();
+
+});
+$('.show-hide').bind('click',function(e){
+$( "#tableHeadVal" ).toggle(500);
+e.stopPropagation();
+});
+$('.check-hide').bind('click',function(){
+    var column = pTable.column($(this).index('.check-hide'));
+    column.visible( ! column.visible() );
+});
+
+/*Validation value used to create data as well*/
+$('.create-button').bind('click',function(){
+
+    var Updatedarray=[]
+    var mDesc;
+    Ptable=$('#example').dataTable();
+    $('.validation').each(function(countVal){
+        Updatedarray.push();
+        Ptable.fnUpdate($(this).val(),pTable.row('.selected').index(),countVal+1,false);
+        if (countVal===0){
+        mId = $(this).val();
+        //alert("mDesc  "+mId); 
+        }
+        
+        if (countVal===1){
+        mAccountId = $(this).val(); 
+        }
+        
+        if (countVal===8){
+        mfollowup = $(this).val();  
+        }
+        
+        if (countVal===9){
+        mStatus = $(this).val();    
+        }
+        
+         if (countVal===10){
+        mRejReason = $(this).val(); 
+        }
+        
+         if (countVal===11){
+        mDescription = $(this).val();   
+        }
+        
+        console.log(pTable.row('.selected').index(),$(this).val(),false);
+    });
+    
+    // This code is used to update data back
+           CallLeadUpdate(mId , mStatus , mfollowup , mRejReason,mDescription);
+    
+    $('#newPagePop').hide();
+});
+
+$('.unlock-button').bind('click',function(){
+    pTable.row('.selected').remove().draw( false );
+});
+
+
+});
+
+////////////////////////////////////////////////*************************Load Table ******/
+
+
+function loadDataTable(myId)
+  {
+  
+  var myAssets=[];
+   var query ;
+    var myListings=[];
+   var myLead=[];
+   var    mlsactive = "'Active'";
+       
+  try
+  {
+    query = "SELECT Name,Account_Type__c,Account_Sub_Type__c,Zip__c,Zip_CLC__c,Zip_HLC__c,Listing_Type__c,Listing_Count__c,CFCB_Full_Flex__c,CFCB_Full_Fast__c,CFCB_City_Flex__c,CFCB_City_Fast__c,CFCB_Half_Flex__c,CFCB_Half_Fast__c,CFCB_City_Half_Flex__c,CFCB_City_Half_Fast__c,DAP__c,FAC_COMP_Qty__c,FAC_MREC_Qty__c,FAC_LB_Qty__c,FH__c,Hand_Raiser__c,Home_Search__c,Featured_CMA_SM__c,CFCB_FULL_TIER__c,CFCB_HALF_TIER__c,City__c,County__c,State__c,Country__c,Trulia__c,Zillow__c FROM Account_Listing__c ";
+
+    query = query + "WHERE Parent_Agent_Broker__c ='" + myId +"'" ;
+  console.log('Query ' + query);
+  
+  //alert("CK Query"+query); 
+  client.query(query,  function(response){
+
+       //    alert('No of rows inside loaddatable ' + response.records.length );
+           
+if (response.records.length > 0 )
+  {
+           
+                  for(var i=0; i<response.records.length; i++) {
+                  
+            // {document.getElementById('tblmsg').innerHTML = "Loading Table... : No of Rows : " + (i+1) + "/" + response.records.length ;}
+              
+              myListings.push(["" ,response.records[i].Name,response.records[i].Account_Type__c,response.records[i].Account_Sub_Type__c,response.records[i].Zip__c,response.records[i].Zip_CLC__c,response.records[i].Zip_HLC__c,response.records[i].Listing_Type__c,response.records[i].Listing_Count__c,response.records[i].CFCB_Full_Flex__c,response.records[i].CFCB_Full_Fast__c,response.records[i].CFCB_City_Flex__c,response.records[i].CFCB_City_Fast__c,response.records[i].CFCB_Half_Flex__c ,response.records[i].CFCB_Half_Fast__c,response.records[i].CFCB_City_Half_Flex__c,response.records[i].CFCB_City_Half_Fast__c ,response.records[i].DAP__c,response.records[i].FAC_COMP_Qty__c,response.records[i].FAC_MREC_Qty__c,response.records[i].FAC_LB_Qty__c,response.records[i].FH__c,response.records[i].Hand_Raiser__c,response.records[i].Home_Search__c,response.records[i].Featured_CMA_SM__c,response.records[i].CFCB_FULL_TIER__c,response.records[i].CFCB_HALF_TIER__c,response.records[i].City__c,response.records[i].County__c,response.records[i].State__c,response.records[i].Country__c,response.records[i].Trulia__c,response.records[i].Zillow__c]);   
+             } // for loop
+        }       // length > 0
+   
+   // {document.getElementById('tblmsg').innerHTML = " No of Rows : " + response.records.length  + "/" + response.records.length ;}
+    
+            
+            
+  $(document).ready(function() {
+                          if (table !=null)
+                            {
+                                table.destroy();
+                             } 
+    
+    
+   
+     var table = $('#example1').DataTable( {
+                "sScrollX": "100%",
+        "sScrollXInner": "290%",
+        "bScrollCollapse": true,
+
+         "jQueryUI":   false ,
+          "columnDefs": [
+             { orderable: false, targets:[0,-1] }
+          ],
+          
+             "pagingType": "full_numbers",
+              stateSave: true ,
+              "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]] ,
+              'iDisplayStart': 25 ,
+                "scrollCollapse": false,
+              
+                colReorder: {
+                    realtime: true
+                }  ,
+                  "createdRow": function ( row, data, index ) {
+                 if(data[8]>0&&data[8]!=null)
+                $('td', row).eq(8).addClass('highlightColor');
+                if(data[9]>0&&data[9]!=null)
+                $('td', row).eq(9).addClass('highlightColor');
+                if(data[10]>0&&data[10]!=null)
+                $('td', row).eq(10).addClass('highlightColor');
+                if(data[11]>0&&data[11]!=null)
+                $('td', row).eq(11).addClass('highlightColor');
+                if(data[12]>0&&data[12]!=null)
+                $('td', row).eq(12).addClass('highlightColor');
+                if(data[13]>0&&data[13]!=null)
+                $('td', row).eq(13).addClass('highlightColor');
+                if(data[14]>0&&data[14]!=null)
+                $('td', row).eq(14).addClass('highlightColor');
+                if(data[15]>0&&data[15]!=null)
+                $('td', row).eq(15).addClass('highlightColor');
+                if(data[16]>0&&data[16]!=null)
+                $('td', row).eq(16).addClass('highlightColor');
+                if(data[20]>0&&data[20]!=null)
+                $('td', row).eq(20).addClass('highlightColor');
+                if(data[21]>0&&data[21]!=null)
+                $('td', row).eq(21).addClass('highlightColor');
+                if(data[22]>0&&data[22]!=null)
+                $('td', row).eq(22).addClass('highlightColor');
+                },
+
+                 "order": [[ 1, "desc" ]]
+                 ,
+                 
+               dom: 'CRTf<"clear">lrtip' ,
+              
+          
+                "data": myListings,
+                 
+        "columns": [
+            {
+                "className":      'details-control',
+                "orderable":      false,
+                "defaultContent": '' ,
+                "data" : null
+            },
+      {"title": "Account Name" },
+      {"title": " Account Type" },
+{"title": " Account Sub Type" },
+{"title": " Zip" },
+{"title": " Zip CLC" },
+{"title": " Zip HLC" },
+{"title": " Listing_Type " },
+{"title": " Listing Count " },
+{"title": " CFCB Full Felx" },
+{"title": "CFCB Full Fast" },
+{"title": " CFCB City Full Flex" },
+{"title": " CFCB City Full Fast" },
+{"title": " CFCB Half Flex" },
+{"title": " CFCB Half Fast" },
+{"title": " CFCB City Half Flex" },
+{"title": " CFCB City Half Fast" },
+{"title": " DAP Qty" },
+{"title": " FAC COMP Qty" },
+{"title": " FAC MREC Qty" },
+{"title": " FAC LB Qty" },
+{"title": " FH" },
+{"title": " HandRaiser" },
+{"title": " Home Search" },
+{"title": " Featured CMA(SM)" },
+{"title": " CFCB Full Price Tier" },
+{"title": " CFCB Half Price Tier" },
+{"title": " City" },
+{"title": " County" },
+{"title": " State" },
+{"title": " Country" },
+{"title": " Trulia" },
+{"title": " Zillow" }
+        ],
+            "order": [[1, 'asc']] ,
+        
+             
+              
+              tableTools: {
+            sRowSelect: "os",
+            sSwfPath: "{!URLFOR($Resource.TableTools,'TableTools-2.2.4/swf/copy_csv_xls_pdf.swf')}",
+            aButtons: [
+                {
+                    sExtends: "collection",
+                    sButtonText: "Export",
+                    sButtonClass: "save-collection",
+                    aButtons: [ 'copy', 'csv', 'xls', 'pdf' ]
+                },
+                'print'
+            ]
+        }
+
+        
+        
+    } );
+
+ /*var collumnArray
+    table.column(8)
+    .data()
+    .each( function ( value, index ) {
+        console.log( 'Data in index: '+index+' is: '+value);
+        $('td',index).eq(8).addClass('highlight');
+         $('td',index).eq(5).addClass('highlight');
+        
+    } );*/
+    
+    
+         //width dynamic
+          if(window.innerWidth>1350)
+          {
+         
+           var adjustwidth=window.innerWidth-35;
+           $('#example1_wrapper').css('width',adjustwidth+'px')
+          }
+            $('#ToolTables_example1_0').prepend('<img src="/resource/1441893625000/export_image">');
+           $('#ToolTables_example1_0').addClass('button-color button align-btn');
+           $('#ToolTables_example1_5').prepend('<img src="/resource/1441893653000/print_image">');
+           $('#ToolTables_example1_5').addClass('button-color button align-btn');
+           $('#ToolTables_example1_1').prepend('<img class="exportImg" src="/resource/1441893653000/inventory_copyImg">');
+           $('#ToolTables_example1_2').prepend('<img class="exportImg" src="/resource/1441893653000/Inventory_CSVImg">');
+           $('#ToolTables_example1_3').prepend('<img class="exportImg" src="/resource/1441893653000/Inventory_ExcelImg">');
+           $('#ToolTables_example1_4').prepend('<img class="exportImg" src="/resource/1441893653000/Inventory_PDFImg">');
+ 
+ 
+   } ); 
+ } );    
+    
+    
+}catch(e
+)
+{}
+
+
+
+}
+
+GlobalSelectedNodeId = '17066|PA|COBROKE|POSTALCODE|FULL';
+   loadDataTable(GlobalSelectedNodeId);
+
+$("#example").delegate("tbody", "click", function(event) {
+  // the code that WAS in the .click() function
+  
+   var oTT = TableTools.fnGetInstance( 'example' );
+  
+      var aData = oTT.fnGetSelectedData();
+                 var  mArrayofTable = aData ;
+                  
+                  console.log('aData.length' + aData.length + aData  );
+                  
+                      for (var i = 0; i < aData.length; i++) {
+                      
+                        
+                       
+             GlobalSelectedNodeId =   aData[i][2]; // since 2nd column in data table has Account Id
+             GlobalSelectedLeadNodeId = aData[i][1];
+             
+             }
+        //alert("CK Selected Data" + GlobalSelectedNodeId);
+  loadDataTable(GlobalSelectedNodeId);
+           
+  
+ 
+});
+
+
+
+function CopyFilterValue()  {}
+
+function createQuoteJS() {
+    location.reload();
+     // Update Lead: with staus as - In Progress & Description as - Quote Created
+     mId = GlobalSelectedNodeId;
+     mStatus = 'In Progress';
+     mDescription = 'Quote Created';
+     mfollowup = '';
+     mRejReason = '';
+     
+     CallLeadUpdate(mId , mStatus , mfollowup , mRejReason,mDescription);
+     
+     // Call Big Maching to create Qupte
+     //window.location.href = '../apex/CreateQuote?accountId='+GlobalSelectedNodeId+'&leadid='+GlobalSelectedLeadNodeId;
+     window.open('../apex/CreateQuote?accountId='+GlobalSelectedNodeId+'&leadid='+GlobalSelectedLeadNodeId, '_blank'); 
+
+}
+
+function OpenAccount() {
+var url ;
+
+if (GlobalSelectedNodeId !=''  )
+{ 
+url = '/'  + GlobalSelectedNodeId  ; 
+    window.location=url ;        
+                
+   window.open(url, '_blank');
+
+}else
+{
+   alert(' Invalid SFDC Id , The record is missing party id or no record is selected  '); 
+ }
+
+  return true;
+}
+
+     </script>
+     
+      </apex:page>

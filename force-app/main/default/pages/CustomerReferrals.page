@@ -1,0 +1,40 @@
+<apex:page standardController="Account" extensions="CustomerReferralsCon" >
+    <apex:pagemessages />
+    <apex:form >
+        <apex:pageBlock title="Customer Referrals" id="pbId">
+            <apex:outputLabel for="sponsorId" value="Sponsor: " />&nbsp;&nbsp;
+            <apex:inputText value="{!SposorId}" id="sponsorId" />&nbsp;&nbsp;
+            Sponsored:&nbsp;&nbsp; <apex:inputTextArea value="{!SposoredIds}" />&nbsp;&nbsp;&nbsp;&nbsp;
+            <apex:commandButton value="Search" action="{!searchAccounts}" reRender="pblId"/>&nbsp;&nbsp;
+            <apex:commandButton value="Clear" action="{!clearPage}" reRender="pblId, pbId"/>&nbsp;&nbsp;
+            <apex:commandButton value="Create Referral" action="{!createReferrals}"/>
+            <apex:commandButton value="Back To Account" action="{!backToAccount}"/>
+        </apex:pageBlock>
+        
+        <apex:pageBlock title="Accounts for Referral" id="pblId">
+            <apex:pageBlockTable value="{!LstCustomerReferral}" var="item">
+                <apex:column >
+                    <apex:inputCheckbox value="{!item.IsSelected}"/>
+                </apex:column>
+                <apex:column headerValue="Contact Role" value="{!item.AccountRelationship.Contact_Role__c}"/>
+                <apex:column headerValue="Is Parent Primary" value="{!item.AccountRelationship.Contact_Role__c}"/>
+                <apex:column headerValue="Broker of Record" value="{!item.AccountRelationship.Broker_of_Record__c}"/>
+                <apex:column headerValue="Account Party ID" value="{!item.AccountRelationship.Parent_Account__r.Party_ID__c}"/>
+                <apex:column headerValue="Referral" value="{!item.Referral}"/>
+                <apex:column headerValue="Account" value="{!item.AccountRelationship.Parent_Account__c}"/>
+                <!--<apex:column headerValue="Account Name" value="{!item.AccountRelationship.Parent_Account__r.Name}"/>-->
+                <apex:column headerValue="Account Owner" value="{!item.AccountRelationship.Parent_Account__r.OwnerId}"/>
+                <!--<apex:column headerValue="Account Owner Full" value="{!item.AccountRelationship.Parent_Account__r.Owner.Name}"/>-->
+                <apex:column headerValue="Account Credit Status" value="{!item.AccountRelationship.Parent_Account__r.Credit_Status__c}"/>
+                <apex:column headerValue="Account Status" value="{!item.AccountRelationship.Parent_Account__r.Status__c}"/>
+                <apex:column headerValue="Account Sub Type" value="{!item.AccountRelationship.Parent_Account__r.Account_Sub_Type__c}"/>
+                <apex:column headerValue="Account Billing State" value="{!item.AccountRelationship.Parent_Account__r.BillingState}"/>
+                <apex:column headerValue="Contact Id" value="{!item.AccountRelationship.Contact_To__c}"/>
+                <apex:column headerValue="Contact FirstName" value="{!item.AccountRelationship.Contact_To__r.FirstName}"/>
+                <apex:column headerValue="Contact LastName" value="{!item.AccountRelationship.Contact_To__r.LastName}"/>
+                <apex:column headerValue="Contact Email" value="{!item.AccountRelationship.Contact_To__r.Email}"/>
+                <apex:column headerValue="Contact Phone" value="{!item.AccountRelationship.Contact_To__r.Preferred_Phone_Number__c}"/>
+            </apex:pageBlockTable>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>

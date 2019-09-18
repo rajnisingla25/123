@@ -1,0 +1,23 @@
+<apex:page Controller="MovingLeadcontroller" showHeader="false" sidebar="false">
+    <!-- Page Header -->
+    <apex:form >
+        <script>
+        function CloseAndRefresh(){
+            window.opener.location.href="/apex/Mortgage";
+            self.close();
+        }
+        window.onbeforeunload = RefreshParent;
+        </script>       
+        <apex:pageBlock >
+            <apex:pageMessages ></apex:pageMessages>
+            <apex:sectionHeader title="Load the CSV file Below"/>
+            <div style = "text-align:left;background-color: #F0FDFC;"> 
+                     <apex:inputFile value="{!csvFileBody}"  filename="{!csvAsString}"/>
+                     <apex:commandButton value="Import Mortgage Leads" action="{!importCSVFile}"/>
+        </div>
+            <div style = "text-align:center;background-color: #F0FDFC;"> 
+                     <apex:commandButton value="Close" onclick="CloseAndRefresh();" />
+            </div>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
