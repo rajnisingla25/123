@@ -15,7 +15,7 @@ public class POCBillRunUtil {
         Map<Billing_Account_Temp__c,Invoice_temp__c > AccountInvoices= new Map<Billing_Account_Temp__c,Invoice_temp__c >();
         Map<Id,List<Amendment_Temp__c> > AccountAmendments= new Map<Id,List<Amendment_Temp__c>>();
         Set<Id> subIds= new Set<Id>();
-        Set<Id> subIds1= new Set<Id>();
+        
 
       for(Amendment_Temp__c amds   :[Select Id,Subscription_Temp__r.Id, Subscription_Temp__r.Billing_Account_Temp__c 
                                         from Amendment_Temp__c
